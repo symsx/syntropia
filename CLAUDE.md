@@ -20,6 +20,11 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   phase.
 - `architecture-technique.md` — proposition de framework modulaire pour
   construire ces pages avec du code commun, à valider.
+- `chantier-carte-interactive.md` — le plan détaillé (10 phases) de la
+  carte interactive du terrain, en cours — voir § Point de reprise.
+- `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
+  le rôle de responsable qualification, pour produire des scénarios de
+  test à partir de l'état réel du dépôt.
 - `skills-map/` — carte des compétences métier nécessaires aux étapes de
   l'atelier (skill `organisation-skills`), sourcée depuis
   `/home/sylvain/projets/syntropie/connaissances/` — lecture seule, ce
@@ -61,19 +66,20 @@ sql/
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
   dev.py                  serveur de développement — voir Commandes
-  compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`
+  compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
+  deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
 public/                racine servable du site en refonte
   .htaccess              seul dossier accessible ; type MIME et cache des polices
   index.php               page publique — présente l'atelier, oriente. Accueil = « / », sans nom de fichier
-  connexion.php          page de connexion — provisoire, sans mise en forme
+  connexion.php          page de connexion — redirige selon que le compte a déjà un site ou non
   deconnexion.php
   definition-projet.php      passage obligé unique — ouvre le site, hors manifeste etapes.js
   definition-vision.php      étape 1 (Définition), gardée par Authentification::exige()
   definition-objectifs.php   étape 2 (Définition), gardée par Authentification::exige()
   definition-moyens.php      étape 3 (Définition), gardée par Authentification::exige()
-  definition-site.php        étape 4 (Définition), gardée par Authentification::exige()
+  definition-site.php        étape 4 (Définition) — le lieu (carte réelle) et ce qu'on observe, deux groupes
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
-  conception-parcelles.php   étape 7 (Conception), gardée par Authentification::exige()
+  conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
   realisation-preparation-parcelle.php  étape 1 (Réalisation)
@@ -85,14 +91,15 @@ public/                racine servable du site en refonte
   suivi-saut-du-chat.php                étape 3 (Suivi)
   suivi-consignation.php                étape 4 (Suivi) — redirige vers conception-parcelles.php, fin du parcours construit
   inscription.php            inscription sur invitation — code de 8 caractères, voir Invitations.php
-  documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md
-  documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md
+  documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md, pagine ses chapitres trop longs
+  documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md, même mécanique
   glossaire.php              les mots techniques, un par un — recherche filtrée, lit contenu/glossaire.md
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
     js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
     js/etapes.js            le manifeste des phases — `pret: true` = la page existe déjà
     js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret` ; initTermes() arme la bulle de tout `.terme`
+    js/livret.js             pagine un chapitre de documentation-{site,saf}.php trop long pour l'écran — mesuré en pixels, pas un compte de paragraphes
     polices/               Clash Display, Archivo, reprises de le-bureau/fonts/
 composants/            un dossier par zone du gabarit, réutilisable entre pages
   bandeau-general/  bandeau-outils/  panneau-gauche/  panneau-droit/
@@ -122,13 +129,33 @@ décrit ci-dessous. Détail des décisions et de ce qui reste à porter dans
   identifiant/nom/rôle puis le mot de passe au clavier (deux fois, sans
   l'afficher). C'est la voie du **premier compte** : `inscription.php`
   exige une invitation, et la première invitation n'a personne pour
-  l'ouvrir.
+  l'ouvrir. **Ne jamais appeler `php bin/compte.php` directement** —
+  voir § Point de reprise, piège vérifié deux fois cette session.
+- Déployer vers alwaysdata : `python3 bin/deployer.py` — `etat`
+  (connectivité), `fichiers` (`--dry-run` pour prévisualiser, sinon
+  envoie), `config` (pousse `config/base.php` seul), `base` (rejoue le
+  schéma sur le serveur distant), `preparer` (assemble un dépôt manuel
+  dans `../syntropia-depot` pour qui préfère FileZilla).
 - Ouvrir la maquette de référence : `le-bureau/index.html` directement
   dans un navigateur — page HTML autonome, sans PHP, sans build.
-- Vérifier une largeur d'écran sous 500px : `--window-size` de Chrome
-  headless a un plancher à 500px et ne simule pas un vrai petit écran ;
-  passer par le protocole DevTools (`Emulation.setDeviceMetricsOverride`)
-  pour un test fiable, ou réduire la fenêtre d'un vrai navigateur.
+- Vérifier une largeur d'écran sous 500px (téléphone réel, pas
+  `--window-size` de Chrome headless, qui plafonne à 500px et ne simule
+  rien de plus petit) : lancer Chrome headless avec le protocole
+  DevTools ouvert (`--remote-debugging-port`, `--remote-allow-origins=*`,
+  `setsid` indispensable si le lancement vient d'un outil — sinon le
+  processus meurt avec l'appel qui l'a lancé), puis le piloter en Python
+  pur (`websocket-client`, déjà présent, aucune autre dépendance —
+  Playwright/Node ne sont pas installés ici) : `Emulation.
+  setDeviceMetricsOverride` pour la taille d'écran réelle,
+  `Runtime.evaluate` pour remplir/cliquer,
+  `Page.captureScreenshot` pour voir le résultat. **Ne jamais conclure
+  qu'une page tient dans l'écran en mesurant seulement `document.
+  documentElement.scrollWidth/scrollHeight`** — `overflow:hidden` sur
+  `html,body` absorbe silencieusement tout débordement sans le signaler ;
+  seule une vraie capture d'écran, ou la mesure directe d'un conteneur
+  contre son parent, le révèle. Entre deux comptes de test dans le même
+  profil Chrome, `Network.clearBrowserCookies` — sinon une session d'un
+  compte déjà supprimé fausse silencieusement le test suivant.
 
 ## Architecture — le gabarit « le bureau »
 
@@ -151,7 +178,10 @@ visible. Syntropia n'est pas une page web qu'on parcourt : c'est un
 atelier, vu de dessus comme un bureau réel où l'on va travailler.
 **Un contenu trop long se réduit, ne défile jamais** — correction du
 2026-09-14, après un bureau construit avec un contenu qui défilait en
-interne : refusé, même pour l'accueil.
+interne : refusé, même pour l'accueil. **Sur petit écran, un contenu
+trop haut se resserre ou se pagine, il ne déborde jamais** — deux vrais
+bugs de ce type trouvés et corrigés le 2026-09-15, voir § Point de
+reprise.
 
 | Zone | Rôle | Déclencheur |
 |---|---|---|
@@ -183,7 +213,11 @@ Règles à respecter pour tout nouveau panneau ou composant :
 bibliothèque JS ; SVG en unités réelles (mètres) pour le dessin. Deux
 polices seulement pour le bureau : Clash Display (titres, menus, outils —
 en majuscules) et Archivo (le reste) ; fichiers et licences dans
-`le-bureau/fonts/`.
+`le-bureau/fonts/`. **Nuance posée le 2026-09-15** : « le bureau suppose
+déjà du JS partout » (thème, tiroirs) est devenu un principe explicite,
+pas seulement un fait — deux nouveaux mécanismes en dépendent
+volontairement (les bulles de `.terme`, la pagination de `livret.js`),
+là où rien ne s'y prêtait avant.
 
 ### Ordonner les menus et la barre d'outils — loi de Jakob
 
@@ -228,6 +262,12 @@ Sans mesure d'usage réelle, « le plus utilisé » se raisonne au départ —
   plusieurs champs (`definition-objectifs` : destinations → « guide le
   comment » ; terme → « mesurer la progression, voir le réalisme ») —
   le dire à l'écran, pas seulement le savoir.
+- **Un mot technique s'explique où il apparaît, pas seulement dans une
+  documentation à part.** Depuis le 2026-09-15 : tout `.terme` souligné
+  en pointillés montre sa définition au survol/focus (une phrase,
+  `contenu/glossaire.md`) — et la même source alimente `glossaire.php`,
+  une recherche pour qui veut chercher un mot directement. Voir § Point
+  de reprise.
 
 ## Directives de travail pour ce dossier
 
@@ -263,9 +303,8 @@ récit.*
 - **Le site EST le bureau** — chaque page, publique ou connectée, sur
   le gabarit `gabarit.css`/`gabarit.js` ; **aucun défilement, nulle
   part, pas même à l'intérieur du bureau** ; un contenu trop long se
-  réduit. **Une seule exception** : `releve-vierge.php`, un document à
-  imprimer, pas une page à visiter — voir § Architecture et § Directives
-  de travail. Ne pas s'en servir de précédent pour autre chose.
+  réduit ou se pagine. **Une seule exception** : `releve-vierge.php`, un
+  document à imprimer, pas une page à visiter.
 - Nom affiché : **Syntropia** (jamais « Atelier Syntropie »).
 - Menus et barre d'outils : du plus utilisé au moins utilisé, sauf les
   listes de parcours (phases, étapes d'une parcelle) qui gardent
@@ -273,219 +312,162 @@ récit.*
 - **Un seul projet par compte** — pas de liste de sites. Un site s'ouvre
   une fois, sur `definition-projet.php` (passage obligé, hors
   `etapes.js`), avant la première question de Définition.
-- **Trois étapes restent volontairement reportées**, à part entière —
+- **Deux étapes restent volontairement reportées**, à part entière —
   pas construites en version allégée, `pret` absent dans `etapes.js` :
-  `conception-etude-site.php` (la carte interactive du terrain —
-  calques, dessin, vents, relief, cadastre ; `carte.php` dans le dépôt
-  de référence), `conception-scenario.php` (scénario de plantation —
-  espèces, strates, associations culturales ; `scenario.php`, 336
-  lignes dans le dépôt de référence) et `conception-materiel-et-eau.php`
-  (`directives.txt` : « pour chaque parcelle », mêmes données absentes
-  que le scénario). Les trois demandent un vrai scénario en base, qui
-  n'existe pas encore, et/ou la carte elle-même. **Les vraies parcelles,
-  elles, existent depuis le 2026-09-15** — `conception-parcelles.php`
-  n'est plus une liste codée en dur, voir plus bas (chantier « carte
-  interactive du terrain », Phase 3). Chacune des trois étapes reste
-  accessible en la sautant : le mécanisme « phase → première étape
-  prête » (`gabarit.js`) passe par-dessus sans lien mort.
+  `conception-scenario.php` (scénario de plantation — espèces, strates,
+  associations culturales ; `scenario.php`, 336 lignes dans le dépôt de
+  référence) et `conception-materiel-et-eau.php` (`directives.txt` :
+  « pour chaque parcelle », mêmes données absentes que le scénario).
+  Les deux demandent un vrai scénario en base, qui n'existe pas encore.
+  `conception-etude-site.php` (la carte interactive) n'est plus
+  « reportée sans plan » : chantier en cours, voir
+  `chantier-carte-interactive.md`, Phases 1-3 déjà faites. Chaque étape
+  reste accessible en la sautant : le mécanisme « phase → première
+  étape prête » (`gabarit.js`) passe par-dessus sans lien mort.
 
 **Construit et vérifié** :
 
 - Le gabarit (`public/assets/css/gabarit.css`,
-  `public/assets/js/{etapes,gabarit}.js`) — `Gabarit.init({ etape,
-  site, contexte })`. Le panneau gauche construit sa navigation tout
-  seul depuis `etapes.js` (`remplirPhaseProjet()`,
-  `remplirEtapesPhase()`) — y compris entre phases : chaque entrée de
-  « Phase projet » mène à la première étape prête de cette phase,
-  jamais à un lien mort. Une section « Documentation » (`remplirSectionDocumentation()`)
-  s'ajoute d'elle-même en dernière position du panneau gauche, sur
-  TOUTE page — les deux livrets, toujours au même endroit, jamais à
-  dupliquer à la main. Le compte (avatar + nom, en haut à droite)
-  ouvre un vrai menu (`initCompteMenu()`) : Mon projet, Préférences
-  (`compte.php`, à venir — grisée), Se déconnecter.
+  `public/assets/js/{etapes,gabarit,carte,livret}.js`) —
+  `Gabarit.init({ etape, site, contexte })`. Le panneau gauche construit
+  sa navigation tout seul depuis `etapes.js` (`remplirPhaseProjet()`,
+  `remplirEtapesPhase()`) — chaque entrée de « Phase projet » mène à la
+  première étape prête de cette phase, jamais à un lien mort. Une
+  section « Documentation » (`remplirSectionDocumentation()`) s'ajoute
+  d'elle-même en dernière position du panneau gauche, sur TOUTE page —
+  les deux livrets et le glossaire, toujours au même endroit. Le compte
+  (avatar + nom, en haut à droite) ouvre un vrai menu
+  (`initCompteMenu()`) : Mon projet, Préférences (`compte.php`, à
+  venir — grisée), Se déconnecter. `initTermes()` arme la bulle de tout
+  `.terme` (survol ou focus clavier, jamais le `title` natif).
 - Le backend PHP (`src/` : `autoload`, `Configuration`, `Database`,
-  `Role`, `Profil`, `FicheTerrain`, `Web/Comptes`,
+  `Role`, `Profil`, `FicheTerrain`, `Documentation`, `Web/Comptes`,
   `Web/Authentification`, `Web/Invitations`, `Web/Sites`,
-  `Web/Reponses`) et les deux bases MySQL (`syntropia`,
+  `Web/Reponses`, `Web/Parcelles`) et les deux bases MySQL (`syntropia`,
   `syntropia_comptes`), schéma dans `sql/`.
 - **La persistance réelle de toute la phase Définition** — `site`,
-  `membre_site`, `participant`, `reponse` (schéma déjà présent,
-  jusque-là inutilisé). `definition-projet.php` ouvre le site ; les
-  quatre étapes de Définition enregistrent chaque champ dans `reponse`
-  et le rechargent en le revisitant — un champ vidé efface sa ligne
-  plutôt que d'y garder `''`. Vérifié de bout en bout, y compris le
-  retour en arrière entre étapes. Ce que ça ne couvre pas encore :
-  `conception-parcelles.php` (liste « Parcelle A » toujours codée en
-  dur), les colonnes propres de la table `site` (`Sites::
-  enregistrerParametres()` non porté — les champs de
-  `definition-site.php` vivent dans `reponse`, comme les autres étapes),
-  le rattachement d'une invitation à un site (`Sites::ajouterMembre()`
-  non porté).
+  `membre_site`, `participant`, `reponse`. `definition-projet.php` ouvre
+  le site ; les quatre étapes de Définition enregistrent chaque champ
+  dans `reponse` et le rechargent en le revisitant — un champ vidé
+  efface sa ligne plutôt que d'y garder `''`. `definition-site.php`
+  écrit aussi, en plus, les colonnes propres `site.latitude`/
+  `longitude` (`Sites::enregistrerParametres()`) via un vrai point posé
+  sur une carte OpenStreetMap (`assets/js/carte.js`, sans dépendance) —
+  le champ texte libre d'origine a disparu.
+- **`conception-parcelles.php` n'est plus un mockup** — vraies parcelles
+  en base (`Web/Parcelles.php`), créées/listées/sélectionnées par le
+  panneau gauche (`?parcelle=ID`), trois mesures réelles enregistrées
+  (`nb_planches`, `largeur_planche_m`, `passe_pied_m` — ce dont la carte
+  interactive aura besoin). **Reste un prototype, volontairement** : le
+  plan lui-même (bordures, planches dessinées en SVG, piloté par
+  `conception-parcelles.js` côté client) — `parcelle.plan` toujours pas
+  branché, chantier séparé.
+- **Les mots techniques expliqués au survol** — tout `.terme` (span,
+  `data-explique="..."`) vient de `contenu/glossaire.md`
+  (`Documentation::glossaire()`/`::terme()`), même source qu'une page
+  publique dédiée, `glossaire.php` (recherche filtrée en direct, jamais
+  plus qu'une poignée de résultats montrés à la fois — mesuré en JS
+  contre la hauteur réelle disponible, pas un compte fixe).
 - `bin/dev.py` — vérifie PHP et les bases, rejoue le schéma, sert ;
   arrête proprement son `php` enfant sur n'importe quel signal.
-  `bin/dev.py compte` (→ `bin/compte.php`, adapté du dépôt de
-  référence) crée ou modifie un compte en CLI — la voie du premier
-  compte, mot de passe jamais affiché ni passé en ligne de commande.
-- Six pages publiques : `index.php`, `connexion.php`, `deconnexion.php`,
-  `inscription.php` (sur invitation, voir `Web/Invitations.php`),
-  `documentation-site.php` et `documentation-saf.php` — deux livrets
-  qu'on tourne sur le bureau, un chapitre affiché à la fois (CSS pur,
-  `:has()` + `label[for]`, sans JavaScript). Le texte vit dans
-  `contenu/*.md` (un chapitre par ligne `# `, voir `src/Documentation.php`),
-  pas dans le PHP — ajouter un chapitre au `.md` suffit, aucune page ne
-  se rouvre. `documentation-saf.md` n'est encore qu'un modèle à
-  remplacer, le porteur écrira son contenu.
-- **Le parcours au complet, sauf les trois étapes reportées** — dix-huit
-  des vingt étapes de `etapes.js` portent `pret: true`. Phase Définition
-  (4/4) : passage `definition-projet.php`, puis `vision`, `objectifs`,
-  `moyens`, `site`. Conception (3/6, plus `conception-calendrier` en
-  6/6) : `etude-sol` (avec `releve-vierge.php`, hors gabarit),
-  `parcelles`, `calendrier` — `etude-site`(1), `scenario`(4) et
-  `materiel-et-eau`(5) reportés, voir ci-dessus. Réalisation (4/4) :
-  `preparation-parcelle`, `materiel-vegetal`, `outils-et-plans`,
-  `consignation`. Suivi (4/4) : `arrosage-germination`, `perturbation`,
-  `saut-du-chat` (suggestion `:has()` si pas encore visible, même
-  principe que la RNA de `definition-moyens.php`), `consignation` —
-  seule étape qui redirige ailleurs que vers une étape suivante
-  (`conception-parcelles.php`, faute de suite : le suivi se répète,
-  contrairement aux étapes amont). Les neuf pages écrites le
-  2026-09-15 n'ont aucun contenu « déjà présent » à porter — rien de
-  comparable dans le dépôt de référence — donc rédigées depuis
-  `directives.txt` directement, sur le schéma déjà établi par
-  Définition. Détail : `architecture-technique.md` § Le parcours
-  complet, de Calendrier à Suivi.
+  `bin/dev.py compte` (→ `bin/compte.php`, jamais appelé en direct — un
+  appel direct retombe silencieusement sur `config/base.php`, donc la
+  production, deux incidents réels cette session avant d'être compris)
+  crée ou modifie un compte en CLI.
+- `bin/deployer.py` — `etat`, `fichiers` (rsync vers
+  `jubile:~/www/syntropia/`), `config`, `base`, `preparer`. Syntropia
+  est en ligne, `https://jubile.alwaysdata.net/syntropia/` (le `https`
+  fonctionne sans rien configurer — certificat Let's Encrypt wildcard
+  `*.alwaysdata.net` posé par la plateforme). Sous `/syntropia/`, pas la
+  racine : le compte alwaysdata héberge aussi Plantae, à `/plantae/` —
+  `RewriteBase`/`RewriteCond` de `.htaccess`, `'base'` de
+  `config/base.php`, et `WWW_DISTANT` de `bin/deployer.py` portent tous
+  les trois ce chemin, à tenir assortis. `.htaccess` vérifié pour de
+  vrai sur Apache réel (pas seulement « non vérifiable en local ») :
+  racine du sous-répertoire réécrite vers `public/`, dossiers protégés
+  refusés (403), polices avec bon type MIME et cache d'un an, cookie de
+  session cantonné à `/syntropia/`. Reste ouvert : aucune procédure
+  n'automatise `deployer.py` après chaque changement — à relancer à la
+  main.
+- Sept pages publiques : `index.php`, `connexion.php` (redirige selon
+  que le compte a déjà un site — corrigé le 2026-09-15, il retombait
+  avant sur le mockup de `conception-parcelles.php` pour un compte tout
+  juste inscrit), `deconnexion.php`, `inscription.php` (sur invitation),
+  `documentation-site.php`, `documentation-saf.php` et `glossaire.php`.
+  Les deux livrets tournent chapitre par chapitre (CSS pur, `:has()` +
+  `label[for]`) et paginent maintenant un chapitre trop long pour
+  l'écran (`assets/js/livret.js`, mesuré en pixels — un chapitre est de
+  la prose libre écrite par le porteur, sa longueur n'est pas bornée).
+  `documentation-saf.md` n'est encore qu'un modèle, le porteur écrit son
+  contenu à son rythme.
+- **Le parcours au complet, sauf les deux étapes reportées** —
+  dix-huit des vingt étapes de `etapes.js` portent `pret: true`.
+  Détail : `architecture-technique.md` § Le parcours complet, de
+  Calendrier à Suivi.
+- **Petit écran, deux vrais bugs trouvés sur capture d'écran réelle et
+  corrigés** : les deux livrets (colonne « Chapitres » à largeur fixe
+  ne tenant plus à côté du contenu sous 30rem → rangée de pastilles
+  au-dessus) et `definition-site.php` (deux colonnes qui s'écrasaient,
+  puis empilées débordaient encore → resserrement + `align-items:
+  flex-start` pour ne plus répartir le débordement pour moitié
+  au-dessus du bandeau). Aucun des deux n'était détectable en mesurant
+  `scrollWidth`/`scrollHeight` — voir § Commandes pour la méthode qui
+  marche. Les autres pages du parcours, vérifiées à 412px, n'ont pas
+  montré d'autre régression à ce jour.
 - `skills-map/` (skill `organisation-skills`) — 14 noeuds de
   compétence métier, groupés par phase, sourcés sur
   `/home/sylvain/projets/syntropie/connaissances/`.
 - Arborescence protégée par `.htaccess`, sur le modèle exact du dépôt de
-  référence — refus dans les dossiers, jamais à la racine. **Non
-  vérifiable en local** : le serveur intégré de PHP ignore les
-  `.htaccess`, seul un vrai Apache (ou le dépôt en ligne) l'exercera.
+  référence — vérifiée pour de vrai en ligne (voir plus haut).
+- `dossier-qualification.md` — brief transmis à cgpt (rôle : responsable
+  qualification), état réel du dépôt phase par phase, pour des
+  scénarios de test sur 3 niveaux d'utilisateur (débutant/intermédiaire/
+  avancé en agroforesterie syntropique — le critère est la connaissance
+  du domaine, l'app ne distingue pas encore les comptes par ce biais).
+  Campagne en cours, comptes `qualification`/`qualification7`… créés
+  localement par cgpt — **leurs scénarios seront confrontés au code
+  réel avant toute correction, pas supposés corrects par construction.**
 
 **Mécanique à respecter pour toute nouvelle étape** : ajouter son
 `pret: true` dans `etapes.js` en même temps que sa page — sinon les
 étapes voisines restent grisées vers elle (jamais de lien mort, jamais
 de lien non plus tant qu'il est absent). Quand `directives.txt` donne
 l'usage d'un champ, l'écrire à côté du champ (`definition-objectifs.php`
-en donne l'exemple) — voir § L'esprit à garder dans l'interface. Sans
-usage connu, ne rien inventer. Pour une étape qui saisit des réponses :
-suivre le schéma de `definition-vision.php` (garde-site, `POST` →
-`Reponses::enregistrerLot()` → redirection, `GET` → `Reponses::
-pourParticipant()` préremplit) plutôt que d'inventer un autre mécanisme.
+en donne l'exemple). Pour une étape qui saisit des réponses : suivre le
+schéma de `definition-vision.php` (garde-site, `POST` →
+`Reponses::enregistrerLot()` → redirection, `GET` →
+`Reponses::pourParticipant()` préremplit) plutôt que d'inventer un
+autre mécanisme. Pour un mot technique nouveau : l'ajouter à
+`contenu/glossaire.md` (`# Terme` + une phrase), puis
+`Documentation::terme($termes, 'id-du-terme', 'texte affiché')` où il
+apparaît — jamais partout où le mot existe dans l'absolu, seulement où
+il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-Le parcours guidé (Définition → Conception → Réalisation → Suivi) est
-maintenant construit et persisté d'un bout à l'autre, à trois étapes
-près. Ce qui reste :
-
-1. **Le chantier « parcelles et scénario réels »** — regroupe les trois
-   étapes reportées : `conception-etude-site` (la carte), `conception-
-   scenario` (espèces, strates, plan de plantation) et `conception-
-   materiel-et-eau` (récapitulatif par parcelle). Un vrai
-   `conception-parcelles.php` (parcelles en base, plus une liste codée
-   en dur) est leur condition commune — s'y attaquer avant, ou avec.
-2. **`contenu/documentation-saf.md`** n'est encore qu'un modèle —
-   Sylvain écrira les vrais chapitres, en markdown, directement dans ce
-   fichier (rien à construire côté site pour ça).
-3. **`autres-documentations.php`** — page publique restante, non
+1. **Chantier « carte interactive du terrain »** — Phases 1 à 3 faites
+   (carte réelle sur `definition-site.php`, `site.latitude`/`longitude`,
+   vraies parcelles). **Phase 4 ensuite** : `src/Web/Calques.php` +
+   `public/api-calques.php`, testable au `curl` avant toute UI de
+   dessin. Plan complet, détaillé phase par phase avec fichiers et
+   tests : `chantier-carte-interactive.md`.
+2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
+   noté, pas commencé. Aucun service USDA officiel n'accepte de
+   coordonnées (seulement des codes postaux américains) ; calculable
+   depuis un historique météo (Open-Meteo, même source que la Phase 8
+   du chantier carte — voir `chantier-carte-interactive.md`).
+   Remplacerait le champ texte libre actuel de `definition-site.php`.
+3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+   chapitres à son rythme, en markdown, directement dans ce fichier.
+4. **`autres-documentations.php`** — page publique restante, non
    commencée.
-4. **Au-delà du premier tour** : rien ne relit encore les réponses
+5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+   dans le menu du compte).
+6. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
-   bord) — chaque étape écrit dans `reponse`, mais rien ne les
-   rassemble encore. À voir si/quand le besoin s'en fait sentir.
-5. **Syntropia est en ligne — `http://jubile.alwaysdata.net/syntropia/`,
-   depuis le 2026-09-15**, bases comprises. **Sous `/syntropia/`, pas la
-   racine** : le compte alwaysdata héberge aussi Plantae, à
-   `/plantae/` — `RewriteBase`/`RewriteCond` de `.htaccess`, `'base'`
-   de `config/base.php`(`.exemple`), et `WWW_DISTANT` de
-   `bin/deployer.py` portent tous les trois ce chemin, à tenir assortis.
-   `bin/deployer.py` (même moule que `dev.py`) : `etat`, `fichiers`
-   (rsync vers `jubile:~/www/syntropia/`), `config` (envoie
-   `config/base.php`, jamais mêlé à `fichiers`), `base` (rejoue le
-   schéma, `mysql` exécuté sur le serveur via SSH), `preparer` (assemble
-   la même arborescence dans `../syntropia-depot`, pour qui dépose à la
-   main — FileZilla — plutôt qu'en ligne de commande ; avertit sur les
-   fichiers binaires, qu'un dépôt FTP en mode ASCII abîme sans le dire).
-   **`.htaccess`, « non vérifiable en local » depuis le 2026-09-14,
-   vérifié pour de vrai** : racine du sous-répertoire réécrite vers
-   `public/`, les dossiers protégés refusent tous (403 : `src/`,
-   `config/`, `sql/`, `bin/`, `contenu/`), polices avec le bon type MIME
-   et un cache d'un an, cookie de session cantonné à `/syntropia/`.
-   **Bases créées par le porteur dans le panneau alwaysdata** (pas de
-   CLI trouvée ; `jubile` n'a pas le droit `CREATE DATABASE` en SQL
-   brut, le formulaire du panneau l'a fait) — `jubile_syntropia_comptes`,
-   `jubile_syntropia`, utilisateur `jubile_syntropia`. Schéma rejoué
-   (4 + 17 tables, conforme), et un compte jetable créé en SSH
-   (`php bin/compte.php`, pas `dev.py compte` — dépend de
-   `config/local.env`, absent en production) s'est réellement connecté
-   sur le site réel, avant d'être supprimé — refait une seconde fois
-   après le passage sous `/syntropia/`, résultat identique. Détail :
-   `architecture-technique.md` § Syntropia en ligne pour la première
-   fois, et § Syntropia et Plantae, chacun dans son sous-répertoire.
-   Reste ouvert : aucune procédure ne rejoue `deployer.py` après chaque
-   changement — à refaire à la main pour l'instant.
-6. **Zone climatique USDA, déterminée plutôt que saisie** — chantier à
-   prévoir, pas commencé, noté par le porteur le 2026-09-15. Aucun
-   service USDA officiel n'accepte des coordonnées (seulement des codes
-   postaux américains) ; une zone USDA se définissant uniquement par la
-   température minimale annuelle moyenne, elle est calculable n'importe
-   où depuis un historique météo. Piste retenue : Open-Meteo (réanalyse
-   ERA5, sans clé), déjà prévu pour la rose des vents de la carte
-   interactive (`conception-etude-site.php`, Phase 8 — voir plan de ce
-   chantier) — même source, même absence de clé, même couverture
-   France. Remplacerait le champ texte libre actuel de
-   `definition-site.php`.
-7. **Corrections et ajouts issus d'un test manuel du porteur, 2026-09-15** :
-   - `connexion.php` redirigeait en dur vers `conception-parcelles.php`
-     après connexion, écrit avant `definition-projet.php` — un compte
-     tout juste inscrit tombait donc sur le mockup encore fictif. Corrige
-     via `Sites::pourCompte()` : sans site → `definition-projet.php`,
-     avec un site → comme avant.
-   - `definition-site.php` sépare maintenant « Le lieu » (administratif :
-     commune, position, superficie, USDA, exposition, pente) de « Ce que
-     vous observez » (climat) — deux groupes visuellement distincts,
-     même page. Le bloc « déjà en présence sur le terrain » (pieds-mères,
-     graines, végétaux utiles) en est parti : fusionné dans
-     `realisation-materiel-vegetal.php`, qui posait déjà la même question
-     en mieux (vocabulaire expliqué, moment plus pertinent).
-   - `conception-etude-sol.php` affiche désormais **à quoi sert** chaque
-     relevé (ex. « Voir si le sol se décompacte au fil des ans »), pas sa
-     méthode (« Sol ressuyé, trois prélèvements ») — la méthode reste sur
-     la fiche à imprimer, où elle a sa place.
-   - **Nouveau : les mots techniques expliqués au survol.** Tout `.terme`
-     (span, `data-explique="..."`) se souligne en pointillés et montre sa
-     bulle au survol ou au focus clavier — `Gabarit.init()` l'arme partout
-     (`initTermes()`, `assets/js/gabarit.js`), jamais le `title` natif du
-     navigateur. Le texte vient de `contenu/glossaire.md`
-     (`Documentation::glossaire()`/`Documentation::terme()`), même source
-     qu'une nouvelle page publique, `glossaire.php` — recherche filtrée
-     en direct, jamais plus qu'une poignée de résultats montrés à la fois
-     (mesuré en JS contre la hauteur réelle, pas un compte fixe : une
-     définition longue ne se coupe jamais en plein mot). Posé sur les
-     termes déjà identifiés cette session (pieds-mères, bouturage, semis,
-     division, USDA, RNA, saut du chat, déchaumage, bâchage, décompacter,
-     densimètre, labour) sur les pages où ils apparaissent réellement —
-     pas partout où le mot existe dans l'absolu, pour ne pas noyer le
-     motif sous trop de soulignements.
-8. **Phase 3 du chantier « carte interactive du terrain » faite —
-   `conception-parcelles.php` n'est plus un mockup, 2026-09-15.**
-   Nouveau `src/Web/Parcelles.php` (`dUnSite()`, `parId()`, `creer()`,
-   `enregistrer()` — whitelist étroite : code/nom/type à la création,
-   puis `nb_planches`/`largeur_planche_m`/`passe_pied_m`, les trois
-   mesures dont la carte aura besoin en Phase 4/5, pas le reste de la
-   fiche d'attributs). La page lit désormais le vrai site
-   (`Sites::pourCompte()`, gardée comme toutes les autres — elle ne
-   l'était pas) et la vraie liste de parcelles ; sans parcelle, ou sur
-   `?nouvelle=1`, un formulaire (code, nom, type) remplace le plan SVG.
-   Le panneau gauche liste les parcelles réelles, chacune menant à
-   `?parcelle=ID`. **Ce qui reste un prototype, volontairement** : le
-   plan lui-même (bordures, planches, dessiné dans le SVG) — piloté par
-   `conception-parcelles.js`, entièrement côté client, `parcelle.plan`
-   toujours pas branché ; les trois mesures réelles vivent à côté, dans
-   un bloc distinct du panneau droit (« Pour la carte du terrain »), et
-   ne se mélangent pas avec le prototype. `connexion.php` corrigé au
-   passage (voir point précédent) pour ne plus jamais montrer ce mockup
-   à un compte tout juste inscrit. Prochaine étape du chantier : Phase 4
-   (`src/Web/Calques.php` + `calque_element` + `api-calques.php`), voir
-   le plan validé plus haut dans cette session.
+   bord) — à voir si/quand le besoin s'en fait sentir.
+7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+   transmis, en cours. Confronter ses scénarios au code réel une fois
+   produits.
+8. Aucune procédure n'automatise `bin/deployer.py` après chaque
+   changement — à relancer à la main.

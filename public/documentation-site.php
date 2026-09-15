@@ -96,6 +96,46 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-ateli
   .doc-tourner:hover{ background:var(--accent-fond); }
   .doc-tourner-suivant{ margin-left:auto; }
 
+  /* pagination À L'INTÉRIEUR d'un chapitre trop long — posée par
+     assets/js/livret.js, mesurée en pixels contre la hauteur réelle
+     disponible. Absente tant qu'un chapitre tient dans l'écran. */
+  .doc-sous-page[hidden]{ display:none; }
+  .doc-sous-nav{
+    display:flex; align-items:center; justify-content:center; gap:.8rem;
+    margin-top:.6rem; padding-top:.5rem; border-top:1px dashed var(--line);
+  }
+  .doc-sous-bouton{
+    border:1px solid var(--line); background:var(--surface); border-radius:.4rem;
+    width:1.8rem; height:1.8rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font:600 .8rem var(--titre); color:var(--accent-titre); padding:0;
+  }
+  .doc-sous-bouton:hover{ background:var(--accent-fond); }
+  .doc-sous-bouton:disabled{ opacity:.35; cursor:default; }
+  .doc-sous-compte{ font:500 .72rem var(--texte); color:var(--muted); min-width:3rem; text-align:center; }
+
+  /* petit écran : la colonne des chapitres (11rem fixes) ne tient plus
+     à côté de la page — `.bureau` a déjà 2×2rem de marge, et un
+     téléphone n'a souvent que 22-23rem de large dedans. Empilée au-dessus,
+     en rangée de pastilles qui passent à la ligne, plutôt que redessinée
+     en colonne : la liste reste courte (quelques chapitres), une rangée
+     coûte moins de hauteur qu'une colonne — la hauteur, elle, ne se
+     récupère nulle part (aucun défilement). Remarque du porteur,
+     2026-09-15, capture d'écran sur téléphone à l'appui. */
+  @media (max-width:30rem){
+    /* la tirette « Informations » est fixe, centrée, juste sous le
+       bandeau — elle recouvre le haut de la page si celle-ci commence
+       tout de suite. Assez de marge pour commencer sous elle plutôt que
+       derrière. Remarque du porteur, 2026-09-15. */
+    main#bureau{ padding-top:2.6rem; }
+    .doc-corps{ flex-direction:column; padding:.9rem .9rem .7rem; gap:.7rem; max-width:100%; }
+    .doc-chapitres-bloc{ flex:0 0 auto; width:100%; }
+    .doc-chapitres-titre{ margin-left:.2rem; }
+    .doc-chapitres{ flex-direction:row; flex-wrap:wrap; gap:.35rem; }
+    .doc-chapitres label{ padding:.3rem .55rem; font-size:.76rem; }
+    .doc-page{ padding:1rem 1.1rem .9rem; min-height:0; }
+    .doc-chapitre p{ font-size:.84rem; }
+  }
+
 <?php foreach ($chapitres as $ch): $id = htmlspecialchars($ch['id'], ENT_QUOTES, 'UTF-8'); ?>
   .doc-corps:has(#doc-<?= $id ?>:checked) .doc-chapitre[data-chapitre="<?= $id ?>"]{ opacity:1; pointer-events:auto; transform:translateX(0); }
   .doc-corps:has(#doc-<?= $id ?>:checked) .doc-page-nav[data-pour="<?= $id ?>"]{ display:flex; }
@@ -245,6 +285,7 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-ateli
 
 <script src="assets/js/etapes.js"></script>
 <script src="assets/js/gabarit.js"></script>
+<script src="assets/js/livret.js"></script>
 <script>
   Gabarit.init({});
 </script>

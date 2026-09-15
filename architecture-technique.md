@@ -1225,26 +1225,203 @@ ASCII est de réécrire les fins de ligne, ce qui détruit un `.woff2`
 sans que rien ne le signale : la page retombe juste sur sa police de
 secours.**
 
+## Le chantier « carte interactive du terrain », Phases 1 à 3 — fait le 2026-09-15
+
+Sur demande explicite du porteur (« travailles maintenant sur la carte
+interactive de conception-etude-site.php »), après deux reports
+précédents (2026-09-14, réaffirmé au début de cette session) faute de
+plan concret. Recherche préalable en deux passes d'agents (Explore puis
+Plan) sur le dépôt de référence — `Calques.php`, `carte.js`, `calques.js`,
+les trois API (`api-calques.php`/`api-cadastre.php`/`api-eau.php`),
+`Cadastre.php`, `Eau.php`, `Vents.php`, `Relief.php`, `Altimetrie.php`,
+`Geojson.php`, `Web/Parcelles.php`, `parcelle.php`, le schéma SQL — pour
+partir de signatures et de tables vérifiées, pas supposées. Le porteur a
+choisi la réplique complète (API externes comprises) plutôt qu'une
+première tranche allégée, en toute connaissance du prérequis que ça
+entraînait : `conception-parcelles.php` était un mockup statique.
+
+Plan écrit et approuvé en 10 phases, conservé dans
+`chantier-carte-interactive.md` (déplacé du répertoire de plans hors
+dépôt, pour ne pas se perdre à la prochaine reprise). Phases 1 à 3
+faites le jour même :
+
+- **Phase 1** — `public/assets/js/carte.js`, port quasi identique du
+  moteur de tuiles sans dépendance (Web Mercator, OpenStreetMap) de la
+  référence. Chemin final sous `assets/js/`, pas `assets/` — corrigé
+  après coup pour suivre la convention déjà posée par `etapes.js`/
+  `gabarit.js`.
+- **Phase 2** — `Sites::enregistrerParametres()` (nouveau, whitelist
+  stricte `latitude`/`longitude`, pas de `Colonnes`/`Referentiel` comme
+  la référence — absents côté cible et hors périmètre) ;
+  `definition-site.php` pose désormais un vrai point sur la carte au
+  lieu d'un champ texte libre.
+- **Phase 3** — nouveau `src/Web/Parcelles.php` (`dUnSite`, `parId`,
+  `creer`, `enregistrer` — whitelist code/nom/type puis les trois
+  mesures `nb_planches`/`largeur_planche_m`/`passe_pied_m`, rien du
+  reste de la fiche d'attributs, hors périmètre). `conception-
+  parcelles.php` sort du mockup statique (« La Vadaux », « Parcelle A »
+  codés en dur) : vrai site, vraie liste de parcelles, formulaire de
+  création si aucune n'existe encore. Le plan SVG (bordures, planches)
+  reste un prototype côté client, volontairement — `parcelle.plan` non
+  branché, chantier séparé (`plan.php`/`ImplantationBordures` côté
+  référence).
+
+**Bug trouvé en testant, avant tout déploiement** : la validation
+serveur des trois mesures n'acceptait pas la virgule décimale française
+(`is_numeric("1,20")` vaut `false` en PHP) alors que le prototype SVG
+voisin la gère déjà côté client (`nombre()` dans `conception-
+parcelles.js`) — corrigé par une conversion `str_replace(',', '.', …)`
+avant validation, même convention que le reste du site.
+
+Prochaine phase du chantier : Phase 4, `src/Web/Calques.php` +
+`public/api-calques.php`, testable au `curl` avant toute UI de dessin —
+détail complet dans `chantier-carte-interactive.md`.
+
+## Les mots techniques expliqués au survol — fait le 2026-09-15
+
+Demande du porteur après un test manuel : la question « déjà en présence
+sur le terrain » (pieds-mères, graines) sur `definition-site.php`
+suppose un vocabulaire qu'un débutant n'a pas. Deux décisions séparées,
+posées avec le porteur avant de coder :
+
+1. **Déplacer, pas seulement expliquer** — le contenu a rejoint
+   `realisation-materiel-vegetal.php`, qui posait déjà une question
+   proche (bouturage/semis/division), en mieux contextualisée. Au
+   passage, `definition-site.php` a été réorganisée en deux groupes
+   visuellement distincts : « Le lieu » (administratif, mesurable sans
+   expertise) et « Ce que vous observez » (climat) — remarque du
+   porteur : séparer l'administratif du terrain.
+2. **Un motif réutilisable partout** — plutôt qu'une explication au cas
+   par cas. Tout mot technique se souligne en pointillés
+   (`<span class="terme" data-explique="...">`) et montre sa bulle au
+   survol ou au focus clavier — **réutilise la bulle déjà prévue par le
+   gabarit** (`Gabarit.bulle.montrer/cacher`, jamais construite avant
+   cette session) plutôt que le `title` natif du navigateur (lent, sans
+   style, illisible au clavier). Nouveau `Documentation::glossaire()`/
+   `::terme()` : même format que les livrets (`# Terme` + une phrase),
+   nouveau fichier `contenu/glossaire.md`. Une page publique,
+   `glossaire.php`, expose la même source en recherche filtrée — jamais
+   de défilement même avec beaucoup de mots : le nombre de résultats
+   montrés s'ajuste à la hauteur réelle disponible (mesuré en JS), pas
+   à un compte fixe.
+
+**Bug trouvé en écrivant `Documentation::glossaire()`** : le texte
+brut destiné à la bulle (`bulle.textContent`, jamais du HTML) passait
+par `strip_tags()` sur un texte déjà échappé par `paragraphes()` — une
+apostrophe finissait donc en `&#039;` littéral dans la bulle au lieu
+d'une apostrophe. Corrigé avec `html_entity_decode()` après
+`strip_tags()`.
+
+Posé sur les termes déjà rencontrés cette session (pieds-mères,
+bouturage, semis, division, zone climatique USDA, RNA, saut du chat,
+déchaumage, bâchage, décompacter, densimètre, labour) — sur les pages où
+ils apparaissent réellement, pas partout où le mot existe dans
+l'absolu, pour ne pas noyer le motif sous trop de soulignements.
+
+## `connexion.php` ne montre plus le mockup à un compte neuf — fait le 2026-09-15
+
+Trouvé par le porteur en testant manuellement avec un compte neuf
+(`simulation`) : la connexion retombait directement sur
+`conception-parcelles.php`, alors encore un mockup, sans jamais passer
+par `definition-projet.php`. Cause : la redirection post-connexion était
+écrite avant que `definition-projet.php` existe (passage obligé
+d'ouverture de site, ajouté plus tôt dans le projet) et n'avait jamais
+été mise à jour. Corrigée : `Sites::pourCompte()` détermine la
+destination — sans site, `definition-projet.php` ; avec un site, comme
+avant.
+
+## Petit écran, deux vraies régressions trouvées sur capture d'écran réelle — fait le 2026-09-15
+
+Le porteur a transmis deux captures d'écran prises sur son téléphone
+(Firefox Android), à des moments différents de la session. Les deux ont
+révélé de vrais bugs, ni l'un ni l'autre détectable en mesurant
+`document.documentElement.scrollWidth`/`scrollHeight` — `overflow:hidden`
+sur `html,body` (la règle « aucun défilement ») absorbe silencieusement
+tout débordement réel sans qu'aucune mesure globale ne le signale. Seule
+une vraie capture d'écran, ou la mesure directe d'un conteneur contre
+son parent, le révèle — leçon retenue pour la suite, consignée dans
+CLAUDE.md § Commandes.
+
+**Première capture** — `documentation-saf.php` : la colonne « Chapitres »
+(11rem fixes, `flex:0 0 11rem`) ne tenait plus à côté du contenu sous
+30rem (~480px) ; combinée à `justify-content:center` sur un conteneur
+plus large que l'écran, la moitié invisible se répartissait de chaque
+côté, donnant l'impression que le texte du chapitre commençait déjà en
+plein milieu, sans liste visible. Corrigé par un `@media (max-
+width:30rem)` sur les deux livrets : la colonne passe en rangée de
+pastilles qui passent à la ligne, au-dessus du contenu plutôt qu'à côté.
+`definition-site.php` (construite cette session) avait le même défaut,
+en pire : sous 30rem les deux colonnes s'écrasaient l'une sur l'autre,
+et même une fois empilées correctement, le contenu dépassait encore —
+`main.bureau` centre verticalement (`align-items:center`), donc un bloc
+trop grand déborde pour moitié **au-dessus** de son propre conteneur (le
+texte d'annonce chevauchait le bandeau) autant qu'en dessous (pied de
+page coupé). Corrigé par un resserrement général (marges, hauteur de la
+carte, zone de texte) et `align-items:flex-start` sur cette page
+spécifiquement, pour que le débordement résiduel éventuel reste toujours
+en bas, jamais en haut.
+
+**Seconde capture**, plus tard la même session — `documentation-site.php` :
+malgré le premier correctif, un chapitre long débordait encore
+verticalement. Cause de fond différente : la longueur d'un chapitre
+n'est pas bornée (c'est de la prose libre, écrite par le porteur), donc
+aucun resserrement de marges ne peut suffire pour toujours — il fallait
+une vraie pagination, mesurée contre le contenu réel. Nouveau
+`assets/js/livret.js` : mesure la hauteur disponible (`#bureau`, moins
+l'en-tête du chapitre et la barre de navigation entre chapitres),
+regroupe les paragraphes en tranches qui y tiennent, montre une tranche
+à la fois avec sa propre pagination (◂ 1/4 ▸) — « suivant » sur la
+dernière tranche enchaîne sur le chapitre suivant, un seul mécanisme à
+comprendre pour l'utilisateur. Étend explicitement la décision déjà
+prise pour l'import GeoJSON de la carte (« le bureau suppose déjà du JS
+partout ») : ce livret n'était sans JavaScript que tant qu'un chapitre
+tenait toujours dans l'écran, ce qui n'est plus garanti dès qu'un
+livret grandit. **Bug trouvé en testant avant déploiement** : le
+sélecteur de pagination (`:scope > p`) happait aussi
+`.doc-chapitre-repere` (« Chapitre X sur Y »), un `<p>` comme les autres
+à ses yeux, la faisant disparaître de sa place — corrigé
+(`:not(.doc-chapitre-repere)`). Corrigé au passage, même capture :
+la tirette « Informations », fixe et centrée juste sous le bandeau,
+recouvrait le haut de la page sur petit écran faute de marge — `#bureau`
+gagne une marge du haut sous 30rem sur ces deux pages spécifiquement.
+
+## `dossier-qualification.md` et la campagne avec cgpt — fait le 2026-09-15
+
+Le porteur a confié à cgpt (ChatGPT) le rôle de responsable
+qualification, pour produire des scénarios et cas d'utilisation sur 3
+niveaux d'utilisateur (débutant/intermédiaire/avancé en agroforesterie
+syntropique — la connaissance du domaine, pas l'aisance avec un site
+web : l'app ne distingue pas encore les comptes par ce critère). Un
+dossier de référence lui a été préparé (`dossier-qualification.md`,
+racine du dépôt) : état réel phase par phase, ce qui est prototype vs
+persisté, ce qui n'existe pas du tout — pour que les scénarios partent
+de faits, pas de suppositions.
+
+cgpt n'a pas Playwright disponible dans son environnement (pas de
+Node/`npx`) ; la même limite existe ici — résolue en pilotant Chrome
+headless directement via le protocole DevTools depuis Python
+(`websocket-client`, déjà présent), sans aucune dépendance
+supplémentaire. La technique (lancement de Chrome, driver minimal,
+piège des cookies entre comptes de test) a été transmise à cgpt pour
+qu'il tente de même si son environnement a Python.
+
+**Incident, détecté et corrigé** : la campagne a signalé un
+« blocage d'authentification réel » — un compte neuf (`qualification6`,
+mot de passe vérifié valide) refusant la connexion sur le site local.
+Vérification : les comptes `qualification` à `qualification6` avaient
+tous été créés sur la base de **production** (alwaysdata), pas en
+local — même piège que documenté plus haut
+(`config/base.php` l'emportant sur `config/local.env` quand
+`bin/compte.php` est appelé sans passer par `dev.py`), cette fois
+déclenché par la campagne elle-même plutôt que par une main humaine ou
+Claude. Les 6 comptes et leurs lignes associées ont été supprimés de la
+production, vérifié (`SELECT COUNT(*) FROM compte` → 0). Leçon
+consignée : ne jamais conclure d'un résultat de test sans vérifier
+**dans quelle base** il s'est produit, surtout quand plusieurs
+environnements partagent la même base de code.
+
 ## Prochaines étapes
 
-1. `definition-site`, puis les 12 autres étapes du manifeste, une à
-   une — chacune ajoute son `pret: true` dans `etapes.js`, et peut
-   laisser `remplirEtapesPhase()` construire sa navigation de phase.
-2. `documentation-saf.php` et `autres-documentations.php` — sur le
-   gabarit « le bureau », une fois leur contenu fourni par Sylvain.
-3. La persistance réelle (`Site`, `Participant`, `Reponse`) — aucune
-   étape ne sauvegarde encore ce qui est saisi.
-4. Vérifier le rewrite `.htaccess` sur un vrai Apache dès que l'occasion
-   se présente — non exercé par le serveur de développement. **Une
-   vraie occasion existe maintenant** : alwaysdata (voir § Hébergement).
-   `config/base.php.exemple` corrigé pour ce compte (préfixe `jubile_`,
-   `base` = `/`), mais deux valeurs restent des déductions, pas des
-   faits lus dans un panneau alwaysdata réel — à vérifier au moment de
-   créer les bases pour de vrai : le préfixe exact, et `hote` (resté
-   `localhost`, peut-être `mysql-jubile.alwaysdata.net`).
-5. Décider du mécanisme de thème (client actuel vs serveur du dépôt de
-   référence) — voir ci-dessus.
-6. `Sites` (service) et `compte.php` — pour que l'invitation puisse à
-   nouveau rattacher un compte créé à un projet existant, et pour
-   qu'une invitation puisse être ouverte depuis l'interface plutôt que
-   par un script.
+Voir CLAUDE.md § Point de reprise § Prochaine étape pour la liste à
+jour — ce fichier ne la duplique plus, pour ne pas la laisser dériver
+comme la version précédente de cette section l'avait fait.

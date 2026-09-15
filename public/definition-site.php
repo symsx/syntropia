@@ -135,6 +135,27 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   }
   .site-bouton:hover{ opacity:.92; }
   .site-note{ font:400 .76rem var(--texte); color:var(--muted); text-align:center; margin-top:.5rem; }
+
+  /* petit écran : deux colonnes côte à côte ne tiennent plus — empilées,
+     elles dépassent en hauteur sur un téléphone si rien d'autre ne se
+     resserre. Chaque marge, chaque champ y perd un peu, pour que la
+     somme tienne sans défilement. Remarque du porteur, 2026-09-15,
+     capture d'écran sur téléphone à l'appui. */
+  @media (max-width:30rem){
+    main#bureau{ padding:.6rem 1rem; align-items:flex-start; }
+    .site-annonce{ margin:0 0 .4rem; font-size:.78rem; line-height:1.3; }
+    .site-colonnes{ flex-direction:column; gap:0; }
+    .site-groupe-titre{ margin:.4rem 0 .3rem; }
+    .site-champ{ margin-bottom:.4rem; }
+    .site-champ label, .site-champ legend{ margin-bottom:.15rem; }
+    .site-champ small{ margin-bottom:.1rem; }
+    .site-carte-champs{ margin-bottom:.25rem; }
+    .site-carte{ height:4.6rem; }
+    .site-choix{ gap:.3rem .5rem; }
+    .site-champ textarea{ height:3.1rem; }
+    .site-bouton{ margin-top:0; padding:.45rem; }
+    .site-note{ margin-top:.25rem; font-size:.7rem; }
+  }
 </style>
 </head>
 <body>
