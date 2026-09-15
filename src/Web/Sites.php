@@ -141,6 +141,43 @@ final class Sites
     }
 
     /**
+     * Le point du site — `latitude`/`longitude`, colonnes propres de
+     * `site`, distinctes de `reponse` (texte libre, une question ⇒ un
+     * champ). Les deux vont ensemble : aucune n'a de sens seule sur une
+     * carte. Whitelist explicite, dans le style de `creer()` ci-dessus —
+     * pas de `Colonnes::normaliser()`/`Referentiel` (dépôt de référence),
+     * absents ici et hors périmètre tant qu'un seul champ est concerné.
+     *
+     * @return array<string, string> erreurs, vide si enregistré
+     */
+    public function enregistrerParametres(int $siteId, string $latitude, string $longitude): array
+    {
+        $latBrut = trim($latitude);
+        $lonBrut = trim($longitude);
+
+        if ($latBrut === '' && $lonBrut === '') {
+            $this->pdo()->prepare('UPDATE site SET latitude = NULL, longitude = NULL WHERE id = ?')
+                ->execute([$siteId]);
+            return [];
+        }
+        if ($latBrut === '' || $lonBrut === '') {
+            return ['coordonnees' => 'La latitude et la longitude vont ensemble : les deux, ou aucune.'];
+        }
+        if (!is_numeric($latBrut) || (float) $latBrut < -90 || (float) $latBrut > 90) {
+            return ['coordonnees' => 'La latitude doit être comprise entre -90 et 90.'];
+        }
+        if (!is_numeric($lonBrut) || (float) $lonBrut < -180 || (float) $lonBrut > 180) {
+            return ['coordonnees' => 'La longitude doit être comprise entre -180 et 180.'];
+        }
+
+        // Cinq décimales : environ un mètre — la même précision que la
+        // carte affiche, voir assets/js/carte.js.
+        $req = $this->pdo()->prepare('UPDATE site SET latitude = ?, longitude = ? WHERE id = ?');
+        $req->execute([round((float) $latBrut, 5), round((float) $lonBrut, 5), $siteId]);
+        return [];
+    }
+
+    /**
      * Un `code` lisible et unique — `NNN-nom-du-site`, comme l'annonce
      * le schéma. La collision est rare (deux sites au même nom, le même
      * jour) ; la base tranche, cette méthode ne fait que réessayer.

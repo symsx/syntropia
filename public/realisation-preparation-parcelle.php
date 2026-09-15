@@ -7,6 +7,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
+use Syntropia\Documentation;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Reponses;
@@ -37,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     exit;
 }
 $reponses = $reponsesService->pourParticipant($participantId);
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 ?>
 <!doctype html>
 <html lang="fr">
@@ -144,8 +146,8 @@ $reponses = $reponsesService->pourParticipant($participantId);
           <fieldset class="prep-champ">
             <legend>La technique</legend>
             <div class="prep-choix">
-              <label><input type="radio" class="radio" name="technique" value="dechaumage"<?= ($reponses['preparation_technique'] ?? '') === 'dechaumage' ? ' checked' : '' ?>>Déchaumage</label>
-              <label><input type="radio" class="radio" name="technique" value="bachage"<?= ($reponses['preparation_technique'] ?? '') === 'bachage' ? ' checked' : '' ?>>Couverture, bâchage</label>
+              <label><input type="radio" class="radio" name="technique" value="dechaumage"<?= ($reponses['preparation_technique'] ?? '') === 'dechaumage' ? ' checked' : '' ?>><?= Documentation::terme($termes, 'dechaumage', 'Déchaumage') ?></label>
+              <label><input type="radio" class="radio" name="technique" value="bachage"<?= ($reponses['preparation_technique'] ?? '') === 'bachage' ? ' checked' : '' ?>>Couverture, <?= Documentation::terme($termes, 'bachage', 'bâchage') ?></label>
               <label><input type="radio" class="radio" name="technique" value="les-deux"<?= ($reponses['preparation_technique'] ?? '') === 'les-deux' ? ' checked' : '' ?>>Les deux</label>
             </div>
           </fieldset>

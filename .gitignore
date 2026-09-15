@@ -9,6 +9,11 @@ __pycache__/
 config/local.env
 config/base.php
 
+# Permissions Claude Code accordées en local — spécifiques à la machine,
+# rien à voir avec le projet (settings.local.json l'est déjà, via le
+# gitignore global de l'utilisateur ; settings.json ne l'était pas).
+.claude/settings.json
+
 # Dossier de dépôt manuel (bin/deployer.py preparer) — voisin du
 # projet, pas dedans ; cette ligne est une redondance volontaire.
 /syntropia-depot/

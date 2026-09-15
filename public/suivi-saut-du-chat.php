@@ -7,6 +7,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
+use Syntropia\Documentation;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Reponses;
@@ -36,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     exit;
 }
 $reponses = $reponsesService->pourParticipant($participantId);
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 ?>
 <!doctype html>
 <html lang="fr">
@@ -151,7 +153,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
           <fieldset class="saut-champ">
-            <legend>Le saut du chat est-il visible ?</legend>
+            <legend>Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?> est-il visible ?</legend>
             <div class="saut-choix">
               <label><input type="radio" class="radio" name="visible" value="oui"<?= ($reponses['saut_du_chat_visible'] ?? '') === 'oui' ? ' checked' : '' ?>>Oui</label>
               <label><input type="radio" class="radio" id="visible-non" name="visible" value="non"<?= ($reponses['saut_du_chat_visible'] ?? 'non') === 'non' ? ' checked' : '' ?>>Pas encore</label>

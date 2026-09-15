@@ -6,6 +6,7 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Documentation;
 use Syntropia\FicheTerrain;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
@@ -14,11 +15,33 @@ Authentification::demarrer($_SERVER);
 $auth = new Authentification();
 $auth->exige(Role::Utilisateur);
 
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
+
 // Cet aperçu se lit dans l'ordre des numéros (01 → 07), plus facile à
 // repérer qu'une liste ; l'ordre du terrain — différent, et pour de
 // bonnes raisons — reste celui de la fiche imprimée. Voir
 // FicheTerrain::fiches() et le panneau Informations de cette page.
 $fiches = FicheTerrain::fiches();
+
+// Succinct, pas la méthode — la méthode (« sol ressuyé, trois
+// prélèvements ») appartient à la fiche à imprimer, pas à cet aperçu.
+// Ici, la règle de l'atelier : dire à quoi sert le test avant de
+// demander de le faire. Résume `FicheTerrain::fiches()[...]['sert']`,
+// écrit pour la fiche papier, plus long qu'il n'en faut pour une liste.
+// Remarque du porteur, 2026-09-15.
+$pourquoi = [
+    'flore'        => 'Choisir des espèces déjà adaptées au terrain.',
+    'profil'       => "Savoir s'il faut " . Documentation::terme($termes, 'decompacter', 'décompacter') . ", et jusqu'où.",
+    'densite'      => 'Voir si le sol se ' . Documentation::terme($termes, 'decompacter', 'décompacte') . ' au fil des ans.',
+    'infiltration' => "Déterminer les besoins d'arrosage pendant les trois premières années.",
+    'slake'        => 'Savoir si le sol se refermera à la première pluie.',
+    'vers'         => "Suivre la vie du sol — l'indicateur qui bouge le plus vite.",
+    'texture'      => "Choisir les espèces de bordure, régler l'arrosage.",
+];
+foreach ($fiches as $cle => &$fiche) {
+    $fiche['pourquoi'] = $pourquoi[$cle] ?? '';
+}
+unset($fiche);
 usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numero']);
 ?>
 <!doctype html>
@@ -49,7 +72,7 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
     background:var(--accent-fond); border-radius:1rem; padding:.15rem .5rem;
   }
   .sol-titre{ flex:1 1 auto; font:600 .86rem var(--titre); color:var(--ink); }
-  .sol-quand{ flex:0 0 auto; font:400 .74rem var(--texte); color:var(--muted); text-align:right; max-width:11rem; }
+  .sol-pourquoi{ flex:0 0 auto; font:400 .74rem var(--texte); color:var(--muted); text-align:right; max-width:15rem; }
 
   .sol-action{
     display:block; width:100%; padding:.65rem; border:0; border-radius:.6rem;
@@ -57,7 +80,6 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
     text-align:center; text-decoration:none; cursor:pointer;
   }
   .sol-action:hover{ opacity:.92; }
-  .sol-note{ font:400 .76rem var(--texte); color:var(--muted); text-align:center; margin-top:.5rem; }
 </style>
 </head>
 <body>
@@ -128,23 +150,21 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
     <main class="bureau" id="bureau">
       <div class="sol-cadre">
         <p class="sol-annonce">Sept relevés déterminent où en est le sol — pas pour
-           juger, pour choisir : décompacter ou non, planter ou semer, arroser
-           court et fréquent ou long et espacé. Comptez une demi-journée sur
-           place, dont l'essentiel à attendre.</p>
+           juger, pour choisir : <?= Documentation::terme($termes, 'decompacter', 'décompacter') ?>
+           ou non, planter ou semer, arroser court et fréquent ou long et espacé.
+           Comptez une demi-journée sur place, dont l'essentiel à attendre.</p>
 
         <ul class="sol-liste">
 <?php foreach ($fiches as $fiche): ?>
           <li class="sol-ligne">
             <span class="sol-numero"><?= htmlspecialchars($fiche['numero'], ENT_QUOTES, 'UTF-8') ?></span>
             <span class="sol-titre"><?= htmlspecialchars($fiche['titre'], ENT_QUOTES, 'UTF-8') ?></span>
-            <span class="sol-quand"><?= htmlspecialchars($fiche['quand'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
+            <span class="sol-pourquoi"><?= $fiche['pourquoi'] ?? '' /* déjà échappé, voir Documentation::terme() */ ?></span>
           </li>
 <?php endforeach; ?>
         </ul>
 
         <a class="sol-action" href="releve-vierge.php" target="_blank" rel="noopener">Ouvrir les fiches à imprimer</a>
-        <p class="sol-note">Sur papier, exprès : accroupi au bord d'un trou, les mains
-           terreuses, souvent sans réseau.</p>
       </div>
     </main>
   </div>
@@ -160,11 +180,13 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
       <p>Cet aperçu suit l'ordre des numéros, pour s'y repérer facilement.
          <strong>Sur le terrain, suivez l'ordre de la fiche imprimée</strong>,
          différent et volontaire : la flore se relève avant de piétiner quoi
-         que ce soit, puis le profil s'ouvre — son trou sert ensuite à
-         l'infiltration et au comptage des vers, on ne le rebouche qu'à la
-         fin. Chaque fiche annonce le geste et la durée avant sa grille, et
-         dit ce que la mesure permettra de décider — jamais quel chemin
-         prendre : un densimètre ne prescrit pas un labour.</p>
+         que ce soit, puis le <?= Documentation::terme($termes, 'profil-de-sol', 'profil') ?>
+         s'ouvre — son trou sert ensuite à l'<?= Documentation::terme($termes, 'infiltration', 'infiltration') ?>
+         et au comptage des vers, on ne le rebouche qu'à la fin. Chaque fiche
+         annonce le geste et la durée avant sa grille, et dit ce que la mesure
+         permettra de décider — jamais quel chemin prendre : un
+         <?= Documentation::terme($termes, 'densimetre', 'densimètre') ?> ne prescrit pas un
+         <?= Documentation::terme($termes, 'labour', 'labour') ?>.</p>
       <p>La saisie numérique de ces relevés n'existe pas encore ; la fiche
          papier, elle-même, sert dès aujourd'hui.</p>
     </div>

@@ -7,6 +7,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
+use Syntropia\Documentation;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Reponses;
@@ -38,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     exit;
 }
 $reponses = $reponsesService->pourParticipant($participantId);
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 ?>
 <!doctype html>
 <html lang="fr">
@@ -174,9 +176,9 @@ $reponses = $reponsesService->pourParticipant($participantId);
               <label><input type="radio" class="radio" name="financier" value="confortable"<?= ($reponses['moyens_financier'] ?? '') === 'confortable' ? ' checked' : '' ?>>Confortables</label>
             </div>
             <p class="moyens-suggestion">Une voie existe pour commencer avec peu : la
-               régénération naturelle assistée — sélectionner et protéger ce qui repousse
-               déjà, semer directement au lieu de transplanter. Environ trois fois moins
-               cher que la plantation.</p>
+               <?= Documentation::terme($termes, 'rna', 'régénération naturelle assistée') ?> —
+               sélectionner et protéger ce qui repousse déjà, semer directement au lieu de
+               transplanter. Environ trois fois moins cher que la plantation.</p>
           </fieldset>
 
           <fieldset class="moyens-champ">

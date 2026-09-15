@@ -41,6 +41,7 @@ window.Gabarit = (function(){
     initOutils();
     initCompteMenu();
     initEchap();
+    initTermes();
 
     return api;
   }
@@ -53,7 +54,8 @@ window.Gabarit = (function(){
      remplirEtapesPhase() : voir CLAUDE.md § Mécanique à respecter). */
   var DOCUMENTATION = [
     { id: 'documentation-saf',  titre: "L'agroforesterie syntropique", pret: true },
-    { id: 'documentation-site', titre: "L'atelier",                    pret: true }
+    { id: 'documentation-site', titre: "L'atelier",                    pret: true },
+    { id: 'glossaire',          titre: "Glossaire",                    pret: true }
   ];
 
   function remplirSectionDocumentation(){
@@ -339,6 +341,22 @@ window.Gabarit = (function(){
     bulle.classList.add('visible');
   }
   function bulleCacher(){ if (bulle) bulle.classList.remove('visible'); }
+
+  /* -------------------------------------------------------------- termes */
+  /* Un mot technique (.terme, data-explique="...") montre sa bulle au
+     survol ou au focus clavier — jamais le `title` natif, illisible au
+     clavier et sans style. Générique, sur TOUTE page : aucune page n'a
+     à câbler ça elle-même, comme la section Documentation. */
+  function initTermes(){
+    var termes = document.querySelectorAll('.terme[data-explique]');
+    termes.forEach(function(t){
+      if (t.tabIndex < 0) t.tabIndex = 0;
+      t.addEventListener('mouseenter', function(){ bulleMontrer(t, t.dataset.explique); });
+      t.addEventListener('mouseleave', bulleCacher);
+      t.addEventListener('focus', function(){ bulleMontrer(t, t.dataset.explique); });
+      t.addEventListener('blur', bulleCacher);
+    });
+  }
 
   var api = {
     init: init,

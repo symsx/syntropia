@@ -7,6 +7,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
+use Syntropia\Documentation;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Reponses;
@@ -36,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     exit;
 }
 $reponses = $reponsesService->pourParticipant($participantId);
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 ?>
 <!doctype html>
 <html lang="fr">
@@ -139,12 +141,18 @@ $reponses = $reponsesService->pourParticipant($participantId);
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
           <div class="mveg-champ">
             <label for="multiplication">Ce que vous multipliez vous-même</label>
-            <small>Bouturage, semis, division — ce qui part de ce que vous avez déjà.</small>
+            <small><?= Documentation::terme($termes, 'bouturage', 'Bouturage') ?>,
+               <?= Documentation::terme($termes, 'semis', 'semis') ?>,
+               <?= Documentation::terme($termes, 'division', 'division') ?> — ce qui part de ce
+               que vous avez déjà : des <?= Documentation::terme($termes, 'pieds-meres', 'pieds-mères') ?>
+               à bouturer, des graines à récolter, sur votre terrain ou ailleurs.</small>
             <textarea id="multiplication" name="multiplication" rows="3" placeholder="Quoi, comment, à partir de quels pieds…"><?= htmlspecialchars($reponses['materiel_multiplication'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <div class="mveg-champ">
             <label for="achat">Ce que vous allez vous procurer</label>
+            <small>Ce qui manque encore — un végétal déjà utile, présent sur le terrain, n'a
+               rien à faire ici.</small>
             <textarea id="achat" name="achat" rows="3" placeholder="Quoi, auprès de qui, en quelle quantité approximative…"><?= htmlspecialchars($reponses['materiel_achat'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
@@ -169,6 +177,9 @@ $reponses = $reponsesService->pourParticipant($participantId);
          plusieurs plants. Les trois coûtent surtout du temps, pas de
          l'argent — une voie utile quand les moyens financiers sont
          serrés (voir l'étape Moyens, en Définition).</p>
+      <p>Un végétal déjà utile au projet, présent sur le terrain sans rien
+         y avoir planté, ne se multiplie ni ne s'achète — il se note
+         simplement, pour mémoire, avec ce qu'il apporte.</p>
     </div>
   </aside>
 

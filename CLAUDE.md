@@ -37,17 +37,19 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Database.php           connexions PDO — syntropia_comptes, syntropia
   Role.php, Profil.php   énumérations — droits et profils
   FicheTerrain.php       contenu des 7 fiches de relevé de sol — voir releve-vierge.php
-  Documentation.php      lit contenu/*.md, un chapitre par ligne « # » — voir ce fichier
+  Documentation.php      lit contenu/*.md, un chapitre par ligne « # » — livrets et glossaire
   Web/
     Comptes.php            dépôt des comptes (base syntropia_comptes)
     Authentification.php   session, connexion, CSRF, garde-page
     Invitations.php         codes d'invitation — condition de l'inscription
     Sites.php                le site d'un compte — un seul, pour l'instant
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
+    Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
 contenu/
   .htaccess              refuse tout accès web
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
   documentation-saf.md      livret « L'agroforesterie syntropique » — modèle à remplacer
+  glossaire.md              un mot technique = un chapitre, une phrase — alimente glossaire.php ET la bulle des `.terme` ailleurs sur le site
 config/
   .htaccess              refuse tout accès web — identifiants en clair dans base.php
   base.php.exemple       gabarit de configuration de production
@@ -85,10 +87,12 @@ public/                racine servable du site en refonte
   inscription.php            inscription sur invitation — code de 8 caractères, voir Invitations.php
   documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md
   documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md
+  glossaire.php              les mots techniques, un par un — recherche filtrée, lit contenu/glossaire.md
   assets/
-    css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises
+    css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
+    js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
     js/etapes.js            le manifeste des phases — `pret: true` = la page existe déjà
-    js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret`
+    js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret` ; initTermes() arme la bulle de tout `.terme`
     polices/               Clash Display, Archivo, reprises de le-bureau/fonts/
 composants/            un dossier par zone du gabarit, réutilisable entre pages
   bandeau-general/  bandeau-outils/  panneau-gauche/  panneau-droit/
@@ -277,11 +281,13 @@ récit.*
   espèces, strates, associations culturales ; `scenario.php`, 336
   lignes dans le dépôt de référence) et `conception-materiel-et-eau.php`
   (`directives.txt` : « pour chaque parcelle », mêmes données absentes
-  que le scénario). Les trois demandent une vraie parcelle et/ou un
-  vrai scénario en base, qui n'existent pas encore
-  (`conception-parcelles.php` reste une liste codée en dur). Chacune
-  reste accessible en la sautant : le mécanisme « phase → première
-  étape prête » (`gabarit.js`) passe par-dessus sans lien mort.
+  que le scénario). Les trois demandent un vrai scénario en base, qui
+  n'existe pas encore, et/ou la carte elle-même. **Les vraies parcelles,
+  elles, existent depuis le 2026-09-15** — `conception-parcelles.php`
+  n'est plus une liste codée en dur, voir plus bas (chantier « carte
+  interactive du terrain », Phase 3). Chacune des trois étapes reste
+  accessible en la sautant : le mécanisme « phase → première étape
+  prête » (`gabarit.js`) passe par-dessus sans lien mort.
 
 **Construit et vérifié** :
 
@@ -419,3 +425,67 @@ près. Ce qui reste :
    fois, et § Syntropia et Plantae, chacun dans son sous-répertoire.
    Reste ouvert : aucune procédure ne rejoue `deployer.py` après chaque
    changement — à refaire à la main pour l'instant.
+6. **Zone climatique USDA, déterminée plutôt que saisie** — chantier à
+   prévoir, pas commencé, noté par le porteur le 2026-09-15. Aucun
+   service USDA officiel n'accepte des coordonnées (seulement des codes
+   postaux américains) ; une zone USDA se définissant uniquement par la
+   température minimale annuelle moyenne, elle est calculable n'importe
+   où depuis un historique météo. Piste retenue : Open-Meteo (réanalyse
+   ERA5, sans clé), déjà prévu pour la rose des vents de la carte
+   interactive (`conception-etude-site.php`, Phase 8 — voir plan de ce
+   chantier) — même source, même absence de clé, même couverture
+   France. Remplacerait le champ texte libre actuel de
+   `definition-site.php`.
+7. **Corrections et ajouts issus d'un test manuel du porteur, 2026-09-15** :
+   - `connexion.php` redirigeait en dur vers `conception-parcelles.php`
+     après connexion, écrit avant `definition-projet.php` — un compte
+     tout juste inscrit tombait donc sur le mockup encore fictif. Corrige
+     via `Sites::pourCompte()` : sans site → `definition-projet.php`,
+     avec un site → comme avant.
+   - `definition-site.php` sépare maintenant « Le lieu » (administratif :
+     commune, position, superficie, USDA, exposition, pente) de « Ce que
+     vous observez » (climat) — deux groupes visuellement distincts,
+     même page. Le bloc « déjà en présence sur le terrain » (pieds-mères,
+     graines, végétaux utiles) en est parti : fusionné dans
+     `realisation-materiel-vegetal.php`, qui posait déjà la même question
+     en mieux (vocabulaire expliqué, moment plus pertinent).
+   - `conception-etude-sol.php` affiche désormais **à quoi sert** chaque
+     relevé (ex. « Voir si le sol se décompacte au fil des ans »), pas sa
+     méthode (« Sol ressuyé, trois prélèvements ») — la méthode reste sur
+     la fiche à imprimer, où elle a sa place.
+   - **Nouveau : les mots techniques expliqués au survol.** Tout `.terme`
+     (span, `data-explique="..."`) se souligne en pointillés et montre sa
+     bulle au survol ou au focus clavier — `Gabarit.init()` l'arme partout
+     (`initTermes()`, `assets/js/gabarit.js`), jamais le `title` natif du
+     navigateur. Le texte vient de `contenu/glossaire.md`
+     (`Documentation::glossaire()`/`Documentation::terme()`), même source
+     qu'une nouvelle page publique, `glossaire.php` — recherche filtrée
+     en direct, jamais plus qu'une poignée de résultats montrés à la fois
+     (mesuré en JS contre la hauteur réelle, pas un compte fixe : une
+     définition longue ne se coupe jamais en plein mot). Posé sur les
+     termes déjà identifiés cette session (pieds-mères, bouturage, semis,
+     division, USDA, RNA, saut du chat, déchaumage, bâchage, décompacter,
+     densimètre, labour) sur les pages où ils apparaissent réellement —
+     pas partout où le mot existe dans l'absolu, pour ne pas noyer le
+     motif sous trop de soulignements.
+8. **Phase 3 du chantier « carte interactive du terrain » faite —
+   `conception-parcelles.php` n'est plus un mockup, 2026-09-15.**
+   Nouveau `src/Web/Parcelles.php` (`dUnSite()`, `parId()`, `creer()`,
+   `enregistrer()` — whitelist étroite : code/nom/type à la création,
+   puis `nb_planches`/`largeur_planche_m`/`passe_pied_m`, les trois
+   mesures dont la carte aura besoin en Phase 4/5, pas le reste de la
+   fiche d'attributs). La page lit désormais le vrai site
+   (`Sites::pourCompte()`, gardée comme toutes les autres — elle ne
+   l'était pas) et la vraie liste de parcelles ; sans parcelle, ou sur
+   `?nouvelle=1`, un formulaire (code, nom, type) remplace le plan SVG.
+   Le panneau gauche liste les parcelles réelles, chacune menant à
+   `?parcelle=ID`. **Ce qui reste un prototype, volontairement** : le
+   plan lui-même (bordures, planches, dessiné dans le SVG) — piloté par
+   `conception-parcelles.js`, entièrement côté client, `parcelle.plan`
+   toujours pas branché ; les trois mesures réelles vivent à côté, dans
+   un bloc distinct du panneau droit (« Pour la carte du terrain »), et
+   ne se mélangent pas avec le prototype. `connexion.php` corrigé au
+   passage (voir point précédent) pour ne plus jamais montrer ce mockup
+   à un compte tout juste inscrit. Prochaine étape du chantier : Phase 4
+   (`src/Web/Calques.php` + `calque_element` + `api-calques.php`), voir
+   le plan validé plus haut dans cette session.

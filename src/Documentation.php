@@ -81,6 +81,55 @@ final class Documentation
         return $paragraphes;
     }
 
+    /**
+     * Le glossaire, prêt pour la bulle au survol — texte brut, une phrase.
+     *
+     * Même fichier, même format que les deux livrets (`chapitres()`) :
+     * un terme = un `# titre`, sa bulle = le premier paragraphe qui suit,
+     * débarrassé de tout HTML (`bulle.textContent`, jamais `innerHTML`
+     * — voir `assets/js/gabarit.js`, `initTermes()`). Les paragraphes
+     * suivants, s'il y en a, ne servent qu'à la page `glossaire.php`
+     * elle-même, pas à la bulle : une bulle qui déborde du bureau est
+     * illisible, une phrase ne déborde jamais.
+     *
+     * @return array<string, string> id (slug du titre) => définition
+     */
+    public static function glossaire(string $chemin): array
+    {
+        $termes = [];
+        foreach (self::chapitres($chemin) as $chapitre) {
+            $premier = $chapitre['paragraphes'][0] ?? '';
+            // paragraphes() a déjà échappé le texte (HTML sûr pour un
+            // <p>) ; ici on veut l'inverse — du texte brut pour
+            // `bulle.textContent`, jamais du HTML dans une bulle.
+            $termes[$chapitre['id']] = trim(html_entity_decode(strip_tags($premier), ENT_QUOTES, 'UTF-8'));
+        }
+        return $termes;
+    }
+
+    /**
+     * Un mot technique, souligné en pointillés, expliqué au survol.
+     *
+     * `$glossaire` vient de `self::glossaire()` — appelée une fois par
+     * page, jamais par mot : lire et découper le fichier à chaque mot
+     * serait un travail refait pour rien. Si le mot n'a pas d'entrée
+     * dans `contenu/glossaire.md`, le texte s'affiche seul, sans bulle
+     * ni soulignement — un mot mal orthographié ici ne casse rien,
+     * il redevient juste un mot ordinaire.
+     *
+     * @param array<string, string> $glossaire
+     */
+    public static function terme(array $glossaire, string $id, string $texte): string
+    {
+        $explication = $glossaire[$id] ?? null;
+        $sur = htmlspecialchars($texte, ENT_QUOTES, 'UTF-8');
+        if ($explication === null || $explication === '') {
+            return $sur;
+        }
+        return '<span class="terme" data-explique="'
+            . htmlspecialchars($explication, ENT_QUOTES, 'UTF-8') . '">' . $sur . '</span>';
+    }
+
     private static function id(string $titre): string
     {
         $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $titre);

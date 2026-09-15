@@ -6,12 +6,77 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Parcelles;
+use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
 $auth = new Authentification();
 $auth->exige(Role::Utilisateur);
+
+$sites = new Sites();
+$compteId = (int) $auth->compteId();
+$site = $sites->pourCompte($compteId);
+if ($site === null) {
+    header('Location: ' . Configuration::base() . 'definition-projet.php');
+    exit;
+}
+$siteId = (int) $site['id'];
+$parcellesService = new Parcelles();
+
+$erreursCreation = [];
+$erreursDimensions = [];
+$codeSaisi = '';
+$nomSaisi = '';
+$typeSaisi = 'perenne';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null)) {
+    $action = (string) ($_POST['action'] ?? '');
+    if ($action === 'creer') {
+        $codeSaisi = (string) ($_POST['code'] ?? '');
+        $nomSaisi = (string) ($_POST['nom'] ?? '');
+        $typeSaisi = (string) ($_POST['type'] ?? 'perenne');
+        $resultat = $parcellesService->creer($siteId, $codeSaisi, $nomSaisi, $typeSaisi);
+        if ($resultat['erreurs'] === []) {
+            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $resultat['id']);
+            exit;
+        }
+        $erreursCreation = $resultat['erreurs'];
+    } elseif ($action === 'dimensions') {
+        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
+        $erreursDimensions = $parcellesService->enregistrer($parcelleId, $siteId, [
+            'nb_planches'       => $_POST['nb_planches'] ?? '',
+            'largeur_planche_m' => $_POST['largeur_planche_m'] ?? '',
+            'passe_pied_m'      => $_POST['passe_pied_m'] ?? '',
+        ]);
+        if ($erreursDimensions === []) {
+            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
+            exit;
+        }
+    }
+}
+
+$parcelles = $parcellesService->dUnSite($siteId);
+$demandeNouvelle = ($_GET['nouvelle'] ?? '') === '1' || ($parcelles === [] && $erreursCreation === []);
+$parcelleActive = null;
+if (!$demandeNouvelle) {
+    $idDemande = (int) ($_GET['parcelle'] ?? 0);
+    foreach ($parcelles as $p) {
+        if ((int) $p['id'] === $idDemande) {
+            $parcelleActive = $p;
+            break;
+        }
+    }
+    if ($parcelleActive === null && $parcelles !== []) {
+        $parcelleActive = $parcelles[0];
+    }
+}
+if ($parcelleActive === null && $parcelles === [] && $erreursCreation !== []) {
+    // Échec de création avec zéro parcelle existante : rester sur le formulaire.
+    $demandeNouvelle = true;
+}
 
 $nomAffiche = $auth->nomAffiche() ?? '';
 $initiales = '';
@@ -27,7 +92,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Créer les parcelles — Syntropia</title>
+<title>Parcelles — Syntropia</title>
 <link rel="stylesheet" href="assets/css/gabarit.css">
 <style>
   /* propre à cette étape : la géométrie de la parcelle, en SVG */
@@ -45,6 +110,42 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-mesure{ font:600 13px var(--texte); fill:var(--ink); font-variant-numeric:tabular-nums; }
   .plan-fleche{ stroke:var(--muted); stroke-width:1.4; fill:none; }
   .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+  /* l'état « aucune parcelle encore » — un formulaire simple, pas de SVG */
+  .parc-creation{ width:100%; max-width:26rem; }
+  .parc-annonce{ font:400 .92rem/1.5 var(--texte); color:var(--muted); margin:0 0 1.4rem; text-align:center; }
+  .parc-champ{ margin-bottom:1rem; }
+  .parc-champ label, .parc-champ legend{ display:block; font:600 .85rem var(--titre); color:var(--ink); margin-bottom:.35rem; padding:0; }
+  .parc-champ small{ display:block; font:400 .78rem/1.3 var(--texte); color:var(--muted); margin-bottom:.3rem; }
+  .parc-champ input[type=text]{
+    width:100%; padding:.5rem .7rem; font:400 .9rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
+  }
+  .parc-champ input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .parc-choix{ display:flex; gap:1rem; }
+  .parc-choix label{ display:flex; align-items:center; gap:.35rem; font:400 .86rem var(--texte); color:var(--ink); }
+  .parc-erreur{
+    margin:0 0 .8rem; padding:.5rem .7rem; border-radius:.5rem; background:var(--alerte);
+    color:var(--bouton-encre); font:500 .82rem var(--texte);
+  }
+  .parc-bouton{
+    width:100%; margin-top:.3rem; padding:.6rem; border:0; border-radius:.6rem;
+    background:var(--accent); color:var(--bouton-encre); font:600 .92rem var(--titre); cursor:pointer;
+  }
+  .parc-bouton:hover{ opacity:.92; }
+  .parc-annuler{ display:block; text-align:center; margin-top:.7rem; font:400 .8rem var(--texte); color:var(--muted); }
+
+  /* les trois mesures réelles, dans le panneau droit — distinctes du
+     prototype de plan au-dessus (non persisté, voir sa note) */
+  .pd-reel{ margin-top:1.4rem; padding-top:1.1rem; border-top:1px dashed var(--line); }
+  .pd-reel .pd-ligne input[type=text]{ width:5rem; text-align:right; }
+  .pd-reel-note{ font:400 .74rem/1.35 var(--texte); color:var(--muted); margin:.5rem 0 .6rem; }
+  .pd-reel-bouton{
+    width:100%; margin-top:.2rem; padding:.5rem; border:0; border-radius:.5rem;
+    background:var(--accent); color:var(--bouton-encre); font:600 .82rem var(--titre); cursor:pointer;
+  }
+  .pd-reel-bouton:hover{ opacity:.92; }
+  .pd-reel-erreur{ font:400 .76rem/1.3 var(--texte); color:var(--alerte); margin:.4rem 0 0; }
 </style>
 </head>
 <body>
@@ -91,6 +192,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     </div>
   </header>
 
+<?php if (!$demandeNouvelle): ?>
   <div class="bandeau-outils" role="toolbar" aria-label="Outils du plan" id="bandeau-outils">
     <button type="button" class="outils-declencheur" id="outils-declencheur" aria-haspopup="true"
             aria-expanded="false" aria-controls="outils-liste">
@@ -115,6 +217,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       <label class="outil-bouton a-venir" for="outil-gomme" title="À venir">⌫ Gomme</label>
     </div>
   </div>
+<?php endif; ?>
 
   <div class="bulle" id="bulle" role="status"></div>
 
@@ -126,10 +229,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       </div>
       <div class="pg-corps">
         <div class="pg-section">
-          <p class="pg-titre pg-nomsite">La Vadaux</p>
+          <p class="pg-titre pg-nomsite"><?= htmlspecialchars((string) $site['nom'], ENT_QUOTES, 'UTF-8') ?></p>
           <ul class="pg-liste">
-            <li><a href="#"><span class="pg-puce">⌂</span><span class="pg-libelle">Le site</span></a></li>
-            <li><a href="#"><span class="pg-puce">▦</span><span class="pg-libelle">La carte</span></a></li>
+            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">⌂</span><span class="pg-libelle">Le site</span></a></li>
+            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">▦</span><span class="pg-libelle">La carte</span></a></li>
           </ul>
         </div>
         <div class="pg-section">
@@ -138,20 +241,68 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <ul class="pg-liste pg-phase-projet"></ul>
         </div>
         <div class="pg-section">
-          <p class="pg-titre">Parcelle A</p>
+          <p class="pg-titre">Parcelles</p>
           <ul class="pg-liste">
-            <li><a href="#" class="active"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
-            <li><a href="#"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
-            <li><a href="#"><span class="pg-puce">✎</span><span class="pg-libelle">Le suivi</span></a></li>
+<?php foreach ($parcelles as $p):
+        $estActive = !$demandeNouvelle && $parcelleActive !== null && (int) $p['id'] === (int) $parcelleActive['id']; ?>
+            <li><a href="conception-parcelles.php?parcelle=<?= (int) $p['id'] ?>"<?= $estActive ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">▤</span><span class="pg-libelle"><?= htmlspecialchars((string) $p['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $p['nom'], ENT_QUOTES, 'UTF-8') ?></span></a></li>
+<?php endforeach; ?>
+            <li><a href="conception-parcelles.php?nouvelle=1"<?= $demandeNouvelle ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
           </ul>
         </div>
-        <p class="pg-pied">Première étape branchée sur l'authentification réelle — voir architecture-technique.md.</p>
+<?php if (!$demandeNouvelle && $parcelleActive !== null): ?>
+        <div class="pg-section">
+          <p class="pg-titre"><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $parcelleActive['nom'], ENT_QUOTES, 'UTF-8') ?></p>
+          <ul class="pg-liste">
+            <li><a href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>" class="active" aria-current="page"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
+            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
+            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">✎</span><span class="pg-libelle">Le suivi</span></a></li>
+          </ul>
+        </div>
+<?php endif; ?>
+        <p class="pg-pied">Les parcelles sont réelles, en base — le plan (planches, bordures) reste un prototype, voir architecture-technique.md.</p>
       </div>
     </nav>
 
+<?php if ($demandeNouvelle): ?>
+    <main class="bureau" id="bureau">
+      <div class="parc-creation">
+        <p class="parc-annonce"><?= $parcelles === [] ? 'Ouvrez votre première parcelle — vous pourrez en ajouter d\'autres ensuite.' : 'Ouvrez une nouvelle parcelle.' ?></p>
+        <form method="post">
+          <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+          <input type="hidden" name="action" value="creer">
+<?php if ($erreursCreation !== []): ?>
+          <p class="parc-erreur"><?= htmlspecialchars(implode(' ', $erreursCreation), ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+          <div class="parc-champ">
+            <label for="code">Code</label>
+            <small>Un repère court — A, B, P1… pour la retrouver dans les listes.</small>
+            <input type="text" id="code" name="code" placeholder="A" maxlength="32"
+                   value="<?= htmlspecialchars($codeSaisi, ENT_QUOTES, 'UTF-8') ?>">
+          </div>
+          <div class="parc-champ">
+            <label for="nom">Nom</label>
+            <input type="text" id="nom" name="nom" placeholder="Le verger, la butte du bas…"
+                   value="<?= htmlspecialchars($nomSaisi, ENT_QUOTES, 'UTF-8') ?>">
+          </div>
+          <fieldset class="parc-champ">
+            <legend>Type</legend>
+            <div class="parc-choix">
+              <label><input type="radio" class="radio" name="type" value="perenne"<?= $typeSaisi === 'perenne' ? ' checked' : '' ?>>Pérenne</label>
+              <label><input type="radio" class="radio" name="type" value="potager"<?= $typeSaisi === 'potager' ? ' checked' : '' ?>>Potager</label>
+            </div>
+          </fieldset>
+          <button type="submit" class="parc-bouton">Créer la parcelle</button>
+        </form>
+<?php if ($parcelles !== []): ?>
+        <a class="parc-annuler" href="conception-parcelles.php?parcelle=<?= (int) $parcelles[0]['id'] ?>">Annuler, revenir à mes parcelles</a>
+<?php endif; ?>
+      </div>
+    </main>
+<?php else: ?>
     <main class="bureau" id="bureau">
       <svg class="bureau-carte" id="plan" viewBox="0 0 1240 900" role="img"
-           aria-label="Plan de la parcelle A : 12 mètres sur 8, quatre bordures externes actives">
+           aria-label="Plan de la parcelle <?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?> — prototype, 12 mètres sur 8">
         <g transform="translate(70,40)">
           <rect class="plan-parcelle-fond" x="0" y="0" width="1200" height="800"/>
           <g id="planches"></g>
@@ -221,8 +372,40 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
         <p class="pd-note">Prototype : le calcul ci-dessus est refait ici, en JavaScript. La persistance en base (<code>parcelle.plan</code>) n'est pas encore branchée — voir architecture-technique.md.</p>
+
+        <div class="pd-reel">
+          <p class="pd-titre">Pour la carte du terrain <span class="pd-unite">(à venir)</span></p>
+          <p class="pd-reel-note">Ces trois mesures serviront à poser cette parcelle sur la
+             carte interactive du terrain, un chantier à part — elles sont réelles,
+             enregistrées dès maintenant.</p>
+          <form method="post">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="action" value="dimensions">
+            <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+            <div class="pd-ligne">
+              <span class="pd-ligne-nom">Nombre de planches</span>
+              <input type="text" name="nb_planches" inputmode="numeric"
+                     value="<?= htmlspecialchars((string) ($parcelleActive['nb_planches'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+            <div class="pd-ligne">
+              <span class="pd-ligne-nom">Largeur d'une planche (m)</span>
+              <input type="text" name="largeur_planche_m" inputmode="decimal"
+                     value="<?= htmlspecialchars((string) ($parcelleActive['largeur_planche_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+            <div class="pd-ligne">
+              <span class="pd-ligne-nom">Passe-pied (m)</span>
+              <input type="text" name="passe_pied_m" inputmode="decimal"
+                     value="<?= htmlspecialchars((string) ($parcelleActive['passe_pied_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+<?php if ($erreursDimensions !== []): ?>
+            <p class="pd-reel-erreur"><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+            <button type="submit" class="pd-reel-bouton">Enregistrer ces mesures</button>
+          </form>
+        </div>
       </div>
     </aside>
+<?php endif; ?>
   </div>
 
   <div class="scrim" id="scrim-info"></div>
@@ -233,8 +416,22 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Vous allez créer la ou les parcelles du site, en fixant leur forme et leur place. Ici : les dimensions de la parcelle <code>A</code>, où courent ses bordures, et la largeur voulue pour les planches. Le nombre de planches se calcule seul — et avec lui les linéaires, donc le nombre de plants et de graines. Prévoyez un mètre ruban et dix minutes sur place.</p>
-      <p><strong>Sélection</strong> — cliquez une bordure du dessin pour la choisir. <strong>Déplacer un bord</strong> — tirez le bord d'une bordure sur le dessin pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à jour au relâchement.</p>
+<?php if ($demandeNouvelle): ?>
+      <p>Le code et le nom suffisent pour ouvrir une parcelle — tout le reste (forme,
+         dimensions, sol) se précise ensuite, ici ou dans les étapes suivantes.
+         <strong>Pérenne</strong> : vergers, haies, système porté par des arbres.
+         <strong>Potager</strong> : cultures de légumes, annuelles.</p>
+<?php else: ?>
+      <p>Vous allez créer la ou les parcelles du site, en fixant leur forme et leur place.
+         Ici : les dimensions de la parcelle <code><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?></code>,
+         où courent ses bordures, et la largeur voulue pour les planches. Le nombre de
+         planches se calcule seul — et avec lui les linéaires, donc le nombre de plants
+         et de graines. Prévoyez un mètre ruban et dix minutes sur place.</p>
+      <p><strong>Sélection</strong> — cliquez une bordure du dessin pour la choisir.
+         <strong>Déplacer un bord</strong> — tirez le bord d'une bordure sur le dessin
+         pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à
+         jour au relâchement.</p>
+<?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
@@ -246,12 +443,16 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
     </form>
+<?php if (!$demandeNouvelle): ?>
     <label class="pied-option"><input type="checkbox" id="afficher-cotes" class="case" checked> Afficher les côtes</label>
+<?php endif; ?>
     <span class="pied-spacer"></span>
+<?php if (!$demandeNouvelle): ?>
     <button class="pied-reset" id="pied-reset" aria-label="Réinitialiser" title="Réinitialiser">
       <span class="pied-reset-texte">Réinitialiser</span>
       <span class="pied-reset-icone" aria-hidden="true">R</span>
     </button>
+<?php endif; ?>
   </footer>
 
 </div>
@@ -259,8 +460,15 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <script src="assets/js/etapes.js"></script>
 <script src="assets/js/gabarit.js"></script>
 <script>
-  Gabarit.init({ site: 'La Vadaux', etape: 'conception-parcelles', contexte: 'parcelle A' });
+  Gabarit.init({
+    site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,
+    etape: 'conception-parcelles',
+    contexte: <?= $demandeNouvelle ? json_encode('nouvelle parcelle', JSON_UNESCAPED_UNICODE)
+      : json_encode($parcelleActive['code'] . ' — ' . $parcelleActive['nom'], JSON_UNESCAPED_UNICODE) ?>
+  });
 </script>
+<?php if (!$demandeNouvelle): ?>
 <script src="conception-parcelles.js"></script>
+<?php endif; ?>
 </body>
 </html>

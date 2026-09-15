@@ -330,6 +330,14 @@ input:checked + .outil-bouton{ background:var(--surface); border-color:var(--acc
 }
 .radio:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 
+/* un mot technique, expliqué au survol par la bulle — jamais le `title`
+   natif du navigateur (lent, sans style, illisible au clavier). Partagé
+   par toute page ; le texte vient de contenu/glossaire.md, voir
+   Documentation::glossaire() et Gabarit.init()'s initTermes(). Remarque
+   du porteur, 2026-09-15. */
+.terme{ border-bottom:1px dotted var(--muted); cursor:help; }
+.terme:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:.15rem; }
+
 .pd-champ{ display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.35rem 0; font:400 .86rem var(--texte); }
 .pd-resultat{ margin:0; }
 .pd-resultat .pd-champ dd{ margin:0; font:600 .9rem var(--texte); font-variant-numeric:tabular-nums; color:var(--accent-titre); }

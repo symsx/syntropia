@@ -7,6 +7,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
+use Syntropia\Documentation;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Reponses;
@@ -27,24 +28,28 @@ $siteId = (int) $site['id'];
 $participantId = $sites->participantDuCompte($siteId, $compteId, $auth->nomAffiche() ?? 'Porteur');
 $reponsesService = new Reponses();
 
+$erreurs = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null)) {
-    $present = array_map('strval', (array) ($_POST['present'] ?? []));
-    $reponsesService->enregistrerLot($siteId, $participantId, 'definition', [
-        'site_commune'         => (string) ($_POST['commune'] ?? ''),
-        'site_coordonnees'     => (string) ($_POST['coordonnees'] ?? ''),
-        'site_superficie'      => (string) ($_POST['superficie'] ?? ''),
-        'site_usda'            => (string) ($_POST['usda'] ?? ''),
-        'site_exposition'      => (string) ($_POST['exposition'] ?? ''),
-        'site_pente'           => (string) ($_POST['pente'] ?? ''),
-        'site_climat'          => (string) ($_POST['climat'] ?? ''),
-        'site_present'         => implode(',', $present),
-        'site_present_detail'  => (string) ($_POST['present_detail'] ?? ''),
-    ]);
-    header('Location: ' . Configuration::base() . 'conception-etude-sol.php');
-    exit;
+    $erreurs = $sites->enregistrerParametres($siteId, (string) ($_POST['latitude'] ?? ''), (string) ($_POST['longitude'] ?? ''));
+    if ($erreurs === []) {
+        $reponsesService->enregistrerLot($siteId, $participantId, 'definition', [
+            'site_commune'         => (string) ($_POST['commune'] ?? ''),
+            'site_superficie'      => (string) ($_POST['superficie'] ?? ''),
+            'site_usda'            => (string) ($_POST['usda'] ?? ''),
+            'site_exposition'      => (string) ($_POST['exposition'] ?? ''),
+            'site_pente'           => (string) ($_POST['pente'] ?? ''),
+            'site_climat'          => (string) ($_POST['climat'] ?? ''),
+        ]);
+        header('Location: ' . Configuration::base() . 'conception-etude-sol.php');
+        exit;
+    }
 }
 $reponses = $reponsesService->pourParticipant($participantId);
-$presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
+// Après une erreur, retenir la saisie plutôt que de revenir à la base :
+// la personne ne doit pas retaper ce qui a échoué pour une seule ligne.
+$latitudeSaisie = $_POST['latitude'] ?? ($site['latitude'] ?? '');
+$longitudeSaisie = $_POST['longitude'] ?? ($site['longitude'] ?? '');
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 ?>
 <!doctype html>
 <html lang="fr">
@@ -65,6 +70,14 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
   .site-annonce{ font:400 .92rem/1.5 var(--texte); color:var(--muted); margin:0 0 1.2rem; text-align:center; }
   .site-colonnes{ display:flex; gap:2rem; align-items:flex-start; }
   .site-colonne{ flex:1 1 0; min-width:0; }
+  /* deux groupes distincts : l'administratif (le lieu, mesurable sans
+     expertise) et l'observé (nécessite d'être sur place, ou d'y avoir
+     déjà été) — remarque du porteur, 2026-09-15. */
+  .site-groupe-titre{
+    font:600 .72rem var(--titre); text-transform:uppercase; letter-spacing:.06em;
+    color:var(--accent-titre); margin:0 0 .7rem; padding-bottom:.35rem;
+    border-bottom:1px solid var(--line);
+  }
 
   .site-champ{ margin-bottom:.85rem; border:0; padding:0; }
   .site-champ label, .site-champ legend{
@@ -87,6 +100,34 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
   .site-unite span{ font:400 .82rem var(--texte); color:var(--muted); }
   .site-choix{ display:flex; gap:.7rem; flex-wrap:wrap; }
   .site-choix label{ display:flex; align-items:center; gap:.35rem; font:400 .82rem var(--texte); color:var(--ink); }
+
+  /* le point du site — deux champs numériques, la carte comme confort */
+  .site-carte-champs{ display:flex; gap:.5rem; margin-bottom:.4rem; }
+  .site-carte-champs input{ flex:1; }
+  .site-carte{
+    position:relative; overflow:hidden; height:7.4rem; border:1px solid var(--line);
+    border-radius:.5rem; background:var(--socle-fond); cursor:crosshair; touch-action:none;
+  }
+  .site-carte:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .site-carte .carte-tuiles img{ position:absolute; width:256px; height:256px; user-select:none; }
+  .site-carte .carte-point{
+    position:absolute; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%;
+    background:var(--alerte); box-shadow:0 0 0 2px var(--surface), 0 1px 5px var(--ombre);
+    pointer-events:none;
+  }
+  .site-carte .carte-credit{
+    position:absolute; right:0; bottom:0; z-index:2; background:var(--surface); color:var(--muted);
+    font:400 .62rem var(--texte); padding:.1rem .4rem; border-radius:.4rem 0 0 0; text-decoration:none;
+  }
+  .site-carte .carte-panne{
+    position:absolute; inset:auto .5rem .5rem; z-index:2; margin:0; background:var(--alerte);
+    color:var(--bouton-encre); padding:.4rem .6rem; border-radius:.5rem; font:400 .74rem/1.3 var(--texte);
+  }
+
+  .site-erreur{
+    margin:0 0 .8rem; padding:.5rem .7rem; border-radius:.5rem; background:var(--alerte);
+    color:var(--bouton-encre); font:500 .82rem var(--texte);
+  }
 
   .site-bouton{
     width:100%; margin-top:.4rem; padding:.6rem; border:0; border-radius:.6rem;
@@ -168,18 +209,29 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+<?php if ($erreurs !== []): ?>
+          <p class="site-erreur"><?= htmlspecialchars(implode(' ', $erreurs), ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
           <div class="site-colonnes">
             <div class="site-colonne">
+              <p class="site-groupe-titre">Le lieu</p>
               <div class="site-champ">
                 <label for="commune">Commune</label>
                 <input type="text" id="commune" name="commune" placeholder="Ex. Saint-André-de-Cubzac"
                        value="<?= htmlspecialchars($reponses['site_commune'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
               </div>
-              <div class="site-champ">
-                <label for="coordonnees">Coordonnées</label>
-                <small>Si vous les avez — une carte suffit sinon.</small>
-                <input type="text" id="coordonnees" name="coordonnees" placeholder="45.02, -0.44"
-                       value="<?= htmlspecialchars($reponses['site_coordonnees'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+              <div class="site-champ site-champ-carte">
+                <label for="latitude">Position</label>
+                <small>Cliquez sur la carte pour poser le point — ou saisissez les
+                   coordonnées, la carte suivra. Un confort : les tuiles viennent
+                   d'OpenStreetMap, un tiers, et rien ici n'en dépend.</small>
+                <div class="site-carte-champs">
+                  <input type="text" id="latitude" name="latitude" placeholder="45.02000"
+                         value="<?= htmlspecialchars((string) $latitudeSaisie, ENT_QUOTES, 'UTF-8') ?>">
+                  <input type="text" id="longitude" name="longitude" placeholder="-0.44000"
+                         value="<?= htmlspecialchars((string) $longitudeSaisie, ENT_QUOTES, 'UTF-8') ?>">
+                </div>
+                <div class="site-carte" data-carte data-latitude="latitude" data-longitude="longitude"></div>
               </div>
               <div class="site-champ">
                 <label for="superficie">Superficie</label>
@@ -190,7 +242,7 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
                 </div>
               </div>
               <div class="site-champ">
-                <label for="usda">Zone climatique USDA</label>
+                <label for="usda"><?= Documentation::terme($termes, 'zone-climatique-usda', 'Zone climatique USDA') ?></label>
                 <small>Le froid hivernal minimal du lieu, si vous le connaissez.</small>
                 <input type="text" id="usda" name="usda" placeholder="Ex. 8b"
                        value="<?= htmlspecialchars($reponses['site_usda'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
@@ -217,23 +269,11 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
             </div>
 
             <div class="site-colonne">
+              <p class="site-groupe-titre">Ce que vous observez</p>
               <div class="site-champ">
                 <label for="climat">Conditions climatiques particulières</label>
                 <small>Gel tardif, vents forts, sécheresse estivale…</small>
                 <textarea id="climat" name="climat" rows="3" placeholder="Ce que vous observez d'inhabituel, ou dont on vous a parlé."><?= htmlspecialchars($reponses['site_climat'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
-              </div>
-              <fieldset class="site-champ">
-                <legend>Déjà en présence sur le terrain</legend>
-                <small>Ce qui existe peut se réutiliser à la phase Conception.</small>
-                <div class="site-choix" style="flex-direction:column; align-items:flex-start; gap:.45rem;">
-                  <label><input type="checkbox" class="case" name="present[]" value="pieds-meres"<?= in_array('pieds-meres', $presentChoisi, true) ? ' checked' : '' ?>>Pieds-mères pour le bouturage</label>
-                  <label><input type="checkbox" class="case" name="present[]" value="graines"<?= in_array('graines', $presentChoisi, true) ? ' checked' : '' ?>>Graines à récolter</label>
-                  <label><input type="checkbox" class="case" name="present[]" value="vegetaux-utiles"<?= in_array('vegetaux-utiles', $presentChoisi, true) ? ' checked' : '' ?>>Végétaux utiles au projet</label>
-                </div>
-              </fieldset>
-              <div class="site-champ">
-                <label for="present-detail">Précisions</label>
-                <textarea id="present-detail" name="present_detail" rows="2" placeholder="Quoi, où, en quelle quantité approximative."><?= htmlspecialchars($reponses['site_present_detail'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
               </div>
             </div>
           </div>
@@ -272,6 +312,7 @@ $presentChoisi = array_filter(explode(',', $reponses['site_present'] ?? ''));
 
 <script src="assets/js/etapes.js"></script>
 <script src="assets/js/gabarit.js"></script>
+<script src="assets/js/carte.js"></script>
 <script>
   Gabarit.init({ etape: 'definition-site' });
 </script>

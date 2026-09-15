@@ -8,12 +8,27 @@ require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Configuration;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
 $auth = new Authentification();
 
+/**
+ * Après connexion, chaque compte a un seul projet possible — jamais un
+ * choix à faire. Sans site : `definition-projet.php`, le passage obligé
+ * qui l'ouvre. Avec un site : « Mon projet », comme le menu du compte.
+ * Longtemps codé en dur vers `conception-parcelles.php` (avant que
+ * `definition-projet.php` n'existe) — un compte tout juste inscrit y
+ * tombait directement, sur la liste de parcelles encore fictive du
+ * mockup. Signalé par le porteur le 2026-09-15.
+ */
+$destinationConnecte = static function (int $compteId): string {
+    return (new Sites())->pourCompte($compteId) === null
+        ? 'definition-projet.php' : 'conception-parcelles.php';
+};
+
 if ($auth->estConnecte()) {
-    header('Location: ' . Configuration::base() . 'conception-parcelles.php');
+    header('Location: ' . Configuration::base() . $destinationConnecte((int) $auth->compteId()));
     exit;
 }
 
@@ -28,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Authentification::adresse($_SERVER)
         );
         if ($erreur === null) {
-            header('Location: ' . Configuration::base() . 'conception-parcelles.php');
+            header('Location: ' . Configuration::base() . $destinationConnecte((int) $auth->compteId()));
             exit;
         }
     }

@@ -19,6 +19,28 @@ dessine au fur et à mesure, il n'est pas figé d'avance.
 
 # L'intention
 
+Que cela soit pour créer son jardin, cultiver sa nourriture, ou 
+produire des végétaux que cela soit sur petite ou grande échelle,
+l'acte de cultiver est d'utilité publique.
+
+Aujourd'hui c'est même un acte citoyen.e qui s'accompagne d'un 
+changement de mentalité ; notre civilisation a besoin de retrouver
+de la raison dans ses méthodes culturales.
+
+L'agroforesterie Syntropique c'est :
+- cultiver en association avec son environnement, sans besoins de s'aliéner avec des engrais, des pesticides et autres intrants.
+- retrouver en tant qu'humain une place honorable dans ses impacts
+et 
+
+# Plan du site
+
+Contient ; 
+- une partie publique, disponible pour tout le monde sans
+connexion avec :
+ - page d'accueil
+  - documentation de l'atelier
+  - documentation sur l'agroforesterie syntropique
+- une partie connectée
 
 
 # Les quatre phases
