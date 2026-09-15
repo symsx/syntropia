@@ -1,0 +1,75 @@
+# Spécifications de l'atelier Syntropie
+
+## Définition
+
+
+"ce que vous devez savoir avant de vous lancer"
+- présentation du site Atelier Syntropie
+ intention : pourquoi ? , pour qui ?
+ présente la carte du site web, sa structure, son architecture
+ son organisation, son fonctionnement
+
+- présentation des systèmes agroforestiers syntropique
+ la syntropie
+ la succession végétale naturelle
+ reproduire en accéléré et en tant que guide et perturbateur.trice positif.ve afin de s'inclure
+ faire avec
+ observer et apprendre
+ vers plus d'abondance
+
+ pour Claude code :
+## règles de programmation et de développement
+- architecture technique ; l'hébergement cible pour le site web syntropie est un sous répertoire de
+  php, HTML, CSS, MySQL, JavaScript
+- des composants mutualisés et réutilisables pour les différentes étapes
+
+# ui-ux
+expérience utilisateur
+- l'utilisateur doit être guidé dans la navigation ; il doit savoir où il se trouve dans la phase de son projet
+- simplicité : phrases courtes et pertinentes sans périphrases
+
+Des ressources de formateurs, expérimentateurs dans les métiers de cultures en agroforesterie sont disponibles dans le répertoire "connaissances".
+Ces ressources sont des supports pour l'accompagnement des utilisateurs de l'atelier "syntropie".
+connaissances/livre-bienvenue-en-syntropie est également une référence en ce qui concerne l'itinéraire technique, les phases et les conseils pour l'atelier.
+
+# interface utilisateur
+au centre de l'écran : le bureau de l'atelier
+en haut de l'écran, le bandeau d'information avec, de gauche à droite; l'icône menu (trois traits superposés horizontaux), le logo, le bouton "étape précédente" (sauf pour la première, alors grisé), titre contextuel, bouton "étape suivante",
+
+partie du site web accessible à tous (hors connexion) :
+- page d'accueil ; la page d'accueil présente l'atelier et oriente vers les documentations, la connexion ou s'enregistrer en tant que nouvel utilisateur (une page "mon compte" récapitule les informations de l'utilisateur et permet d'inviter d'autres personnes à rejoindre son projet (un seul projet par utilisateur avec un site et n parcelles). [ce fonctionnement est déjà en place dans la version actuelle de syntropie]
+- documentation du site (sera élaboré et maintenu par Claude)
+- documentation saf syntropique (sera fourni par Sylvain)
+- autres documentations (sera fourni par Sylvain)
+
+accessible aux personnes connectées :
+les 4 phases du projet, chaque phase contient des étapes
+- phase 1 : définition
+dans la phase de définition l'utilisateur décrit son projet
+ - étape 1 : sa *vision* qui est l'utilisateur ? seul ou groupe ? important pour savoir où on va, avec quelle motivation, l'intention au-delà de soi
+ - étape 2 : ses *objectifs* concrets ; quelles productions ? Quelles destinations (loisir, vivrier, commerciale, social) ; ceci guidera le "comment" pour atteindre les objectifs. à quel terme ? (court ; dans environ 3 ans, dans moyen environ 5 à 10 ans, long : dans plus de 10 ans) Ceci afin de mesurer la progression, placer les étapes, voir le réalisme du projet
+ - étape 3 : ses *moyens* ; les connaissances, le temps d'investissement, les moyens financiers, le terrain pour le projet (si peu de moyens financiers, proposer des solutions de RNA voir regeneration-naturelle pour débuter
+ - étape 4 : le lieu de son projet appelé *site* quelle commune, position (coordonnées), superficie, zone climatique USDA, exposition du terrain (pente), conditions climatiques particulières
+une parcelle = un objectif avec productions principales, productions secondaires. Quels moyens sont déjà en présence ; pieds mères pour le bouturage, graines à récolter, végétaux utiles au projet
+
+- phase 2 : conception (un ou plusieurs parcelles dites "tortues" selon Anaëlle Théry)
+ - étape 1 : étude du site ; permet de réaliser la cartographie du site, topologie altitude, projections d'ombres [fonctionnalités déjà présentes]
+ - étape 2 : étude du sol et de l'environnement ; à faire sur place avec des fiches à remplir (si informations non connues) [fonctionnalités déjà présentes, fiches à améliorer : dire ce que l'on va déterminer et pourquoi] voir "diagnostic-des-sols"
+ - étape 3 : création de parcelles (forme et placement sur le site)
+ - étape 4 : création du scénario et du plan de plantation de chaque parcelle (le "film" que l'on va dérouler = dimension temps (quoi quand), le plan = dimension espace (quoi où))
+  - étape 4bis : si la parcelle est un potager (cultures de légumes, feuilles et racines pour soi et la famille) ou du maraîchage (cultures de légumes, feuilles et racines pour la vente) alors proposer des associations culturales au moyen de cultures-associees et maraichage-naturel
+ - étape 5 : récapitulatif du matériel végétal à se procurer pour chaque parcelle, estimer les besoins en eau (dimensionnement) pour l'arrosage si les pluies ne sont pas suffisantes. Prévision de stockage ou d'accès à l'eau.
+ -étape 6 : montrer le calendrier (planning) du projet (quoi faire, quand)
+
+- phase 3 : réalisation
+ - étape 1 : préparation de la parcelle (déchaumer ; couvrir, bâcher, manuellement, par un ou plusieurs animaux ?)
+ - étape 2 : préparation du matériel végétal ; donner des conseils pour la multiplication
+ - étape 3 : préparation des outils et édition des plans d'implantation à destination des personnes qui participent au chantier et moyens humains
+ - étape 4 : consignations de ce qui a été fait, quand et dans quelles conditions
+
+- phase 4 : suivi
+ - étape 1 : arrosage, prise des boutures, germination visible
+ - étape 2 : perturbation (quand, quoi, comment perturber
+ - étape 3 : constatation "saut du chat", si non conseils pour "rattraper" ; planter plus (quoi en fonction de la période)
+ - étape 4 : consignation de ce qui est observé, des résultats
+

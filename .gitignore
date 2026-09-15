@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+*.tmp
+~$*
+__pycache__/
+*.pyc
+
+# Configuration locale — jamais dans le dépôt
+config/local.env
+config/base.php
+
+# Dossier de dépôt manuel (bin/deployer.py preparer) — voisin du
+# projet, pas dedans ; cette ligne est une redondance volontaire.
+/syntropia-depot/

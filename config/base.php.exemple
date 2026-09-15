@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Configuration de PRODUCTION — à copier en `base.php`, jamais versionné.
+ *
+ * Adapté de `application/config/base.php.exemple` (dépôt de référence) —
+ * mais PAS le même hébergeur. `application/` vise du mutualisé cPanel
+ * (PlanetHoster, `application/conception/mise-en-ligne.md`), qui impose
+ * le préfixe `hngaenpk_` ; syntropia vise **alwaysdata**
+ * (`http://jubile.alwaysdata.net/`, compte ouvert le 2026-09-11 — voir
+ * `syntropie/JOURNAL.md` à cette date), dont la convention de préfixe
+ * est différente. `base_comptes`/`base_syntropia`/`utilisateur`
+ * ci-dessous supposent que le compte alwaysdata se nomme `jubile`
+ * (déduit du sous-domaine — alwaysdata préfixe bases et utilisateurs
+ * MySQL du login du compte) : **à vérifier dans le panneau alwaysdata
+ * une fois les bases créées**, pas encore confirmé caractère pour
+ * caractère. `hote` en revanche est confirmé le 2026-09-15, par accès
+ * SSH réel au compte (`ssh jubile`, voir architecture-technique.md
+ * § Hébergement) : `mysql-jubile.alwaysdata.net` répond, et aucun
+ * socket MySQL local n'existe sur cette machine — `localhost`, hérité
+ * du dépôt de référence, aurait échoué.
+ *
+ * Aucun terminal en production sur ce type d'hébergement, donc aucune
+ * variable d'environnement possible en ligne — ce fichier est le seul
+ * moyen de configurer l'application en production.
+ */
+
+declare(strict_types=1);
+
+return [
+    'hote' => 'mysql-jubile.alwaysdata.net',
+    'port' => 3306,
+    'base_comptes' => 'jubile_syntropia_comptes',
+    'base_syntropia' => 'jubile_syntropia',
+    'utilisateur' => 'jubile_syntropia',
+    'mot_de_passe' => '',
+
+    // Le chemin sous lequel l'application est servie. Il bâtit les liens
+    // ET cantonne le cookie de session. Sous-répertoire, pas la racine :
+    // jubile.alwaysdata.net héberge Syntropia ET Plantae sur le même
+    // compte (décision du porteur, 2026-09-15), chacun dans le sien —
+    // voir architecture-technique.md § Hébergement, et .htaccess (racine
+    // du dépôt) pour le RewriteBase assorti.
+    'base' => '/syntropia/',
+];

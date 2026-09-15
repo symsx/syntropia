@@ -1,0 +1,29 @@
+# Syntropia à la racine du dépôt, sans lien symbolique vers public/.
+#
+# Adapté de application/bin/preparer-depot.py (dépôt de référence), qui
+# génère ce fichier pour Syntropie. Même leçon, payée là-bas le
+# 2026-08-17 : CE FICHIER NE REFUSE RIEN, et c'est voulu. Le contrôle
+# d'accès s'exécute AVANT la réécriture — un `Require all denied` posé
+# ici bloquerait la demande avant qu'elle n'atteigne `public/`, et tout
+# le site répondrait « Forbidden ». La protection vit dans les dossiers
+# qui n'ont rien à faire sur le web : `src/.htaccess`, `config/.htaccess`,
+# `sql/.htaccess`, `bin/.htaccess`.
+#
+# Déployé sous /syntropia/ — alwaysdata héberge Syntropia ET Plantae sur
+# le même compte (jubile.alwaysdata.net), chacun dans son propre
+# sous-répertoire (décision du porteur, 2026-09-15 — voir
+# architecture-technique.md § Hébergement). RewriteBase ET le motif du
+# RewriteCond portent tous les deux le sous-répertoire : REQUEST_URI est
+# toujours absolu depuis la racine du domaine, jamais relatif à ce
+# fichier — oublier l'un des deux referait « Forbidden » partout ou
+# casserait la réécriture. Même paramétrage que
+# `application/bin/preparer-depot.py` (dépôt de référence), qui génère
+# ce même motif avec `{base}` pour son propre déploiement en
+# sous-répertoire.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /syntropia/
+    RewriteCond %{REQUEST_URI} !^/syntropia/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

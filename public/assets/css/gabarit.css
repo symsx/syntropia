@@ -1,0 +1,439 @@
+/* Le gabarit — la coquille commune à toutes les étapes de l'atelier.
+   Extrait de le-bureau/index.html (maquette validée le 2026-09-11).
+   Ce que ce fichier NE contient PAS : le contenu du bureau lui-même
+   (propre à chaque étape) — voir architecture-technique.md. */
+
+@font-face{ font-family:'Clash Display'; src:url('../polices/ClashDisplay-Medium.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Clash Display'; src:url('../polices/ClashDisplay-Semibold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('../polices/Archivo-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('../polices/Archivo-Medium.woff2') format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Archivo'; src:url('../polices/Archivo-SemiBold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+
+:root{
+  --ink:#26312A; --muted:#4E5A50; --line:#C7D2BE; --alerte:#A2412A;
+  color-scheme: light;
+  --fond:#F6EEDB; --surface:#FFFFFF; --accent-titre:#84651F; --accent:#C89B3C;
+  --accent-doux:#DFC16F; --accent-fond:#F6EEDB; --bouton-encre:#FFFFFF;
+  --socle-fond:#EDF2E7; --socle-accent:#4E7043; --socle-accent-doux:#9DBB8D;
+  --ombre: rgba(38,49,42,.22);
+  --titre:'Clash Display', system-ui, -apple-system, sans-serif;
+  --texte:'Archivo', system-ui, -apple-system, sans-serif;
+  --haut-bandeaux: 6.2rem; /* 3.4rem (bandeau général) + 2.8rem (bandeau outils) */
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E4EADD; --muted:#9CAB94; --line:#37402F; --alerte:#E39177;
+    color-scheme: dark;
+    --fond:#1E1A11; --surface:#2A2418; --accent-titre:#E3C87C; --accent:#DFC16F;
+    --accent-doux:#4B4025; --accent-fond:#382F1D; --bouton-encre:#1E1A11;
+    --socle-fond:#121710; --socle-accent:#8AAE7B; --socle-accent-doux:#3A4B32;
+    --ombre: rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E4EADD; --muted:#9CAB94; --line:#37402F; --alerte:#E39177;
+  color-scheme: dark;
+  --fond:#1E1A11; --surface:#2A2418; --accent-titre:#E3C87C; --accent:#DFC16F;
+  --accent-doux:#4B4025; --accent-fond:#382F1D; --bouton-encre:#1E1A11;
+  --socle-fond:#121710; --socle-accent:#8AAE7B; --socle-accent-doux:#3A4B32;
+  --ombre: rgba(0,0,0,.55);
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; overflow:hidden; }
+body{
+  background:var(--socle-fond); color:var(--ink); font:400 15px/1.5 var(--texte);
+  -webkit-font-smoothing:antialiased;
+}
+button, input{ font:inherit; color:inherit; }
+a{ color:inherit; text-decoration:none; }
+code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); padding:.05em .35em; border-radius:.3em; font-size:.92em; }
+
+.app{
+  height:100vh; height:100dvh;
+  display:grid; grid-template-rows:auto auto 1fr auto;
+  background:var(--fond);
+}
+
+/* ----------------------------------------------------- bandeau général */
+.bandeau-general{
+  position:relative; /* pour le titre centré sur la fenêtre, pas sur l'espace restant */
+  grid-row:1; height:3.4rem; min-width:0; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.9rem;
+  padding:0 1rem; background:var(--surface);
+}
+.bg-gauche{ display:flex; align-items:center; gap:.7rem; min-width:0; }
+.bg-droite{ display:flex; align-items:center; gap:.6rem; justify-content:flex-end; }
+/* Centré sur la fenêtre, pas sur la colonne `1fr` du bandeau : quand
+   gauche et droite n'ont pas la même largeur (ex. `connexion.php`, sans
+   pastille de compte), un centrage par grille glisse visiblement du
+   côté le plus étroit. Sorti du flux de la grille, positionné par
+   rapport au bandeau lui-même — gauche/droite gardent leur place, eux,
+   dans leurs colonnes `auto`. `max-width` le tient à l'écart des deux
+   côtés même sur un titre long ; `text-overflow: ellipsis` prend le
+   relais si ça ne suffit pas. */
+.bg-centre{
+  position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
+  max-width:min(55vw, 30rem);
+  min-width:0; display:flex; align-items:center; justify-content:center; gap:.3rem; overflow:hidden;
+}
+.bg-centre-titre{
+  font:600 1.08rem var(--titre); color:var(--accent-titre); letter-spacing:.005em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* boutons étape précédente / étape suivante — encadrent le titre
+   contextuel (directives.txt). Grisé, jamais masqué, quand il n'y a
+   rien avant ou après : l'utilisateur voit qu'il est au bout, pas que
+   le bouton a disparu. */
+.etape-bouton{
+  width:1.8rem; height:1.8rem; border:0; background:transparent; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+  color:var(--muted);
+}
+.etape-bouton:hover:not(:disabled){ background:var(--accent-fond); color:var(--ink); }
+.etape-bouton:disabled{ opacity:.35; cursor:default; }
+.etape-chevron{ width:.55rem; height:.55rem; }
+
+.hamburger{
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+  width:2.4rem; height:2.4rem; border:0; background:transparent; border-radius:.5rem;
+  cursor:pointer; flex:none;
+}
+.hamburger:hover{ background:var(--accent-fond); }
+.hamburger span{ display:block; height:2px; width:1.35rem; margin:0 auto; background:var(--ink); border-radius:2px; transition:transform .2s, opacity .2s; }
+.hamburger[aria-expanded="true"] span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+.hamburger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.hamburger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+.logo-espace{
+  width:2.1rem; height:2.1rem; border-radius:.6rem; flex:none;
+  background:var(--accent-fond); border:1px dashed var(--accent-doux);
+  display:flex; align-items:center; justify-content:center;
+}
+.logo-espace svg{ width:1.15rem; height:1.15rem; color:var(--accent); }
+.marque{ display:flex; flex-direction:column; line-height:1.1; }
+.marque-nom{ font:500 .86rem var(--titre); color:var(--accent-titre); letter-spacing:.02em; white-space:nowrap; }
+.marque-sujet{ font:400 .7rem var(--texte); color:var(--muted); white-space:nowrap; }
+
+.compte{
+  display:flex; align-items:center; gap:.5rem; padding:.35rem .7rem .35rem .5rem;
+  border:1px solid var(--line); background:var(--surface); border-radius:2rem; cursor:pointer;
+  font:inherit;
+}
+.compte:hover{ background:var(--accent-fond); }
+.compte-avatar{ width:1.7rem; height:1.7rem; border-radius:50%; background:var(--accent); color:var(--bouton-encre);
+  display:flex; align-items:center; justify-content:center; font:500 .74rem var(--titre); flex:none; }
+.compte-nom{ font:500 .82rem var(--titre); }
+
+/* le menu utilisateur — un compte connecté ouvre un menu (Mon projet,
+   Préférences, Se déconnecter) plutôt que de naviguer directement ;
+   même mécanique d'ouverture/fermeture que le menu d'outils. */
+.compte-conteneur{ position:relative; }
+.compte[aria-expanded="true"]{ background:var(--accent-fond); border-color:var(--accent); }
+.compte-menu{
+  display:none; position:absolute; top:calc(100% + .5rem); right:0; z-index:25;
+  min-width:11.5rem; padding:.4rem; border:1px solid var(--line); border-radius:.7rem;
+  background:var(--surface); box-shadow:0 10px 26px var(--ombre);
+}
+.compte-menu.ouvert{ display:flex; flex-direction:column; gap:.1rem; }
+.compte-menu-item{
+  display:flex; align-items:center; gap:.55rem; padding:.5rem .6rem; border-radius:.5rem;
+  font:500 .84rem var(--titre); color:var(--ink); text-decoration:none;
+}
+.compte-menu-item:hover{ background:var(--accent-fond); }
+.compte-menu-item.a-venir{ color:var(--muted); pointer-events:none; }
+.compte-menu-puce{ width:1.2rem; text-align:center; font-size:.85rem; flex:none; }
+.compte-menu-separateur{ height:1px; margin:.3rem .3rem; background:var(--line); }
+
+.theme-bascule{
+  width:2.2rem; height:2.2rem; border:1px solid var(--line); background:var(--surface);
+  border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.theme-bascule:hover{ background:var(--accent-fond); }
+/* ☀ clair, ☾ sombre, ◐ système — changé par Gabarit.init(), jamais une
+   icône fixe : le bouton doit montrer l'état, pas juste le proposer. */
+.theme-icone{ font-size:1.05rem; line-height:1; }
+
+/* --------------------------------------------------- bandeau contextuel */
+.bandeau-outils{
+  grid-row:2; height:2.8rem; min-width:0; display:flex; align-items:center; gap:.35rem; padding:0 1rem;
+  background:var(--accent-fond); overflow-x:auto;
+}
+.bandeau-outils input{ position:absolute; opacity:0; pointer-events:none; }
+.outil-bouton{
+  display:flex; align-items:center; gap:.4rem; padding:.4rem .75rem; border-radius:.5rem;
+  font:500 .74rem var(--titre); text-transform:uppercase; letter-spacing:.04em; cursor:pointer;
+  border:1px solid transparent; white-space:nowrap; color:var(--ink);
+}
+.outil-bouton:hover{ background:var(--surface); }
+input:checked + .outil-bouton{ background:var(--surface); border-color:var(--accent); color:var(--accent-titre); font-weight:600; }
+.outil-bouton.a-venir{ opacity:.42; cursor:default; }
+.outil-bouton.a-venir:hover{ background:transparent; }
+.outil-separateur{ width:1px; align-self:stretch; margin:.3rem .3rem; background:var(--line); flex:none; }
+
+/* le déclencheur du menu d'outils — caché sauf en tout petit écran,
+   voir plus bas : là, c'est lui qui remplace la rangée de boutons. */
+.outils-declencheur{
+  display:none; align-items:center; gap:.5rem; padding:.4rem .7rem; border-radius:.5rem;
+  border:1px solid var(--accent); background:var(--surface); color:var(--accent-titre);
+  font:600 .78rem var(--titre); text-transform:uppercase; letter-spacing:.03em; cursor:pointer;
+}
+.outils-declencheur-chevron{ width:.6rem; height:.6rem; transition:transform .2s ease; }
+.outils-declencheur[aria-expanded="true"] .outils-declencheur-chevron{ transform:rotate(180deg); }
+/* la liste des outils : sur grand écran, une simple enveloppe qui ne
+   change rien à la rangée existante — display:contents la retire de
+   la mise en page, seuls ses enfants (les boutons) y participent. */
+.outils-liste{ display:contents; }
+
+/* --------------------------------------------------------- la bulle */
+/* l'indication ponctuelle — un cadre à bords arrondis, avec une petite
+   flèche dirigée vers l'objet du bureau qu'elle commente. */
+.bulle{
+  position:fixed; left:0; top:0; max-width:14rem; padding:.5rem .7rem; border-radius:.7rem;
+  background:var(--ink); color:var(--fond); font:400 .78rem/1.4 var(--texte);
+  box-shadow:0 8px 20px var(--ombre); pointer-events:none; z-index:6;
+  opacity:0; transition:opacity .12s ease; white-space:normal;
+}
+.bulle.visible{ opacity:1; }
+.bulle::after{ content:''; position:absolute; width:.6rem; height:.6rem; background:inherit; transform:rotate(45deg); }
+.bulle[data-cote-bulle="haut"]{ transform:translate(-50%,-100%) translateY(-.6rem); }
+.bulle[data-cote-bulle="haut"]::after{ bottom:-.28rem; left:50%; margin-left:-.3rem; }
+.bulle[data-cote-bulle="bas"]{ transform:translate(-50%,0) translateY(.6rem); }
+.bulle[data-cote-bulle="bas"]::after{ top:-.28rem; left:50%; margin-left:-.3rem; }
+.bulle[data-cote-bulle="gauche"]{ transform:translate(-100%,-50%) translateX(-.6rem); }
+.bulle[data-cote-bulle="gauche"]::after{ right:-.28rem; top:50%; margin-top:-.3rem; }
+.bulle[data-cote-bulle="droite"]{ transform:translate(0,-50%) translateX(.6rem); }
+.bulle[data-cote-bulle="droite"]::after{ left:-.28rem; top:50%; margin-top:-.3rem; }
+
+/* ------------------------------------------------------------- corps */
+.corps{ grid-row:3; display:flex; min-height:0; min-width:0; position:relative; }
+
+/* le panneau gauche — un tiroir, ouvert et fermé par le hamburger */
+.scrim{
+  position:fixed; inset:0; background:var(--ombre); opacity:0; pointer-events:none;
+  transition:opacity .22s ease; z-index:20;
+}
+.scrim.visible{ opacity:1; pointer-events:auto; }
+
+.panneau-gauche{
+  position:fixed; inset:0 auto 0 0; width:min(17rem, 86vw); z-index:23;
+  background:var(--surface); box-shadow:16px 0 30px var(--ombre);
+  display:flex; flex-direction:column;
+  transform:translateX(-100%); transition:transform .25s ease;
+}
+.panneau-gauche.ouvert{ transform:translateX(0); }
+.pg-entete{
+  flex:none; height:3.4rem; display:flex; align-items:center; gap:.6rem; padding:0 1rem;
+}
+.pg-entete .marque-nom{ font:600 1rem var(--titre); color:var(--accent-titre); }
+.pg-corps{ flex:1; overflow-y:auto; padding:1rem .9rem 1.2rem; }
+.pg-section + .pg-section{ margin-top:1.3rem; }
+.pg-titre{ font:500 .7rem var(--titre); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin:0 0 .4rem .3rem; }
+.pg-liste{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.1rem; }
+.pg-liste a{
+  display:flex; align-items:center; gap:.55rem; padding:.45rem .6rem; border-radius:.5rem;
+  font:500 .84rem var(--titre); color:var(--ink);
+}
+.pg-liste a:hover{ background:var(--accent-fond); }
+.pg-liste a.active{ background:var(--accent); color:var(--bouton-encre); font-weight:600; }
+/* montré, jamais caché — mais jamais cliquable non plus tant que la
+   page n'existe pas : un href réel sous un style grisé serait un lien
+   mort qui ne se voit qu'au clic. */
+.pg-liste a.a-venir{ color:var(--muted); pointer-events:none; }
+.pg-puce{ width:1.4rem; text-align:center; font:600 .72rem var(--texte); font-variant-numeric:tabular-nums; flex:none; }
+.pg-pied{ margin:1.3rem .3rem 0; font:400 .72rem var(--texte); color:var(--muted); line-height:1.5; }
+
+/* le bureau — le canevas central, sans défilement, toujours entièrement
+   visible. Son contenu (l'intérieur du <main>) est propre à l'étape. */
+.bureau{
+  flex:1; min-width:0; min-height:0; display:flex; align-items:center; justify-content:center;
+  padding:2rem; position:relative;
+  background-image: radial-gradient(var(--line) .6px, transparent .6px);
+  background-size:22px 22px; background-position:-4px -4px;
+}
+
+.panneau-droit{
+  position:fixed; top:3.4rem; bottom:2.7rem; right:0; width:min(21rem, 90vw);
+  background:var(--surface);
+  box-shadow:-14px 0 28px var(--ombre);
+  transform:translateX(100%); transition:transform .25s ease;
+  z-index:23; overflow-y:auto;
+}
+.panneau-droit.ouvert{ transform:translateX(0); }
+
+/* la tirette qui ouvre et ferme le panneau droit — un triangle qui
+   pointe vers la droite quand le panneau est ouvert, vers la gauche
+   quand il est fermé. Elle reste collée au bord du panneau, qu'il
+   soit ouvert ou non. */
+.tirette{
+  position:fixed; top:50%; right:0; transform:translateY(-50%);
+  transition:right .25s ease;
+  width:1.6rem; padding:.7rem .25rem; display:flex; flex-direction:column;
+  align-items:center; gap:.5rem; cursor:pointer; border:0;
+  background:var(--surface);
+  border-radius:.6rem 0 0 .6rem; box-shadow:-4px 0 10px var(--ombre); z-index:22;
+}
+.tirette:hover{ background:var(--accent-fond); }
+.tirette.ouvert{ right:min(21rem, 90vw); }
+.tirette-triangle{ width:.62rem; height:.62rem; flex:none; transition:transform .25s ease; transform:rotate(180deg); }
+.tirette.ouvert .tirette-triangle{ transform:rotate(0deg); }
+.tirette-texte{
+  writing-mode:vertical-rl; font:500 .68rem var(--titre); letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted);
+}
+.pd-corps{ padding:1.1rem 1.2rem 1.6rem; }
+.pd-titre{ font:600 .78rem var(--titre); text-transform:uppercase; letter-spacing:.06em; color:var(--accent-titre);
+  margin:1.3rem 0 .6rem; padding-top:.9rem; border-top:1px solid var(--line); }
+.pd-titre:first-child{ margin-top:0; padding-top:0; border-top:0; }
+.pd-unite{ text-transform:none; font:400 .74rem var(--texte); letter-spacing:0; color:var(--muted); }
+
+/* une ligne du panneau Données — deux colonnes, une largeur de champ
+   fixe — pour que tous les champs de saisie s'alignent verticalement,
+   quelle que soit la longueur du libellé. Réutilisée par toute étape
+   qui a un champ numérique à saisir. */
+.pd-ligne{ display:grid; grid-template-columns:1fr 4.6rem; align-items:center; gap:.6rem; padding:.35rem 0; font:400 .86rem var(--texte); }
+.pd-ligne-nom{ display:flex; align-items:center; gap:.55rem; min-width:0; }
+.pd-ligne input[type="text"]{
+  width:100%; text-align:right; font:600 .9rem var(--texte); font-variant-numeric:tabular-nums; padding:.3rem .5rem;
+  border:1px solid var(--line); border-radius:.4rem; background:var(--fond); color:var(--ink);
+}
+.pd-ligne input[type="text"]:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+
+/* case à cocher maison — carrée, coins arrondis, encre de bouton du
+   thème plutôt que le rendu par défaut du navigateur. Partagée par
+   toutes les cases du bureau, pas seulement celles d'une étape. */
+.case{
+  appearance:none; -webkit-appearance:none; flex:none; width:1.25rem; height:1.25rem; margin:0;
+  border-radius:.4rem; border:1.5px solid var(--line); background:var(--surface); cursor:pointer;
+  position:relative; transition:background .15s ease, border-color .15s ease;
+}
+.case:hover{ border-color:var(--accent); }
+.case:checked{ background:var(--accent); border-color:var(--accent); }
+.case:checked::after{
+  content:''; position:absolute; left:.36rem; top:.18rem; width:.36rem; height:.62rem;
+  border:solid var(--bouton-encre); border-width:0 2px 2px 0; transform:rotate(45deg);
+}
+.case:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+/* bouton radio maison — même logique que .case, ronde plutôt que
+   carrée. Un choix entre options exclusives (« qui êtes-vous ? »),
+   jamais le rendu par défaut du navigateur. */
+.radio{
+  appearance:none; -webkit-appearance:none; flex:none; width:1.15rem; height:1.15rem; margin:0;
+  border-radius:50%; border:1.5px solid var(--line); background:var(--surface); cursor:pointer;
+  position:relative; transition:border-color .15s ease;
+}
+.radio:hover{ border-color:var(--accent); }
+.radio:checked{ border-color:var(--accent); }
+.radio:checked::after{
+  content:''; position:absolute; inset:.22rem; border-radius:50%; background:var(--accent);
+}
+.radio:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+.pd-champ{ display:flex; align-items:center; justify-content:space-between; gap:.6rem; padding:.35rem 0; font:400 .86rem var(--texte); }
+.pd-resultat{ margin:0; }
+.pd-resultat .pd-champ dd{ margin:0; font:600 .9rem var(--texte); font-variant-numeric:tabular-nums; color:var(--accent-titre); }
+.pd-resultat .pd-champ dt{ font:400 .86rem var(--texte); color:var(--muted); }
+.pd-note{ font:400 .76rem var(--texte); color:var(--muted); line-height:1.5; margin-top:.3rem; }
+
+/* ------------------------------------------- le panneau d'informations
+   générales — une tirette horizontale, sous la barre d'outils, qui
+   déroule le panneau vers le bas. Même triangle que la tirette droite :
+   il pointe vers le bureau (ici, le bas) quand le panneau est fermé, et
+   s'en écarte (le haut) une fois ouvert — la tirette suit le panneau et
+   reste collée à son bord inférieur. */
+.tirette-info{
+  position:fixed; left:50%; top:var(--haut-bandeaux); transform:translateX(-50%);
+  transition:top .25s ease;
+  padding:.4rem 1rem; display:flex; align-items:center; gap:.5rem; cursor:pointer; border:0;
+  background:var(--surface);
+  border-radius:0 0 .6rem .6rem; box-shadow:0 4px 10px var(--ombre); z-index:22;
+}
+.tirette-info:hover{ background:var(--accent-fond); }
+.tirette-info.ouvert{ top:calc(var(--haut-bandeaux) + min(16rem, 44vh)); }
+.tirette-info .tirette-triangle{ width:.6rem; height:.6rem; flex:none; transition:transform .25s ease; transform:rotate(90deg); }
+.tirette-info.ouvert .tirette-triangle{ transform:rotate(-90deg); }
+.tirette-info .tirette-texte{
+  writing-mode:horizontal-tb; font:500 .68rem var(--titre); letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted);
+}
+/* fermé, sa hauteur est nulle — pas de transform ici : un panneau ancré
+   en haut qu'on masque en le glissant vers le haut déborderait sur les
+   bandeaux (couverts, quoique fermé, tant qu'il occupe encore sa place
+   en hauteur). La hauteur elle-même est l'animation. */
+.panneau-info{
+  position:fixed; left:0; right:0; top:var(--haut-bandeaux); height:0; overflow:hidden;
+  background:var(--surface); box-shadow:0 14px 28px var(--ombre);
+  transition:height .25s ease;
+  z-index:23;
+}
+.panneau-info.ouvert{ height:min(16rem, 44vh); overflow-y:auto; }
+.pi-corps{ max-width:40rem; margin:0 auto; padding:1.2rem 1.4rem 1.6rem; }
+.pi-corps p{ font:400 .88rem/1.6 var(--texte); margin:0 0 .8rem; }
+.pi-corps p:last-child{ margin-bottom:0; }
+
+/* ------------------------------------------------------------- pied */
+.pied{
+  grid-row:4; display:flex; align-items:center; gap:1rem; padding:.5rem 1rem; min-width:0;
+  background:var(--surface); height:2.7rem;
+}
+.pied-recherche{ display:flex; align-items:center; gap:.4rem; background:var(--fond); border:1px solid var(--line);
+  border-radius:1.4rem; padding:.25rem .35rem .25rem .8rem; flex:0 1 20rem; }
+.pied-recherche input{ border:0; background:transparent; outline:0; flex:1; font:400 .84rem var(--texte); color:var(--ink); }
+.pied-recherche button{ border:0; background:var(--accent-fond); width:1.9rem; height:1.9rem; border-radius:50%;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.pied-recherche button svg{ width:.95rem; height:.95rem; }
+.pied-option{ display:flex; align-items:center; gap:.4rem; font:400 .82rem var(--texte); color:var(--muted); white-space:nowrap; }
+.pied-spacer{ flex:1; }
+.pied-mention{ font:500 .8rem var(--titre); color:var(--muted); }
+.pied-reset{
+  border:1px solid var(--alerte); color:var(--alerte); background:transparent; border-radius:.5rem;
+  padding:.4rem .9rem; font:500 .76rem var(--titre); letter-spacing:.03em; text-transform:uppercase; cursor:pointer;
+}
+.pied-reset:hover{ background:var(--alerte); color:#fff; }
+.pied-reset-icone{ display:none; }
+
+@media (max-width:34rem){
+  .pied-recherche{ flex:1; }
+  .pied-option{ display:none; }
+  /* la rangée compte trois éléments (recherche, option, réinitialiser) —
+     en dessous de 34rem, l'option a déjà disparu ; le bouton devient une
+     icône ronde pour ne pas se battre avec le champ de recherche pour
+     la place restante. */
+  .pied-reset{
+    width:2.3rem; height:2.3rem; padding:0; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pied-reset-texte{ display:none; }
+  .pied-reset-icone{ display:block; font:700 .95rem var(--titre); }
+}
+
+/* petit écran : le bandeau général ne tient plus avec le nom du site,
+   le nom du compte et le titre central tous en même temps — on retire
+   ce qui se déduit du contexte, jamais l'accès (hamburger, thème,
+   compte, titre restent tous cliquables et lisibles). */
+@media (max-width:30rem){
+  .bandeau-general{ padding:0 .6rem; gap:.4rem; }
+  .marque{ display:none; }
+  .compte-nom{ display:none; }
+  .compte{ padding:.35rem; }
+  .bg-centre-titre{ font-size:.92rem; }
+
+  /* la rangée d'outils ne tient pas non plus, et le défilement
+     horizontal masque des outils sans le dire — elle devient un menu :
+     un bouton qui affiche l'outil choisi, un menu qui se déroule
+     dessous pour en choisir un autre. */
+  .bandeau-outils{ overflow-x:visible; position:relative; }
+  .outils-declencheur{ display:flex; }
+  .outils-liste{
+    display:none; flex-direction:column; align-items:stretch; gap:.15rem;
+    position:absolute; left:1rem; top:calc(100% + .4rem); z-index:22;
+    background:var(--surface); border-radius:.7rem; padding:.4rem;
+    box-shadow:0 10px 24px var(--ombre); min-width:12rem;
+  }
+  .outils-liste.ouvert{ display:flex; }
+  .outils-liste .outil-bouton{ justify-content:flex-start; }
+  .outil-separateur{ display:none; }
+}
+
+.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }

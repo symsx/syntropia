@@ -1,0 +1,350 @@
+/* Le gabarit — la coquille commune à toutes les étapes de l'atelier.
+   Charge etapes.js avant celui-ci. Chaque page appelle Gabarit.init({
+   site, etape }) une fois son HTML en place ; le reste (thème, tiroirs,
+   Échap, menu d'outils, bulle) est générique et ne dépend d'aucun
+   contenu propre à l'étape. Voir architecture-technique.md. */
+window.Gabarit = (function(){
+  'use strict';
+
+  function el(id){ return document.getElementById(id); }
+
+  function etapeParId(id){
+    return (window.ETAPES || []).filter(function(e){ return e.id === id; })[0];
+  }
+
+  var fermetures = [];   // une fonction "fermer" par tiroir, pour Échap
+  var ecouteursOutil = [];
+  var bulle, bureau;
+
+  function init(config){
+    config = config || {};
+    var etape = etapeParId(config.etape);
+    if (!etape) {
+      // Une page hors parcours (accueil, connexion...) n'a légitimement
+      // pas d'étape : avertir seulement si une étape a été demandée et
+      // ne correspond à rien dans etapes.js — pas quand elle est absente.
+      if (config.etape) {
+        console.warn('Gabarit.init : étape inconnue — "' + config.etape + '". Voir public/assets/js/etapes.js');
+      }
+    } else {
+      remplirTitreEtNavigation(config.site, etape, config.contexte);
+      remplirPhaseProjet(etape);
+      remplirEtapesPhase(etape);
+    }
+
+    remplirSectionDocumentation();
+
+    initTheme();
+    initTiroirGauche();
+    initTiroirDroit();
+    initTiroirInfo();
+    initOutils();
+    initCompteMenu();
+    initEchap();
+
+    return api;
+  }
+
+  /* -------------------------------------------------- documentation */
+  /* Deux parties, toujours en dernière position du panneau gauche, sur
+     TOUTE page — publique ou connectée, avec ou sans étape. Un seul
+     endroit à tenir à jour plutôt qu'une section « Documentation »
+     recopiée à la main sur chaque page (même raison que
+     remplirEtapesPhase() : voir CLAUDE.md § Mécanique à respecter). */
+  var DOCUMENTATION = [
+    { id: 'documentation-saf',  titre: "L'agroforesterie syntropique", pret: true },
+    { id: 'documentation-site', titre: "L'atelier",                    pret: true }
+  ];
+
+  function remplirSectionDocumentation(){
+    var corps = document.querySelector('.pg-corps');
+    if (!corps) return;
+    var ici = (window.location.pathname.split('/').pop() || '');
+
+    var section = document.createElement('div');
+    section.className = 'pg-section';
+    var titre = document.createElement('p');
+    titre.className = 'pg-titre';
+    titre.textContent = 'Documentation';
+    section.appendChild(titre);
+
+    var liste = document.createElement('ul');
+    liste.className = 'pg-liste';
+    DOCUMENTATION.forEach(function(d){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      if (ici === d.id + '.php') {
+        a.href = '#';
+        a.className = 'active';
+        a.setAttribute('aria-current', 'page');
+      } else if (d.pret) {
+        a.href = d.id + '.php';
+      } else {
+        a.href = '#';
+        a.className = 'a-venir';
+        a.tabIndex = -1;
+        a.setAttribute('aria-disabled', 'true');
+      }
+      a.innerHTML = '<span class="pg-puce">?</span><span class="pg-libelle">' + d.titre + '</span>';
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+    section.appendChild(liste);
+
+    var pied = corps.querySelector('.pg-pied');
+    if (pied) { corps.insertBefore(section, pied); } else { corps.appendChild(section); }
+  }
+
+  /* ------------------------------------------------ titre et navigation */
+  function remplirTitreEtNavigation(site, etape, contexte){
+    var titre = document.querySelector('.bg-centre-titre');
+    if (titre) titre.textContent = (site ? site + ' — ' : '') + etape.titre + (contexte ? ' · ' + contexte : '');
+
+    var index = window.ETAPES.indexOf(etape);
+    configurerBoutonEtape(el('etape-precedente'), window.ETAPES[index - 1]);
+    configurerBoutonEtape(el('etape-suivante'), window.ETAPES[index + 1]);
+  }
+
+  function configurerBoutonEtape(bouton, cible){
+    if (!bouton) return;
+    // Grisé quand il n'y a rien avant/après, mais aussi quand l'étape
+    // voisine existe dans le manifeste sans que sa page soit construite
+    // — jamais de lien mort, montré comme tout autre "à venir" du site.
+    if (!cible || !cible.pret){ bouton.disabled = true; return; }
+    bouton.disabled = false;
+    bouton.addEventListener('click', function(){ window.location.href = cible.id + '.php'; });
+  }
+
+  /* -------------------------------------------------------- phase projet */
+  /* Chaque phase mène à sa première étape construite — sans quoi
+     « Définition » restait un href="#" mort dès qu'on était passé en
+     Conception, seule porte fermée derrière soi trouvée par le porteur
+     le 2026-09-14. Pas de mémoire de la dernière étape visitée : aucune
+     persistance n'existe encore pour la porter. */
+  function premiereEtapePreteDeLaPhase(phaseId){
+    return (window.ETAPES || []).filter(function(e){ return e.phase === phaseId && e.pret; })[0];
+  }
+
+  function remplirPhaseProjet(etapeActive){
+    var liste = document.querySelector('.pg-phase-projet');
+    if (!liste || !window.PHASES) return;
+    var indexActif = window.PHASES.map(function(p){ return p.id; }).indexOf(etapeActive.phase);
+    liste.innerHTML = '';
+    window.PHASES.forEach(function(phase, i){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      var premiere = premiereEtapePreteDeLaPhase(phase.id);
+      if (i === indexActif){
+        a.href = '#';
+        a.className = 'active';
+        a.setAttribute('aria-current', 'page');
+      } else if (premiere){
+        a.href = premiere.id + '.php';
+      } else {
+        a.href = '#';
+        a.className = 'a-venir';
+        a.tabIndex = -1;
+        a.setAttribute('aria-disabled', 'true');
+      }
+      a.innerHTML = '<span class="pg-puce">' + phase.numero + '</span><span class="pg-libelle">' + phase.libelle + '</span>';
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+  }
+
+  /* -------------------------------------------------- étapes de la phase */
+  /* La liste des étapes de la phase en cours, dans l'ordre du parcours
+     (jamais par fréquence — voir CLAUDE.md § Ordonner les menus).
+     Construite depuis etapes.js pour qu'une page n'ait jamais à tenir à
+     jour la liste de ses voisines : le manifeste est la seule source. */
+  function remplirEtapesPhase(etapeActive){
+    var liste = document.querySelector('.pg-etapes-phase');
+    if (!liste || !window.ETAPES) return;
+    var etapesPhase = window.ETAPES.filter(function(e){ return e.phase === etapeActive.phase; });
+    liste.innerHTML = '';
+    etapesPhase.forEach(function(e, i){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      if (e.id === etapeActive.id) {
+        a.href = '#';
+        a.className = 'active';
+        a.setAttribute('aria-current', 'page');
+      } else if (e.pret) {
+        a.href = e.id + '.php';
+      } else {
+        a.href = '#';
+        a.className = 'a-venir';
+        a.tabIndex = -1;
+        a.setAttribute('aria-disabled', 'true');
+      }
+      a.innerHTML = '<span class="pg-puce">' + (i + 1) + '</span><span class="pg-libelle">' + e.titre + '</span>';
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+  }
+
+  /* ------------------------------------------------------ thème clair/sombre */
+  /* Trois états, pas deux : « système » suit le réglage du navigateur
+     (`prefers-color-scheme`, en CSS) et c'est le défaut — aucun cookie ni
+     `localStorage` posé tant qu'on ne s'en écarte pas. Le bouton doit
+     montrer lequel des trois est actif, pas seulement permettre d'en
+     changer — voir le porteur, 2026-09-14 : « dans syntropie l'icône
+     changeait de motif ». Mêmes glyphes que `application/src/Theme.php`
+     (dépôt de référence) : ☀ clair, ☾ sombre, ◐ système. */
+  var GLYPHES_THEME = { clair: '☀', sombre: '☾', systeme: '◐' };
+  var LIBELLES_THEME = { clair: 'clair', sombre: 'sombre', systeme: 'système' };
+
+  function initTheme(){
+    var bascule = el('theme-bascule');
+    if (!bascule) return;
+    var icone = el('theme-icone');
+    var cle = 'syntropie-theme';
+    function appliquer(valeur){
+      if (valeur === 'clair') document.documentElement.setAttribute('data-theme', 'light');
+      else if (valeur === 'sombre') document.documentElement.setAttribute('data-theme', 'dark');
+      else document.documentElement.removeAttribute('data-theme');
+      if (icone) icone.textContent = GLYPHES_THEME[valeur] || GLYPHES_THEME.systeme;
+      var libelle = LIBELLES_THEME[valeur] || LIBELLES_THEME.systeme;
+      bascule.title = 'Thème ' + libelle + ' — cliquer pour changer';
+      bascule.setAttribute('aria-label', 'Thème ' + libelle + ', changer de thème');
+    }
+    var depart = 'systeme';
+    try { depart = localStorage.getItem(cle) || 'systeme'; } catch (e) {}
+    appliquer(depart);
+    bascule.addEventListener('click', function(){
+      var actuel = document.documentElement.getAttribute('data-theme');
+      var suivant = actuel === 'dark' ? 'clair' : (actuel === 'light' ? 'systeme' : 'sombre');
+      appliquer(suivant);
+      try { localStorage.setItem(cle, suivant); } catch (e) {}
+    });
+  }
+
+  /* ----------------------------------------------------- tiroirs génériques */
+  function tiroir(idDeclencheur, idPanneau, idScrim, libelleAria){
+    var declencheur = el(idDeclencheur), panneau = el(idPanneau), scrim = el(idScrim);
+    if (!declencheur || !panneau || !scrim) return;
+    function ouvrir(etat){
+      declencheur.setAttribute('aria-expanded', etat ? 'true' : 'false');
+      declencheur.classList.toggle('ouvert', etat);
+      if (libelleAria) declencheur.setAttribute('aria-label', etat ? libelleAria.masquer : libelleAria.afficher);
+      panneau.classList.toggle('ouvert', etat);
+      panneau.setAttribute('aria-hidden', etat ? 'false' : 'true');
+      scrim.classList.toggle('visible', etat);
+    }
+    declencheur.addEventListener('click', function(){ ouvrir(!panneau.classList.contains('ouvert')); });
+    scrim.addEventListener('click', function(){ ouvrir(false); });
+    fermetures.push(function(){ ouvrir(false); });
+  }
+
+  function initTiroirGauche(){ tiroir('hamburger', 'panneau-gauche', 'scrim-gauche'); }
+  function initTiroirDroit(){
+    tiroir('tirette', 'panneau-droit', 'scrim-droit', { afficher: 'Afficher le panneau Données', masquer: 'Masquer le panneau Données' });
+  }
+  function initTiroirInfo(){
+    tiroir('tirette-info', 'panneau-info', 'scrim-info', { afficher: 'Afficher les informations', masquer: 'Masquer les informations' });
+  }
+
+  /* ------------------------------------------------------------ outils */
+  function initOutils(){
+    var bandeau = el('bandeau-outils');
+    if (!bandeau) return;
+    var declencheur = el('outils-declencheur');
+    var liste = el('outils-liste');
+    var icone = el('outils-icone-actif');
+    var texte = el('outils-texte-actif');
+
+    function ouvrirMenu(etat){
+      if (!declencheur || !liste) return;
+      declencheur.setAttribute('aria-expanded', etat ? 'true' : 'false');
+      liste.classList.toggle('ouvert', etat);
+    }
+    if (declencheur && liste) {
+      declencheur.addEventListener('click', function(){ ouvrirMenu(!liste.classList.contains('ouvert')); });
+      document.addEventListener('click', function(e){
+        if (!liste.classList.contains('ouvert')) return;
+        if (liste.contains(e.target) || declencheur.contains(e.target)) return;
+        ouvrirMenu(false);
+      });
+      fermetures.push(function(){ ouvrirMenu(false); });
+    }
+
+    function majOutil(){
+      var actif = bandeau.querySelector('input:checked');
+      if (!actif || !actif.nextElementSibling) return;
+      var correspondance = actif.nextElementSibling.textContent.match(/^(\S+)\s(.*)$/);
+      if (icone) icone.textContent = correspondance ? correspondance[1] : '';
+      if (texte) texte.textContent = correspondance ? correspondance[2] : actif.nextElementSibling.textContent;
+      ouvrirMenu(false);
+      ecouteursOutil.forEach(function(fn){ fn(actif.id); });
+    }
+    bandeau.addEventListener('change', majOutil);
+    majOutil();
+  }
+
+  /* -------------------------------------------------------- menu compte */
+  /* Même mécanique que le menu d'outils : un déclencheur, une liste
+     ouverte/fermée par classe, close au clic dehors et à Échap. */
+  function initCompteMenu(){
+    var bouton = el('compte-bouton');
+    var menu = el('compte-menu');
+    if (!bouton || !menu) return;
+    function ouvrir(etat){
+      bouton.setAttribute('aria-expanded', etat ? 'true' : 'false');
+      menu.classList.toggle('ouvert', etat);
+    }
+    bouton.addEventListener('click', function(e){
+      e.stopPropagation();
+      ouvrir(!menu.classList.contains('ouvert'));
+    });
+    document.addEventListener('click', function(e){
+      if (!menu.classList.contains('ouvert')) return;
+      if (menu.contains(e.target) || bouton.contains(e.target)) return;
+      ouvrir(false);
+    });
+    fermetures.push(function(){ ouvrir(false); });
+  }
+
+  function initEchap(){
+    document.addEventListener('keydown', function(e){
+      if (e.key !== 'Escape') return;
+      fermetures.forEach(function(fermer){ fermer(); });
+    });
+  }
+
+  /* -------------------------------------------------------------- la bulle */
+  /* positionne une bulle contre l'élément visé, du côté où la place ne
+     manque pas dans le bureau. orientation force 'horizontal'|'vertical'
+     quand la forme de l'élément ne suffit pas à le déduire. */
+  function bulleMontrer(cible, texte, orientation){
+    bulle = bulle || el('bulle');
+    bureau = bureau || el('bureau');
+    if (!bulle || !bureau) return;
+    var b = cible.getBoundingClientRect();
+    var bureauRect = bureau.getBoundingClientRect();
+    var horizontal = orientation ? orientation === 'horizontal' : b.width >= b.height;
+    var cote, x, y;
+    if (horizontal) {
+      var milieu = bureauRect.top + bureauRect.height / 2;
+      cote = (b.top < milieu) ? 'bas' : 'haut';
+      x = b.left + b.width / 2; y = (cote === 'haut') ? b.top : b.bottom;
+    } else {
+      var centre = bureauRect.left + bureauRect.width / 2;
+      cote = (b.left < centre) ? 'droite' : 'gauche';
+      x = (cote === 'droite') ? b.right : b.left; y = b.top + b.height / 2;
+    }
+    bulle.textContent = texte;
+    bulle.dataset.coteBulle = cote;
+    bulle.style.left = x + 'px';
+    bulle.style.top = y + 'px';
+    bulle.classList.add('visible');
+  }
+  function bulleCacher(){ if (bulle) bulle.classList.remove('visible'); }
+
+  var api = {
+    init: init,
+    bulle: { montrer: bulleMontrer, cacher: bulleCacher },
+    onOutilChange: function(fn){ ecouteursOutil.push(fn); },
+    onReset: function(fn){ var bouton = el('pied-reset'); if (bouton) bouton.addEventListener('click', fn); }
+  };
+  return api;
+})();
