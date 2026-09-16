@@ -16,14 +16,13 @@
  *     Simplification assumée, pas un oubli.
  *   - Les messages ponctuels (enregistré, erreur…) passent par la bulle
  *     du gabarit (`Gabarit.bulle`) plutôt qu'un paragraphe dédié.
- *   - Le cadastre et la recherche d'eau (Phases 6 et 7, pas encore
- *     construites) restent gérés par le code ci-dessous exactement
- *     comme la référence — simplement, tant que `cfg.apiCadastre`/
- *     `cfg.apiEau` n'existent pas et que la page ne pose pas les
- *     éléments qui leur correspondent, ce code ne trouve rien à
- *     accrocher (`$('cadastre-visible')` etc. renvoient `null`) et ne
- *     fait donc rien — sans qu'il y ait besoin d'y toucher quand ces
- *     phases arriveront.
+ *   - Le cadastre (Phase 6) et la recherche d'eau (Phase 7) sont gérés
+ *     par le code ci-dessous exactement comme la référence — le pari
+ *     pris en Phase 5 (garder ce code tant que `cfg.apiCadastre`/
+ *     `cfg.apiEau` n'existent pas, et qu'il ne trouve donc rien à
+ *     accrocher, `$('cadastre-visible')` etc. renvoyant `null`) a payé
+ *     aux deux phases suivantes : ni l'une ni l'autre n'a eu besoin de
+ *     toucher une seule ligne de ce fichier.
  *
  * Une couche SVG posée sur les tuiles de `carte.js`, qui expose sa
  * projection (`conteneur.carte`) et prévient quand la vue change

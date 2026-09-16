@@ -9,6 +9,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Calques;
+use Syntropia\Web\Eau;
 use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
@@ -33,13 +34,13 @@ $latitude = $site['latitude'] === null ? null : (float) $site['latitude'];
 $longitude = $site['longitude'] === null ? null : (float) $site['longitude'];
 
 // Ce que le script a besoin de savoir, et rien de plus : il ne refait
-// aucun contrôle d'accès — l'API les tient tous. Pas de apiCadastre/
-// apiEau — Phases 6 et 7, pas encore construites ; assets/js/calques.js
-// s'en passe déjà proprement (voir son en-tête).
+// aucun contrôle d'accès — l'API les tient tous.
 $config = [
     'siteId' => $siteId,
     'csrf' => $auth->jeton(),
     'api' => 'api-calques.php',
+    'apiCadastre' => 'api-cadastre.php',
+    'apiEau' => 'api-eau.php',
     'peutEcrire' => $peutEcrire,
     'calques' => Calques::CALQUES,
     'elements' => $elements,
@@ -138,6 +139,13 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     background:var(--surface); color:var(--muted); font:600 .78rem var(--titre);
   }
   .pd-bouton-discret:hover{ background:var(--accent-fond); }
+
+  .chercher-eau{ border-left:2px solid #2E6E9E; padding-left:.7rem; margin:0 0 .9rem; }
+  .chercher-eau .pd-aide{ margin:.3rem 0 0; }
+
+  .cadastre-bascule{ border-left:2px solid var(--accent); padding-left:.7rem; margin:.7rem 0 0; }
+  .cadastre-bascule label{ display:flex; align-items:center; gap:.4rem; font:600 .82rem var(--titre); color:var(--ink); cursor:pointer; }
+  .cadastre-bascule .pd-aide{ margin:.3rem 0 0; }
 
   .calques-liste{ list-style:none; margin:0; padding:0; }
   .calque-ligne{ padding:.4rem 0; border-top:1px solid var(--line); }
@@ -284,6 +292,27 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     </button>
     <aside class="panneau-droit" id="panneau-droit" aria-hidden="true">
       <div class="pd-corps">
+        <p class="chercher-eau" hidden>
+          <button type="button" id="eau-chercher" class="pd-bouton-discret">Chercher l'eau d'OpenStreetMap</button>
+          <span class="pd-aide"><strong>Tracez d'abord les limites du terrain</strong> — à la main,
+             ou en suivant le cadastre. <strong>Ce sont elles qui bornent la recherche</strong> :
+             sinon je ramènerais la rivière du département. Je cherche à
+             <?= (int) Eau::MARGE_M ?> m autour, parce que l'eau du voisin compte, et je ramène
+             les cours d'eau à ce qui longe le terrain.</span>
+          <span class="pd-aide">Rivières, ruisseaux, fossés, mares, zones humides et sources déjà
+             cartographiés se posent sur le calque de l'eau. <strong>Ce qui est posé reste
+             modifiable</strong>, et vous complétez : un fossé récent n'est jamais sur la carte.</span>
+          <span class="pd-aide" id="eau-etat"></span>
+        </p>
+
+        <p class="cadastre-bascule" hidden>
+          <label><input type="checkbox" class="case" id="cadastre-visible"> <strong>Voir le cadastre</strong></label>
+          <span class="pd-aide">Les limites des parcelles cadastrales, en trait fin — de quoi
+             suivre leurs bords pour tracer les vôtres. C'est un repère : rien n'en est
+             enregistré. Un plan cadastral est un document fiscal, et seul un bornage fait foi.
+             <span id="cadastre-etat"></span></span>
+        </p>
+
         <p class="pd-titre">Sur quel calque</p>
         <select id="calque-choix" class="pd-champ-texte">
 <?php foreach (Calques::CALQUES as $cle => $def): ?>

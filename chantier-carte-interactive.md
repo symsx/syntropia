@@ -6,8 +6,8 @@ le retrouve — voir CLAUDE.md § Point de reprise pour l'état courant résumé
 
 **État** : ✅ Phase 1 (carte.js) — ✅ Phase 2 (site.latitude/longitude) —
 ✅ Phase 3 (vraies parcelles) — ✅ Phase 4 (backend calques, 2026-09-16) —
-✅ Phase 5 (page vivante, `pret:true`, 2026-09-16) — Phases 6 à 10 non
-commencées.
+✅ Phase 5 (page vivante, `pret:true`, 2026-09-16) — ✅ Phase 6 (cadastre,
+2026-09-16) — ✅ Phase 7 (eau, 2026-09-16) — Phases 8 à 10 non commencées.
 
 ## Contexte
 
@@ -81,8 +81,8 @@ Phase 2  ✅ site.latitude/longitude réels (Sites::enregistrerParametres)
 Phase 3  ✅ Vraies parcelles, en liste (CRUD minimal) — condition commune
 Phase 4  ✅ Backend calques (Calques.php + calque_element + api-calques.php)
 Phase 5  ✅ conception-etude-site.php + calques.js — page vivante, pret:true
-Phase 6  ⏳ Cadastre (IGN API Carto)
-Phase 7  ⏳ Eau (Overpass)
+Phase 6  ✅ Cadastre (IGN API Carto)
+Phase 7  ✅ Eau (Overpass)
 Phase 8  ⏳ Vents (Open-Meteo)
 Phase 9  ⏳ Relief (IGN Altimétrie + Relief.php, sans iso())
 Phase 10 ⏳ Import GeoJSON
@@ -195,22 +195,58 @@ rendu, `api-calques.php` refuse quand même le POST direct).
   seulement — les autres pages gardent le comportement uniforme des
   tiroirs ; fermeture toujours possible par la tirette ou Échap.
 
-### Phase 6 — Cadastre (IGN API Carto) ⏳
+### Phase 6 — Cadastre (IGN API Carto) ✅ (fait le 2026-09-16)
 
 Superposition éphémère des parcelles cadastrales IGN, jamais stockée.
-`src/Web/Cadastre.php` (264 lignes, `COTE_MAX_M=600`), `public/api-cadastre.php`
-(77 lignes, lecture seule — `roleSur() !== null`, body `site_id, sud,
+`src/Web/Cadastre.php` (port proche, `COTE_MAX_M=600`), `public/api-cadastre.php`
+(port proche, lecture seule — `roleSur() !== null`, body `site_id, sud,
 ouest, nord, est`, réponse allégée `{parcelles:[{libelle, contenance_m2,
-points}]}`). `calques.js` : fetch débouncé (500ms) sur `carte:vue`.
+points}]}`). `conception-etude-site.php` : ajoute `apiCadastre` au JSON de
+config, et le bloc `.cadastre-bascule` (case à cocher « Voir le cadastre »,
+`#cadastre-etat`) dans le panneau Données — sur le modèle exact de la
+référence.
 
-### Phase 7 — Eau (Overpass) ⏳
+**Rien à faire côté `calques.js`** : tout le mécanisme (fetch débouncé
+500 ms sur `carte:vue`, rendu du calque cadastre en trait fin sous les
+autres, dessin du numéro de parcelle si la place le permet) avait déjà été
+porté à la Phase 5, gardé derrière `cfg.apiCadastre` et `$('cadastre-
+visible')` — exactement le pari fait alors : « le JS doit tolérer leur
+absence dès cette phase », vérifié payant ici, zéro ligne de JS à changer.
+
+**Test** : vérifié en Chrome headless (CDP) sur le Champ-de-Mars (une zone
+française connue, coordonnées 48.85837/2.29448) — la couche apparaît (50
+parcelles, contours en pointillés + numéros CR 1-4 visibles), capture
+d'écran à l'appui ; `SELECT COUNT(*) FROM calque_element` confirme zéro
+enregistrement après usage ; la garde `COTE_MAX_M` refuse poliment une
+emprise de 14 650 m de côté (« Zoomez pour voir le cadastre… ») sans
+jamais lever d'erreur ; un compte anonyme et un site qui n'appartient pas
+au compte sont tous deux refusés (403).
+
+### Phase 7 — Eau (Overpass) ✅ (fait le 2026-09-16)
 
 Propose automatiquement les éléments d'eau proches, à partir de l'emprise
-déjà tracée. `src/Web/Eau.php` (277 lignes, `COTE_MAX_M=3000`,
-`MARGE_M=100`, gestion HTTP 429/504 dédiée), `public/api-eau.php`
-(113 lignes — dérive la bbox de `Calques::empriseDuTerrain()`, dédup par
-`proprietes.osm`). Indépendante du Cadastre, ordre non contraint entre
-les deux.
+déjà tracée. `src/Web/Eau.php` (port proche, `COTE_MAX_M=3000`,
+`MARGE_M=100`, gestion HTTP 429/504 dédiée), `public/api-eau.php` (port
+proche — dérive la bbox de `Calques::empriseDuTerrain($siteId,
+Eau::MARGE_M)`, message dédié si `null`, dédup par `proprietes.osm`, écrit
+via `Calques::ajouter()`). `conception-etude-site.php` ajoute `apiEau` à
+la config JSON et le bloc `.chercher-eau` (bouton + aide) dans le panneau
+Données, avant la case cadastre — même ordre que la référence.
+
+**Encore une fois, rien à changer dans `calques.js`** : le bouton
+`#eau-chercher`, déjà gardé derrière `cfg.apiEau` depuis la Phase 5,
+s'est allumé de lui-même dès que la page a fourni la clé et le HTML.
+
+**Test** : un fond tracé sur le Canal Saint-Martin (Paris, une zone à
+l'eau bien cartographiée) puis « Chercher l'eau » a posé 4 éléments réels
+(un canal en deux tronçons, deux plans d'eau) ; un second clic a
+correctement dédupliqué (0 posé, 4 déjà là) ; retirer le fond puis
+chercher renvoie le message dédié (« Tracez d'abord les limites du
+terrain… ») sans erreur HTTP ; un site étranger au compte et un accès
+anonyme sont refusés (403) comme pour les autres API. **Le 429/504 s'est
+présenté pour de vrai**, pas simulé : à force de solliciter Overpass en
+rafale pendant ce test, le service a fini par répondre occupé — message
+exact affiché, bouton réactivé ensuite, aucune erreur JS.
 
 ### Phase 8 — Vents (Open-Meteo) ⏳
 

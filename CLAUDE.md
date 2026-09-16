@@ -51,6 +51,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
     Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
+    Cadastre.php             parcelles cadastrales IGN (API Carto) — éphémère, jamais stocké ; appelé par api-cadastre.php
+    Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
 contenu/
   .htaccess              refuse tout accès web
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -97,6 +99,8 @@ public/                racine servable du site en refonte
   documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md, même mécanique
   glossaire.php              les mots techniques, un par un — recherche filtrée, lit contenu/glossaire.md
   api-calques.php            POST ajouter/modifier/retirer un tracé — appelée par conception-etude-site.php (assets/js/calques.js)
+  api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
+  api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
     js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
@@ -383,9 +387,8 @@ récit.*
   `#trace-libelle`…), modes de dessin (déplacer/point/ligne/polygone/
   libre) sur le bandeau d'outils partagé (`Gabarit.onOutilChange()`),
   placement d'une parcelle dimensionnée par rectangle tournant d'un clic
-  (angle local-mètres). Cadastre/Eau/Vents/Relief/Import GeoJSON
-  (Phases 6-10) pas encore branchés — le JS tolère déjà leur absence
-  (`cfg.apiCadastre`/`cfg.apiEau` non fournis). Vérifié de bout en bout
+  (angle local-mètres). Vents/Relief/Import GeoJSON (Phases 8-10) pas
+  encore branchés. Vérifié de bout en bout
   en Chrome headless piloté en CDP : tracé du fond, parcelle posée par
   rectangle + rotation + enregistrement, point sur `ressenti`, retrait
   d'un tracé, persistance à la recharge, refus d'écriture pour un compte
@@ -399,6 +402,34 @@ récit.*
   events:none}`) dans le `<style>` propre à cette page seule, les autres
   pages gardent le comportement uniforme. Détail complet :
   `chantier-carte-interactive.md` § Phase 5.
+- **Le cadastre sur la carte — Phase 6 du chantier carte, 2026-09-16.**
+  `src/Web/Cadastre.php` (port proche : `autour()`, `dansEmprise()`,
+  `parReference()`, `COTE_MAX_M=600`) et `public/api-cadastre.php`
+  (POST, lecture seule — `roleSur() !== null`, pas `peutEcrireSur()` : on
+  regarde, on n'écrit rien). `conception-etude-site.php` ajoute
+  `apiCadastre` à la config JSON et la case « Voir le cadastre » dans le
+  panneau Données — `calques.js` savait déjà s'en servir depuis la
+  Phase 5 (gardé derrière `cfg.apiCadastre`), aucune ligne de JS à
+  changer. Vérifié en Chrome headless (CDP) sur le Champ-de-Mars : 50
+  parcelles IGN affichées en trait fin par-dessus la carte, `SELECT
+  COUNT(*) FROM calque_element` reste à zéro après usage, la garde des
+  600 m de côté refuse poliment une emprise trop large, anonyme et site
+  non ouvert au compte tous deux refusés (403).
+- **L'eau sur la carte — Phase 7 du chantier carte, 2026-09-16.**
+  `src/Web/Eau.php` (port proche : `dansEmprise()`, `COTE_MAX_M=3000`,
+  `MARGE_M=100`, gestion HTTP 429/504) et `public/api-eau.php` (POST,
+  écriture — dérive la bbox de `Calques::empriseDuTerrain($siteId,
+  Eau::MARGE_M)`, refuse poliment si le fond n'est pas tracé, dédup par
+  `proprietes.osm`, écrit via `Calques::ajouter()`). `conception-
+  etude-site.php` ajoute `apiEau` et le bloc « Chercher l'eau
+  d'OpenStreetMap » dans le panneau Données — même pari qu'en Phase 6,
+  `calques.js` inchangé. Vérifié sur le Canal Saint-Martin (Paris) : 4
+  éléments réels posés (canal en deux tronçons, deux plans d'eau), un
+  second clic déduplique correctement (0 posé, 4 déjà là), le message
+  dédié apparaît si le fond est retiré, site étranger et accès anonyme
+  refusés (403). **Le 429/504 s'est présenté pour de vrai** en sollicitant
+  Overpass en rafale pendant le test — message et ré-activation du
+  bouton corrects, sans code à simuler pour le vérifier.
 - **Les mots techniques expliqués au survol** — tout `.terme` (span,
   `data-explique="..."`) vient de `contenu/glossaire.md`
   (`Documentation::glossaire()`/`::terme()`), même source qu'une page
@@ -482,12 +513,15 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-1. **Chantier « carte interactive du terrain »** — Phases 1 à 5 faites,
-   `conception-etude-site.php` vivante et `pret: true`. **Phase 6
-   ensuite** : Cadastre (IGN API Carto), la première des quatre phases
-   qui enrichissent la page déjà utilisable sans plus toucher
-   `etapes.js`. Plan complet, détaillé phase par phase avec fichiers et
-   tests : `chantier-carte-interactive.md`.
+1. **Chantier « carte interactive du terrain »** — Phases 1 à 7 faites,
+   `conception-etude-site.php` vivante et `pret: true`, cadastre IGN et
+   recherche d'eau (Overpass) en place. **Phase 8 ensuite** : Vents
+   (Open-Meteo), rose calculée à la demande depuis `site.latitude`/
+   `longitude`, jamais persistée. Deux phases restent après (Relief,
+   Import GeoJSON), toutes enrichissent la page déjà utilisable sans plus
+   toucher `etapes.js`. Plan complet, détaillé phase par phase avec
+   fichiers et tests :
+   `chantier-carte-interactive.md`.
 2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de
    coordonnées (seulement des codes postaux américains) ; calculable
