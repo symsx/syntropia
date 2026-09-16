@@ -1,0 +1,725 @@
+/* La carte à calques — dessiner sur le terrain, sans bibliothèque.
+ *
+ * Porté de `application/public/assets/calques.js` (dépôt de référence,
+ * 785 lignes), logique de dessin/état/rendu inchangée. Ce qui change,
+ * pour tenir sur le gabarit « le bureau » au lieu de la coquille propre
+ * à `carte.php` :
+ *
+ *   - Les modes de dessin (déplacer/point/ligne/polygone/libre) sont le
+ *     bandeau d'outils partagé (`name="outil"`, `Gabarit.onOutilChange()`)
+ *     plutôt qu'un groupe de radios `name="mode"` réinventé ici.
+ *   - `nommerLesModes()` ne renomme plus le texte des outils selon le
+ *     calque choisi (« une ligne » → « une flèche » pour les vents) —
+ *     ce texte vient du bandeau d'outils partagé, commun à toute page.
+ *     Elle continue à atténuer (`.mode--autre`) les outils que le
+ *     calque actif n'attend pas, avec l'info-bulle qui dit pourquoi.
+ *     Simplification assumée, pas un oubli.
+ *   - Les messages ponctuels (enregistré, erreur…) passent par la bulle
+ *     du gabarit (`Gabarit.bulle`) plutôt qu'un paragraphe dédié.
+ *   - Le cadastre et la recherche d'eau (Phases 6 et 7, pas encore
+ *     construites) restent gérés par le code ci-dessous exactement
+ *     comme la référence — simplement, tant que `cfg.apiCadastre`/
+ *     `cfg.apiEau` n'existent pas et que la page ne pose pas les
+ *     éléments qui leur correspondent, ce code ne trouve rien à
+ *     accrocher (`$('cadastre-visible')` etc. renvoient `null`) et ne
+ *     fait donc rien — sans qu'il y ait besoin d'y toucher quand ces
+ *     phases arriveront.
+ *
+ * Une couche SVG posée sur les tuiles de `carte.js`, qui expose sa
+ * projection (`conteneur.carte`) et prévient quand la vue change
+ * (`carte:vue`). Ici : les éléments enregistrés, le tracé en cours, la
+ * pose d'une parcelle par ses dimensions, l'échelle.
+ *
+ * Tout ce qui est calculé en mètres — surface, longueur, rectangle d'une
+ * parcelle — passe par une projection locale plane : à l'échelle d'un
+ * terrain, l'erreur est négligeable. La même formule est dans `Calques.php`.
+ */
+(function () {
+  'use strict';
+
+  var conteneur = document.querySelector('[data-carte][data-calques]');
+  if (!conteneur) { return; }
+  var cfg = JSON.parse(conteneur.dataset.calques);
+  var NS = 'http://www.w3.org/2000/svg';
+
+  // Le zoom d'arrivée : le plus fin que servent les tuiles d'OpenStreetMap,
+  // soit environ 40 cm par point d'écran sous nos latitudes. C'est la limite
+  // de la photo aérienne, et elle décide de ce que cette carte sait faire :
+  // poser une parcelle sur le terrain, non dessiner ce qu'il y a dedans.
+  var ZOOM_TERRAIN = 18;
+
+  var svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'calques');
+  conteneur.appendChild(svg);
+
+  var elements = cfg.elements.slice();
+  var visibles = {};
+  Object.keys(cfg.calques).forEach(function (c) { visibles[c] = true; });
+
+  /* LE CADASTRE — un repère, non une donnée du projet. Voir l'en-tête :
+   * inerte tant que la Phase 6 n'a pas posé le bouton et `cfg.apiCadastre`. */
+  var cadastre = { visible: false, parcelles: [], message: '', minuteur: null, encours: false };
+
+  var mode = 'deplacer';          // deplacer · point · ligne · polygone · libre · rectangle
+  var enCours = null;             // { calque, type, points: [[lat, lon]] }
+  var rect = null;                // { parcelle, centre, angle, largeur, longueur }
+  var enLibre = false;
+
+  function $(id) { return document.getElementById(id); }
+  function texte(id, t) { var el = $(id); if (el) { el.textContent = t; } }
+
+  // ---------------------------------------------------------------- mètres
+  function metresParDegre(lat) {
+    return [111320, 111320 * Math.cos(lat * Math.PI / 180)];
+  }
+  function enMetres(points) {
+    if (!points.length) { return []; }
+    var o = points[0], m = metresParDegre(o[0]);
+    return points.map(function (p) { return [(p[1] - o[1]) * m[1], (p[0] - o[0]) * m[0]]; });
+  }
+  function surface(points) {
+    if (points.length < 3) { return 0; }
+    var xy = enMetres(points), a = 0;
+    for (var i = 0; i < xy.length; i++) {
+      var p = xy[i], q = xy[(i + 1) % xy.length];
+      a += p[0] * q[1] - q[0] * p[1];
+    }
+    return Math.abs(a) / 2;
+  }
+  function longueur(points) {
+    var xy = enMetres(points), l = 0;
+    for (var i = 1; i < xy.length; i++) {
+      l += Math.hypot(xy[i][0] - xy[i - 1][0], xy[i][1] - xy[i - 1][1]);
+    }
+    return l;
+  }
+  function centre(points) {
+    var la = 0, lo = 0;
+    points.forEach(function (p) { la += p[0]; lo += p[1]; });
+    return [la / points.length, lo / points.length];
+  }
+  function arrondi(v, d) { return Math.round(v * Math.pow(10, d)) / Math.pow(10, d); }
+  function fmt(m) { return m >= 10000 ? arrondi(m / 10000, 2) + ' ha' : arrondi(m, 0) + ' m²'; }
+
+  /* Les quatre coins d'une parcelle posée par ses dimensions : largeur
+   * d'est en ouest, longueur du sud au nord, puis rotation d'un angle
+   * compté depuis le nord, dans le sens des aiguilles d'une montre. */
+  function coins(r) {
+    var m = metresParDegre(r.centre[0]);
+    var a = r.angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+    return [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(function (s) {
+      var x = s[0] * r.largeur / 2, y = s[1] * r.longueur / 2;
+      var xr = x * ca + y * sa, yr = -x * sa + y * ca;
+      return [arrondi(r.centre[0] + yr / m[0], 5), arrondi(r.centre[1] + xr / m[1], 5)];
+    });
+  }
+
+  // ---------------------------------------------------------------- dessin
+  function px(p) { return conteneur.carte.versPixel(p[0], p[1]); }
+  function noeud(nom, attrs, parent) {
+    var n = document.createElementNS(NS, nom);
+    Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    (parent || svg).appendChild(n);
+    return n;
+  }
+  function etiquette(p, mot, teinte) {
+    if (!mot) { return; }
+    var q = px(p);
+    var t = noeud('text', { x: q[0] + 8, y: q[1] - 8, fill: teinte, 'class': 'calque-etiquette' });
+    t.textContent = mot;
+  }
+  function chemin(points) {
+    return points.map(function (p) { var q = px(p); return q[0] + ',' + q[1]; }).join(' ');
+  }
+
+  /* LE VENT SE TRACE AVEC UNE FLÈCHE, et son épaisseur dit son intensité.
+   * Un vent dominant et une brise de vallée ne se lisent pas au même
+   * poids de trait ; la carte doit les distinguer d'un coup d'œil. */
+  var INTENSITES = {
+    dominant: { libelle: 'dominant', trait: 6 },
+    secondaire: { libelle: 'secondaire', trait: 2.5 }
+  };
+  function trait(el) {
+    var i = el && el.proprietes && el.proprietes.intensite;
+    return (INTENSITES[i] || INTENSITES.secondaire).trait;
+  }
+
+  /* La pointe, posée au dernier point et orientée par le dernier segment.
+   * Elle grandit avec le trait : une flèche fine sur un trait épais se
+   * verrait comme une bavure. */
+  function pointe(points, teinte, largeur, parent) {
+    if (points.length < 2) { return; }
+    var b = px(points[points.length - 1]);
+    var a = px(points[points.length - 2]);
+    var dx = b[0] - a[0], dy = b[1] - a[1];
+    var d = Math.hypot(dx, dy);
+    if (d < 1) { return; }
+    dx /= d; dy /= d;
+    var l = largeur * 3.2, w = largeur * 1.6;
+    var p1 = [b[0] - l * dx + w * dy, b[1] - l * dy - w * dx];
+    var p2 = [b[0] - l * dx - w * dy, b[1] - l * dy + w * dx];
+    noeud('polygon', { points: b[0] + ',' + b[1] + ' ' + p1[0] + ',' + p1[1]
+      + ' ' + p2[0] + ',' + p2[1], fill: teinte }, parent);
+  }
+
+  function dessinerElement(el) {
+    if (!visibles[el.calque] || !el.geometrie || !el.geometrie.length) { return; }
+    var teinte = (cfg.calques[el.calque] || {}).teinte || '#333';
+    var g = noeud('g', { 'class': 'calque calque--' + el.calque, 'data-id': el.id });
+    if (el.type === 'point' || el.geometrie.length === 1) {
+      var q = px(el.geometrie[0]);
+      noeud('circle', { cx: q[0], cy: q[1], r: 6, fill: teinte, stroke: '#fff', 'stroke-width': 2 }, g);
+      var h = el.proprietes && el.proprietes.hauteur_m ? ' · ' + el.proprietes.hauteur_m + ' m' : '';
+      etiquette(el.geometrie[0], (el.libelle || '') + h, teinte);
+    } else if (el.type === 'ligne') {
+      var vent = el.calque === 'vents';
+      var largeur = vent ? trait(el) : 3;
+      noeud('polyline', { points: chemin(el.geometrie), fill: 'none', stroke: teinte,
+        'stroke-width': largeur, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, g);
+      if (vent) { pointe(el.geometrie, teinte, largeur, g); }
+      var mot = el.libelle || '';
+      if (vent && el.proprietes && el.proprietes.intensite === 'dominant') {
+        mot = (mot ? mot + ' · ' : '') + 'dominant';
+      }
+      etiquette(el.geometrie[Math.floor(el.geometrie.length / 2)], mot, teinte);
+    } else if (el.type === 'grille') {
+      var a = px(el.geometrie[0]), b = px(el.geometrie[1]);
+      noeud('rect', { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]),
+        width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]),
+        fill: 'none', stroke: teinte, 'stroke-width': 1,
+        'stroke-opacity': 0.35, 'stroke-dasharray': '2 6' }, g);
+      var courbes = (el.proprietes && el.proprietes.courbes) || [];
+      var parNiveau = {};
+      courbes.forEach(function (c, i) {
+        noeud('line', { x1: px(c.points[0])[0], y1: px(c.points[0])[1],
+          x2: px(c.points[1])[0], y2: px(c.points[1])[1],
+          stroke: teinte, 'stroke-width': 1.4, 'stroke-linecap': 'round' }, g);
+        (parNiveau[c.altitude] = parNiveau[c.altitude] || []).push(i);
+      });
+      var niveaux = Object.keys(parNiveau);
+      niveaux.forEach(function (altitude, rang) {
+        if (niveaux.length > 8 && rang % 2) { return; }
+        var siens = parNiveau[altitude];
+        var milieu = courbes[siens[Math.floor(siens.length / 2)]];
+        etiquette(milieu.points[0], Math.round(altitude) + ' m', teinte);
+      });
+      if (!courbes.length) { etiquette(el.geometrie[1], el.libelle, teinte); }
+    } else if (el.type === 'polygone') {
+      var parcelle = el.calque === 'parcelles';
+      noeud('polygon', { points: chemin(el.geometrie), fill: teinte, 'fill-opacity': parcelle ? 0.12 : 0.22,
+        stroke: teinte, 'stroke-width': parcelle ? 3 : 2,
+        'stroke-dasharray': parcelle ? '' : '6 4' }, g);
+      etiquette(centre(el.geometrie), el.libelle, teinte);
+    }
+  }
+
+  /* Le cadastre se dessine en premier, donc dessous : un trait fin, sans
+   * remplissage, et le numéro de parcelle quand il y a la place. */
+  function dessinerCadastre() {
+    if (!cadastre.visible || !cadastre.parcelles.length) { return; }
+    var g = noeud('g', { 'class': 'calque-cadastre' });
+    cadastre.parcelles.forEach(function (p) {
+      if (!p.points || p.points.length < 3) { return; }
+      noeud('polygon', { points: chemin(p.points), fill: 'none', stroke: '#B4622A',
+        'stroke-width': 1.2, 'stroke-opacity': 0.85 }, g);
+      var a = px(p.points[0]), b = px(p.points[Math.floor(p.points.length / 2)]);
+      if (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) > 60) {
+        var c = centre(p.points), q = px(c);
+        var t = noeud('text', { x: q[0], y: q[1], fill: '#8A4718', 'text-anchor': 'middle',
+          'class': 'calque-etiquette cadastre-numero' }, g);
+        t.textContent = p.libelle;
+      }
+    });
+  }
+
+  function dessinerEnCours() {
+    if (!enCours || !enCours.points.length) { return; }
+    var teinte = (cfg.calques[enCours.calque] || {}).teinte || '#333';
+    if (enCours.points.length > 1) {
+      var attrs = { points: chemin(enCours.points), fill: 'none', stroke: teinte,
+        'stroke-width': 2.5, 'stroke-dasharray': '4 3' };
+      if (enCours.type === 'polygone' && enCours.points.length > 2) {
+        attrs.fill = teinte; attrs['fill-opacity'] = 0.15;
+        noeud('polygon', attrs);
+      } else {
+        noeud('polyline', attrs);
+      }
+    }
+    if (enCours.calque === 'vents' && enCours.type === 'ligne') {
+      pointe(enCours.points, teinte, intensiteChoisie().trait, null);
+    }
+    if (enCours.type !== 'polygone' || enCours.points.length < 40) {
+      enCours.points.forEach(function (p) {
+        var q = px(p);
+        noeud('circle', { cx: q[0], cy: q[1], r: 4, fill: '#fff', stroke: teinte, 'stroke-width': 2 });
+      });
+    }
+  }
+
+  function dessinerRect() {
+    if (!rect || !rect.centre) { return; }
+    var teinte = cfg.calques.parcelles.teinte;
+    var c = coins(rect);
+    noeud('polygon', { points: chemin(c), fill: teinte, 'fill-opacity': 0.18, stroke: teinte,
+      'stroke-width': 3, 'stroke-dasharray': '8 4' });
+    etiquette(rect.centre, rect.parcelle.code + ' — ' + rect.largeur + ' × ' + rect.longueur + ' m', teinte);
+    var q0 = px(c[3]), q1 = px(c[2]);
+    noeud('line', { x1: q0[0], y1: q0[1], x2: q1[0], y2: q1[1], stroke: '#fff', 'stroke-width': 5, 'stroke-linecap': 'round' });
+  }
+
+  function echelle() {
+    var barre = $('carte-echelle');
+    if (!barre || !conteneur.carte) { return; }
+    var mpp = conteneur.carte.metresParPixel();
+    var choix = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000], m = choix[0];
+    choix.forEach(function (c) { if (c / mpp <= 180) { m = c; } });
+    barre.style.width = (m / mpp) + 'px';
+    barre.textContent = m >= 1000 ? (m / 1000) + ' km' : m + ' m';
+  }
+
+  function tout() {
+    if (!conteneur.carte) { return; }
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    svg.setAttribute('viewBox', '0 0 ' + conteneur.clientWidth + ' ' + conteneur.clientHeight);
+    dessinerCadastre();
+    elements.forEach(dessinerElement);
+    dessinerEnCours();
+    dessinerRect();
+    echelle();
+  }
+
+  /* Demander les parcelles cadastrales de la vue — Phase 6, inerte pour
+   * l'instant (voir en-tête). */
+  function chargerCadastre() {
+    if (!cadastre.visible || !conteneur.carte || cadastre.encours || !cfg.apiCadastre) { return; }
+    var l = conteneur.clientWidth, h = conteneur.clientHeight;
+    var so = conteneur.carte.versLatLon(0, h), ne = conteneur.carte.versLatLon(l, 0);
+    cadastre.encours = true;
+    fetch(cfg.apiCadastre, { method: 'POST', body: new URLSearchParams({
+      csrf: cfg.csrf, site_id: cfg.siteId,
+      sud: so[0], ouest: so[1], nord: ne[0], est: ne[1] }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        cadastre.encours = false;
+        cadastre.parcelles = j.ok ? j.parcelles : [];
+        cadastre.message = j.message || '';
+        etatCadastre();
+        tout();
+      })
+      .catch(function () {
+        cadastre.encours = false;
+        cadastre.parcelles = [];
+        cadastre.message = "Le cadastre n'a pas répondu. Les limites se tracent à la main.";
+        etatCadastre();
+        tout();
+      });
+  }
+
+  function cadastreBientot() {
+    if (!cadastre.visible) { return; }
+    window.clearTimeout(cadastre.minuteur);
+    cadastre.minuteur = window.setTimeout(chargerCadastre, 500);
+  }
+
+  function etatCadastre() {
+    var el = $('cadastre-etat');
+    if (!el) { return; }
+    el.textContent = !cadastre.visible ? ''
+      : (cadastre.parcelles.length
+          ? cadastre.parcelles.length + ' parcelle' + (cadastre.parcelles.length > 1 ? 's' : '')
+            + ' au cadastre — suivez leurs bords pour tracer vos limites.'
+          : cadastre.message);
+  }
+
+  // ---------------------------------------------------------------- listes
+  function listes() {
+    var ul = $('calques-liste');
+    if (!ul) { return; }
+    ul.textContent = '';
+    Object.keys(cfg.calques).forEach(function (c) {
+      var siens = elements.filter(function (e) { return e.calque === c; });
+      var li = document.createElement('li');
+      li.className = 'calque-ligne';
+      var lab = document.createElement('label');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'case'; cb.checked = visibles[c];
+      cb.addEventListener('change', function () { visibles[c] = cb.checked; tout(); });
+      var pastille = document.createElement('span');
+      pastille.className = 'calque-pastille'; pastille.style.background = cfg.calques[c].teinte;
+      lab.append(cb, pastille, ' ' + cfg.calques[c].libelle + ' ');
+      var n = document.createElement('small');
+      n.textContent = siens.length ? siens.length + ' tracé' + (siens.length > 1 ? 's' : '') : 'rien';
+      lab.appendChild(n);
+      li.appendChild(lab);
+      if (siens.length) {
+        var sous = document.createElement('ul');
+        siens.forEach(function (e) {
+          var it = document.createElement('li');
+          var mesure = e.type === 'polygone' ? fmt(surface(e.geometrie))
+            : e.type === 'ligne' ? arrondi(longueur(e.geometrie), 0) + ' m' : '';
+          if (e.proprietes && e.proprietes.intensite === 'dominant') { mesure += ', dominant'; }
+          var a = document.createElement('a');
+          a.href = '#'; a.textContent = e.libelle || (e.type + ' sans nom');
+          a.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            var c0 = centre(e.geometrie);
+            conteneur.carte.centrer(c0[0], c0[1]);
+          });
+          it.append(a, mesure ? ' — ' + mesure : '');
+          if (cfg.peutEcrire) {
+            var b = document.createElement('button');
+            b.type = 'button'; b.className = 'discret'; b.textContent = 'retirer';
+            b.addEventListener('click', function () { retirer(e.id); });
+            it.append(' ', b);
+          }
+          sous.appendChild(it);
+        });
+        li.appendChild(sous);
+      }
+      ul.appendChild(li);
+    });
+    var sel = $('parcelle-choix');
+    if (sel) {
+      Array.prototype.forEach.call(sel.options, function (o) {
+        if (!o.value) { return; }
+        var posee = elements.some(function (e) { return e.calque === 'parcelles' && String(e.parcelle_id) === o.value; });
+        o.textContent = o.dataset.nom + (posee ? ' — posée' : o.dataset.dims ? ' — ' + o.dataset.dims : ' — sans dimensions');
+      });
+    }
+  }
+
+  // ------------------------------------------------------- message ponctuel
+  /* La bulle du gabarit, plutôt qu'un paragraphe dédié — voir l'en-tête. */
+  var messageMinuteur = null;
+  function message(m) {
+    if (!m || !window.Gabarit || !window.Gabarit.bulle) { return; }
+    var cible = $('trace-enregistrer') || conteneur;
+    window.Gabarit.bulle.montrer(cible, m);
+    window.clearTimeout(messageMinuteur);
+    messageMinuteur = window.setTimeout(function () {
+      window.Gabarit.bulle.cacher();
+    }, 4000);
+  }
+
+  // ---------------------------------------------------------------- écrire
+  function envoyer(champs) {
+    var fd = new URLSearchParams(champs);
+    fd.set('csrf', cfg.csrf); fd.set('site_id', cfg.siteId);
+    return fetch(cfg.api, { method: 'POST', body: fd }).then(function (r) { return r.json(); });
+  }
+
+  function enregistrer() {
+    var libelle = ($('trace-libelle') || {}).value || '';
+    var hauteur = parseFloat(($('trace-hauteur') || {}).value);
+    var champs;
+    if (rect && rect.centre) {
+      champs = { action: 'ajouter', calque: 'parcelles', type: 'polygone', libelle: rect.parcelle.code,
+        parcelle_id: rect.parcelle.id, geometrie: JSON.stringify(coins(rect)),
+        proprietes: JSON.stringify({ angle: rect.angle, largeur_m: rect.largeur, longueur_m: rect.longueur,
+          surface_m2: arrondi(rect.largeur * rect.longueur, 1) }) };
+    } else if (enCours && enCours.points.length) {
+      var props = {};
+      if (!isNaN(hauteur)) { props.hauteur_m = hauteur; }
+      if (enCours.calque === 'vents') {
+        props.intensite = ($('trace-intensite') || { value: 'dominant' }).value;
+      }
+      champs = { action: 'ajouter', calque: enCours.calque, type: enCours.type, libelle: libelle,
+        geometrie: JSON.stringify(enCours.points), proprietes: JSON.stringify(props) };
+      if (enCours.calque === 'parcelles' && ($('parcelle-choix') || {}).value) {
+        champs.parcelle_id = $('parcelle-choix').value;
+      }
+    } else {
+      message('Rien à enregistrer : tracez d\'abord.'); return;
+    }
+    envoyer(champs).then(function (j) {
+      if (!j.ok) { message(j.message); return; }
+      elements.push(j.element);
+      if (boutonCentrer) { boutonCentrer.hidden = false; }
+      enCours = null; rect = null;
+      if ($('trace-libelle')) { $('trace-libelle').value = ''; }
+      etat(); tout(); listes(); message(j.message);
+    }).catch(function () { message('Le serveur n\'a pas répondu — rien n\'est enregistré.'); });
+  }
+
+  function retirer(id) {
+    envoyer({ action: 'retirer', id: id }).then(function (j) {
+      if (!j.ok) { message(j.message); return; }
+      elements = elements.filter(function (e) { return String(e.id) !== String(id); });
+      tout(); listes(); message(j.message);
+    });
+  }
+
+  // ---------------------------------------------------------------- tracer
+  var presse = null;
+  function latlon(e) {
+    var r = conteneur.getBoundingClientRect();
+    var p = conteneur.carte.versLatLon(e.clientX - r.left, e.clientY - r.top);
+    return [arrondi(p[0], 5), arrondi(p[1], 5)];
+  }
+  function nouveau(type) {
+    return { calque: ($('calque-choix') || { value: 'fond' }).value, type: type, points: [] };
+  }
+
+  function nommerLesModes() {
+    var calque = enCours ? enCours.calque : (choixCalque || { value: '' }).value;
+    var attendus = ((cfg.calques[calque] || {}).types) || [];
+    Array.prototype.forEach.call(document.querySelectorAll('#outils-liste label[for^="outil-"]'), function (label) {
+      var valeur = (label.getAttribute('for') || '').replace(/^outil-/, '');
+      if (valeur === 'deplacer' || valeur === '') { label.classList.remove('mode--autre'); label.title = ''; return; }
+      var type = valeur === 'libre' ? 'polygone' : valeur;
+      var pertinent = attendus.indexOf(type) !== -1;
+      label.classList.toggle('mode--autre', !pertinent);
+      label.title = pertinent ? '' : "Ce calque attend plutôt : " + attendus.join(', ') + '.';
+    });
+  }
+
+  function intensiteChoisie() {
+    var sel = $('trace-intensite');
+    return INTENSITES[sel && sel.value] || INTENSITES.dominant;
+  }
+  function etat() {
+    var n = enCours ? enCours.points.length : 0;
+    var mot;
+    if (rect) {
+      mot = rect.centre ? 'Parcelle ' + rect.parcelle.code + ' posée — tournez-la, puis enregistrez.'
+        : 'Cliquez sur la carte à l\'endroit du centre de la parcelle ' + rect.parcelle.code + '.';
+    } else if (!enCours) {
+      mot = { deplacer: 'Glissez pour déplacer, molette pour zoomer.',
+              point: 'Cliquez : un point.',
+              ligne: 'Cliquez point après point ; double-clic ou Entrée pour finir, clic droit pour défaire.',
+              polygone: 'Cliquez le contour ; double-clic ou Entrée pour fermer, clic droit pour défaire.',
+              libre: 'Appuyez et suivez le contour à la main ; relâchez pour fermer.',
+              rectangle: 'Cliquez le centre de la parcelle ; clic droit pour la reprendre.' }[mode];
+    } else {
+      var mesure = enCours.type === 'polygone' && n > 2 ? ' — ' + fmt(surface(enCours.points))
+        : enCours.type === 'ligne' && n > 1 ? ' — ' + arrondi(longueur(enCours.points), 0) + ' m' : '';
+      mot = n + ' point' + (n > 1 ? 's' : '') + mesure
+        + '. Clic droit défait le dernier, Échap annule tout.';
+    }
+    texte('trace-etat', mot);
+    var pret = (rect && rect.centre) || (enCours && enCours.points.length >= ({ point: 1, ligne: 2, polygone: 3 }[enCours.type] || 1));
+    if ($('trace-enregistrer')) { $('trace-enregistrer').disabled = !pret; }
+    var h = $('trace-hauteur-champ');
+    if (h) { h.hidden = !(enCours && (enCours.calque === 'ombres' || enCours.calque === 'vegetation')); }
+    var v = $('trace-intensite-champ');
+    var surLesVents = (enCours ? enCours.calque : (choixCalque || {}).value) === 'vents';
+    if (v) { v.hidden = !surLesVents; }
+  }
+  function ajouterPoint(e) {
+    enCours.points.push(latlon(e));
+    etat(); tout();
+  }
+  function annuler() {
+    enCours = null; rect = null; enLibre = false;
+    if ($('parcelle-choix')) { $('parcelle-choix').value = ''; }
+    etat(); tout();
+  }
+  function terminer() {
+    if (!enCours) { return; }
+    if (enCours.type === 'ligne' && enCours.points.length < 2) { return; }
+    if (enCours.type === 'polygone' && enCours.points.length < 3) { return; }
+    etat(); tout();
+    if ($('trace-libelle')) { $('trace-libelle').focus(); }
+  }
+
+  svg.addEventListener('mousedown', function (e) {
+    presse = { x: e.clientX, y: e.clientY };
+    if (mode === 'libre') {
+      e.stopPropagation(); e.preventDefault();
+      enCours = nouveau('polygone'); enLibre = true;
+      ajouterPoint(e);
+    }
+  });
+  window.addEventListener('mousemove', function (e) {
+    if (!enLibre || !enCours) { return; }
+    var r = conteneur.getBoundingClientRect();
+    var d = enCours.points.length ? px(enCours.points[enCours.points.length - 1]) : null;
+    if (!d || Math.hypot(e.clientX - r.left - d[0], e.clientY - r.top - d[1]) > 7) { ajouterPoint(e); }
+  });
+  window.addEventListener('mouseup', function () {
+    if (enLibre) { enLibre = false; terminer(); }
+  });
+  svg.addEventListener('click', function (e) {
+    if (mode === 'deplacer' || mode === 'libre') { return; }
+    if (presse && Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 4) { return; }
+    if (mode === 'rectangle') {
+      if (!rect) { return; }
+      rect.centre = latlon(e); etat(); tout(); return;
+    }
+    if (mode === 'point') {
+      enCours = nouveau('point'); ajouterPoint(e); terminer(); return;
+    }
+    if (!enCours) { enCours = nouveau(mode); }
+    ajouterPoint(e);
+  });
+  /* LE CLIC DROIT DÉFAIT LE DERNIER POINT. Un tracé se rate d'un point,
+   * pas en entier. Le menu du navigateur est écarté pendant qu'on dessine. */
+  svg.addEventListener('contextmenu', function (e) {
+    if (mode === 'deplacer') { return; }
+    e.preventDefault();
+    if (rect && rect.centre) { rect.centre = null; etat(); tout(); return; }
+    if (!enCours || !enCours.points.length) { annuler(); return; }
+    enCours.points.pop();
+    if (!enCours.points.length) { enCours = null; }
+    etat(); tout();
+  });
+
+  svg.addEventListener('dblclick', function (e) {
+    e.preventDefault();
+    if (enCours && (mode === 'ligne' || mode === 'polygone')) { terminer(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { return; }
+    if (e.key === 'Escape') { annuler(); }
+    if (e.key === 'Enter' && enCours) { terminer(); }
+  });
+
+  // ---------------------------------------------------------------- panneau
+  function changerMode(m) {
+    mode = m;
+    var bouton = document.getElementById('outil-' + m);
+    if (bouton && !bouton.checked) {
+      bouton.checked = true;
+      bouton.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    svg.style.pointerEvents = mode === 'deplacer' ? 'none' : 'auto';
+    svg.style.cursor = mode === 'deplacer' ? '' : 'crosshair';
+    if (mode !== 'rectangle') { rect = null; }
+    enCours = null; enLibre = false;
+    nommerLesModes();
+    etat(); tout();
+  }
+  if (window.Gabarit && window.Gabarit.onOutilChange) {
+    window.Gabarit.onOutilChange(function (id) {
+      changerMode(String(id).replace(/^outil-/, ''));
+    });
+  }
+  /* L'EAU DÉJÀ CARTOGRAPHIÉE — Phase 7, inerte pour l'instant (voir en-tête). */
+  var boutonEau = $('eau-chercher');
+  if (boutonEau && cfg.peutEcrire && cfg.apiEau) {
+    var blocEau = document.querySelector('.chercher-eau');
+    if (blocEau) { blocEau.hidden = false; }
+    boutonEau.addEventListener('click', function () {
+      boutonEau.disabled = true;
+      texte('eau-etat', 'Je regarde ce qu\'OpenStreetMap connaît autour du terrain…');
+      fetch(cfg.apiEau, { method: 'POST', body: new URLSearchParams({
+        csrf: cfg.csrf, site_id: cfg.siteId }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          boutonEau.disabled = false;
+          texte('eau-etat', j.message || '');
+          if (j.ok && j.elements && j.elements.length) {
+            elements = elements.concat(j.elements);
+            if (boutonCentrer) { boutonCentrer.hidden = false; }
+            listes(); tout();
+          }
+        })
+        .catch(function () {
+          boutonEau.disabled = false;
+          texte('eau-etat', "Le service n'a pas répondu. L'eau se trace à la main.");
+        });
+    });
+  }
+
+  var caseCadastre = $('cadastre-visible');
+  var blocCadastre = document.querySelector('.cadastre-bascule');
+  if (caseCadastre && cfg.apiCadastre) {
+    if (blocCadastre) { blocCadastre.hidden = false; }
+    cadastre.visible = caseCadastre.checked;
+    caseCadastre.addEventListener('change', function () {
+      cadastre.visible = caseCadastre.checked;
+      if (cadastre.visible) { chargerCadastre(); } else { etatCadastre(); tout(); }
+    });
+  }
+
+  var choixCalque = $('calque-choix');
+  if (choixCalque) {
+    choixCalque.addEventListener('change', function () {
+      texte('calque-aide', (cfg.calques[choixCalque.value] || {}).aide || '');
+      if (enCours && enCours.points.length) {
+        enCours.calque = choixCalque.value;
+      } else {
+        changerMode('deplacer');
+      }
+      nommerLesModes();
+      etat(); tout();
+    });
+    texte('calque-aide', (cfg.calques[choixCalque.value] || {}).aide || '');
+  }
+  var choixParcelle = $('parcelle-choix');
+  if (choixParcelle) {
+    choixParcelle.addEventListener('change', function () {
+      var o = choixParcelle.selectedOptions[0];
+      if (!o || !o.value) { rect = null; etat(); tout(); return; }
+      var p = cfg.parcelles.filter(function (q) { return String(q.id) === o.value; })[0];
+      if (!p) { return; }
+      if (p.largeur_m && p.longueur_m) {
+        changerMode('rectangle');
+        rect = { parcelle: p, centre: null, angle: parseFloat(($('parcelle-angle') || { value: 0 }).value) || 0,
+                 largeur: p.largeur_m, longueur: p.longueur_m };
+        etat(); tout();
+      } else {
+        rect = null;
+        if (choixCalque) { choixCalque.value = 'parcelles'; choixCalque.dispatchEvent(new Event('change')); }
+        changerMode('polygone');
+        texte('trace-etat', 'La parcelle ' + p.code + ' n\'a pas de dimensions : tracez son contour à la main, puis enregistrez.');
+      }
+    });
+  }
+  var angle = $('parcelle-angle');
+  if (angle) {
+    angle.addEventListener('input', function () {
+      if (rect) { rect.angle = parseFloat(angle.value) || 0; texte('parcelle-angle-valeur', angle.value + '°'); tout(); }
+    });
+  }
+  if ($('trace-enregistrer')) { $('trace-enregistrer').addEventListener('click', enregistrer); }
+  if ($('trace-annuler')) { $('trace-annuler').addEventListener('click', annuler); }
+  var boutonCentrer = $('carte-centrer');
+  if (boutonCentrer) {
+    boutonCentrer.addEventListener('click', function () {
+      var sud = 90, nord = -90, ouest = 180, est = -180, vus = 0;
+      elements.forEach(function (e) {
+        (e.geometrie || []).forEach(function (p) {
+          sud = Math.min(sud, p[0]); nord = Math.max(nord, p[0]);
+          ouest = Math.min(ouest, p[1]); est = Math.max(est, p[1]);
+          vus++;
+        });
+      });
+      if (!vus) { return; }
+      var large = Math.max((nord - sud) * 111320, (est - ouest) * 111320
+        * Math.cos((nord + sud) / 2 * Math.PI / 180));
+      var z = ZOOM_TERRAIN;
+      while (z > 10 && large > conteneur.clientWidth * 156543.03392
+        * Math.cos((nord + sud) / 2 * Math.PI / 180) / Math.pow(2, z)) { z--; }
+      conteneur.carte.centrer((sud + nord) / 2, (ouest + est) / 2, z);
+    });
+  }
+
+  if (boutonCentrer && elements.length) { boutonCentrer.hidden = false; }
+
+  conteneur.addEventListener('carte:vue', tout);
+  conteneur.addEventListener('carte:vue', cadastreBientot);
+  window.addEventListener('resize', tout);
+  changerMode('deplacer');
+  nommerLesModes();
+  listes();
+
+  /* Le cadrage d'arrivée : le point du site d'abord — cadrer sur la
+   * moyenne des tracés emporterait le centre avec un import lointain. */
+  var cadre = false;
+  function cadrer() {
+    if (cadre || !conteneur.carte) { return; }
+    cadre = true;
+    var ou = cfg.centre;
+    if (!ou) {
+      var vus = [];
+      elements.forEach(function (e) { vus = vus.concat(e.geometrie); });
+      ou = vus.length ? centre(vus) : null;
+    }
+    if (ou) { conteneur.carte.centrer(ou[0], ou[1], ZOOM_TERRAIN); }
+    tout();
+    if (cadastre.visible) { chargerCadastre(); }
+  }
+  conteneur.addEventListener('carte:vue', cadrer);
+  cadrer();
+})();

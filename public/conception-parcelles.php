@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'nb_planches'       => $_POST['nb_planches'] ?? '',
             'largeur_planche_m' => $_POST['largeur_planche_m'] ?? '',
             'passe_pied_m'      => $_POST['passe_pied_m'] ?? '',
+            'longueur_m'        => $_POST['longueur_m'] ?? '',
         ]);
         if ($erreursDimensions === []) {
             header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
@@ -232,7 +233,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <p class="pg-titre pg-nomsite"><?= htmlspecialchars((string) $site['nom'], ENT_QUOTES, 'UTF-8') ?></p>
           <ul class="pg-liste">
             <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">⌂</span><span class="pg-libelle">Le site</span></a></li>
-            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">▦</span><span class="pg-libelle">La carte</span></a></li>
+            <li><a href="conception-etude-site.php"><span class="pg-puce">▦</span><span class="pg-libelle">La carte</span></a></li>
           </ul>
         </div>
         <div class="pg-section">
@@ -374,10 +375,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="pd-note">Prototype : le calcul ci-dessus est refait ici, en JavaScript. La persistance en base (<code>parcelle.plan</code>) n'est pas encore branchée — voir architecture-technique.md.</p>
 
         <div class="pd-reel">
-          <p class="pd-titre">Pour la carte du terrain <span class="pd-unite">(à venir)</span></p>
-          <p class="pd-reel-note">Ces trois mesures serviront à poser cette parcelle sur la
-             carte interactive du terrain, un chantier à part — elles sont réelles,
-             enregistrées dès maintenant.</p>
+          <p class="pd-titre">Pour la carte du terrain</p>
+          <p class="pd-reel-note">Ces mesures servent à poser cette parcelle sur
+             <a href="conception-etude-site.php">la carte interactive du terrain</a> — sans
+             longueur ni largeur, elle s'y trace à la main plutôt que par un rectangle posé
+             d'un clic.</p>
           <form method="post">
             <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="action" value="dimensions">
@@ -396,6 +398,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
               <span class="pd-ligne-nom">Passe-pied (m)</span>
               <input type="text" name="passe_pied_m" inputmode="decimal"
                      value="<?= htmlspecialchars((string) ($parcelleActive['passe_pied_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+            </div>
+            <div class="pd-ligne">
+              <span class="pd-ligne-nom">Longueur d'une planche (m)</span>
+              <input type="text" name="longueur_m" inputmode="decimal"
+                     value="<?= htmlspecialchars((string) ($parcelleActive['longueur_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
             </div>
 <?php if ($erreursDimensions !== []): ?>
             <p class="pd-reel-erreur"><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>

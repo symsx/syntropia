@@ -5,8 +5,9 @@ Plan approuvé le 2026-09-15, phases 1 à 3 faites le même jour. Conservé ici
 le retrouve — voir CLAUDE.md § Point de reprise pour l'état courant résumé.
 
 **État** : ✅ Phase 1 (carte.js) — ✅ Phase 2 (site.latitude/longitude) —
-✅ Phase 3 (vraies parcelles) — ⏳ Phase 4 (backend calques) à faire ensuite
-— Phases 5 à 10 non commencées.
+✅ Phase 3 (vraies parcelles) — ✅ Phase 4 (backend calques, 2026-09-16) —
+✅ Phase 5 (page vivante, `pret:true`, 2026-09-16) — Phases 6 à 10 non
+commencées.
 
 ## Contexte
 
@@ -78,8 +79,8 @@ sont vérifiés, pas supposés.
 Phase 1  ✅ carte.js (moteur de tuiles) — pilote sur definition-site.php
 Phase 2  ✅ site.latitude/longitude réels (Sites::enregistrerParametres)
 Phase 3  ✅ Vraies parcelles, en liste (CRUD minimal) — condition commune
-Phase 4  ⏳ Backend calques (Calques.php + calque_element + api-calques.php)
-Phase 5  ⏳ conception-etude-site.php + calques.js — page vivante, pret:true
+Phase 4  ✅ Backend calques (Calques.php + calque_element + api-calques.php)
+Phase 5  ✅ conception-etude-site.php + calques.js — page vivante, pret:true
 Phase 6  ⏳ Cadastre (IGN API Carto)
 Phase 7  ⏳ Eau (Overpass)
 Phase 8  ⏳ Vents (Open-Meteo)
@@ -115,7 +116,7 @@ SVG, piloté par `conception-parcelles.js` côté client) — `parcelle.plan`
 toujours pas branché, chantier séparé (`plan.php`/`ImplantationBordures`
 côté référence).
 
-### Phase 4 — Backend calques ⏳ (prochaine étape du chantier)
+### Phase 4 — Backend calques ✅ (fait le 2026-09-16)
 
 **But** : toute la logique serveur des calques, testable au `curl` avant
 toute UI de dessin.
@@ -136,7 +137,7 @@ toute UI de dessin.
 le relire, le retirer ; vérifier les refus (lecture seule, calque/type
 invalides, points insuffisants pour un polygone).
 
-### Phase 5 — `conception-etude-site.php` + `calques.js` — la page vivante ⏳
+### Phase 5 — `conception-etude-site.php` + `calques.js` — la page vivante ✅ (fait le 2026-09-16)
 
 **But** : la carte réellement dessinable dans « le bureau », avec tous les
 modes de dessin et le placement des parcelles réelles. **Fait basculer
@@ -170,7 +171,29 @@ dont les Phases 7/9 dépendront) ; (b) placement de parcelle (rectangle) ;
 **Test** : tracer les limites du terrain, créer + placer une parcelle par
 rectangle avec rotation, dessiner un point sur `ressenti`, tout retirer,
 recharger (persistance réelle), vérifier qu'un compte lecture seule ne
-peut pas écrire.
+peut pas écrire — tout vérifié (Chrome headless piloté en CDP), y compris
+le cas lecture seule (bandeau-outils et panneau Données absents du HTML
+rendu, `api-calques.php` refuse quand même le POST direct).
+
+**Deux écarts trouvés en testant, corrigés dans cette même phase** :
+
+- `Parcelles::enregistrer()` (Phase 3) ne captait jamais `longueur_m` —
+  avec `largeur_planche_m`/`nb_planches`/`passe_pied_m`,
+  `Calques::parcellesAPlacer()` en a besoin en plus de `largeur_m`
+  (calculée) pour proposer l'outil rectangle ; sans lui, aucune parcelle
+  créée par le vrai formulaire n'était jamais « dimensionnée ». Ajouté
+  à `Parcelles::enregistrer()` et au formulaire de
+  `conception-parcelles.php`.
+- Le clic sur la carte ne faisait rien tant que le panneau Données était
+  ouvert : son `scrim` (fond assombri commun à tous les tiroirs,
+  « clic en dehors = ferme », voir CLAUDE.md § Architecture) couvre tout
+  le bureau et absorbe le clic avant qu'il n'atteigne le SVG — or cette
+  page est la première où panneau et carte s'utilisent *en même temps*
+  (choisir un calque, cliquer pour poser un point/une parcelle, revenir
+  au panneau pour enregistrer). `#scrim-droit` neutralisé (`pointer-
+  events:none`) dans le `<style>` propre à `conception-etude-site.php`
+  seulement — les autres pages gardent le comportement uniforme des
+  tiroirs ; fermeture toujours possible par la tirette ou Échap.
 
 ### Phase 6 — Cadastre (IGN API Carto) ⏳
 

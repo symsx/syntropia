@@ -50,6 +50,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Sites.php                le site d'un compte — un seul, pour l'instant
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
     Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
+    Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
 contenu/
   .htaccess              refuse tout accès web
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -78,6 +79,7 @@ public/                racine servable du site en refonte
   definition-objectifs.php   étape 2 (Définition), gardée par Authentification::exige()
   definition-moyens.php      étape 3 (Définition), gardée par Authentification::exige()
   definition-site.php        étape 4 (Définition) — le lieu (carte réelle) et ce qu'on observe, deux groupes
+  conception-etude-site.php  étape 1 (Conception) — la carte interactive du terrain, calques.js
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
   conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
@@ -94,9 +96,11 @@ public/                racine servable du site en refonte
   documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md, pagine ses chapitres trop longs
   documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md, même mécanique
   glossaire.php              les mots techniques, un par un — recherche filtrée, lit contenu/glossaire.md
+  api-calques.php            POST ajouter/modifier/retirer un tracé — appelée par conception-etude-site.php (assets/js/calques.js)
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
     js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
+    js/calques.js            dessin des calques sur carte.js — modes via Gabarit.onOutilChange(), placement de parcelle par rectangle
     js/etapes.js            le manifeste des phases — `pret: true` = la page existe déjà
     js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret` ; initTermes() arme la bulle de tout `.terme`
     js/livret.js             pagine un chapitre de documentation-{site,saf}.php trop long pour l'écran — mesuré en pixels, pas un compte de paragraphes
@@ -320,10 +324,12 @@ récit.*
   « pour chaque parcelle », mêmes données absentes que le scénario).
   Les deux demandent un vrai scénario en base, qui n'existe pas encore.
   `conception-etude-site.php` (la carte interactive) n'est plus
-  « reportée sans plan » : chantier en cours, voir
-  `chantier-carte-interactive.md`, Phases 1-3 déjà faites. Chaque étape
-  reste accessible en la sautant : le mécanisme « phase → première
-  étape prête » (`gabarit.js`) passe par-dessus sans lien mort.
+  reportée du tout : `pret: true` depuis la Phase 5 du chantier (voir
+  `chantier-carte-interactive.md`), page vivante et dessinable — restent
+  Cadastre/Eau/Vents/Relief/Import GeoJSON (Phases 6-10, enrichissent une
+  page déjà utilisable, ne touchent plus `etapes.js`). Chaque étape reste
+  accessible en la sautant : le mécanisme « phase → première étape
+  prête » (`gabarit.js`) passe par-dessus sans lien mort.
 
 **Construit et vérifié** :
 
@@ -356,12 +362,43 @@ récit.*
   le champ texte libre d'origine a disparu.
 - **`conception-parcelles.php` n'est plus un mockup** — vraies parcelles
   en base (`Web/Parcelles.php`), créées/listées/sélectionnées par le
-  panneau gauche (`?parcelle=ID`), trois mesures réelles enregistrées
-  (`nb_planches`, `largeur_planche_m`, `passe_pied_m` — ce dont la carte
-  interactive aura besoin). **Reste un prototype, volontairement** : le
-  plan lui-même (bordures, planches dessinées en SVG, piloté par
+  panneau gauche (`?parcelle=ID`), quatre mesures réelles enregistrées
+  (`nb_planches`, `largeur_planche_m`, `passe_pied_m`, `longueur_m` — ce
+  dont la carte interactive a besoin pour l'outil rectangle, voir plus
+  bas). **Reste un prototype, volontairement** : le plan lui-même
+  (bordures, planches dessinées en SVG, piloté par
   `conception-parcelles.js` côté client) — `parcelle.plan` toujours pas
   branché, chantier séparé.
+- **Le backend des calques** — `src/Web/Calques.php` (port proche de la
+  référence : `CALQUES`/`TYPES`, `dUnSite()`, `parId()`,
+  `parcellesAPlacer()`, `empriseDuTerrain()`, `ajouter()`/`modifier()`/
+  `retirer()`, `pointsDepuis()`/`metresParDegre()`/`surfaceM2()`/
+  `longueurM()`) et `public/api-calques.php` (POST, jeton + `Sites::
+  peutEcrireSur()`, actions `ajouter`/`modifier`/`retirer`, JSON).
+- **La carte interactive du terrain est vivante — chantier
+  `chantier-carte-interactive.md`, Phases 1 à 5 faites, 2026-09-16,
+  `pret: true`.** `conception-etude-site.php` + `public/assets/js/
+  calques.js` : dessin SVG par-dessus `carte.js`, calque actif et champs
+  du tracé dans le panneau Données (`#calque-choix`, `#trace-etat`,
+  `#trace-libelle`…), modes de dessin (déplacer/point/ligne/polygone/
+  libre) sur le bandeau d'outils partagé (`Gabarit.onOutilChange()`),
+  placement d'une parcelle dimensionnée par rectangle tournant d'un clic
+  (angle local-mètres). Cadastre/Eau/Vents/Relief/Import GeoJSON
+  (Phases 6-10) pas encore branchés — le JS tolère déjà leur absence
+  (`cfg.apiCadastre`/`cfg.apiEau` non fournis). Vérifié de bout en bout
+  en Chrome headless piloté en CDP : tracé du fond, parcelle posée par
+  rectangle + rotation + enregistrement, point sur `ressenti`, retrait
+  d'un tracé, persistance à la recharge, refus d'écriture pour un compte
+  lecture seule (UI absente du HTML rendu **et** `api-calques.php`
+  refuse quand même le POST direct). Deux écarts trouvés et corrigés en
+  testant : `Parcelles::enregistrer()` ne captait pas `longueur_m` (sans
+  quoi aucune parcelle n'était jamais « dimensionnée » pour le
+  rectangle) ; le `scrim` partagé de tous les tiroirs (fond assombri,
+  clic en dehors = ferme) bloquait les clics sur la carte tant que le
+  panneau Données restait ouvert — neutralisé (`#scrim-droit{pointer-
+  events:none}`) dans le `<style>` propre à cette page seule, les autres
+  pages gardent le comportement uniforme. Détail complet :
+  `chantier-carte-interactive.md` § Phase 5.
 - **Les mots techniques expliqués au survol** — tout `.terme` (span,
   `data-explique="..."`) vient de `contenu/glossaire.md`
   (`Documentation::glossaire()`/`::terme()`), même source qu'une page
@@ -445,11 +482,11 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-1. **Chantier « carte interactive du terrain »** — Phases 1 à 3 faites
-   (carte réelle sur `definition-site.php`, `site.latitude`/`longitude`,
-   vraies parcelles). **Phase 4 ensuite** : `src/Web/Calques.php` +
-   `public/api-calques.php`, testable au `curl` avant toute UI de
-   dessin. Plan complet, détaillé phase par phase avec fichiers et
+1. **Chantier « carte interactive du terrain »** — Phases 1 à 5 faites,
+   `conception-etude-site.php` vivante et `pret: true`. **Phase 6
+   ensuite** : Cadastre (IGN API Carto), la première des quatre phases
+   qui enrichissent la page déjà utilisable sans plus toucher
+   `etapes.js`. Plan complet, détaillé phase par phase avec fichiers et
    tests : `chantier-carte-interactive.md`.
 2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de

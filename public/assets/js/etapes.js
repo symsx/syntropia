@@ -22,7 +22,7 @@
     { id: 'definition-moyens',     phase: 'definition', titre: 'Moyens', pret: true },
     { id: 'definition-site',       phase: 'definition', titre: 'Site', pret: true },
 
-    { id: 'conception-etude-site',      phase: 'conception', titre: 'Étude du site' },
+    { id: 'conception-etude-site',      phase: 'conception', titre: 'Étude du site', pret: true },
     { id: 'conception-etude-sol',       phase: 'conception', titre: 'Étude du sol', pret: true },
     { id: 'conception-parcelles',       phase: 'conception', titre: 'Créer les parcelles', pret: true },
     { id: 'conception-scenario',        phase: 'conception', titre: 'Scénario de plantation' },

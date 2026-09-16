@@ -132,14 +132,31 @@ final class Parcelles
             }
         }
 
+        // La longueur d'une planche — avec largeur_planche_m/nb_planches/
+        // passe_pied_m, la quatrième mesure dont `Calques::parcellesAPlacer()`
+        // a besoin pour proposer l'outil rectangle (Phase 4/5 de la carte) :
+        // sans elle, `largeur_m` se calcule mais `longueur_m` reste vide, et
+        // la parcelle ne se pose jamais que tracée à la main. Absente du
+        // premier passage de cette méthode (2026-09-16) — trouvé en testant
+        // la Phase 5, ajoutée ici plutôt que laissée de côté.
+        $longueur = null;
+        $brut = str_replace(',', '.', trim((string) ($valeurs['longueur_m'] ?? '')));
+        if ($brut !== '') {
+            if (!is_numeric($brut) || (float) $brut <= 0) {
+                $erreurs['longueur_m'] = 'La longueur doit être un nombre positif.';
+            } else {
+                $longueur = round((float) $brut, 2);
+            }
+        }
+
         if ($erreurs !== []) {
             return $erreurs;
         }
 
         $req = $this->pdo()->prepare(
-            'UPDATE parcelle SET nb_planches = ?, largeur_planche_m = ?, passe_pied_m = ?
+            'UPDATE parcelle SET nb_planches = ?, largeur_planche_m = ?, passe_pied_m = ?, longueur_m = ?
              WHERE id = ? AND site_id = ?');
-        $req->execute([$nbPlanches, $largeurPlanche, $passePied, $id, $siteId]);
+        $req->execute([$nbPlanches, $largeurPlanche, $passePied, $longueur, $id, $siteId]);
         return [];
     }
 }
