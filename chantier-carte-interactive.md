@@ -4,10 +4,11 @@ Plan approuvé le 2026-09-15, phases 1 à 3 faites le même jour. Conservé ici
 (déplacé de `~/.claude/plans/`, hors dépôt) pour qu'une reprise ultérieure
 le retrouve — voir CLAUDE.md § Point de reprise pour l'état courant résumé.
 
-**État** : ✅ Phase 1 (carte.js) — ✅ Phase 2 (site.latitude/longitude) —
-✅ Phase 3 (vraies parcelles) — ✅ Phase 4 (backend calques, 2026-09-16) —
-✅ Phase 5 (page vivante, `pret:true`, 2026-09-16) — ✅ Phase 6 (cadastre,
-2026-09-16) — ✅ Phase 7 (eau, 2026-09-16) — Phases 8 à 10 non commencées.
+**État : chantier terminé, les dix phases sont faites (2026-09-16).**
+✅ Phase 1 (carte.js) — ✅ Phase 2 (site.latitude/longitude) — ✅ Phase 3
+(vraies parcelles) — ✅ Phase 4 (backend calques) — ✅ Phase 5 (page
+vivante, `pret:true`) — ✅ Phase 6 (cadastre) — ✅ Phase 7 (eau) —
+✅ Phase 8 (vents) — ✅ Phase 9 (relief) — ✅ Phase 10 (import GeoJSON).
 
 ## Contexte
 
@@ -83,9 +84,9 @@ Phase 4  ✅ Backend calques (Calques.php + calque_element + api-calques.php)
 Phase 5  ✅ conception-etude-site.php + calques.js — page vivante, pret:true
 Phase 6  ✅ Cadastre (IGN API Carto)
 Phase 7  ✅ Eau (Overpass)
-Phase 8  ⏳ Vents (Open-Meteo)
-Phase 9  ⏳ Relief (IGN Altimétrie + Relief.php, sans iso())
-Phase 10 ⏳ Import GeoJSON
+Phase 8  ✅ Vents (Open-Meteo)
+Phase 9  ✅ Relief (IGN Altimétrie + Relief.php, sans iso())
+Phase 10 ✅ Import GeoJSON
 ```
 
 ### Phase 1 — `carte.js`, moteur de tuiles ✅
@@ -248,32 +249,119 @@ présenté pour de vrai**, pas simulé : à force de solliciter Overpass en
 rafale pendant ce test, le service a fini par répondre occupé — message
 exact affiché, bouton réactivé ensuite, aucune erreur JS.
 
-### Phase 8 — Vents (Open-Meteo) ⏳
+### Phase 8 — Vents (Open-Meteo) ✅ (fait le 2026-09-16)
 
 Rose des vents calculée à la demande depuis `site.latitude`/`longitude`,
-jamais persistée. `src/Web/Vents.php` (187 lignes, `ANNEES_DEFAUT=5`,
-16 secteurs, `SEUIL_FORT_KMH=20.0` flag app). Action POST `rose` sur
-`conception-etude-site.php`. **Même source (Open-Meteo) envisagée pour
-la zone climatique USDA** — voir CLAUDE.md § Point de reprise, chantier
-séparé mais lié.
+jamais persistée. `src/Web/Vents.php` (port proche, `ANNEES_DEFAUT=5`,
+16 secteurs, `SEUIL_FORT_KMH=20.0` flag app). **Même source (Open-Meteo)
+envisagée pour la zone climatique USDA** — voir CLAUDE.md § Point de
+reprise, chantier séparé mais lié.
 
-### Phase 9 — Relief (altitude + courbes de niveau, sans vue 3D) ⏳
+**Différence assumée avec la référence** : `carte.php` affiche la rose
+dans une longue section documentaire de la page, toujours visible ;
+`conception-etude-site.php` la range dans le panneau Données
+(`#vents-rose-bloc`), visible seulement quand le calque « vents » est
+choisi — cohérent avec le reste de la page (calque actif → champs qui le
+concernent). Le calcul lui-même reste un simple `<form method="post">`
+qui rend la même page (action `rose`), sans API JSON séparée, exactement
+comme la référence — le panneau Données et la sélection du calque
+« vents » se rouvrent tout seuls après l'envoi (`aside.ouvert`, `<option
+selected>` posés côté serveur) pour que le résultat soit visible sans
+reclic.
+
+**Rien à faire côté dessin des flèches** : `dessinerElement()` savait déjà
+tracer une flèche de vent avec épaisseur selon l'intensité
+(`INTENSITES`/`trait()`/`pointe()`) depuis le port initial de la Phase 5 —
+ce n'était pas encore branché à une vraie donnée avant cette phase, mais
+le code n'a pas bougé.
+
+**Test** : vérifié sur un point réel (Limoges, coordonnées 45.85/1.25,
+la même station SYNOP que la référence a utilisée pour vérifier sa
+convention météorologique) — 43 824 heures relevées sur 5 ans, vent
+dominant nord-est, rose SVG + tableau des 5 secteurs affichés
+correctement (capture d'écran à l'appui) ; sans coordonnées, le
+formulaire disparaît et seul le message « Posez d'abord le point du
+site » s'affiche, sans erreur. **Open-Meteo a répondu « n'a pas répondu »
+pour de vrai** à deux reprises pendant les essais rapprochés (comme
+Overpass en Phase 7) — message dégradé correct à chaque fois, aucune
+exception JS ni PHP.
+
+### Phase 9 — Relief (altitude + courbes de niveau, sans vue 3D) ✅ (fait le 2026-09-16)
 
 Grille d'altitudes IGN + courbes de niveau 2D sur le calque `relief`.
 `src/Relief.php` (namespace `Syntropia`, classe plate comme
-`FicheTerrain.php` — `pente()`, `courbe()`, `niveaux()`, `courbesGeo()`,
-`iso()` non porté), `src/Web/Altimetrie.php` (225 lignes, filtrage strict
-du sentinel `z=-99999`), `public/api-altitude.php` (54 lignes). La plus
-lourde en calcul serveur (marching squares) — placée après les API plus
-simples.
+`FicheTerrain.php` — `pente()`, `rose()`, `ceQuElleCommande()`,
+`courbe()`, `niveaux()`, `courbesGeo()`, `iso()` non porté),
+`src/Web/Altimetrie.php` (port proche, filtrage strict du sentinel
+`z=-99999`), `public/api-altitude.php` (nouveau point d'entrée JSON, sans
+équivalent direct côté référence — voir plus bas).
 
-### Phase 10 — Import GeoJSON ⏳
+**Écart assumé avec la référence, trouvé en lisant `carte.php` et
+`relief.php` de près** : le dépôt de référence relève sa grille sur une
+page séparée (`relief.php`, avec vue 3D et côté/pas saisis à la main —
+tous deux hors périmètre ici) ; ce que le plan appelait
+`api-altitude.php` n'a d'ailleurs aucun rapport avec le fichier du même
+nom côté référence, qui sert une tout autre fonction (altitude d'un
+point pour une fiche de site). Ici, comme pour l'eau (Phase 7), le carré
+à relever se déduit de l'emprise du fond déjà tracé
+(`Calques::empriseDuTerrain()`) plutôt que d'être saisi — rien à régler,
+le pas s'ajuste automatiquement pour viser une grille d'une quarantaine
+de points de côté (sous le plafond de 2 000 points d'`Altimetrie`). Les
+courbes ne sont pas stockées : `conception-etude-site.php` les
+recalcule à chaque chargement depuis les altitudes brutes (même logique
+que la référence sur `carte.php`), et `api-altitude.php` les calcule
+aussi dans sa réponse pour un affichage immédiat sans recharger la page.
+Un seul relevé de relief par site : le suivant remplace le précédent,
+côté serveur et côté client.
+
+**Rendu déjà en place depuis la Phase 5** : `dessinerElement()` savait
+déjà tracer un élément `grille` (bbox pointillée + segments de contour +
+étiquettes d'altitude) — jamais exercé avant cette phase faute de
+donnée réelle, mais aucune ligne à changer.
+
+**Test** : relevé réel sur un terrain de montagne (Hautes-Alpes,
+44.9319/6.2331) — 1681 points en 12 appels IGN, dénivelé de 629 m,
+pente moyenne 108,7 % exposée nord-ouest, 538 segments de courbes
+affichés avec leurs altitudes (capture d'écran à l'appui) ; un second
+relevé remplace le premier (un seul élément `relief`/`grille` en base à
+la fois) ; sans fond tracé, message dédié ; hors couverture IGN
+(Londres) : message « Aucun point n'est dans la couverture » et rien
+n'est enregistré ; site étranger et accès anonyme refusés (403).
+**L'amincissement au-delà du plafond de segments vérifié directement**
+sur les données réelles récupérées (fonction pure, sans base ni
+réseau) : `maximum=100` fait passer 538 segments à 67 en espaçant les
+niveaux de 1 sur 6 — confirme le `do…while ($saut <= 6)`.
+
+### Phase 10 — Import GeoJSON ✅ (fait le 2026-09-16 — dernière phase du chantier)
 
 Importer des tracés externes (ContourBuddy, QGIS, Géoportail, traces GPS)
-directement sur un calque. `src/Geojson.php` (namespace `Syntropia`,
-263 lignes — inversion `[lon,lat]`→`[lat,lon]`, limites 4 Mo / 1500 points
-par tracé / 300 tracés). Zéro dépendance sur Cadastre/Eau/Vents/Relief —
-peut en réalité être menée n'importe quand après la Phase 5.
+directement sur un calque. `src/Geojson.php` (namespace `Syntropia`, port
+proche — inversion `[lon,lat]`→`[lat,lon]`, limites 4 Mo / 1500 points par
+tracé / 300 tracés). `conception-etude-site.php` gère l'action POST
+`importer` (upload multipart, calque cible choisi dans le formulaire lui-
+même, indépendant du calque actif à l'écran) — un simple POST qui rend la
+même page, exactement comme la référence sur `carte.php` : un fichier ne
+se poste pas en `fetch()` sans complexité ajoutée, et contrairement au
+cadastre/à l'eau/aux vents/au relief (des services distants interrogés
+depuis la page), importer est un geste ponctuel qui n'a pas besoin de
+rester sur une vue précise de la carte.
+
+**Test** : import réel d'un GeoJSON (polygone + ligne avec `elevation`)
+sur le calque « végétation » — 2 tracés posés, inversion lon/lat vérifiée
+en base, anneau fermé dédupliqué, l'altitude devenue libellé (« 145,5
+m ») ; coordonnées façon Lambert 93 refusées avec le message dédié, rien
+n'écrit en base ; 350 tracés synthétiques → exactement 300 posés avec le
+message de troncature. Limite des 4 Mo et cas d'entrée (vide, JSON
+illisible, sans géométrie, type inconnu) vérifiés en appelant
+`Geojson::lire()` directement (fonction pure, sans base ni réseau) —
+`upload_max_filesize` du serveur local (2 Mo) est de toute façon plus
+bas que le plafond de la classe (4 Mo), donc un vrai upload HTTP ne
+peut pas exercer ce cas précis ici. L'allègement à 1500 points vérifié
+sur une ligne à 3000 points (1501 points gardés — les deux extrémités
+sont toujours conservées, d'où le +1 possible sur la cible : comportement
+voulu, pas un bug, voir le commentaire de `alleger()`). Formulaire
+d'import à l'intérieur du même panneau Données que tout le reste,
+donc soumis à la même garde `$peutEcrire` déjà vérifiée en Phase 5.
 
 ## Ce que ce plan exclut explicitement
 

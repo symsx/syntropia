@@ -42,6 +42,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Database.php           connexions PDO — syntropia_comptes, syntropia
   Role.php, Profil.php   énumérations — droits et profils
   FicheTerrain.php       contenu des 7 fiches de relevé de sol — voir releve-vierge.php
+  Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
+  Geojson.php             lit un GeoJSON externe (ContourBuddy, QGIS, Géoportail…), un tracé par morceau — inversion [lon,lat]→[lat,lon]
   Documentation.php      lit contenu/*.md, un chapitre par ligne « # » — livrets et glossaire
   Web/
     Comptes.php            dépôt des comptes (base syntropia_comptes)
@@ -53,6 +55,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
     Cadastre.php             parcelles cadastrales IGN (API Carto) — éphémère, jamais stocké ; appelé par api-cadastre.php
     Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
+    Vents.php                rose des vents calculée à la demande (Open-Meteo) — jamais persistée ; appelé par conception-etude-site.php
+    Altimetrie.php           altitude IGN — un point, ou une grille pour le relief ; filtre le sentinel z=-99999 ; appelé par api-altitude.php
 contenu/
   .htaccess              refuse tout accès web
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -101,6 +105,7 @@ public/                racine servable du site en refonte
   api-calques.php            POST ajouter/modifier/retirer un tracé — appelée par conception-etude-site.php (assets/js/calques.js)
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
+  api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
     js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
@@ -328,12 +333,12 @@ récit.*
   « pour chaque parcelle », mêmes données absentes que le scénario).
   Les deux demandent un vrai scénario en base, qui n'existe pas encore.
   `conception-etude-site.php` (la carte interactive) n'est plus
-  reportée du tout : `pret: true` depuis la Phase 5 du chantier (voir
-  `chantier-carte-interactive.md`), page vivante et dessinable — restent
-  Cadastre/Eau/Vents/Relief/Import GeoJSON (Phases 6-10, enrichissent une
-  page déjà utilisable, ne touchent plus `etapes.js`). Chaque étape reste
-  accessible en la sautant : le mécanisme « phase → première étape
-  prête » (`gabarit.js`) passe par-dessus sans lien mort.
+  reportée du tout : `pret: true` depuis la Phase 5, et le chantier
+  « carte interactive du terrain » est maintenant terminé, dix phases
+  faites — cadastre IGN, eau OpenStreetMap, rose des vents, relief IGN
+  et import GeoJSON tous en place (voir `chantier-carte-interactive.md`).
+  Chaque étape reste accessible en la sautant : le mécanisme « phase →
+  première étape prête » (`gabarit.js`) passe par-dessus sans lien mort.
 
 **Construit et vérifié** :
 
@@ -430,6 +435,71 @@ récit.*
   refusés (403). **Le 429/504 s'est présenté pour de vrai** en sollicitant
   Overpass en rafale pendant le test — message et ré-activation du
   bouton corrects, sans code à simuler pour le vérifier.
+- **La rose des vents — Phase 8 du chantier carte, 2026-09-16.**
+  `src/Web/Vents.php` (port proche : `rose()`/`agreger()`, 16 secteurs,
+  `ANNEES_DEFAUT=5`, `SEUIL_FORT_KMH=20.0`). Pas d'API JSON séparée — un
+  simple `<form method="post" action="rose">` qui rend la même page,
+  comme la référence, mais rangé dans le panneau Données
+  (`#vents-rose-bloc`) plutôt qu'une section documentaire toujours
+  visible : il n'apparaît que calque « vents » choisi, et le panneau se
+  rouvre tout seul sur ce calque après l'envoi pour que le résultat soit
+  visible sans reclic. `dessinerElement()` savait déjà tracer les flèches
+  de vent avec épaisseur selon l'intensité depuis la Phase 5 — non
+  branché à une vraie rose jusqu'ici, mais aucune ligne de JS à changer.
+  Vérifié sur un point réel (Limoges — même station que la vérification
+  de convention météorologique du dépôt de référence) : rose SVG +
+  tableau des 5 secteurs dominants affichés, message dédié si les
+  coordonnées manquent. Open-Meteo a répondu « occupé » pour de vrai
+  pendant des essais rapprochés — dégradation correcte, comme Overpass en
+  Phase 7.
+- **Le relief sur la carte — Phase 9 du chantier carte, 2026-09-16.**
+  `src/Relief.php` (port proche, sans `iso()` — la vue 3D reste hors
+  périmètre) et `src/Web/Altimetrie.php` (port proche, filtre le
+  sentinel IGN `z=-99999`). `public/api-altitude.php` — **sans
+  équivalent direct côté référence**, qui relève sa grille sur une page
+  séparée (`relief.php`, avec vue 3D et côté/pas saisis à la main, tous
+  deux exclus ici) ; le fichier référence du même nom sert une tout
+  autre fonction. Ici le carré à relever se déduit de l'emprise du fond
+  déjà tracé (`Calques::empriseDuTerrain()`), comme l'eau en Phase 7 —
+  rien à saisir, le pas s'ajuste pour viser ~40×40 points. Un seul
+  relevé par site, le suivant remplace le précédent. Les courbes ne sont
+  pas stockées : `conception-etude-site.php` les recalcule à chaque
+  chargement (même logique que la référence sur `carte.php`), et
+  `api-altitude.php` les calcule aussi dans sa réponse pour un affichage
+  immédiat. `dessinerElement()` savait déjà tracer un élément `grille`
+  depuis la Phase 5, jamais exercé faute de donnée réelle jusqu'ici.
+  Vérifié sur un relevé réel en haute montagne (Hautes-Alpes,
+  44.9319/6.2331) : 1681 points en 12 appels IGN, 538 courbes de niveau
+  affichées avec altitudes, pente moyenne 108,7 % exposée nord-ouest ;
+  un second relevé remplace le premier ; hors couverture IGN (testé sur
+  Londres) le message dédié apparaît et rien ne s'enregistre ; site
+  étranger et accès anonyme refusés (403). L'amincissement au-delà du
+  plafond de segments vérifié directement sur les données réelles
+  récupérées (fonction pure) : 538 segments ramenés à 67 avec un plafond
+  de 100.
+- **Import GeoJSON — Phase 10 du chantier carte, dernière phase,
+  2026-09-16. Le chantier « carte interactive du terrain » est
+  terminé, dix phases faites.** `src/Geojson.php` (port proche :
+  `FeatureCollection`/`Feature`/`GeometryCollection`, géométries simples
+  et multiples — un multiple donne un tracé par morceau —, inversion
+  `[lon,lat]`→`[lat,lon]`, limites 4 Mo / 1500 points par tracé / 300
+  tracés). `conception-etude-site.php` gère l'action POST `importer`
+  (upload multipart, calque cible choisi dans le formulaire, indépendant
+  du calque actif à l'écran) — un simple POST qui rend la même page,
+  comme la référence sur `carte.php` : contrairement au cadastre/à
+  l'eau/aux vents/au relief, importer est un geste ponctuel qui n'a pas
+  besoin de rester sur une vue précise. Formulaire dans le même panneau
+  Données que tout le reste, donc sous la même garde `$peutEcrire`.
+  Vérifié : import réel (polygone + ligne avec `elevation`) — inversion
+  lon/lat correcte en base, anneau fermé dédupliqué, altitude devenue
+  libellé ; coordonnées Lambert 93 refusées avec le message dédié, rien
+  écrit ; 350 tracés synthétiques → exactement 300 posés avec message de
+  troncature ; cas limites (fichier vide, JSON illisible, sans
+  géométrie, type inconnu, trop gros, ligne à 3000 points allégée à
+  1500±1) vérifiés en appelant `Geojson::lire()` directement — le
+  plafond `upload_max_filesize` du serveur local (2 Mo) est de toute
+  façon plus bas que celui de la classe (4 Mo), un vrai upload ne peut
+  donc pas exercer ce cas précis ici.
 - **Les mots techniques expliqués au survol** — tout `.terme` (span,
   `data-explique="..."`) vient de `contenu/glossaire.md`
   (`Documentation::glossaire()`/`::terme()`), même source qu'une page
@@ -513,32 +583,23 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-1. **Chantier « carte interactive du terrain »** — Phases 1 à 7 faites,
-   `conception-etude-site.php` vivante et `pret: true`, cadastre IGN et
-   recherche d'eau (Overpass) en place. **Phase 8 ensuite** : Vents
-   (Open-Meteo), rose calculée à la demande depuis `site.latitude`/
-   `longitude`, jamais persistée. Deux phases restent après (Relief,
-   Import GeoJSON), toutes enrichissent la page déjà utilisable sans plus
-   toucher `etapes.js`. Plan complet, détaillé phase par phase avec
-   fichiers et tests :
-   `chantier-carte-interactive.md`.
-2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
+1. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de
    coordonnées (seulement des codes postaux américains) ; calculable
-   depuis un historique météo (Open-Meteo, même source que la Phase 8
-   du chantier carte — voir `chantier-carte-interactive.md`).
+   depuis un historique météo (Open-Meteo, même source que la rose des
+   vents de `conception-etude-site.php` — voir `src/Web/Vents.php`).
    Remplacerait le champ texte libre actuel de `definition-site.php`.
-3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+2. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-4. **`autres-documentations.php`** — page publique restante, non
+3. **`autres-documentations.php`** — page publique restante, non
    commencée.
-5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+4. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
    dans le menu du compte).
-6. **Au-delà du premier tour** : rien ne relit encore les réponses
+5. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+6. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-8. Aucune procédure n'automatise `bin/deployer.py` après chaque
+7. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.

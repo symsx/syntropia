@@ -503,6 +503,13 @@
     var v = $('trace-intensite-champ');
     var surLesVents = (enCours ? enCours.calque : (choixCalque || {}).value) === 'vents';
     if (v) { v.hidden = !surLesVents; }
+    // La rose ne se trace pas : elle s'affiche tant qu'on est sur le
+    // calque des vents, tracé en cours ou non — au contraire du champ
+    // d'intensité ci-dessus, qui ne sert qu'une fois le tracé commencé.
+    var r = $('vents-rose-bloc');
+    if (r) { r.hidden = (choixCalque || {}).value !== 'vents'; }
+    var rf = $('relief-bloc');
+    if (rf) { rf.hidden = (choixCalque || {}).value !== 'relief'; }
   }
   function ajouterPoint(e) {
     enCours.points.push(latlon(e));
@@ -593,7 +600,7 @@
       changerMode(String(id).replace(/^outil-/, ''));
     });
   }
-  /* L'EAU DÉJÀ CARTOGRAPHIÉE — Phase 7, inerte pour l'instant (voir en-tête). */
+  /* L'EAU DÉJÀ CARTOGRAPHIÉE — un clic, un appel, sur l'emprise du fond. */
   var boutonEau = $('eau-chercher');
   if (boutonEau && cfg.peutEcrire && cfg.apiEau) {
     var blocEau = document.querySelector('.chercher-eau');
@@ -616,6 +623,35 @@
         .catch(function () {
           boutonEau.disabled = false;
           texte('eau-etat', "Le service n'a pas répondu. L'eau se trace à la main.");
+        });
+    });
+  }
+  /* LE RELIEF — une grille d'altitudes IGN sur l'emprise du fond, comme
+   * l'eau. Un seul relevé par site : le nouveau remplace l'ancien, ici
+   * comme au serveur — sinon l'ancienne grille resterait visible jusqu'au
+   * rechargement. */
+  var boutonAltitude = $('altitude-relever');
+  if (boutonAltitude && cfg.peutEcrire && cfg.apiAltitude) {
+    boutonAltitude.addEventListener('click', function () {
+      boutonAltitude.disabled = true;
+      texte('altitude-etat', "Je relève les altitudes IGN sur l'emprise du terrain…");
+      fetch(cfg.apiAltitude, { method: 'POST', body: new URLSearchParams({
+        csrf: cfg.csrf, site_id: cfg.siteId }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          boutonAltitude.disabled = false;
+          texte('altitude-etat', j.message || '');
+          if (j.ok && j.element) {
+            elements = elements.filter(function (e) {
+              return !(e.calque === 'relief' && e.type === 'grille');
+            }).concat([j.element]);
+            if (boutonCentrer) { boutonCentrer.hidden = false; }
+            listes(); tout();
+          }
+        })
+        .catch(function () {
+          boutonAltitude.disabled = false;
+          texte('altitude-etat', "Le service n'a pas répondu. Réessayez dans un moment.");
         });
     });
   }
