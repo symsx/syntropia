@@ -34,8 +34,18 @@ final class Cadastre
 
     private const DELAI_SECONDES = 10;
 
-    /** Au-delà, ce n'est plus un terrain qu'on regarde, c'est un quartier. */
-    public const COTE_MAX_M = 600.0;
+    /**
+     * Au-delà, ce n'est plus un terrain qu'on regarde, c'est un quartier.
+     *
+     * 600 m était injoignable en pratique : au zoom maximal de `carte.js`
+     * (18, ~0,4 m/pixel sous nos latitudes), un écran ordinaire affiche déjà
+     * 700 à 900 m de côté — le message « zoomez » restait donc affiché même
+     * zoom au maximum. Remonté à 2000 m, signalé par le porteur le
+     * 2026-09-18 (« le zoom est au maximum possible », capture à l'appui) —
+     * large marge sur les écrans les plus larges, et cohérent avec le
+     * terrain agroforestier visé ici, souvent bien plus grand qu'un jardin.
+     */
+    public const COTE_MAX_M = 2000.0;
 
     /**
      * Les parcelles qui touchent un carré centré sur un point.

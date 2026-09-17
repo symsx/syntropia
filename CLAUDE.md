@@ -422,7 +422,8 @@ récit.*
   `chantier-carte-interactive.md` § Phase 5.
 - **Le cadastre sur la carte — Phase 6 du chantier carte, 2026-09-16.**
   `src/Web/Cadastre.php` (port proche : `autour()`, `dansEmprise()`,
-  `parReference()`, `COTE_MAX_M=600`) et `public/api-cadastre.php`
+  `parReference()`, `COTE_MAX_M` — 600 à l'origine, voir correction
+  ci-dessous) et `public/api-cadastre.php`
   (POST, lecture seule — `roleSur() !== null`, pas `peutEcrireSur()` : on
   regarde, on n'écrit rien). `conception-etude-site.php` ajoute
   `apiCadastre` à la config JSON et la case « Voir le cadastre » dans le
@@ -432,7 +433,12 @@ récit.*
   parcelles IGN affichées en trait fin par-dessus la carte, `SELECT
   COUNT(*) FROM calque_element` reste à zéro après usage, la garde des
   600 m de côté refuse poliment une emprise trop large, anonyme et site
-  non ouvert au compte tous deux refusés (403).
+  non ouvert au compte tous deux refusés (403). **Correction du
+  2026-09-18** : 600 m était en pratique injoignable — au zoom maximal
+  de `carte.js` (18), un écran ordinaire affiche déjà 700 à 900 m de
+  côté, donc le message « zoomez » restait affiché même zoom au
+  maximum (signalé par le porteur, capture à l'appui). `COTE_MAX_M`
+  remonté à 2000.
 - **L'eau sur la carte — Phase 7 du chantier carte, 2026-09-16.**
   `src/Web/Eau.php` (port proche : `dansEmprise()`, `COTE_MAX_M=3000`,
   `MARGE_M=100`, gestion HTTP 429/504) et `public/api-eau.php` (POST,
