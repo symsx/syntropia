@@ -139,6 +139,12 @@
 
   /* --------------------------------------------------- glisser un bord */
   var enCours = null;
+  // Le bord opposé, et la dimension de la parcelle qu'ils se partagent —
+  // nord et sud dans la largeur, ouest et est dans la longueur. Une
+  // bordure ne peut pas grandir au-delà de ce que l'autre lui laisse :
+  // au-delà, elle sortirait de la parcelle plutôt que de la border.
+  var OPPOSE = { nord: 'sud', sud: 'nord', ouest: 'est', est: 'ouest' };
+  var CHAMP_DIMENSION = { nord: champLargeur, sud: champLargeur, ouest: champLongueur, est: champLongueur };
   function versMetres(xEcran, yEcran){
     var ctm = svg.getScreenCTM();
     if (!ctm) return null;
@@ -164,7 +170,10 @@
     if (!point) return;
     var dx = (point.x - enCours.depart.x) / 100, dy = (point.y - enCours.depart.y) / 100;
     var delta = { nord: dy, sud: -dy, ouest: dx, est: -dx }[enCours.cote] || 0;
-    var largeur = Math.max(0.1, enCours.largeurDepart + delta);
+    var dimension = Math.max(1, nombre(CHAMP_DIMENSION[enCours.cote].value));
+    var oppose = nombre(champDe(OPPOSE[enCours.cote]).value);
+    var plafond = Math.max(0.1, dimension - oppose);
+    var largeur = Math.min(plafond, Math.max(0.1, enCours.largeurDepart + delta));
     champDe(enCours.cote).value = fmt(largeur);
     redessiner();
     montrerBulle(enCours.rect);
