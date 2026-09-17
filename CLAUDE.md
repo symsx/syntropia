@@ -86,6 +86,7 @@ bin/
   compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
   deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
   catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario)
+  lancer-local.sh          lance dev.py et ouvre Firefox dès que le port répond — pour le lanceur de bureau, pas l'usage courant (dev.py seul suffit)
 public/                racine servable du site en refonte
   .htaccess              seul dossier accessible ; type MIME et cache des polices
   index.php               page publique — présente l'atelier, oriente. Accueil = « / », sans nom de fichier
@@ -150,7 +151,9 @@ décrit ci-dessous. Détail des décisions et de ce qui reste à porter dans
   `bin/dev.py etat` (diagnostic seul), `init` (schéma seul), `serve`
   (sert seul). Ne crée jamais les bases ou l'utilisateur MySQL — ça
   demande des droits d'administration, voir `architecture-technique.md`
-  § Le backend.
+  § Le backend. Un lanceur de bureau (« Syntropia (local) », hors dépôt —
+  propre à ce poste) appelle `bin/lancer-local.sh`, qui fait la même
+  chose puis ouvre Firefox dès que le port répond.
 - Créer ou modifier un compte : `python3 bin/dev.py compte` — demande
   identifiant/nom/rôle puis le mot de passe au clavier (deux fois, sans
   l'afficher). C'est la voie du **premier compte** : `inscription.php`
