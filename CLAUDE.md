@@ -26,6 +26,10 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-scenario-plantation.md` — le plan détaillé (4 phases) du
   scénario de plantation et de la base de végétaux, proposé le
   2026-09-18, pas encore commencé — voir § Point de reprise.
+- `chantier-plan-de-parcelle.md` — le plan détaillé (2 phases) de la
+  persistance du plan de parcelle (bordures, sens des planches,
+  dimensions), proposé le 2026-09-18, pas encore commencé — réplique
+  partielle et assumée de la référence, voir § Point de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -667,23 +671,34 @@ il apparaît réellement, pour ne pas noyer le motif.
    (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
    le plan, § Décisions tranchées) : le niveau d'accompagnement à
    donner à la conduite jardin-forêt dès cette première version.
-2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
+2. **Chantier « plan de parcelle »** — plan dans
+   `chantier-plan-de-parcelle.md` (2 phases : persister le plan —
+   bordures, sens des planches, dimensions —, puis faire converger
+   `nb_planches` avec la carte interactive). Proposé le 2026-09-18 suite
+   à un signalement du porteur (une parcelle affichait toujours 8 × 12 m,
+   rien ne s'enregistrait — le prototype SVG de `conception-parcelles.php`
+   est resté volontairement côté client depuis la Phase 3 du chantier
+   carte). Réplique partielle et assumée de la référence
+   (`src/Plan.php`/`ImplantationBordures.php`) : ni bordures internes, ni
+   assignation d'espèce (suppose `scenario_ligne`, pas encore construit),
+   ni formes non rectangulaires — voir le plan, § Ce que ce plan exclut.
+3. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de
    coordonnées (seulement des codes postaux américains) ; calculable
    depuis un historique météo (Open-Meteo, même source que la rose des
    vents de `conception-etude-site.php` — voir `src/Web/Vents.php`).
    Remplacerait le champ texte libre actuel de `definition-site.php`.
-3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-4. **`autres-documentations.php`** — page publique restante, non
+5. **`autres-documentations.php`** — page publique restante, non
    commencée.
-5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+6. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
    dans le menu du compte).
-6. **Au-delà du premier tour** : rien ne relit encore les réponses
+7. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+8. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-8. Aucune procédure n'automatise `bin/deployer.py` après chaque
+9. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
