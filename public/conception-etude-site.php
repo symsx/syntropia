@@ -11,7 +11,6 @@ use Syntropia\Relief;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Calques;
-use Syntropia\Web\Eau;
 use Syntropia\Web\Sites;
 use Syntropia\Web\Vents;
 
@@ -246,7 +245,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .pd-bouton-discret:hover{ background:var(--accent-fond); }
 
   .chercher-eau{ border-left:2px solid #2E6E9E; padding-left:.7rem; margin:0 0 .9rem; }
-  .chercher-eau .pd-aide{ margin:.3rem 0 0; }
+  .chercher-eau .pd-aide{ display:block; margin:.3rem 0 0; }
 
   .cadastre-bascule{ border-left:2px solid var(--accent); padding-left:.7rem; margin:.7rem 0 0; }
   .cadastre-bascule label{ display:flex; align-items:center; gap:.4rem; font:600 .82rem var(--titre); color:var(--ink); cursor:pointer; }
@@ -415,13 +414,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="chercher-eau" hidden>
           <button type="button" id="eau-chercher" class="pd-bouton-discret">Chercher l'eau d'OpenStreetMap</button>
           <span class="pd-aide"><strong>Tracez d'abord les limites du terrain</strong> — à la main,
-             ou en suivant le cadastre. <strong>Ce sont elles qui bornent la recherche</strong> :
-             sinon je ramènerais la rivière du département. Je cherche à
-             <?= (int) Eau::MARGE_M ?> m autour, parce que l'eau du voisin compte, et je ramène
-             les cours d'eau à ce qui longe le terrain.</span>
-          <span class="pd-aide">Rivières, ruisseaux, fossés, mares, zones humides et sources déjà
-             cartographiés se posent sur le calque de l'eau. <strong>Ce qui est posé reste
-             modifiable</strong>, et vous complétez : un fossé récent n'est jamais sur la carte.</span>
+             ou en suivant le cadastre.</span>
           <span class="pd-aide" id="eau-etat"></span>
         </p>
 

@@ -108,6 +108,6 @@ foreach ($resultat['traces'] as $trace) {
 $message = count($poses) . ' élément' . (count($poses) > 1 ? 's posés' : ' posé')
     . ' sur le calque de l\'eau'
     . ($deja > 0 ? ', et ' . $deja . ' qui y ' . ($deja > 1 ? 'étaient' : 'était') . ' déjà' : '')
-    . '. À vous de compléter : un fossé récent n\'est jamais sur la carte.';
+    . '.';
 
 repondre(200, ['ok' => true, 'elements' => $poses, 'message' => $message]);
