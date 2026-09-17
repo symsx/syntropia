@@ -26,9 +26,13 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
 - `skills-map/` — carte des compétences métier nécessaires aux étapes de
-  l'atelier (skill `organisation-skills`), sourcée depuis
-  `/home/sylvain/projets/syntropie/connaissances/` — lecture seule, ce
-  corpus n'est ni recopié ni modifié ici.
+  l'atelier (skill `organisation-skills`), dont les noeuds citent
+  `connaissances/`.
+- `connaissances/` — la base sourcée par `skills-map/` : importée telle
+  quelle du projet `syntropie` le 2026-09-17, celui-ci étant voué à
+  disparaître. Avant cette date, c'était un corpus externe en lecture
+  seule (`/home/sylvain/projets/syntropie/connaissances/`), jamais
+  recopié ; il vit maintenant ici, modifiable comme le reste du dépôt.
 
 ## Arborescence
 
@@ -120,7 +124,9 @@ composants/            un dossier par zone du gabarit, réutilisable entre pages
 skills-map/            carte des compétences métier — un noeud par domaine
   INDEX.md               le tronc, groupé par phase de l'atelier
   nodes/*.md             un fichier par domaine (diagnostic des sols, cycles
-                         de l'eau, forêt-jardin…), sourcé sur connaissances/
+                         de l'eau, forêt-jardin…), cite connaissances/
+connaissances/         la base citée par skills-map/ — un dossier par domaine,
+                       importée du projet syntropie le 2026-09-17
 .claude/skills/
   organisation-skills/    le skill qui maintient skills-map/
 ```
@@ -527,6 +533,20 @@ récit.*
   session cantonné à `/syntropia/`. Reste ouvert : aucune procédure
   n'automatise `deployer.py` après chaque changement — à relancer à la
   main.
+- **Le chantier « carte interactive du terrain » est déployé —
+  2026-09-16.** `bin/deployer.py fichiers` a envoyé les 20 fichiers des
+  Phases 4 à 10 (10 dans `public/`, 10 dans `src/`), sans changement de
+  schéma ni de `config/base.php`. Vérifié en ligne au `curl` juste
+  après : page protégée redirige l'anonyme (302), les quatre API
+  (`api-calques`/`api-cadastre`/`api-eau`/`api-altitude`) refusent le
+  POST anonyme (403), `assets/js/calques.js` se sert (200), `src/`
+  reste protégé (403). **Reste à vérifier pour de vrai** : que les
+  appels sortants du chantier (tuiles OSM, IGN Carto/Altimétrie,
+  Overpass, Open-Meteo) passent bien depuis les serveurs alwaysdata —
+  un hébergement mutualisé filtre parfois le curl sortant, et rien de
+  cela n'a encore été testé en production, seulement en local. À faire
+  à la prochaine reprise avant de considérer le chantier vraiment fini
+  en ligne.
 - Sept pages publiques : `index.php`, `connexion.php` (redirige selon
   que le compte a déjà un site — corrigé le 2026-09-15, il retombait
   avant sur le mockup de `conception-parcelles.php` pour un compte tout
@@ -553,8 +573,23 @@ récit.*
   marche. Les autres pages du parcours, vérifiées à 412px, n'ont pas
   montré d'autre régression à ce jour.
 - `skills-map/` (skill `organisation-skills`) — 14 noeuds de
-  compétence métier, groupés par phase, sourcés sur
-  `/home/sylvain/projets/syntropie/connaissances/`.
+  compétence métier, groupés par phase, citant `connaissances/`.
+- **`connaissances/` importée du projet `syntropie` — 2026-09-17.**
+  89 fiches markdown + 1 JSON, copiées telles quelles (`diff -rq` contre
+  la source : identiques) depuis
+  `/home/sylvain/projets/syntropie/connaissances/`, ce projet étant voué
+  à disparaître. Les fichiers de `skills-map/nodes/*.md` citent déjà
+  `connaissances/<domaine>/` en chemin relatif — rien à réécrire là,
+  ces citations résolvent maintenant en local. **Restent externes,
+  non importées à la demande du porteur** : `application/` (le dépôt de
+  référence PHP) et les deux skills `atelier-syntropie-interface-
+  layout`/`atelier-syntropie-uiux` (déjà synchronisés au niveau du
+  compte Claude, donc probablement disponibles même après disparition
+  du dossier). Quelques noeuds de `skills-map/` citent aussi
+  `outils/fiches-terrain/` ou `referentiels/` du dépôt `syntropie`
+  (`diagnostic-des-sols.md`, `formation-joala.md`,
+  `cultures-associees.md`) — ces renvois-là resteront pendants tant que
+  ces dossiers-là ne sont pas eux aussi importés.
 - Arborescence protégée par `.htaccess`, sur le modèle exact du dépôt de
   référence — vérifiée pour de vrai en ligne (voir plus haut).
 - `dossier-qualification.md` — brief transmis à cgpt (rôle : responsable

@@ -1,0 +1,402 @@
+{
+  "date_versement": "2026-09-10",
+  "racine_source": "/home/sylvain/Documents/projet_de_vie/Formations/Joala_Syntropie",
+  "fichiers": [
+    {
+      "fichier": "La Vie en Syntropie.txt",
+      "nature": "synthèse fournie",
+      "octets": 6228,
+      "sha256": "cbc1ecfde45a76b421b53a70d1db0d054de8c276af4e43a179180ab6e496a8cb",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "fichier": "Transformer une pente en jardin-forêt grâce à l'hydrologie régénérative - Jardin d'un autre monde/synthese - Transformer une pente en jardin-forêt grâce à l'hydrologie régénérative.md",
+      "nature": "synthèse fournie",
+      "octets": 7064,
+      "sha256": "1ae6761a7567c3717e3c1ff9cd09ba86bb90f063be7bd1cdeeea0a1a5e5888be",
+      "fiche": "jardin-autre-monde-hydrologie.md"
+    },
+    {
+      "fichier": "Transformer une pente en jardin-forêt grâce à l'hydrologie régénérative - Jardin d'un autre monde/transcription - Transformer une pente en jardin-forêt grâce à l'hydrologie régénérative.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 59984,
+      "sha256": "4ebd82d01934bb0162f6d29fd27a93a4f0d4e729d230c057a500620a2d75790b",
+      "fiche": "jardin-autre-monde-hydrologie.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; En quête d'autonomie avec la Syntropie, avec Stéphane Molino/Destination Syntropie - En quête d'autonomie avec la Syntropie avec Stéphane Molino.txt",
+      "nature": "notes, support ou description",
+      "octets": 1520,
+      "sha256": "a10fa4293109d8763e4ae89cc51904b58397282f48a62740858520ee92ac01aa",
+      "fiche": "molino-autonomie.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; En quête d'autonomie avec la Syntropie, avec Stéphane Molino/synthese Destination Syntropie - En quête d'autonomie avec la Syntropie avec Stéphane Molino.md",
+      "nature": "synthèse fournie",
+      "octets": 6896,
+      "sha256": "aa1641e6a4512ace30743ed0bf1edd7b1d01bc4e35cdcd6632e519f8745f8fab",
+      "fiche": "molino-autonomie.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; En quête d'autonomie avec la Syntropie, avec Stéphane Molino/transcription Destination Syntropie - En quête d'autonomie avec la Syntropie avec Stéphane Molino.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 58698,
+      "sha256": "4653244128841af34a610aed064496df44a77509fe47d05ab10896e1ee2e2995",
+      "fiche": "molino-autonomie.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Forêt nourricière et Pépinière Syntropique, avec Benoit Andru/synthese - .md",
+      "nature": "synthèse fournie",
+      "octets": 6525,
+      "sha256": "e3c623817c45b14b8ec8dd8f38258b60cec617237c5003a67b7debc1c56bc0ad",
+      "fiche": "andru-pepiniere-et-bilan.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Forêt nourricière et Pépinière Syntropique, avec Benoit Andru/transcription - .txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 63118,
+      "sha256": "c03eb9bf54cabad3bd0284be505fbc13dfc75e18f1227aa03033a6efd3581ea9",
+      "fiche": "andru-pepiniere-et-bilan.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Gemmothérapie en Agroforesterie Syntropique/doc_synthese Destination Syntropie - Gemmothérapie en Agroforesterie Syntropique.md",
+      "nature": "synthèse fournie",
+      "octets": 7320,
+      "sha256": "990d7eda893cefa086a1a72156bcc4f10392ec64c919cc6eec29588bb9a31bfc",
+      "fiche": "production-de-bourgeons.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Gemmothérapie en Agroforesterie Syntropique/transcription Destination Syntropie - Gemmothérapie en Agroforesterie Syntropique.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 63123,
+      "sha256": "bc038382da9a769106de69ce0eb44fce1f5ef3f8505ac6cf7123b8201e375aa4",
+      "fiche": "production-de-bourgeons.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; La robustesse du vivant, solution aux risques naturels majeurs, avec Paul Dallongeville/WEBINAIRE ; La robustesse du vivant, solution aux risques naturels majeurs, avec Paul Dallongeville (français_ASR).srt",
+      "nature": "sous-titres, repérage temporel",
+      "octets": 173981,
+      "sha256": "f1b3e253269d708fc043525700a4c0cbc54bb4278ac7570b139c53b31d1a121c",
+      "fiche": "dallongeville-robustesse.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; La robustesse du vivant, solution aux risques naturels majeurs, avec Paul Dallongeville/synthese.md",
+      "nature": "synthèse fournie",
+      "octets": 6960,
+      "sha256": "2a4f7fd4d0b6fe74bd22bc0c60512a56668a6eadb7d0aa0820cbd2f7eb41e122",
+      "fiche": "dallongeville-robustesse.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; La robustesse du vivant, solution aux risques naturels majeurs, avec Paul Dallongeville/transcription.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 89198,
+      "sha256": "747f3c981fd28ca7e4a3508fec8f2ee6186da38e8075be64b817ba8364fe6f0c",
+      "fiche": "dallongeville-robustesse.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Science et Syntropie, avec Sylvain Takerkart de l'association Vvoum/synthese.md",
+      "nature": "synthèse fournie",
+      "octets": 7679,
+      "sha256": "d1dc219e48411015918572cd0e50222fab475d7d977d570dec08f8f059d2fdb3",
+      "fiche": "science-et-suivi-vvoum.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Science et Syntropie, avec Sylvain Takerkart de l'association Vvoum/transcription.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 94123,
+      "sha256": "dcc004ead26e576d309a81b16aee41aa14ca32a70294fc7b2a4cc52fa8a3951d",
+      "fiche": "science-et-suivi-vvoum.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Session d'entraide collective printanière !/synthese_Destination Syntropie - Session d entraide collective printanière.md",
+      "nature": "synthèse fournie",
+      "octets": 7314,
+      "sha256": "4b86c7a12c1f5fcf94e69abd215194e0970436a73582ec6bfde29f0f2fe61d99",
+      "fiche": "entraide-printaniere.md"
+    },
+    {
+      "fichier": "WEBINAIRE ; Session d'entraide collective printanière !/transcription_Destination Syntropie - Session d entraide collective printanière.txt",
+      "nature": "transcription, recoupements ciblés",
+      "octets": 65639,
+      "sha256": "39a8493489dce91e7c5483988e725f5c681ca19a476b993f3b094fa21f59488f",
+      "fiche": "entraide-printaniere.md"
+    },
+    {
+      "fichier": "calendrier_de_perturbations.txt",
+      "nature": "notes, support ou description",
+      "octets": 2624,
+      "sha256": "d468fe9286e6bd244ddb4413c2a1b1f3404602a22b0fae11d03162bc374b7d52",
+      "fiche": "calendrier-et-taille-hivernale.md"
+    },
+    {
+      "fichier": "quizz_systemes_syntropie.txt",
+      "nature": "notes, support ou description",
+      "octets": 1159,
+      "sha256": "ad440e40bbec4e0e6cf7362718d63ff9e6b4616bde2b2d5f21d01b742e2d5b37",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "fichier": "systeme_abondance.md",
+      "nature": "synthèse fournie",
+      "octets": 7386,
+      "sha256": "4552e284e2c9cf7d1b9af00099198b48cfbacede60300a33c6b4b6765706a1e5",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "fichier": "systemes_en_syntropie.txt",
+      "nature": "notes, support ou description",
+      "octets": 15007,
+      "sha256": "6e08cf9085a91f087cb2be4815b4be08997eac1b6631356bab3f873994ca301a",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "fichier": "taille_d_hiver_syntropie.txt",
+      "nature": "notes, support ou description",
+      "octets": 4034,
+      "sha256": "5bc0835c5d048612df8fdfc41b59398ec9d73e24fb01801537f68d991f26cdd0",
+      "fiche": "calendrier-et-taille-hivernale.md"
+    },
+    {
+      "fichier": "videos/Bilan Mind Map.txt",
+      "nature": "notes, support ou description",
+      "octets": 528,
+      "sha256": "a4b39b24764436aca84b191e425583f017f991dfa61411cbba7d615b85ce7c58",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "fichier": "videos/JOALA SYNTROPIE 1⁄3 (Description).txt",
+      "nature": "notes, support ou description",
+      "octets": 220,
+      "sha256": "fb50ed5a9e05747942c1f4ce353362b827859e788e27491451d4b44546ef07f0",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "fichier": "videos/accumulation.txt",
+      "nature": "notes, support ou description",
+      "octets": 1698,
+      "sha256": "c0f640df084fb754cdd85236d65783d9312655bc43588aa89d4e1b3f1fec9a11",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "fichier": "videos/calendrier.txt",
+      "nature": "notes, support ou description",
+      "octets": 1036,
+      "sha256": "068d1e471203c129451e9c183c52f2db82631e15e3cb68b57cf35b3b0a1adeb0",
+      "fiche": "calendrier-et-taille-hivernale.md"
+    },
+    {
+      "fichier": "videos/tortues.txt",
+      "nature": "notes, support ou description",
+      "octets": 14214,
+      "sha256": "51af7115e59ccf53f025d3ce5157f5ab987bc3bf576b9b312fe28f9ec5241ae2",
+      "fiche": "tortues-et-succession.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "1-2-podcast_.txt",
+      "nature": "synthèse générée",
+      "octets": 4679,
+      "sha256": "213f6d85b013c1abc58c1157b314da68bf5ffbcbb620b63498ea9f32af5cf796",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "1-3-bilan_mind_map.txt",
+      "nature": "transcription",
+      "octets": 3551,
+      "sha256": "b2b354c2c9d3987f7b695e811b78171ede3391b05e1c09452229aa8627b06013",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "2-1-systeme_de_colonisation.txt",
+      "nature": "synthèse générée",
+      "octets": 6601,
+      "sha256": "b771db90777ce8392958558c726a0ab2b5192f831afe504e0790f2b3a132687d",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "2-2-systeme_d_accumulation.txt",
+      "nature": "synthèse générée",
+      "octets": 5208,
+      "sha256": "249ff4a67e9b36fdb2ddeb197960dd96b4fcea98c52fcf9c33855363ac2b014a",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "2-3-systeme_d_abondance.txt",
+      "nature": "synthèse générée",
+      "octets": 6896,
+      "sha256": "4f0e39878c891fd4a8d7d664cb40fa86009052b7cdcfeb2dc28aa573197e9616",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "2-4-la_perturbation.txt",
+      "nature": "synthèse générée",
+      "octets": 4676,
+      "sha256": "d32eca99fabecf206d30027ab5a4fe9d6cf9a5ddbb9d983875b024ef2c0f6ae7",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-1-perturbation_d_hiver.txt",
+      "nature": "synthèse générée",
+      "octets": 4665,
+      "sha256": "9cb9adb5ee0c6ad3301977c73a36077f56d8d0f066f69f863c449140a82371d0",
+      "fiche": "calendrier-et-taille-hivernale.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-2-les_leviers_de_l_abondance.txt",
+      "nature": "synthèse générée",
+      "octets": 6353,
+      "sha256": "b4d0c8e19b057546985ba3f3e1530310f05f3437480dfccec9dc352efd745543",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-3-Comment_les_loups_changent_les_rivieres.txt",
+      "nature": "synthèse générée",
+      "octets": 4903,
+      "sha256": "4b749f3e79713dd1ec23f0d5f2458a7b7a19972742f874d1036349d5db0e160e",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-4-Comment_les baleines_changent_le_climat.txt",
+      "nature": "synthèse générée",
+      "octets": 4559,
+      "sha256": "dbf4a000bd26321874172cad9cbfc4d218e978f58887524f70654a4195b3796b",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-5-creer_un_scenario_planter_un_film.txt",
+      "nature": "synthèse générée + notes",
+      "octets": 9941,
+      "sha256": "2f5ca23dc0e1f9062a750c0dfddd291a763b9e9636e9bfc542ba80f49f69cb52",
+      "fiche": "strates-et-lumiere.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-6-vision du monde inclusif-exclusif.txt",
+      "nature": "synthèse générée",
+      "octets": 6474,
+      "sha256": "6359f565530b0b3cc4f750473b472ce76fde6bfdab75ad7db91d30a693c57ced",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-7-apres_le_gel.txt",
+      "nature": "synthèse générée",
+      "octets": 4751,
+      "sha256": "e22c1cd32f04e316285166e5048740cd645943e02cf4edfa02e659768daa860f",
+      "fiche": "calendrier-et-taille-hivernale.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-8-le_musee_des_erreurs.txt",
+      "nature": "synthèse générée",
+      "octets": 4345,
+      "sha256": "b71b14f2db880abbfb32a1883cd21e7f74c1378df3a48e850714a38f51aaca41",
+      "fiche": "systemes-et-abondance.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "3-9-la_vie_d_abord.txt",
+      "nature": "synthèse générée",
+      "octets": 4827,
+      "sha256": "69b8da8d07f3d0a1c5de0f0ea9191535e3b3e71e8dd8322c63f292a7d043a490",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-1-du_potager_au_jardin_foret.txt",
+      "nature": "synthèse générée",
+      "octets": 5399,
+      "sha256": "a401613da91cc96c00b54e31b50b8206ceb989035690496917d236a1fa4a6aeb",
+      "fiche": "tortues-et-succession.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-2-outil_fonction_et_plaisir_interne.txt",
+      "nature": "synthèse générée",
+      "octets": 6811,
+      "sha256": "5561eb13a754a66e7fd7ccd8b3d7f45b70cd18d482d3d5112c23c1d9b0820094",
+      "fiche": "principes-et-posture.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-3-plantations_printaniere_en_tortue_zebre.txt",
+      "nature": "synthèse générée",
+      "octets": 5828,
+      "sha256": "1ec32413c53967c6e4ae20c82e905c5d9a31bbec8f3567108d16bcea76ce03a0",
+      "fiche": "tortues-et-succession.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-4-commentaires_sur_le_holistic_management.txt",
+      "nature": "synthèse générée",
+      "octets": 5060,
+      "sha256": "156b38f58dcc98cd3459359e6801d7799927ea874508c340334eba0b95c1023f",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-5-holistic_management.txt",
+      "nature": "synthèse générée",
+      "octets": 4786,
+      "sha256": "0da003965bbcc6d1e7fe5070a475a3080a4114eb4c16818c78ceb63e5606cbdd",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "4-8-visite_abeille_zebre_fin_mai.txt",
+      "nature": "synthèse générée",
+      "octets": 5955,
+      "sha256": "824b2e7dcf1d2601866ed17cba3adcd5cf9cfe44c7575ddc7c3521ca7a7383cd",
+      "fiche": "tortues-et-succession.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "Allan-Savory-Restaureer_les_prairies_mondiales.txt",
+      "nature": "synthèse générée",
+      "octets": 6851,
+      "sha256": "1c59ffa85b735954c95ad10ffddbf6eeb2966b51b35fb5b04b15f79112a33a57",
+      "fiche": "perturbation-et-cascade-trophique.md"
+    },
+    {
+      "versement": "2026-09-17",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "accumulation.txt",
+      "nature": "doublon exact de videos/accumulation.txt (premier versement)",
+      "octets": 1698,
+      "sha256": "c0f640df084fb754cdd85236d65783d9312655bc43588aa89d4e1b3f1fec9a11",
+      "fiche": null
+    }
+  ]
+}

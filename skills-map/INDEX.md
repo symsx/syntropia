@@ -1,12 +1,14 @@
 # Carte des compétences métier — atelier Syntropie
 
 Tronc de la carte : une ligne par noeud, groupée par phase de l'atelier
-(`plan-du-site.md`). Source des noeuds : `/home/sylvain/projets/syntropie/connaissances/`
-— corpus en lecture seule, jamais recopié ni modifié ici. Chaque noeud
-renvoie vers son dossier source et, quand il existe, vers l'articulation
-qui le relie au cadre (`referentiels/articulation-*.md` du dépôt de
-référence). Voir `SKILL.md` (`.claude/skills/organisation-skills/`) pour
-la procédure d'ajout/liaison/fusion.
+(`plan-du-site.md`). Source des noeuds : `connaissances/`, importée le
+2026-09-17 du projet `syntropie` (voué à disparaître) — modifiable ici
+comme le reste du dépôt. Chaque noeud renvoie vers son dossier source
+et, quand il existe, vers l'articulation qui le relie au cadre
+(`referentiels/articulation-*.md` du dépôt `syntropie` — ce dossier-là
+reste externe, non importé). Voir `SKILL.md`
+(`.claude/skills/organisation-skills/`) pour la procédure
+d'ajout/liaison/fusion.
 
 ## Fondamentaux — le socle syntropique
 
