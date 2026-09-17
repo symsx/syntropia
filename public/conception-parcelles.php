@@ -312,9 +312,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <rect class="plan-bordure" data-cote="ouest" id="bordure-ouest" x="0"    y="0"   width="40"   height="800"/>
           <rect class="plan-bordure" data-cote="est"   id="bordure-est"   x="1160" y="0"   width="40"   height="800"/>
 
-          <line class="plan-fleche" x1="0" y1="-16" x2="1200" y2="-16" marker-start="url(#fl)" marker-end="url(#fl)"/>
+          <line class="plan-fleche" id="fleche-longueur" x1="0" y1="-16" x2="1200" y2="-16" marker-start="url(#fl)" marker-end="url(#fl)"/>
           <text class="plan-mesure" id="mesure-longueur" x="600" y="-24" text-anchor="middle">12,00 m</text>
-          <line class="plan-fleche" x1="-16" y1="0" x2="-16" y2="800" marker-start="url(#fl)" marker-end="url(#fl)"/>
+          <line class="plan-fleche" id="fleche-largeur" x1="-16" y1="0" x2="-16" y2="800" marker-start="url(#fl)" marker-end="url(#fl)"/>
           <text class="plan-mesure" id="mesure-largeur" x="-24" y="400" text-anchor="middle" transform="rotate(-90 -24 400)">8,00 m</text>
 
           <text class="plan-cote" x="600" y="24" text-anchor="middle">nord</text>
@@ -346,6 +346,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <div class="pd-ligne">
           <span class="pd-ligne-nom">Largeur (nord ↔ sud)</span>
           <input type="text" id="in-largeur" value="8,00" inputmode="decimal">
+        </div>
+
+        <p class="pd-titre">Sens des planches</p>
+        <div class="parc-choix">
+          <label><input type="radio" class="radio" name="sens-planches" id="sens-nord-sud" value="nord-sud" checked>Nord ↔ Sud</label>
+          <label><input type="radio" class="radio" name="sens-planches" id="sens-est-ouest" value="est-ouest">Est ↔ Ouest</label>
         </div>
 
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>

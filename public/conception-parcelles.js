@@ -45,26 +45,54 @@
 
     document.getElementById('mesure-longueur').setAttribute('x', L / 2);
     document.getElementById('mesure-longueur').textContent = fmt(longueur) + ' m';
-    document.querySelector('[x1="0"][y1="-16"]').setAttribute('x2', L);
+    document.getElementById('fleche-longueur').setAttribute('x2', L);
+    document.getElementById('fleche-largeur').setAttribute('y2', H);
+    document.getElementById('mesure-largeur').setAttribute('y', H / 2);
+    document.getElementById('mesure-largeur').setAttribute('transform', 'rotate(-90 -24 ' + (H / 2) + ')');
     document.getElementById('mesure-largeur').textContent = fmt(largeur) + ' m';
 
-    // planches, dans la zone utile
+    // planches, dans la zone utile — nord-sud par défaut (une planche par
+    // largeur, juxtaposées d'ouest en est) ; est-ouest sur demande (une
+    // planche par longueur, empilées du nord au sud). Dans un petit
+    // potager syntropique, le sens compte peu — les strates émergentes
+    // dominent la lumière quel que soit le sens des lignes (connaissances/
+    // livre-bienvenue-en-syntropie/ch08-au-potager-syntropique.md) — mais
+    // le choix reste au porteur, pour une parcelle pérenne ou une
+    // préférence de terrain.
     var planches = document.getElementById('planches');
     planches.innerHTML = '';
     var largeurUtile = Math.max(0, longueur - b.ouest - b.est);
     var hauteurUtile = Math.max(0, largeur - b.nord - b.sud);
     var pas = PLANCHE + PASSE_PIED;
-    var nbPlanches = hauteurUtile > PLANCHE ? Math.max(1, Math.floor((hauteurUtile - PLANCHE) / pas) + 1) : (hauteurUtile > 0 ? 1 : 0);
-    var yDepart = b.nord * ECH;
-    for (var i = 0; i < nbPlanches; i++){
-      var y = yDepart + i * pas * ECH;
-      var h = Math.min(PLANCHE * ECH, (largeur - b.sud) * ECH - y);
-      if (h <= 0) break;
-      var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      rect.setAttribute('class', 'plan-planche');
-      rect.setAttribute('x', bo); rect.setAttribute('y', y);
-      rect.setAttribute('width', Math.max(0, L - bo - be)); rect.setAttribute('height', h);
-      planches.appendChild(rect);
+    var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
+    var sens = sensChoisi ? sensChoisi.value : 'nord-sud';
+    var nbPlanches;
+    if (sens === 'nord-sud'){
+      nbPlanches = largeurUtile > PLANCHE ? Math.max(1, Math.floor((largeurUtile - PLANCHE) / pas) + 1) : (largeurUtile > 0 ? 1 : 0);
+      var xDepart = b.ouest * ECH;
+      for (var i = 0; i < nbPlanches; i++){
+        var x = xDepart + i * pas * ECH;
+        var w = Math.min(PLANCHE * ECH, (longueur - b.est) * ECH - x);
+        if (w <= 0) break;
+        var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('class', 'plan-planche');
+        rect.setAttribute('x', x); rect.setAttribute('y', bn);
+        rect.setAttribute('width', w); rect.setAttribute('height', Math.max(0, H - bn - bs));
+        planches.appendChild(rect);
+      }
+    } else {
+      nbPlanches = hauteurUtile > PLANCHE ? Math.max(1, Math.floor((hauteurUtile - PLANCHE) / pas) + 1) : (hauteurUtile > 0 ? 1 : 0);
+      var yDepart = b.nord * ECH;
+      for (var j = 0; j < nbPlanches; j++){
+        var y = yDepart + j * pas * ECH;
+        var h = Math.min(PLANCHE * ECH, (largeur - b.sud) * ECH - y);
+        if (h <= 0) break;
+        var rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect2.setAttribute('class', 'plan-planche');
+        rect2.setAttribute('x', bo); rect2.setAttribute('y', y);
+        rect2.setAttribute('width', Math.max(0, L - bo - be)); rect2.setAttribute('height', h);
+        planches.appendChild(rect2);
+      }
     }
 
     var surfaceUtile = largeurUtile * hauteurUtile;
@@ -74,7 +102,7 @@
     document.getElementById('r-lineaire').textContent = fmt(lineaire) + ' m';
   }
 
-  document.querySelectorAll('.bordure-active, .bordure-largeur, #in-longueur, #in-largeur').forEach(function(el){
+  document.querySelectorAll('.bordure-active, .bordure-largeur, #in-longueur, #in-largeur, input[name="sens-planches"]').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
   });
@@ -153,6 +181,7 @@
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });
+    document.getElementById('sens-nord-sud').checked = true;
     redessiner();
   });
 
