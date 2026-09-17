@@ -183,7 +183,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   svg.calques{ position:absolute; inset:0; z-index:3; width:100%; height:100%; pointer-events:none; touch-action:none; }
   .calque-etiquette{
     font:600 .78rem var(--texte); paint-order:stroke fill;
-    stroke:var(--surface); stroke-width:3px; stroke-linejoin:round;
+    /* #fff fixe, jamais var(--surface) : les tuiles OpenStreetMap restent
+       toujours claires, thème sombre ou non — un contour calé sur le
+       thème (sombre) devenait illisible sur ce fond qui, lui, ne change
+       pas. Même logique que le cercle d'un point, déjà stroke:#fff plus
+       haut dans ce fichier. */
+    stroke:#fff; stroke-width:3px; stroke-linejoin:round;
   }
 
   .carte-reglures{
