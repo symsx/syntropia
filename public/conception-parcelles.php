@@ -52,6 +52,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'passe_pied_m'      => $_POST['passe_pied_m'] ?? '',
             'longueur_m'        => $_POST['longueur_m'] ?? '',
         ]);
+        // Appelé en tâche de fond par conception-parcelles.js (voir plus bas) :
+        // une redirection rechargerait la page, et avec elle perdrait tout le
+        // plan dessiné à l'écran, purement client — rien de ce que dessine
+        // conception-parcelles.js n'est encore en base. Voir architecture-
+        // technique.md. Le POST classique (JS absent) garde la redirection.
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['ok' => $erreursDimensions === [], 'erreurs' => $erreursDimensions], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
         if ($erreursDimensions === []) {
             header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
             exit;
@@ -386,7 +396,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
              <a href="conception-etude-site.php">la carte interactive du terrain</a> — sans
              longueur ni largeur, elle s'y trace à la main plutôt que par un rectangle posé
              d'un clic.</p>
-          <form method="post">
+          <form method="post" id="dimensions-form">
             <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="action" value="dimensions">
             <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
@@ -410,10 +420,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
               <input type="text" name="longueur_m" inputmode="decimal"
                      value="<?= htmlspecialchars((string) ($parcelleActive['longueur_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
             </div>
-<?php if ($erreursDimensions !== []): ?>
-            <p class="pd-reel-erreur"><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>
-<?php endif; ?>
-            <button type="submit" class="pd-reel-bouton">Enregistrer ces mesures</button>
+            <p class="pd-reel-erreur" id="dimensions-erreur"<?= $erreursDimensions === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="pd-reel-note" id="dimensions-etat" hidden></p>
+            <button type="submit" class="pd-reel-bouton" id="dimensions-bouton">Enregistrer ces mesures</button>
           </form>
         </div>
       </div>

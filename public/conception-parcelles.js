@@ -166,6 +166,48 @@
     Gabarit.bulle.cacher();
   });
 
+  /* ------------------------------------- enregistrer les mesures réelles
+     (pour la carte du terrain) sans recharger la page — un rechargement
+     perdrait tout le plan ci-dessus, purement client (voir en-tête du
+     fichier PHP) : longueur/largeur, bordures, sens des planches, rien
+     de tout cela n'est encore en base. */
+  var formDimensions = document.getElementById('dimensions-form');
+  if (formDimensions){
+    var boutonDimensions = document.getElementById('dimensions-bouton');
+    var erreurDimensions = document.getElementById('dimensions-erreur');
+    var etatDimensions = document.getElementById('dimensions-etat');
+    formDimensions.addEventListener('submit', function(e){
+      e.preventDefault();
+      boutonDimensions.disabled = true;
+      erreurDimensions.hidden = true;
+      etatDimensions.hidden = true;
+      // location.href, jamais `formDimensions.action` : le champ caché
+      // nommé "action" (POST vers ce même script) masque la propriété
+      // native du formulaire, qui renverrait alors cet input, non l'URL.
+      fetch(location.href, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: new FormData(formDimensions)
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          boutonDimensions.disabled = false;
+          if (j.ok){
+            etatDimensions.textContent = 'Enregistré — pour la carte du terrain, sans effet sur le plan ci-dessus.';
+            etatDimensions.hidden = false;
+          } else {
+            erreurDimensions.textContent = (j.erreurs || []).join(' ') || 'Erreur inattendue.';
+            erreurDimensions.hidden = false;
+          }
+        })
+        .catch(function(){
+          boutonDimensions.disabled = false;
+          erreurDimensions.textContent = "L'enregistrement a échoué. Réessayez dans un moment.";
+          erreurDimensions.hidden = false;
+        });
+    });
+  }
+
   /* --------------------------------------------------------- côtes on/off */
   document.getElementById('afficher-cotes').addEventListener('change', function(e){
     document.querySelectorAll('.plan-cote, .plan-mesure, .plan-fleche').forEach(function(el){
