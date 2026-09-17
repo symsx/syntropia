@@ -51,6 +51,16 @@
     document.getElementById('mesure-largeur').setAttribute('transform', 'rotate(-90 -24 ' + (H / 2) + ')');
     document.getElementById('mesure-largeur').textContent = fmt(largeur) + ' m';
 
+    // les quatre repères nord/sud/est/ouest, recentrés sur les nouveaux bords
+    document.getElementById('cote-nord').setAttribute('x', L / 2);
+    document.getElementById('cote-sud').setAttribute('x', L / 2);
+    document.getElementById('cote-sud').setAttribute('y', H - 8);
+    document.getElementById('cote-ouest').setAttribute('y', H / 2);
+    document.getElementById('cote-ouest').setAttribute('transform', 'rotate(-90 20 ' + (H / 2) + ')');
+    document.getElementById('cote-est').setAttribute('x', L - 20);
+    document.getElementById('cote-est').setAttribute('y', H / 2);
+    document.getElementById('cote-est').setAttribute('transform', 'rotate(90 ' + (L - 20) + ' ' + (H / 2) + ')');
+
     // planches, dans la zone utile — nord-sud par défaut (une planche par
     // largeur, juxtaposées d'ouest en est) ; est-ouest sur demande (une
     // planche par longueur, empilées du nord au sud). Dans un petit

@@ -327,10 +327,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <line class="plan-fleche" id="fleche-largeur" x1="-16" y1="0" x2="-16" y2="800" marker-start="url(#fl)" marker-end="url(#fl)"/>
           <text class="plan-mesure" id="mesure-largeur" x="-24" y="400" text-anchor="middle" transform="rotate(-90 -24 400)">8,00 m</text>
 
-          <text class="plan-cote" x="600" y="24" text-anchor="middle">nord</text>
-          <text class="plan-cote" x="600" y="792" text-anchor="middle">sud</text>
-          <text class="plan-cote" x="20" y="404" text-anchor="middle" transform="rotate(-90 20 404)">ouest</text>
-          <text class="plan-cote" x="1180" y="404" text-anchor="middle" transform="rotate(90 1180 404)">est</text>
+          <text class="plan-cote" id="cote-nord" x="600" y="24" text-anchor="middle">nord</text>
+          <text class="plan-cote" id="cote-sud" x="600" y="792" text-anchor="middle">sud</text>
+          <text class="plan-cote" id="cote-ouest" x="20" y="404" text-anchor="middle" transform="rotate(-90 20 404)">ouest</text>
+          <text class="plan-cote" id="cote-est" x="1180" y="404" text-anchor="middle" transform="rotate(90 1180 404)">est</text>
         </g>
         <defs>
           <marker id="fl" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
