@@ -48,8 +48,12 @@ DEFAUTS = {
 
 # Quelle base reçoit quel fichier. Les fichiers ne portent ni `CREATE
 # DATABASE` ni `USE` — voir sql/00-comptes.sql et sql/01-syntropia.sql.
+# `02-especes-seed.sql` est du DML (INSERT IGNORE), pas du schéma : à
+# part pour que la table `espece` reste un CREATE TABLE pur, comme le
+# reste du fichier — voir chantier-scenario-plantation.md, Phase 1.
 SCHEMAS = [("SYNTROPIA_DB_COMPTES", "00-comptes.sql"),
-           ("SYNTROPIA_DB_BASE", "01-syntropia.sql")]
+           ("SYNTROPIA_DB_BASE", "01-syntropia.sql"),
+           ("SYNTROPIA_DB_BASE", "02-especes-seed.sql")]
 
 VERT, ROUGE, JAUNE, GRIS, FIN_ = "\033[32m", "\033[31m", "\033[33m", "\033[90m", "\033[0m"
 
@@ -127,7 +131,10 @@ def verifier_base(cfg):
     — voir l'en-tête du fichier : ça demande des droits que ce projet n'a
     pas, et c'est déjà fait."""
     partout_ok = True
-    for cle, _ in SCHEMAS:
+    # dict.fromkeys, pas un set : deux fichiers de SCHEMAS peuvent viser la
+    # même base (02-especes-seed.sql vise SYNTROPIA_DB_BASE comme
+    # 01-syntropia.sql) — la vérifier deux fois n'apporterait rien.
+    for cle in dict.fromkeys(cle for cle, _ in SCHEMAS):
         base = cfg[cle]
         essai = mysql(cfg, sql="SELECT 1;", base=base)
         if essai.returncode != 0:

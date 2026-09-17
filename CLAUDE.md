@@ -21,7 +21,11 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `architecture-technique.md` — proposition de framework modulaire pour
   construire ces pages avec du code commun, à valider.
 - `chantier-carte-interactive.md` — le plan détaillé (10 phases) de la
-  carte interactive du terrain, en cours — voir § Point de reprise.
+  carte interactive du terrain, terminé le 2026-09-16 — voir § Point
+  de reprise.
+- `chantier-scenario-plantation.md` — le plan détaillé (4 phases) du
+  scénario de plantation et de la base de végétaux, proposé le
+  2026-09-18, pas encore commencé — voir § Point de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -61,6 +65,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
     Vents.php                rose des vents calculée à la demande (Open-Meteo) — jamais persistée ; appelé par conception-etude-site.php
     Altimetrie.php           altitude IGN — un point, ou une grille pour le relief ; filtre le sentinel z=-99999 ; appelé par api-altitude.php
+    Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -73,12 +78,14 @@ config/
 sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation
-  01-syntropia.sql        17 tables — site, parcelle, scenario_ligne…
+  01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
+  02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
   dev.py                  serveur de développement — voir Commandes
   compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
   deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
+  catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario)
 public/                racine servable du site en refonte
   .htaccess              seul dossier accessible ; type MIME et cache des polices
   index.php               page publique — présente l'atelier, oriente. Accueil = « / », sans nom de fichier
@@ -547,6 +554,32 @@ récit.*
   cela n'a encore été testé en production, seulement en local. À faire
   à la prochaine reprise avant de considérer le chantier vraiment fini
   en ligne.
+- **La base de végétaux — Phase 1 du chantier « scénario de
+  plantation », 2026-09-18.** `src/Web/Especes.php` sur la table
+  `espece` (déjà en base depuis un chantier antérieur, mais jamais
+  utilisée — pas même côté référence, où le formulaire du scénario
+  reste un champ texte libre avec une liste de suggestion sans lien
+  vers la table). Cadre partagé (`site_id=0`, 46 espèces curatées dans
+  `sql/02-especes-seed.sql`, DML rejoué par `bin/dev.py init`) +
+  surcharges par site, la surcharge primant toujours. `bin/
+  catalogue-plantae.py` exporte 1271 noms depuis `plantae-corpus` vers
+  `contenu/catalogue-scenario.json`, pour la suggestion de saisie de la
+  Phase 4 — aucune donnée agronomique copiée, seulement des noms, comme
+  la référence. **Colonne `variete` ajoutée à `espece`** en cours de
+  Phase 1 (`uq_espece` étendue à `(site_id, nom_scientifique,
+  variete)`) : signalé par le porteur qu'une variété peut changer la
+  strate ou le rôle du tout au tout (tournesol conduit à une fleur, pour
+  la biomasse, contre tournesol classique) — la clé n'aurait pas pu le
+  porter sinon. **Bug trouvé en testant** : `retirer()` ne protégeait
+  le cadre que par sa clause SQL (`WHERE site_id = ?`), qui matcherait
+  `site_id = 0` aussi bien qu'un site réel — corrigé par un refus
+  explicite avant toute requête. Vérifié directement (pas de page
+  encore) : liste des 46 espèces, priorité d'une surcharge locale sur
+  le cadre pour un même couple `(nom_scientifique, variete)`, espèce
+  absente des deux niveaux renvoyant `null` sans erreur (reste
+  saisissable en texte libre), retrait d'une surcharge qui rend la
+  lecture au cadre, refus de `retirer()` sur le cadre. Détail complet :
+  `chantier-scenario-plantation.md` § Phase 1.
 - Sept pages publiques : `index.php`, `connexion.php` (redirige selon
   que le compte a déjà un site — corrigé le 2026-09-15, il retombait
   avant sur le mockup de `conception-parcelles.php` pour un compte tout
@@ -618,23 +651,30 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-1. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
+1. **Chantier « scénario de plantation »** — plan dans
+   `chantier-scenario-plantation.md` (4 phases : base de végétaux
+   `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,
+   page `conception-scenario.php`). **Phase 1 faite le 2026-09-18**
+   (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
+   le plan, § Décisions tranchées) : le niveau d'accompagnement à
+   donner à la conduite jardin-forêt dès cette première version.
+2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de
    coordonnées (seulement des codes postaux américains) ; calculable
    depuis un historique météo (Open-Meteo, même source que la rose des
    vents de `conception-etude-site.php` — voir `src/Web/Vents.php`).
    Remplacerait le champ texte libre actuel de `definition-site.php`.
-2. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-3. **`autres-documentations.php`** — page publique restante, non
+4. **`autres-documentations.php`** — page publique restante, non
    commencée.
-4. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
    dans le menu du compte).
-5. **Au-delà du premier tour** : rien ne relit encore les réponses
+6. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-6. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-7. Aucune procédure n'automatise `bin/deployer.py` après chaque
+8. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.

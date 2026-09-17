@@ -1,0 +1,5089 @@
+{
+  "source": "plantae-corpus — noms uniquement",
+  "vegetaux": [
+    {
+      "nom": "abies alba",
+      "communs": "sapin argenté ; sapin blanc ; sapin des vosges ; sapin pectiné"
+    },
+    {
+      "nom": "acacia",
+      "communs": ""
+    },
+    {
+      "nom": "acanthus mollis",
+      "communs": "acanthe à feuilles molles ; acanthe molle"
+    },
+    {
+      "nom": "acer",
+      "communs": ""
+    },
+    {
+      "nom": "acer campestre",
+      "communs": "érable champêtre ; acéraille ; auzerolle ; azeraille ; bois de poule ; bois-chaud ; petit érable"
+    },
+    {
+      "nom": "acer negundo",
+      "communs": "érable negundo ; erable à feuilles de frêne"
+    },
+    {
+      "nom": "acer platanoides",
+      "communs": "erable plane ; erable de norvège"
+    },
+    {
+      "nom": "acer pseudoplatanus",
+      "communs": "érable sycomore ; erable blanc ; erable des montagnes ; erable faux-platane ; faux-platane"
+    },
+    {
+      "nom": "acer saccharum",
+      "communs": "érable à sucre"
+    },
+    {
+      "nom": "achillea millefolium",
+      "communs": "achillée millefeuille ; herbe à la coupure ; herbe aux charpentiers ; herbe aux cochers ; herbe aux militaires ; herbe de saint jean ; herbe de saint joseph ; millefeuille ; saigne-nez ; sourcil-de-vénus"
+    },
+    {
+      "nom": "achillea ptarmica",
+      "communs": "achillée sternutatoire ; achillée ptarmique ; bouton-d'argent"
+    },
+    {
+      "nom": "acmella oleracea",
+      "communs": "cresson de para ; brède mafane ; cresson du pará"
+    },
+    {
+      "nom": "aconitum lycoctonum",
+      "communs": "aconit tue loup"
+    },
+    {
+      "nom": "aconitum napellus",
+      "communs": "aconit napel ; casque de jupiter ; char de vénus"
+    },
+    {
+      "nom": "acorus calamus",
+      "communs": "acore odorant ; acore vrai ; roseau odorant"
+    },
+    {
+      "nom": "actaea spicata",
+      "communs": "actée en épis ; actée en épi ; herbe de st christophe"
+    },
+    {
+      "nom": "actinidia",
+      "communs": "kiwis ; kiwaïs"
+    },
+    {
+      "nom": "actinidia arguta",
+      "communs": "kiwaï ; kiwi de siberie"
+    },
+    {
+      "nom": "actinidia chinensis",
+      "communs": "kiwi ; actinidie de chine ; actinidier de chine ; kiwi de chine"
+    },
+    {
+      "nom": "actinidia chinensis var. deliciosa",
+      "communs": "kiwi ; actinidier délicieux ; groseille de chine ; kiwi commun ; kiwi variété déliciosa"
+    },
+    {
+      "nom": "actinidia kolomikta",
+      "communs": "kiwi arctique ; actinidier panaché ; kiwi d'ornement"
+    },
+    {
+      "nom": "adiantum capillus-veneris",
+      "communs": "cheveux de vénus"
+    },
+    {
+      "nom": "adonis aestivalis",
+      "communs": "adonis d’été"
+    },
+    {
+      "nom": "adonis annua",
+      "communs": "adonis d'automne ; adonis annuelle ; adonis goutte-de-sang ; goutte de sang"
+    },
+    {
+      "nom": "adonis flammea",
+      "communs": "adonis écarlate"
+    },
+    {
+      "nom": "adonis vernalis",
+      "communs": "adonis de printemps ; adonide printanier ; adonis printanier"
+    },
+    {
+      "nom": "adoxa moschatellina",
+      "communs": "moscatelline"
+    },
+    {
+      "nom": "aegilops neglecta",
+      "communs": "aegilops"
+    },
+    {
+      "nom": "aegopodium podagraria",
+      "communs": "égopode podagraire ; aégopode ; boucage à feuilles d'angélique ; fausse angélique ; herbe à la goutte ; herbe aux goutteux ; herbe de saint gérard ; pied-de-chèvre ; podagraire"
+    },
+    {
+      "nom": "aesculus hippocastanum",
+      "communs": "marronnier d'inde ; châtaigne de cheval ; marronnier blanc ; marronnier commun"
+    },
+    {
+      "nom": "aethusa cynapium",
+      "communs": "petite ciguë"
+    },
+    {
+      "nom": "agastache",
+      "communs": ""
+    },
+    {
+      "nom": "agastache rugosa",
+      "communs": "agastache rugueuse ; menthe-réglisse coréenne"
+    },
+    {
+      "nom": "agave americana",
+      "communs": "agave d'amérique ; agave américain"
+    },
+    {
+      "nom": "agrimonia eupatoria",
+      "communs": "aigremoine eupatoire ; agrimoine ; eupatoire des anciens ; francormier ; herbe de saint-guillaume ; herbe de sainte madeleine ; soubeirette ; thé des bois ; thé du nord ; véteresque"
+    },
+    {
+      "nom": "agrimonia procera",
+      "communs": "aigremoine altière ; aigremoine élevée ; aigremoine odorante"
+    },
+    {
+      "nom": "agrostemma githago",
+      "communs": "nielle des blés ; couronne des blés ; nielle ; nielle des champs ; œillet des champs"
+    },
+    {
+      "nom": "agrostis canina",
+      "communs": "agrostide des chiens ; trainassse"
+    },
+    {
+      "nom": "agrostis capillaris",
+      "communs": "agrostide capillaire ; agrostide commune ; agrostide commune agrostis capillaris ; agrostis capillaire ; agrostis commun ; agrostis commune ; agrostis ténu ; traînasse"
+    },
+    {
+      "nom": "agrostis stolonifera",
+      "communs": "agrostide stolonifère ; agrostide blanche ; agrostis blanc ; agrostis stolonifère ; fiorin"
+    },
+    {
+      "nom": "ailanthus altissima",
+      "communs": "ailante ; faux vernis du japon ; frêne puant ; vernis de chine"
+    },
+    {
+      "nom": "aira caryophyllea",
+      "communs": "canche caryophyllée ; aira caryophyllé ; canche faux-œillet"
+    },
+    {
+      "nom": "aira praecox",
+      "communs": "canche printanière"
+    },
+    {
+      "nom": "ajuga chamaepitys",
+      "communs": "bugle petit cyprès ; ivette commune ; ivette commune ajuga chamaepitys"
+    },
+    {
+      "nom": "ajuga genevensis",
+      "communs": "bugle de genève"
+    },
+    {
+      "nom": "ajuga reptans",
+      "communs": "bugle rampante ; consyre moyenne ; dorve ; herbe à la coupasse ; herbe à maout ; herbe au charpentier ; herbe de saint laurent"
+    },
+    {
+      "nom": "akebia",
+      "communs": "akebies ; vigne chocolat"
+    },
+    {
+      "nom": "akebia quinata",
+      "communs": "akébie à cinq feuilles ; akébie à cinq folioles"
+    },
+    {
+      "nom": "albizia julibrissin",
+      "communs": "albizia ; acacia de constantinople ; albizie julibrissin ; arbre à soie"
+    },
+    {
+      "nom": "alcea rosea",
+      "communs": "rose trémière"
+    },
+    {
+      "nom": "alchemilla alpina",
+      "communs": "alchémille des alpes ; alchémille argentée"
+    },
+    {
+      "nom": "alchemilla arvensis",
+      "communs": "alchémille des champs"
+    },
+    {
+      "nom": "alchemilla mollis",
+      "communs": "alchémille molle ; manteau de notre-dame"
+    },
+    {
+      "nom": "alchemilla vulgaris",
+      "communs": "alchemille commune"
+    },
+    {
+      "nom": "alisma plantago-aquatica",
+      "communs": "plantain d'eau commun ; flûteau ; plantain d'eau"
+    },
+    {
+      "nom": "alkekengi officinarum",
+      "communs": "alkékenge ; amour en cage"
+    },
+    {
+      "nom": "alliaria petiolata",
+      "communs": "alliaire ; alliaire officinale ; alliaire pétiolée ; herbe à l'ail ; herbe aux aulx"
+    },
+    {
+      "nom": "allium ampeloprasum",
+      "communs": "poireau perpetuel ; ail éléphant ; ail faux poireau ; carambole ; poireau des vignes ; poireau des vignes poireau d'été ; poireau du levant"
+    },
+    {
+      "nom": "allium cepa",
+      "communs": "oignon ; ail oignon ; echalote ; oignon-patate"
+    },
+    {
+      "nom": "allium cepa aggregatum group",
+      "communs": "échalote"
+    },
+    {
+      "nom": "allium cepa var. proliferatum",
+      "communs": "oignon rocambole"
+    },
+    {
+      "nom": "allium fistulosum",
+      "communs": "ail fistuleux ; ciboule ; ciboulette ; cive de st jacques ; gros oignon"
+    },
+    {
+      "nom": "allium fistulosum bulbifera group",
+      "communs": "ciboule commune"
+    },
+    {
+      "nom": "allium lusitanicum",
+      "communs": "ail des collines ; ciboulette de montagne"
+    },
+    {
+      "nom": "allium neapolitanum",
+      "communs": "ail de naples ; ail blanc"
+    },
+    {
+      "nom": "allium oleraceum",
+      "communs": "ail des maraîchers"
+    },
+    {
+      "nom": "allium paniculatum",
+      "communs": "ail paniculé"
+    },
+    {
+      "nom": "allium polyanthum",
+      "communs": "poireau perpétuel ; ail à nombreuses fleurs ; poireau de vigne ; poireau de vigne allium polyanthum ; poireau des vignes ; poireau sauvage"
+    },
+    {
+      "nom": "allium porrum",
+      "communs": "poireau ; porreau"
+    },
+    {
+      "nom": "allium proliferum",
+      "communs": "oignon rocambole"
+    },
+    {
+      "nom": "allium roseum",
+      "communs": "ail rose"
+    },
+    {
+      "nom": "allium sativum",
+      "communs": "ail à tige tortueuse (dit aussi rocambole) ; ail ; ail commun ; ail cultivé"
+    },
+    {
+      "nom": "allium schoenoprasum",
+      "communs": "ciboulette ; ciboulette commune ; cives ; civette"
+    },
+    {
+      "nom": "allium scorodoprasum",
+      "communs": "ail rocambole ; ail d’espagne"
+    },
+    {
+      "nom": "allium sphaerocephalon",
+      "communs": "ail à tête ronde"
+    },
+    {
+      "nom": "allium tricoccum",
+      "communs": "ail des bois ; ail sauvage ; ail trilobé"
+    },
+    {
+      "nom": "allium triquetrum",
+      "communs": "ail à trois angles ; ail campanulé ; ail triquètre"
+    },
+    {
+      "nom": "allium tuberosum",
+      "communs": "ail tubéreux ; ciboulail ; ciboule de chine ; ciboulette de chine"
+    },
+    {
+      "nom": "allium ursinum",
+      "communs": "ail des ours ; ail à larges feuilles ; ail des bois ; ail pétiolé"
+    },
+    {
+      "nom": "allium victorialis",
+      "communs": "ail victorial ; ail de cerf ; ail des cerfs"
+    },
+    {
+      "nom": "allium vineale",
+      "communs": "ail des vignes ; aillet ; aillot ; oignon bâtard"
+    },
+    {
+      "nom": "alnus",
+      "communs": "aulnes"
+    },
+    {
+      "nom": "alnus cordata",
+      "communs": "aulne de corse ; aulne à feuilles en cœur ; aulne cordé ; aulne corse ; aune cordé ; aune cordiforme"
+    },
+    {
+      "nom": "alnus glutinosa",
+      "communs": "aulne glutineux ; aulne commun ; aulne noir ; aulne poisseux ; aune glutineux ; aune noir ; aune poisseux ; vergne ; verne"
+    },
+    {
+      "nom": "alnus incana",
+      "communs": "aulne blanc ; aulne blanchâtre ; aulne blanchi ; aulne des montagnes ; aulne montagnard ; aune gris ; verne"
+    },
+    {
+      "nom": "alopecurus myosuroides",
+      "communs": "vulpin des champs"
+    },
+    {
+      "nom": "alopecurus pratensis",
+      "communs": "vulpin des prés"
+    },
+    {
+      "nom": "aloysia citrodora",
+      "communs": "verveine citronnelle ; verveine citron"
+    },
+    {
+      "nom": "alpagrostis setacea",
+      "communs": "agrostide à soies ; agrostide de curtis"
+    },
+    {
+      "nom": "althaea cannabina",
+      "communs": "guimauve à feuilles de chanvre ; guimauve à feuilles de cannabis ; guimauve faux-chanvre"
+    },
+    {
+      "nom": "althaea officinalis",
+      "communs": "guimauve officinale ; guimauve sauvage ; mauve officinale"
+    },
+    {
+      "nom": "alyssoides utriculata",
+      "communs": "vésicaire renflée"
+    },
+    {
+      "nom": "alyssum alyssoides",
+      "communs": "alysson à calices"
+    },
+    {
+      "nom": "alyssum simplex",
+      "communs": "passerage des champs"
+    },
+    {
+      "nom": "amaranthus albus",
+      "communs": "amarante blanche"
+    },
+    {
+      "nom": "amaranthus blitum",
+      "communs": "amarante blette"
+    },
+    {
+      "nom": "amaranthus cruentus",
+      "communs": ""
+    },
+    {
+      "nom": "amaranthus graecizans subsp. silvestris",
+      "communs": "amarante des bois"
+    },
+    {
+      "nom": "amaranthus hybridus",
+      "communs": "amarante queue-de -renard ; amarante couchée"
+    },
+    {
+      "nom": "amaranthus retroflexus",
+      "communs": "amarante réfléchie"
+    },
+    {
+      "nom": "ambrosia artemisiifolia",
+      "communs": "ambroisie à feuilles d'armoise ; ambroisie à feuilles d’artémise"
+    },
+    {
+      "nom": "amelanchier",
+      "communs": "amélanchiers"
+    },
+    {
+      "nom": "amelanchier alnifolia",
+      "communs": "amélanchier à feuilles d aulne ; amélanchier à feuilles d'aulne"
+    },
+    {
+      "nom": "amelanchier canadensis",
+      "communs": "amélanchier ; amélanchier d'amérique ; amélanchier du canada"
+    },
+    {
+      "nom": "amelanchier ovalis",
+      "communs": "amélanchier des bois ; amélanchier ; amélanchier à feuilles ovales"
+    },
+    {
+      "nom": "ammi majus",
+      "communs": "ammi élevé ; ammi commun ; ammi officinal ; grand ammi"
+    },
+    {
+      "nom": "amorpha fruticosa",
+      "communs": "faux indigo ; amorphe arbustive ; amorphe buissonnante ; indigo du bush"
+    },
+    {
+      "nom": "amphicarpaea bracteata",
+      "communs": "amphicarpe bractéolée"
+    },
+    {
+      "nom": "anacamptis pyramidalis",
+      "communs": "orchis pyramidal"
+    },
+    {
+      "nom": "anacyclus clavatus",
+      "communs": "anacycle en massue ; anacycle tomenteux"
+    },
+    {
+      "nom": "anarrhinum bellidifolium",
+      "communs": "anarrhine à feuilles de pâquerette  anarrhinum bellidifolium"
+    },
+    {
+      "nom": "anchusa arvensis",
+      "communs": "buglosse des champs"
+    },
+    {
+      "nom": "anchusa azurea var. azurea",
+      "communs": "buglosse d'italie"
+    },
+    {
+      "nom": "anchusa officinalis",
+      "communs": "buglosse officinale"
+    },
+    {
+      "nom": "androsace elongata",
+      "communs": "androsace allongée"
+    },
+    {
+      "nom": "androsace maxima",
+      "communs": "grande androsace"
+    },
+    {
+      "nom": "andryala integrifolia",
+      "communs": "andryale à feuilles entières ; andryale commune"
+    },
+    {
+      "nom": "anemone nemorosa",
+      "communs": "anémone des bois ; anémone sanguinaire ; anémone sylvie ; bassinet blanc ; bassinet purpurin ; casse-verres ; fausse anémone ; sylvie"
+    },
+    {
+      "nom": "anethum graveolens",
+      "communs": ""
+    },
+    {
+      "nom": "angelica archangelica",
+      "communs": "angélique vraie ; angélique archangélique ; angélique officinale ; archangélique ; herbe aux anges ; herbe du saint-esprit"
+    },
+    {
+      "nom": "angelica sylvestris",
+      "communs": "angélique sylvestre ; angélique des bois ; angélique des prés ; angélique sauvage ; herbe à la fièvre ; impératoire sauvage ; panais sauvage"
+    },
+    {
+      "nom": "annona cherimola",
+      "communs": "annone ; chérimolier"
+    },
+    {
+      "nom": "anredera cordifolia",
+      "communs": "vigne de madère ; épinard de madère"
+    },
+    {
+      "nom": "antennaria dioica",
+      "communs": "patte de chat ; antennaire dioïque ; pied de chat"
+    },
+    {
+      "nom": "anthemis arvensis",
+      "communs": "anthémis des champs ; camomille des champs ; fausse camomille"
+    },
+    {
+      "nom": "anthemis cotula",
+      "communs": "anthémis fétide ; anthémis cotule ; anthémis puante ; camomille bâtarde ; camomille des chiens ; camomille puante ; maroute ; œil-de-vache"
+    },
+    {
+      "nom": "anthericum liliago",
+      "communs": "phalangère à fleurs de lis ; anthéricum à fleurs de lys ; lys de saint bernard ; lys de st bruno ; phalangère ; phalangère petit-lis"
+    },
+    {
+      "nom": "anthoxanthum odoratum",
+      "communs": "flouve odorante ; chiendent odorant ; foin dur ; herbe aux bisons"
+    },
+    {
+      "nom": "anthriscus cerefolium",
+      "communs": "cerfeuil commun ; cerfeuil ; cerfeuil cultivé"
+    },
+    {
+      "nom": "anthriscus sylvestris",
+      "communs": "cerfeuil des bois ; cerfeuil d'âne ; cerfeuil des prés ; cerfeuil sauvage ; chérophylle sauvag ; ciguë blanche ; fausse ciguë ; persil des bois"
+    },
+    {
+      "nom": "anthyllis montana",
+      "communs": "vulnéraire de montagne"
+    },
+    {
+      "nom": "anthyllis vulneraria",
+      "communs": "vulnéraire ; anthyllide vulnéraire ; trèfles des sables"
+    },
+    {
+      "nom": "antirrhinum majus",
+      "communs": "gueule-de-loup ; grand muflier ; gueule de loup ou de lion ; muflier des fleuristes"
+    },
+    {
+      "nom": "apera spica-venti",
+      "communs": "agrostide épi du vent ; plumette"
+    },
+    {
+      "nom": "apios americana",
+      "communs": "apios d'amérique ; glycine tubéreuse ; haricot pomme de terre ; patate en chapelet"
+    },
+    {
+      "nom": "apium graveolens",
+      "communs": "céléri ; ache ; céleri sauvage"
+    },
+    {
+      "nom": "apium graveolens dulce group",
+      "communs": "céleri branche"
+    },
+    {
+      "nom": "apium graveolens rapaceum group",
+      "communs": "céleri rave"
+    },
+    {
+      "nom": "aponogeton distachyos",
+      "communs": "vanille d'eau ; aponogeton à deux épis"
+    },
+    {
+      "nom": "aquilegia vulgaris",
+      "communs": "ancolie commune ; ancolie vulgaire ; clochette"
+    },
+    {
+      "nom": "arabidopsis thaliana",
+      "communs": "arabette de thalius"
+    },
+    {
+      "nom": "arabis alpina",
+      "communs": "arabette des alpes"
+    },
+    {
+      "nom": "arabis hirsuta",
+      "communs": "arabette hirsute ; arabette hérissée ; arabette hérissée arabis hirsuta ; arabette poilue"
+    },
+    {
+      "nom": "arabis sagittata",
+      "communs": "arabette à feuilles sagittées"
+    },
+    {
+      "nom": "arachis hypogaea",
+      "communs": "cacahuète ; arachide ; pois de terre"
+    },
+    {
+      "nom": "aralia cordata",
+      "communs": "udo"
+    },
+    {
+      "nom": "aralia elata",
+      "communs": "angélique en arbre ; angélique du japon ; aralie japonaise"
+    },
+    {
+      "nom": "araucaria araucana",
+      "communs": "araucaria du chili ; désespoir-des-singes"
+    },
+    {
+      "nom": "arbutus menziesii",
+      "communs": "arbousier d'amérique"
+    },
+    {
+      "nom": "arbutus unedo",
+      "communs": "arbousier ; arbousier commun ; arbre à fraises ; arbre aux fraises"
+    },
+    {
+      "nom": "arctium lappa",
+      "communs": "bardane ; bardane commune ; bardane officinale ; chou d'âne ; grande bardane ; grippe ; herbe au teigneux ; herbe aux pouilleux ; herbe aux seigneurs ; napolier ; oreille de géant"
+    },
+    {
+      "nom": "arctium minus",
+      "communs": "petite bardane ; bardane à petites têtes ; bardane à petits capitules"
+    },
+    {
+      "nom": "arctium tomentosum",
+      "communs": "bardane tomenteuse"
+    },
+    {
+      "nom": "arctostaphylos uva-ursi",
+      "communs": "raisin d'ours ; busserolle ; busserolle officinale"
+    },
+    {
+      "nom": "arenaria serpyllifolia",
+      "communs": "sabline à feuilles de serpolet ; sabline des murs ; sabline sauvage"
+    },
+    {
+      "nom": "argentina anserina",
+      "communs": "potentille ansérine ; ansérine ; argentine ansérine ; potentille des oies"
+    },
+    {
+      "nom": "aria edulis",
+      "communs": "alisier blanc ; alisier de bourgogne ; alisier des alpes ; alisier torminal ; allouchier ; alouchier ; cormier ; sorbier des oiseleurs"
+    },
+    {
+      "nom": "aristolochia clematitis",
+      "communs": "aristoloche clématite"
+    },
+    {
+      "nom": "aristolochia rotunda",
+      "communs": "aristoloche ronde"
+    },
+    {
+      "nom": "aristotelia chilensis",
+      "communs": "maqui du chili"
+    },
+    {
+      "nom": "armeria arenaria",
+      "communs": "arméria des sables ; arméria faux plantain ; armérie des sables ; armérie faux plantain ; gazon de l’olympe"
+    },
+    {
+      "nom": "armoracia rusticana",
+      "communs": "raifort rustique ; cranson rustique ; grand raifort ; moutarde des capucins ; raifort"
+    },
+    {
+      "nom": "arnica montana",
+      "communs": "arnica des montagnes ; arnica ; arnique de montagne"
+    },
+    {
+      "nom": "arnoseris minima",
+      "communs": "arnoséris naine"
+    },
+    {
+      "nom": "aronia melanocarpa",
+      "communs": ""
+    },
+    {
+      "nom": "aronia mitshurinii",
+      "communs": "aronia"
+    },
+    {
+      "nom": "arrhenatherum elatius",
+      "communs": "fromental élevé ; avoine à chapelet ; avoine élevée ; fenasse ; fromental ; ray-grass français"
+    },
+    {
+      "nom": "artemisia absinthium",
+      "communs": "absinthe ; absinthe commune ; absinthe vraie ; aluine ; armoise absinthe ; armoise amère ; herbe aux vers ; herbe sainte"
+    },
+    {
+      "nom": "artemisia alba",
+      "communs": "armoise blanche ; armoise camphrée"
+    },
+    {
+      "nom": "artemisia annua",
+      "communs": "armoise annuelle"
+    },
+    {
+      "nom": "artemisia dracunculus",
+      "communs": "estragon"
+    },
+    {
+      "nom": "artemisia genipi",
+      "communs": "génépi vrai"
+    },
+    {
+      "nom": "artemisia verlotiorum",
+      "communs": "armoise des frères verlot ; armoise de verlot"
+    },
+    {
+      "nom": "artemisia vulgaris",
+      "communs": "armoise commune"
+    },
+    {
+      "nom": "arum italicum",
+      "communs": "gouet commun ; arum commun ; arum d’italie"
+    },
+    {
+      "nom": "arum maculatum",
+      "communs": "gouet tacheté ; arum maculé"
+    },
+    {
+      "nom": "arundo donax",
+      "communs": "canne de provence"
+    },
+    {
+      "nom": "asarum",
+      "communs": ""
+    },
+    {
+      "nom": "asimina triloba",
+      "communs": "asiminier ; pawpaw"
+    },
+    {
+      "nom": "asparagus acutifolius",
+      "communs": "asperge piquante ; a. piquante ; asperge.sauvage"
+    },
+    {
+      "nom": "asparagus officinalis",
+      "communs": "asperge officinale ; asparagus ; asperge ; asperge cultivée"
+    },
+    {
+      "nom": "asphodeline lutea",
+      "communs": "asphodéline jaune ; asphodèle jaune ; bâton de jacob jaune ; bâton-de-jacob"
+    },
+    {
+      "nom": "asphodelus aestivus",
+      "communs": "asphodèle à petits fruits"
+    },
+    {
+      "nom": "asphodelus albus",
+      "communs": "asphodèle blanc ; bâton blanc"
+    },
+    {
+      "nom": "asphodelus ramosus",
+      "communs": "asphodèle rameuse"
+    },
+    {
+      "nom": "asplenium ceterach",
+      "communs": "cétérach officinal ; asplénie cétérach ; cétérach officinale ; doradille ; herbe dorée"
+    },
+    {
+      "nom": "asplenium trichomanes",
+      "communs": "fausse-capillaire ; asplénie trichomane ; capillaire des murailles ; capillaire rouge ; doradille"
+    },
+    {
+      "nom": "aster",
+      "communs": "aster"
+    },
+    {
+      "nom": "aster ageratoides var. ageratoides",
+      "communs": "aster d'ulleungdo"
+    },
+    {
+      "nom": "aster indicus",
+      "communs": "aster indien ; kalimeris"
+    },
+    {
+      "nom": "astragalus glycyphyllos",
+      "communs": "astragale à feuilles de réglisse ; astragale faux réglisse ; réglisse sauvage"
+    },
+    {
+      "nom": "athyrium filix-femina",
+      "communs": "fougère femelle ; polypode femelle"
+    },
+    {
+      "nom": "atriplex",
+      "communs": ""
+    },
+    {
+      "nom": "atriplex halimus",
+      "communs": "arroche de mer ; arroche arbustive ; arroche marine ; arroche maritime ; fesse cul ; herbe à chameau ; pourpier de mer"
+    },
+    {
+      "nom": "atriplex hortensis",
+      "communs": "arroche des jardins ; arroche verte ; arrode ; bonne dame ; epinard géant ; érode ; faux-épinard ; golette"
+    },
+    {
+      "nom": "atriplex patula",
+      "communs": "arroche étalée"
+    },
+    {
+      "nom": "atriplex portulacoides",
+      "communs": "arroche faux pourpier ; obione faux pourpier"
+    },
+    {
+      "nom": "atriplex prostrata",
+      "communs": "arroche à feuilles hastées"
+    },
+    {
+      "nom": "avena barbata",
+      "communs": "avoine barbue"
+    },
+    {
+      "nom": "avena fatua",
+      "communs": "folle-avoine"
+    },
+    {
+      "nom": "avena sativa",
+      "communs": "avoine"
+    },
+    {
+      "nom": "avena sterilis",
+      "communs": "avoine stérile"
+    },
+    {
+      "nom": "avenella flexuosa",
+      "communs": "canche flexueuse ; canche des montagnes ; foin tortueux"
+    },
+    {
+      "nom": "avenula pubescens",
+      "communs": "avoine pubescente"
+    },
+    {
+      "nom": "bacopa monnieri",
+      "communs": "hysope d'eau ; brahmi"
+    },
+    {
+      "nom": "bambusa",
+      "communs": "bambous"
+    },
+    {
+      "nom": "barbarea verna",
+      "communs": "cresson de jardin ; barbarée précoce ; barbarée printanière ; cresson de terre"
+    },
+    {
+      "nom": "barbarea vulgaris",
+      "communs": "barbarée commune ; herbe de la ste barbe"
+    },
+    {
+      "nom": "basella alba",
+      "communs": "baselle ; brède d'angola ; épinard de malabar"
+    },
+    {
+      "nom": "bellis perennis",
+      "communs": "pâquerette vivace ; pâquerette"
+    },
+    {
+      "nom": "benincasa hispida",
+      "communs": "courge à cire ; courge cireuse ; courge d'hiver"
+    },
+    {
+      "nom": "berberis",
+      "communs": "épine vinette"
+    },
+    {
+      "nom": "berberis aquifolium",
+      "communs": "mahonia ; épine-vinette à feuilles de houx ; faux houx ; mahonia à feuilles de houx ; mahonie à feuilles de houx"
+    },
+    {
+      "nom": "berberis lycium",
+      "communs": "berbéris indien"
+    },
+    {
+      "nom": "berberis microphylla",
+      "communs": "berbéris à feuilles de buis ; calafate"
+    },
+    {
+      "nom": "berberis vulgaris",
+      "communs": "epine-vinette commune ; epine vinette"
+    },
+    {
+      "nom": "berchemia floribunda",
+      "communs": "berchémie"
+    },
+    {
+      "nom": "berteroa incana",
+      "communs": "alysson blanchâtre"
+    },
+    {
+      "nom": "beta vulgaris",
+      "communs": "blette ; bette ; bette commune ; bette-épinard ; betterage fourragère ; betterave à sucre ; betterave commune ; betterave rouge ; betterave sucrière ; poirée"
+    },
+    {
+      "nom": "beta vulgaris subsp. vulgaris",
+      "communs": "bette maritime ; bette commune ; bette-épinard ; betterage fourragère ; betterave ; betterave à sucre ; betterave commune ; betterave fourragère ; betterave rouge ; betterave sucrière"
+    },
+    {
+      "nom": "betonica officinalis",
+      "communs": "bétoine officinale ; bétoine ; epiaire officinale"
+    },
+    {
+      "nom": "betula",
+      "communs": "bouleaux"
+    },
+    {
+      "nom": "betula pendula",
+      "communs": "bouleau blanc ; boulard ; bouleau commun ; bouleau d'europe ; bouleau pendant ; bouleau pleureur ; bouleau verruqueux ; brel"
+    },
+    {
+      "nom": "betula pubescens",
+      "communs": "bouleau pubescent ; bouleau blanc ; bouleau blanc betula pubescens"
+    },
+    {
+      "nom": "bidens bipinnata",
+      "communs": "bident bipenné"
+    },
+    {
+      "nom": "bidens radiata",
+      "communs": "bident radié"
+    },
+    {
+      "nom": "bidens tripartita",
+      "communs": "bident tripartite ; bident à trois folioles ; bident trifoliolé ; chanvre d'eau ; cornuet"
+    },
+    {
+      "nom": "bifora radians",
+      "communs": "bifora radié"
+    },
+    {
+      "nom": "billardiera scandens",
+      "communs": "billardiera"
+    },
+    {
+      "nom": "biscutella cichoriifolia",
+      "communs": "lunetière à feuilles de chicorée"
+    },
+    {
+      "nom": "bistorta officinalis",
+      "communs": "renouée bistorte ; bistorte officinale"
+    },
+    {
+      "nom": "bituminaria bituminosa",
+      "communs": "herbe au bitume"
+    },
+    {
+      "nom": "blackstonia perfoliata",
+      "communs": "blackstonie perfoliée ; centaurée jaune ; centaurée perfoliée ; chlore perfoliée ; chlorette ; gentiane perfoliée"
+    },
+    {
+      "nom": "blitum bonus-henricus",
+      "communs": "chénopode bon henri ; blette bon henri ; chénopode du bon henri ; epinard du roi henri ; épinard sauvage ; herbe aux oies ; oseille de tours"
+    },
+    {
+      "nom": "bomarea edulis",
+      "communs": "bomarea"
+    },
+    {
+      "nom": "boquila trifoliolata",
+      "communs": "liane caméléon"
+    },
+    {
+      "nom": "borago officinalis",
+      "communs": "bourrache ; bourrache officinale"
+    },
+    {
+      "nom": "botrychium lunaria",
+      "communs": "botryche lunaire"
+    },
+    {
+      "nom": "brachypodium pinnatum",
+      "communs": "brachypode penné"
+    },
+    {
+      "nom": "brassica oleracea",
+      "communs": "chou potager ; chou ; chou commun ; chou de bruxelles ; Chou de Daubenton ; chou sauvage ; chou-fleur"
+    },
+    {
+      "nom": "brassica oleracea 'daubenton'",
+      "communs": "chou vivace ; chou perpétuel de daubenton"
+    },
+    {
+      "nom": "brassica oleracea acephala group",
+      "communs": "chou kale frisé"
+    },
+    {
+      "nom": "brassica oleracea botrytis group",
+      "communs": "chou-fleur"
+    },
+    {
+      "nom": "brassica oleracea capitata group",
+      "communs": "chou cabu ; chou rouge"
+    },
+    {
+      "nom": "brassica oleracea gemmifera group",
+      "communs": "chou de bruxelles"
+    },
+    {
+      "nom": "brassica oleracea gongylodes group",
+      "communs": "chou-rave"
+    },
+    {
+      "nom": "brassica oleracea italica group",
+      "communs": "brocoli"
+    },
+    {
+      "nom": "brassica oleracea sabauda group",
+      "communs": "chou de milan"
+    },
+    {
+      "nom": "brassica oleracea var. acephala 'purple tree collard'",
+      "communs": "chou perpétuel pourpre"
+    },
+    {
+      "nom": "brassica oleracea var. acephala 'taunton deane'",
+      "communs": "chou perpétuel de taunton deane"
+    },
+    {
+      "nom": "brassica oleracea var. botrytis 'nine star'",
+      "communs": "chou-fleur perpétuel"
+    },
+    {
+      "nom": "brassica rapa",
+      "communs": ""
+    },
+    {
+      "nom": "brassica rapa pekinensis group",
+      "communs": "chou chinois"
+    },
+    {
+      "nom": "brassica rapa rapifera group",
+      "communs": "navet"
+    },
+    {
+      "nom": "briza media",
+      "communs": "amourette commune ; amourette ; brize intermédiaire ; brize moyenne ; grolette ; langue-de-femme ; pain d'oiseau ; tremblotte"
+    },
+    {
+      "nom": "bromus arvensis",
+      "communs": "brome des champs"
+    },
+    {
+      "nom": "bromus catharticus",
+      "communs": "brome cathartique"
+    },
+    {
+      "nom": "bromus erectus",
+      "communs": "brome érigé"
+    },
+    {
+      "nom": "bromus hordeaceus",
+      "communs": "brome mou ; brome fausse avoine ; brome fausse orge"
+    },
+    {
+      "nom": "bromus sterilis",
+      "communs": "brome stérile"
+    },
+    {
+      "nom": "bromus tectorum",
+      "communs": "brome des toits ; brome des murs"
+    },
+    {
+      "nom": "broussonetia kazinoki",
+      "communs": "kozo"
+    },
+    {
+      "nom": "broussonetia papyrifera",
+      "communs": "mûrier à papier ; mûrier de chine"
+    },
+    {
+      "nom": "buddleja davidii",
+      "communs": "arbre à papillon ; arbre à papillons ; arbre à papillons commun ; arbre aux papillons ; arbre aux papillons du père david ; arbre-à-papillon ; arbre-aux-papillons ; buddléa ; buddléa de david ; buddléia changeant ; buddleia de david ; buddléia du père david ; buddleja du père david ; lilas d'été"
+    },
+    {
+      "nom": "buglossoides arvensis",
+      "communs": "grémil des champs"
+    },
+    {
+      "nom": "bunias erucago",
+      "communs": "fausse roquette"
+    },
+    {
+      "nom": "bunias orientalis",
+      "communs": "bunias d'orient ; roquette d'orient"
+    },
+    {
+      "nom": "bunium bulbocastanum",
+      "communs": "châtaigne de terre ; bunium noix-de-terre ; marron-de-terre ; noix-de-terre"
+    },
+    {
+      "nom": "bupleurum fruticosum",
+      "communs": "buplèvre arbustif ; oreille de lièvre ; séséli d’éthiopie ; séséli d’éthiopie bupleurum fruticosum"
+    },
+    {
+      "nom": "bupleurum rotundifolium",
+      "communs": "buplèvre à feuilles rondes ; oreille de lièvre"
+    },
+    {
+      "nom": "butia capitata",
+      "communs": "palmier-abricot ; arbre à laque ; butia odorant ; palmier à vin ; palmier vinaigre"
+    },
+    {
+      "nom": "butomus umbellatus",
+      "communs": "butome en ombelle ; jonc fleuri"
+    },
+    {
+      "nom": "buxus sempervirens",
+      "communs": "buis ; bois béni ; buis commun ; buis sempervirent ; buis toujours vert"
+    },
+    {
+      "nom": "cakile maritima",
+      "communs": "cakile maritime"
+    },
+    {
+      "nom": "calamagrostis arenaria",
+      "communs": "oyat"
+    },
+    {
+      "nom": "calendula arvensis",
+      "communs": "souci des champs ; fleur de tous les mois ; gauchefer ; souci des vignes ; souci sauvage"
+    },
+    {
+      "nom": "calendula officinalis",
+      "communs": "souci ; souci des jardins ; souci officinal"
+    },
+    {
+      "nom": "callianthe megapotamica",
+      "communs": "abutilon du grand fleuve ; drapeau belge ; lanterne chinoise"
+    },
+    {
+      "nom": "calluna vulgaris",
+      "communs": "bruyère ; béruée ; bruyère commune ; callune ; callune commune"
+    },
+    {
+      "nom": "calycanthus",
+      "communs": ""
+    },
+    {
+      "nom": "camassia quamash",
+      "communs": "quamash ; camas commune ; camassie camash ; jacinthe des indiens ; petite camas ; quamassie"
+    },
+    {
+      "nom": "camellia sinensis",
+      "communs": "théier"
+    },
+    {
+      "nom": "campanula glomerata",
+      "communs": "campanule agglomérée ; campanule en bouquets"
+    },
+    {
+      "nom": "campanula lactiflora",
+      "communs": "campanule vivace"
+    },
+    {
+      "nom": "campanula persicifolia",
+      "communs": "campanule à feuilles de pêcher"
+    },
+    {
+      "nom": "campanula rapunculus",
+      "communs": "campanule raiponce ; bâton de saint jacques ; raiponce cultivée ; rave sauvage"
+    },
+    {
+      "nom": "campanula rhomboidalis",
+      "communs": "campanule rhomboïdale"
+    },
+    {
+      "nom": "campanula rotundifolia",
+      "communs": "campanule à feuilles rondes ; campanule à feuille ronde"
+    },
+    {
+      "nom": "campanula trachelium",
+      "communs": "campanule gantelée ; campanule à feuilles d'ortie ; campanule gant de notre-dame ; gantelée"
+    },
+    {
+      "nom": "canna indica",
+      "communs": "canna comestible ; balisier indien ; balisier rouge ; canna lily ; conflore"
+    },
+    {
+      "nom": "capparis spinosa",
+      "communs": "câprier ; câprier épineux"
+    },
+    {
+      "nom": "capsella bursa-pastoris",
+      "communs": "capselle bourse à pasteur"
+    },
+    {
+      "nom": "capsicum annuum",
+      "communs": "poivron"
+    },
+    {
+      "nom": "capsicum flexuosum",
+      "communs": "piment vivace du brésil"
+    },
+    {
+      "nom": "caragana arborescens",
+      "communs": "caraganier de siberie ; acacia jaune ; arbre aux pois ; caraganier arborescent"
+    },
+    {
+      "nom": "cardamine",
+      "communs": ""
+    },
+    {
+      "nom": "cardamine flexuosa",
+      "communs": "cardamine des bois"
+    },
+    {
+      "nom": "cardamine hirsuta",
+      "communs": "cardamine hirsute ; cressonnette"
+    },
+    {
+      "nom": "cardamine impatiens",
+      "communs": "cardamine impatiente"
+    },
+    {
+      "nom": "cardamine pratensis",
+      "communs": "cardamine des prés ; bouquet-du-loup ; cresson des prés ; cresson sauvage ; cressonnette ; faux cresson ; passerage sauvage ; petite dentaire"
+    },
+    {
+      "nom": "carduus crispus",
+      "communs": "chardon crépu ; chardon crispé"
+    },
+    {
+      "nom": "carduus nutans",
+      "communs": "chardon penché"
+    },
+    {
+      "nom": "carduus pycnocephalus",
+      "communs": "chardon à têtes denses"
+    },
+    {
+      "nom": "carduus tenuiflorus",
+      "communs": "chardon à petites fleurs"
+    },
+    {
+      "nom": "carex caryophyllea",
+      "communs": "laîche ; laîche précoce"
+    },
+    {
+      "nom": "carex hirta",
+      "communs": "laîche hérissée ; laîche velue"
+    },
+    {
+      "nom": "carissa macrocarpa",
+      "communs": "prunier du natal ; amantungula ; carissa à gros fruits ; carissier à gros fruits"
+    },
+    {
+      "nom": "carlina acanthifolia",
+      "communs": "carline à feuilles d'acanthe ; chardon baromètre ; chardon-soleil ; chardousse"
+    },
+    {
+      "nom": "carlina acaulis",
+      "communs": "carline à tige courte ; carline acaule ; plante baromètre"
+    },
+    {
+      "nom": "carlina vulgaris",
+      "communs": "carline commune"
+    },
+    {
+      "nom": "carpinus betulus",
+      "communs": "charme ; charme commun ; charmille"
+    },
+    {
+      "nom": "carum carvi",
+      "communs": "carvi ; cumin des prés ; cumin sauvage"
+    },
+    {
+      "nom": "carya",
+      "communs": ""
+    },
+    {
+      "nom": "carya illinoinensis",
+      "communs": "carya de l'illinois ; noyer de pécan ; pacanier ; pécan"
+    },
+    {
+      "nom": "carya laciniosa",
+      "communs": "caryer lacinié ; caryer écailleux ; pacanier lacinié"
+    },
+    {
+      "nom": "carya ovata",
+      "communs": "caryer ovale ; hickory blanc ; noyer blanc d'amérique ; noyer tendre ; pacanier ovale"
+    },
+    {
+      "nom": "castanea mollissima",
+      "communs": "châtaignier chinois"
+    },
+    {
+      "nom": "castanea pumila",
+      "communs": "châtaignier de virginie"
+    },
+    {
+      "nom": "castanea sativa",
+      "communs": "châtaignier ; châtaigne ; châtaigner ; châtaignier commun ; châtaignier cultivé ; marronnier"
+    },
+    {
+      "nom": "castanopsis cuspidata",
+      "communs": "châtaignier du japon"
+    },
+    {
+      "nom": "casuarina cunninghamiana",
+      "communs": "filao"
+    },
+    {
+      "nom": "catalpa bignonioides",
+      "communs": "catalpa ; arbre aux haricots ; catalpa commun ; catalpa de la caroline"
+    },
+    {
+      "nom": "catananche caerulea",
+      "communs": "catananche bleue ; cupidone ; cupidone bleue"
+    },
+    {
+      "nom": "ceanothus americanus",
+      "communs": "céanothe d'amérique"
+    },
+    {
+      "nom": "ceanothus thyrsiflorus",
+      "communs": "lilas de californie ; céanothe à fleurs en thyrse ; céanothe à fleurs en thyrses"
+    },
+    {
+      "nom": "celtis australis",
+      "communs": "micocoulier ; falabreguier ; micocoulier austral ; micocoulier de provence"
+    },
+    {
+      "nom": "centaurea benedicta",
+      "communs": "chardon béni"
+    },
+    {
+      "nom": "centaurea cyanus",
+      "communs": "bleuet ; audifoin ; barbeau ; blavelle ; bleuet des moissons"
+    },
+    {
+      "nom": "centaurea jacea",
+      "communs": "centaurée jacée ; jacée ; tête de moineau"
+    },
+    {
+      "nom": "centaurea solstitialis",
+      "communs": "centaurée du solstice ; chardon doré ; chardon doré  centaurea solstitialis"
+    },
+    {
+      "nom": "centaurium erythraea",
+      "communs": "petite centaurée commune ; erythrée ; erythrée petite-centaurée ; gentianelle ; herbe à chiron ; herbe à mille florins ; herbe au centaure ; petite centaurée ; petite-centaurée rouge"
+    },
+    {
+      "nom": "cephalotaxus",
+      "communs": ""
+    },
+    {
+      "nom": "cephalotaxus harringtonia",
+      "communs": "céphalotaxe ; céphalotaxe de harrington ; if à prunes japonais ; pin japonais à queue de vache"
+    },
+    {
+      "nom": "cerastium glomeratum",
+      "communs": "céraiste aggloméré"
+    },
+    {
+      "nom": "cerastium pumilum",
+      "communs": "céraiste nain"
+    },
+    {
+      "nom": "ceratonia siliqua",
+      "communs": "caroubier"
+    },
+    {
+      "nom": "cercis canadensis",
+      "communs": "gainier du canada ; gainier rouge"
+    },
+    {
+      "nom": "cercis siliquastrum",
+      "communs": "arbre de judée ; gainier commun ; gainier de judas ; gainier de judée"
+    },
+    {
+      "nom": "cercocarpus montanus",
+      "communs": "cercocarpus"
+    },
+    {
+      "nom": "cerinthe major",
+      "communs": "grand mélinet"
+    },
+    {
+      "nom": "cerinthe minor",
+      "communs": "mélinet"
+    },
+    {
+      "nom": "chaenomeles",
+      "communs": "cognassier du japon"
+    },
+    {
+      "nom": "chaenomeles cathayensis",
+      "communs": "cognassier de cathay"
+    },
+    {
+      "nom": "chaerophyllum aureum",
+      "communs": "cerfeuil doré"
+    },
+    {
+      "nom": "chaerophyllum bulbosum",
+      "communs": "cerfeuil tubéreux ; cerfeuil à bulbe"
+    },
+    {
+      "nom": "chaerophyllum temulum",
+      "communs": "cerfeuil enivrant ; cerfeuil penché"
+    },
+    {
+      "nom": "chamaemelum nobile",
+      "communs": "camomille romaine ; anthémis noble"
+    },
+    {
+      "nom": "chelidonium majus",
+      "communs": "grande chélidoine ; grande éclaire ; herbe aux verrue ; herbe aux verrues"
+    },
+    {
+      "nom": "chenopodium album",
+      "communs": "chénopode blanc ; ansérine blanche ; chénopode"
+    },
+    {
+      "nom": "chenopodium quinoa",
+      "communs": "quinoa ; ansérine du pérou"
+    },
+    {
+      "nom": "chenopodium vulvaria",
+      "communs": "chénopode fétide ; vulvaire"
+    },
+    {
+      "nom": "choerospondias axillaris",
+      "communs": "lapsi"
+    },
+    {
+      "nom": "chondrilla juncea",
+      "communs": "chondrille"
+    },
+    {
+      "nom": "chrysanthemum nankingense",
+      "communs": "chrysanthème comestible de nankin"
+    },
+    {
+      "nom": "chrysogonum virginianum",
+      "communs": "chrysogone de virginie ; genou doré"
+    },
+    {
+      "nom": "chrysosplenium",
+      "communs": ""
+    },
+    {
+      "nom": "chrysosplenium oppositifolium",
+      "communs": "dorine à feuilles opposées"
+    },
+    {
+      "nom": "cicer arietinum",
+      "communs": ""
+    },
+    {
+      "nom": "cichorium endivia",
+      "communs": "chicorée frisée"
+    },
+    {
+      "nom": "cichorium intybus",
+      "communs": "chicorée sauvage ; barbe-de-capucin ; chicorée amère ; chicorée vivace ; chicory"
+    },
+    {
+      "nom": "cichorium intybus var. foliosum 'spadona'",
+      "communs": "chicorée 'spadona'"
+    },
+    {
+      "nom": "cirsium arvense",
+      "communs": "chardon des champs ; chardon commun"
+    },
+    {
+      "nom": "cirsium eriophorum",
+      "communs": "cirse laineux"
+    },
+    {
+      "nom": "cirsium oleraceum",
+      "communs": "cirse maraîcher ; cirse potager"
+    },
+    {
+      "nom": "cirsium palustre",
+      "communs": "cirse des marais ; bâton du diable"
+    },
+    {
+      "nom": "cirsium tuberosum",
+      "communs": "chardon bulbeux ; cirse tubéreux"
+    },
+    {
+      "nom": "cirsium vulgare",
+      "communs": "cirse commun ; chardon commun ; cirse à feuilles lancéolées ; cirse lancéolé"
+    },
+    {
+      "nom": "cistus ladanifer",
+      "communs": "ciste à gomme ; ciste ladanifère ; ciste porte ladanum ; ladanum d’espagne ; lédon"
+    },
+    {
+      "nom": "citrullus lanatus",
+      "communs": ""
+    },
+    {
+      "nom": "citrullus mucosospermus",
+      "communs": "pastèque à graines ; egusi"
+    },
+    {
+      "nom": "citrus",
+      "communs": "agrumes"
+    },
+    {
+      "nom": "citrus japonica",
+      "communs": "kumquatier ; kumquat"
+    },
+    {
+      "nom": "citrus limon",
+      "communs": "citronnier"
+    },
+    {
+      "nom": "citrus trifoliata",
+      "communs": "poncirus ; citronnier épineux"
+    },
+    {
+      "nom": "claytonia perfoliata",
+      "communs": "pourpier d'hiver ; claytone de cuba ; pourpier d’hiver claytonia perfoliata"
+    },
+    {
+      "nom": "claytonia sibirica",
+      "communs": "claytonie de sibérie ; claytonia de sibérie ; laitue des mineurs ; montia de sibérie"
+    },
+    {
+      "nom": "clematis vitalba",
+      "communs": "clématite des haies ; aubavis ; aubervigne ; bois de pipe ; clématite sauvage ; clématite vigne blanche ; cranquillier ; herbe aux gueux ; vigne de salomon"
+    },
+    {
+      "nom": "cleome houtteana",
+      "communs": ""
+    },
+    {
+      "nom": "clethra barbinervis",
+      "communs": "cléthra du japon ; clèthre du japon"
+    },
+    {
+      "nom": "clinopodium acinos",
+      "communs": "calament des champs"
+    },
+    {
+      "nom": "clinopodium menthifolium subsp. ascendens",
+      "communs": "calament ascendent"
+    },
+    {
+      "nom": "clinopodium menthifolium subsp. menthifolium",
+      "communs": "calament des bois"
+    },
+    {
+      "nom": "clinopodium nepeta subsp. spruneri",
+      "communs": "calament officinale ; calament des bois  calamintha sylvatica"
+    },
+    {
+      "nom": "cochlearia officinalis",
+      "communs": "cochléaire officinale ; cranson"
+    },
+    {
+      "nom": "cochlearia pyrenaica",
+      "communs": "cochlearia des pyrénées"
+    },
+    {
+      "nom": "coincya richeri",
+      "communs": "chou de richer"
+    },
+    {
+      "nom": "colchicum autumnale",
+      "communs": "colchique d'automne ; chenarde ; dame-nue ; dame-sans-chemise ; femme-nue ; oignon de loup ; safran bâtard ; safran des prés ; tue-chien ; veilleuse"
+    },
+    {
+      "nom": "colocasia esculenta",
+      "communs": "taro"
+    },
+    {
+      "nom": "colutea arborescens",
+      "communs": "baguenaudier ; arbre à vessies"
+    },
+    {
+      "nom": "comarum palustre",
+      "communs": "potentille des marais ; comaret ; comaret des marais ; quintefeuille aquatique"
+    },
+    {
+      "nom": "comptonia peregrina",
+      "communs": "comptonie voyageuse"
+    },
+    {
+      "nom": "conium maculatum",
+      "communs": "grande ciguë"
+    },
+    {
+      "nom": "conopodium majus",
+      "communs": "janottes ; noisette de terre"
+    },
+    {
+      "nom": "convolvulus arvensis",
+      "communs": "liseron des champs"
+    },
+    {
+      "nom": "convolvulus sepium",
+      "communs": "liseron des haies"
+    },
+    {
+      "nom": "convolvulus tricolor",
+      "communs": ""
+    },
+    {
+      "nom": "coprosma lucida",
+      "communs": ""
+    },
+    {
+      "nom": "cordyline australis",
+      "communs": "cordyline australe ; cordyline faux dracène"
+    },
+    {
+      "nom": "coriandrum sativum",
+      "communs": "coriandre"
+    },
+    {
+      "nom": "cormus domestica",
+      "communs": "cormier ; sorbier domestique"
+    },
+    {
+      "nom": "cornus canadensis",
+      "communs": "cornouiller du canada"
+    },
+    {
+      "nom": "cornus capitata",
+      "communs": "cornouiller porte-fraises ; cornouiller de bentham ; cornouiller de l'himalaya ; cornouiller du Bentham"
+    },
+    {
+      "nom": "cornus kousa",
+      "communs": "cornouiller du japon"
+    },
+    {
+      "nom": "cornus mas",
+      "communs": "cornouiller mâle ; cornier ; cornouiller sauvage ; fuselier"
+    },
+    {
+      "nom": "cornus sanguinea",
+      "communs": "cornouiller sanguin ; bois puant ; bois punais ; cornouiller femelle ; olivier de normandie ; puègne blanche ; sanguin ; sanguine"
+    },
+    {
+      "nom": "cornus sericea",
+      "communs": "cornouiller soyeux ; cornouiller stolonifère"
+    },
+    {
+      "nom": "coronilla valentina",
+      "communs": "coronille ; coronille de valence"
+    },
+    {
+      "nom": "corylus avellana",
+      "communs": "noisetier ; avelinier ; coudrier ; noisetier commun"
+    },
+    {
+      "nom": "corylus colurna",
+      "communs": "noisetier de byzance ; coudrier de byzance"
+    },
+    {
+      "nom": "cosmos bipinnatus",
+      "communs": "cosmos"
+    },
+    {
+      "nom": "cota tinctoria",
+      "communs": "camomille des teinturiers ; anthémis des teinturiers ; cota des teinturiers ; œil de bœuf"
+    },
+    {
+      "nom": "crambe maritima",
+      "communs": "crambe maritime ; chou marin ; choux marin"
+    },
+    {
+      "nom": "crataegus azarolus",
+      "communs": "azerolier vrai ; azerolier ; azérolier a frutti bianchi ; azérolier amarillos"
+    },
+    {
+      "nom": "crataegus germanica",
+      "communs": "néflier d'allemagne ; aubépine d'allemagne ; mêpier ; néflier ; néflier commun"
+    },
+    {
+      "nom": "crataegus laevigata",
+      "communs": "aubépine lisse ; aubépine à deux styles ; aubépine épineuse ; bois de mai ; epine à fleurs ; epine blanche"
+    },
+    {
+      "nom": "crataegus monogyna",
+      "communs": "aubépine \"fruitière\" ; aubépine à un style ; aubépine monogyne ; bois de mai ; épine noire"
+    },
+    {
+      "nom": "crataegus orientalis subsp. orientalis",
+      "communs": "aubépine"
+    },
+    {
+      "nom": "crataegus tanacetifolia",
+      "communs": "aubépine de turquie"
+    },
+    {
+      "nom": "crepis biennis",
+      "communs": "crépide bisannuelle"
+    },
+    {
+      "nom": "crepis foetida",
+      "communs": "crépide fétide"
+    },
+    {
+      "nom": "crepis sancta",
+      "communs": "crépis saint ; crépide de nïmes ; herbe sainte"
+    },
+    {
+      "nom": "crepis setosa",
+      "communs": "crépide à soies"
+    },
+    {
+      "nom": "crithmum maritimum",
+      "communs": "criste marine ; perce pierre"
+    },
+    {
+      "nom": "cruciata laevipes",
+      "communs": "gaillet croisette"
+    },
+    {
+      "nom": "cryptotaenia japonica",
+      "communs": ""
+    },
+    {
+      "nom": "cucumis melo",
+      "communs": "melon"
+    },
+    {
+      "nom": "cucumis sativus",
+      "communs": "concombre"
+    },
+    {
+      "nom": "cucurbita",
+      "communs": "courges ; courge à graines nues"
+    },
+    {
+      "nom": "cucurbita argyrosperma",
+      "communs": "courge du mexique ; courge à graines d'argent"
+    },
+    {
+      "nom": "cucurbita maxima",
+      "communs": "courge"
+    },
+    {
+      "nom": "cucurbita pepo",
+      "communs": "courgette"
+    },
+    {
+      "nom": "cyclanthera pedata",
+      "communs": ""
+    },
+    {
+      "nom": "cydonia oblonga",
+      "communs": "cognassier ; cognassier commun ; cognassier oblong ; coing"
+    },
+    {
+      "nom": "cynara cardunculus",
+      "communs": "cardon ; artichaut ; artichaut sauvage ; carde ; cardon de lyon"
+    },
+    {
+      "nom": "cynara cardunculus subsp. cardunculus",
+      "communs": "artichaut ; cardon cultivé"
+    },
+    {
+      "nom": "cynara cardunculus var. cardunculus",
+      "communs": "cardon"
+    },
+    {
+      "nom": "cynodon dactylon",
+      "communs": "chiendent pied-de-poule ; cynodon ; gros chiendent ; herbe des bermudes"
+    },
+    {
+      "nom": "cynoglossum officinale",
+      "communs": "cynoglosse officinale ; langue de chien"
+    },
+    {
+      "nom": "cynosurus cristatus",
+      "communs": "crételle des prés ; crételle ; crételle à crêtes"
+    },
+    {
+      "nom": "cyperus esculentus",
+      "communs": "souchet comestible ; souchet délicieux ; souchet doré ; souchet sucré"
+    },
+    {
+      "nom": "cyperus rotundus",
+      "communs": "souchet"
+    },
+    {
+      "nom": "cypripedium calceolus",
+      "communs": "sabot de vénus"
+    },
+    {
+      "nom": "cytisus scoparius",
+      "communs": "cytise à balais ; genêt à balais ; genettier ; grand genêt ; juniesse ; sarothamne à balais ; spartier à balais"
+    },
+    {
+      "nom": "dactylis glomerata",
+      "communs": "dactyle aggloméré ; chiendent à brossettes ; dactyle pelotonné ; pied-de-poule"
+    },
+    {
+      "nom": "daphne mezereum",
+      "communs": "bois gentil ; bois joli ; lauréole jolie ; mézéréon ; verdelet"
+    },
+    {
+      "nom": "datura stramonium",
+      "communs": "datura stramoine ; datura officinal ; pomme épineuse"
+    },
+    {
+      "nom": "daucus carota",
+      "communs": "carotte ; carotte sauvage ; dentelle d'évêque ; faux-chervis ; gironille ; nid d'oiseau ; pastenade"
+    },
+    {
+      "nom": "decaisnea fargesii",
+      "communs": "arbre aux haricots bleus ; arbre aux saucisses ; doigts-de-l'homme-mort"
+    },
+    {
+      "nom": "delphinium consolida",
+      "communs": "pied d'alouette royal ; dauphinelle ; pied d’alouette"
+    },
+    {
+      "nom": "deschampsia cespitosa",
+      "communs": "canche cespiteuse"
+    },
+    {
+      "nom": "dianthus",
+      "communs": "œillet"
+    },
+    {
+      "nom": "digitalis purpurea",
+      "communs": "digitale pourpre ; doigtier ; gant de notre dame ; gant-de-bergère ; gantelée ; grande digitale"
+    },
+    {
+      "nom": "digitaria sanguinalis",
+      "communs": "digitaire sanguine"
+    },
+    {
+      "nom": "dioscorea communis",
+      "communs": "tamier commun ; haut liseron ; herbe aux femmes battues ; racine-vierge ; raisin du diable ; sceau de la vierge ; vigne noire"
+    },
+    {
+      "nom": "dioscorea polystachya",
+      "communs": "igname de chine ; igname de corée ; nagaimo"
+    },
+    {
+      "nom": "diospyros kaki",
+      "communs": "plaqueminier de chine ; figuier caque ; kaki ; plaqueminier ; plaqueminier du japon ; plaqueminier kaki"
+    },
+    {
+      "nom": "diospyros lotus",
+      "communs": "plaqueminier lotus ; plaqueminier d'europe ; plaqueminier d'italie ; plaqueminier du levant ; plaqueminier lotier ; prunier-dattier"
+    },
+    {
+      "nom": "diospyros virginiana",
+      "communs": "plaqueminier de virginie ; plaqueminier d'amérique"
+    },
+    {
+      "nom": "diplotaxis erucoides",
+      "communs": "diplotaxis fausse roquette"
+    },
+    {
+      "nom": "diplotaxis tenuifolia",
+      "communs": "roquette vivace ; diplotaxe à feuilles étroites ; diplotaxe à feuilles ténues ; diplotaxe vulgaire ; diplotaxis à feuilles ténues ; fausse roquette ; roquette jaune ; roquette sauvage"
+    },
+    {
+      "nom": "dipsacus fullonum",
+      "communs": "cardère ; bain de notre-dame ; cabaret des oiseaux ; cardère à foulon ; cardère sauvage ; fontaine-aux-oiseaux ; lavoir de vénus ; peigne à loup"
+    },
+    {
+      "nom": "dittrichia viscosa",
+      "communs": "inule visqueuse"
+    },
+    {
+      "nom": "dovyalis caffra",
+      "communs": "pomme caffre"
+    },
+    {
+      "nom": "draba verna",
+      "communs": "drave printanière"
+    },
+    {
+      "nom": "dracocephalum officinale",
+      "communs": "hysope officinale"
+    },
+    {
+      "nom": "drimys winteri",
+      "communs": "cannelle de magellan"
+    },
+    {
+      "nom": "dryopteris filix-mas",
+      "communs": "fougère mâle"
+    },
+    {
+      "nom": "dystaenia takesimana",
+      "communs": "céleri géant de corée (seombadi)"
+    },
+    {
+      "nom": "echinacea purpurea",
+      "communs": "échinacée pourpre ; echinacée poupre"
+    },
+    {
+      "nom": "echinochloa crus-galli",
+      "communs": "sétaire pied de coq"
+    },
+    {
+      "nom": "echium vulgare",
+      "communs": "vipérine ; vipérine commune"
+    },
+    {
+      "nom": "ehretia dicksonii",
+      "communs": "cabrillet de dickson"
+    },
+    {
+      "nom": "elaeagnus",
+      "communs": "éléagnus"
+    },
+    {
+      "nom": "elaeagnus angustifolia",
+      "communs": "olivier de bohême ; arbre d'argent ; arbre de paradis ; chalef à feuilles étroites"
+    },
+    {
+      "nom": "elaeagnus multiflora",
+      "communs": "goumi du japon ; chalef à fleurs nombreuses"
+    },
+    {
+      "nom": "elaeagnus submacrophylla",
+      "communs": "chalef de ebbing"
+    },
+    {
+      "nom": "elaeagnus umbellata",
+      "communs": "olivier d automne ; chalef en ombelle ; oléastre en ombelle"
+    },
+    {
+      "nom": "eleutherococcus senticosus",
+      "communs": "éleuthérocoque ; ginseng sibérien"
+    },
+    {
+      "nom": "elymus campestris",
+      "communs": "chiendent des champs"
+    },
+    {
+      "nom": "elymus repens",
+      "communs": "chiendent rampant"
+    },
+    {
+      "nom": "empetrum nigrum",
+      "communs": "camarine noire"
+    },
+    {
+      "nom": "epilobium angustifolium",
+      "communs": "chamaenérion ; épilobe ; epilobe en épi ; laurier de saint antoine"
+    },
+    {
+      "nom": "epilobium hirsutum",
+      "communs": "epilobe hirsute"
+    },
+    {
+      "nom": "epilobium montanum",
+      "communs": "epilobe de montagne"
+    },
+    {
+      "nom": "epilobium palustre",
+      "communs": "epilobe des marais"
+    },
+    {
+      "nom": "epilobium parviflorum",
+      "communs": "epilobe à petites fleurs"
+    },
+    {
+      "nom": "epilobium tetragonum",
+      "communs": "epilobe à quatre angles"
+    },
+    {
+      "nom": "equisetum arvense",
+      "communs": "prêle des champs"
+    },
+    {
+      "nom": "equisetum hyemale",
+      "communs": "prêle d’hiver"
+    },
+    {
+      "nom": "equisetum ramosissimum",
+      "communs": "prêle rameuse"
+    },
+    {
+      "nom": "equisetum telmateia",
+      "communs": "grande prêle"
+    },
+    {
+      "nom": "erica cinerea",
+      "communs": "bruyère cendrée"
+    },
+    {
+      "nom": "erigeron annuus",
+      "communs": "erigéron annue ; vergerette annuelle ; vergerette annuelle  erigeron annuus"
+    },
+    {
+      "nom": "erigeron bonariensis",
+      "communs": "vergerette du cap"
+    },
+    {
+      "nom": "erigeron canadensis",
+      "communs": "vergerette du canada"
+    },
+    {
+      "nom": "erigeron sumatrensis",
+      "communs": "vergerette de sumatra"
+    },
+    {
+      "nom": "eriobotrya japonica",
+      "communs": "néflier du japon ; bibacier ; bibasse ; bibassier ; ériobotrie du japon ; ériobotrya du japon ; loquat"
+    },
+    {
+      "nom": "erodium cicutarium",
+      "communs": "erodium fausse-cigüe"
+    },
+    {
+      "nom": "erodium moschatum",
+      "communs": "bec de grue musquée ; erodium musquée"
+    },
+    {
+      "nom": "eruca sativa",
+      "communs": "roquette cultivée"
+    },
+    {
+      "nom": "eruca vesicaria",
+      "communs": "roquette"
+    },
+    {
+      "nom": "eryngium campestre",
+      "communs": "chardon blanc ; chardon roulant ; panicaut"
+    },
+    {
+      "nom": "eryngium maritimum",
+      "communs": "chardon bleu des dunes"
+    },
+    {
+      "nom": "eschscholzia californica",
+      "communs": "eschscholzia de californie ; pavot de californie"
+    },
+    {
+      "nom": "eucalyptus",
+      "communs": ""
+    },
+    {
+      "nom": "eucalyptus globulus",
+      "communs": "eucalyptus globuleux"
+    },
+    {
+      "nom": "eucalyptus gunnii",
+      "communs": "eucalyptus de gunn ; eucalyptus à feuilles rondes ; gommier cidre"
+    },
+    {
+      "nom": "eucommia ulmoides",
+      "communs": "arbre à gutta-percha"
+    },
+    {
+      "nom": "euonymus europaeus",
+      "communs": "fusain d'europe"
+    },
+    {
+      "nom": "eupatorium cannabinum",
+      "communs": "eupatoire chanvrine"
+    },
+    {
+      "nom": "euphorbia cyparissias",
+      "communs": "euphorbe petit cyprès"
+    },
+    {
+      "nom": "euphorbia esula",
+      "communs": "euphorbe ésule"
+    },
+    {
+      "nom": "euphorbia helioscopia",
+      "communs": "euphorbe réveille-matin"
+    },
+    {
+      "nom": "euphorbia lathyris",
+      "communs": "euphorbe épurge ; grande épurge"
+    },
+    {
+      "nom": "euphorbia segetalis",
+      "communs": "euphorbe des moissons"
+    },
+    {
+      "nom": "euphorbia serrata",
+      "communs": "euphorbe en scie"
+    },
+    {
+      "nom": "euphrasia officinalis",
+      "communs": "euphraise officinale"
+    },
+    {
+      "nom": "eutrema japonicum",
+      "communs": "wasabi"
+    },
+    {
+      "nom": "fagopyrum cymosum",
+      "communs": "sarrasin vivace ; sarrasin à deux grappes ; sarrasin en cyme"
+    },
+    {
+      "nom": "fagus sylvatica",
+      "communs": "hêtre des forêts ; fayard ; fouteau ; foyard ; hêtre ; hêtre commun"
+    },
+    {
+      "nom": "fallopia convolvulus",
+      "communs": "renouée faux liseron ; vrillée sauvage  faloppia convolvulus"
+    },
+    {
+      "nom": "feijoa sellowiana",
+      "communs": "goyave du bresil"
+    },
+    {
+      "nom": "festuca myuros",
+      "communs": "vulpie queue de rat"
+    },
+    {
+      "nom": "festuca ovina",
+      "communs": "fétuque ovine ; fétuque à moutons ; fétuque des moutons"
+    },
+    {
+      "nom": "festuca rubra",
+      "communs": "fétuque rouge ; fétuque traçante"
+    },
+    {
+      "nom": "ficus",
+      "communs": "figuiers"
+    },
+    {
+      "nom": "ficus carica",
+      "communs": "figuier ; caprifiguier ; figuier commun ; figuier d'europe ; figuier de carie ; figuier de la carie ; figuier ordinaire"
+    },
+    {
+      "nom": "filipendula ulmaria",
+      "communs": "reine-des-prés ; fausse spirée ; filipendule ulmaire ; spirée ulmaire"
+    },
+    {
+      "nom": "firmiana simplex",
+      "communs": "parasol chinois ; arbre de noémie ; arbre parasol de chine ; firmiana à feuilles de platane ; sterculia faux platane"
+    },
+    {
+      "nom": "foeniculum vulgare",
+      "communs": "fenouil vivace ; anis doux ; fenouil ; fenouil bulbeux ; fenouil commun ; lani"
+    },
+    {
+      "nom": "forestiera pubescens var. parvifolia",
+      "communs": "olivier sauvage du nouveau-mexique"
+    },
+    {
+      "nom": "fragaria",
+      "communs": "fraisier"
+    },
+    {
+      "nom": "fragaria ananassa",
+      "communs": "Fraise ananas ; Fraisier ; fraisier ananas ; Fraisier cultive ; fraisier des jardins"
+    },
+    {
+      "nom": "fragaria moschata",
+      "communs": "fraisier ; fraisier musqué"
+    },
+    {
+      "nom": "fragaria vesca",
+      "communs": "fraisier sauvage ; fraise des bois ; fraisier ; fraisier commun ; fraisier des bois"
+    },
+    {
+      "nom": "frangula alnus",
+      "communs": "bourdaine ; bois à poudre ; bois-noir ; bourgène ; coudrier noir ; frangule"
+    },
+    {
+      "nom": "fraxinus angustifolia",
+      "communs": "frêne oxyphylle ; frêne à feuilles étroites ; frêne oxycarpa"
+    },
+    {
+      "nom": "fraxinus excelsior",
+      "communs": "frene ; frêne commun ; frêne d'europe ; frêne élevé"
+    },
+    {
+      "nom": "fraxinus ornus",
+      "communs": "frêne à fleurs ; frêne à manne"
+    },
+    {
+      "nom": "fritillaria meleagris",
+      "communs": "damier ; coccigrole ; fritillaire à damier ; fritillaire pintade ; méléagre ; oeuf de vanneau"
+    },
+    {
+      "nom": "fritillaria pudica",
+      "communs": "fritillaire pudique"
+    },
+    {
+      "nom": "fuchsia",
+      "communs": ""
+    },
+    {
+      "nom": "fuchsia magellanica",
+      "communs": "fuchsia de magellan ; fuchsia arbustif ; fuchsia rustique"
+    },
+    {
+      "nom": "fumaria muralis",
+      "communs": "fumeterre des murs ; fumeterre des murailles"
+    },
+    {
+      "nom": "fumaria officinalis",
+      "communs": "fumeterre officinal"
+    },
+    {
+      "nom": "galactites tomentosus",
+      "communs": "chardon laineux ; galactite cotonneux"
+    },
+    {
+      "nom": "galax urceolata",
+      "communs": ""
+    },
+    {
+      "nom": "galeopsis ladanum",
+      "communs": "galéopsis intermédiaire ; galéopsis laineux"
+    },
+    {
+      "nom": "galeopsis segetum",
+      "communs": "galéopsis des champs"
+    },
+    {
+      "nom": "galeopsis tetrahit",
+      "communs": "ortie royale"
+    },
+    {
+      "nom": "galinsoga quadriradiata",
+      "communs": "galinsoga"
+    },
+    {
+      "nom": "galium aparine",
+      "communs": "gaillet gratteron"
+    },
+    {
+      "nom": "galium mollugo",
+      "communs": "gaillet blanc ; gaillet mollugine"
+    },
+    {
+      "nom": "galium odoratum",
+      "communs": "gaillet odorant ; aspérule odorante ; belle-étoile ; muguet de linge ; muguet des dames ; petit muguet ; thé suisse"
+    },
+    {
+      "nom": "galium tricornutum",
+      "communs": "gaillet à trois cornes"
+    },
+    {
+      "nom": "galium verum",
+      "communs": "caille lait jaune ; gaillet jaune ; gaillet vrai"
+    },
+    {
+      "nom": "garrya",
+      "communs": ""
+    },
+    {
+      "nom": "gaudinia fragilis",
+      "communs": "gaudinie fragile"
+    },
+    {
+      "nom": "gaultheria",
+      "communs": ""
+    },
+    {
+      "nom": "gaultheria hispidula",
+      "communs": "petit thé"
+    },
+    {
+      "nom": "gaultheria procumbens",
+      "communs": "gaulthérie couchée ; gaulthérie du canada ; thé du canada ; thé rouge"
+    },
+    {
+      "nom": "gaultheria shallon",
+      "communs": "gaulthérie shallon ; palommier ; shallon"
+    },
+    {
+      "nom": "gaylussacia baccata",
+      "communs": "gaylussaquier"
+    },
+    {
+      "nom": "genista pilosa",
+      "communs": "genêt poilu ; genêt à feuilles velues ; genêt des landes ; génette"
+    },
+    {
+      "nom": "genista sagittalis",
+      "communs": "genêt sagitté ; genêt ailé ; génistrelle"
+    },
+    {
+      "nom": "genista scorpius",
+      "communs": "épine fleurie ; genêt scorpion"
+    },
+    {
+      "nom": "genista tinctoria",
+      "communs": "genêt des teinturiers ; bois vert ; genestrelle jaune ; genêt commun ; herbe à jaunir"
+    },
+    {
+      "nom": "gentiana acaulis",
+      "communs": "gentiane de koch ; gentiane acaule"
+    },
+    {
+      "nom": "gentiana acaulis subsp. acaulis",
+      "communs": "gentiane acaule ; gentiane de koch gentiana acaulis"
+    },
+    {
+      "nom": "gentiana lutea",
+      "communs": "grande gentiane ; gentiane jaune"
+    },
+    {
+      "nom": "gentiana purpurea",
+      "communs": "gentiane pourpre"
+    },
+    {
+      "nom": "geranium dissectum",
+      "communs": "géranium disséqué ; géranium à feuilles découpées ; géranium découpé"
+    },
+    {
+      "nom": "geranium macrorrhizum",
+      "communs": "géranium à grosses racines ; géranium à gros rhizome ; géranium à gros rhizomes ; géranium des balkans"
+    },
+    {
+      "nom": "geranium molle",
+      "communs": "géranium mou"
+    },
+    {
+      "nom": "geranium robertianum",
+      "communs": "géranium herbe à robert"
+    },
+    {
+      "nom": "geranium rotundifolium",
+      "communs": "géranium à feuilles rondes ; mauvette"
+    },
+    {
+      "nom": "geranium sylvaticum",
+      "communs": "géranium des bois"
+    },
+    {
+      "nom": "geum rivale",
+      "communs": "benoîte des ruisseaux"
+    },
+    {
+      "nom": "geum urbanum",
+      "communs": "benoîte des villes ; benoîte comune ; herbe de saint benoît"
+    },
+    {
+      "nom": "gevuina avellana",
+      "communs": "noisetier du chili"
+    },
+    {
+      "nom": "ginkgo biloba",
+      "communs": "ginkgo biloba ; abricotier d'argent ; arbre aux écus ; arbre aux écus d'or ; arbre aux mille écus ; arbre aux quarante écus ; gingko bilobé ; ginkgo"
+    },
+    {
+      "nom": "glebionis segetum",
+      "communs": "chrysanthème des moissons ; chrysanthème des blés ; marguerite dorée ; marguerite jaune"
+    },
+    {
+      "nom": "glechoma hederacea",
+      "communs": "gléchome lierre terrestre ; courroie de saint jean ; gléchome ; gléchome faux-lierre ; gléchome lierre ; glécome ; lierre terrestre"
+    },
+    {
+      "nom": "gleditsia triacanthos",
+      "communs": "févier d'amérique ; epine-du-christ en arbre ; févier à épines triples ; févier à trois épines"
+    },
+    {
+      "nom": "glycine max",
+      "communs": ""
+    },
+    {
+      "nom": "glycyrrhiza glabra",
+      "communs": "réglisse glabre ; réglisse ; réglisse sauvage"
+    },
+    {
+      "nom": "gnaphalium uliginosum",
+      "communs": "cotonnière des marais ; gnaphale des marais"
+    },
+    {
+      "nom": "gomortega keule",
+      "communs": "keule"
+    },
+    {
+      "nom": "grewia biloba",
+      "communs": "grewia"
+    },
+    {
+      "nom": "gunnera",
+      "communs": ""
+    },
+    {
+      "nom": "gunnera tinctoria",
+      "communs": "nalca ; pangue ; rhubarbe géante du chili"
+    },
+    {
+      "nom": "gymnocladus dioicus",
+      "communs": "chicot du canada"
+    },
+    {
+      "nom": "gynostemma pentaphyllum",
+      "communs": "thé des centenaires ; thé de l'immortalité"
+    },
+    {
+      "nom": "hablitzia tamnoides",
+      "communs": "épinard grimpant du caucase"
+    },
+    {
+      "nom": "halesia carolina",
+      "communs": "arbre aux clochettes d'argent ; halésia de caroline ; perce-neige en arbre"
+    },
+    {
+      "nom": "hamamelis virginiana",
+      "communs": "hamamélis de virginie ; hamamélis d'automne ; noisetier  d’amérique ; noisetier de sorcières ; noisetier des sorcières"
+    },
+    {
+      "nom": "hedera helix",
+      "communs": "lierre commun ; herbe de saint jean ; lierre grimpant"
+    },
+    {
+      "nom": "helianthemum nummularium",
+      "communs": "hélianthème commun ; hélianthème à feuilles arrondies ; hélianthème jaune ; hélianthème nummulaire"
+    },
+    {
+      "nom": "helianthus annuus",
+      "communs": "tournesol ; grand soleil ; soleil"
+    },
+    {
+      "nom": "helianthus maximiliani",
+      "communs": "hélianthe de maximilien"
+    },
+    {
+      "nom": "helianthus strumosus",
+      "communs": "hélianthi"
+    },
+    {
+      "nom": "helianthus tuberosus",
+      "communs": "hélianthe tubéreux ; canada ; patate de virginie ; topinambour"
+    },
+    {
+      "nom": "helichrysum italicum",
+      "communs": "immortelle d'italie ; éternelle jaune ; hélichryse à feuilles étroites ; hélichryse d'italie"
+    },
+    {
+      "nom": "helictochloa pratensis",
+      "communs": "avoine des prés"
+    },
+    {
+      "nom": "helminthotheca echioides",
+      "communs": "picride fausse-vipérine"
+    },
+    {
+      "nom": "helosciadium nodiflorum",
+      "communs": "ache faux-cresson ; cresson de cheval"
+    },
+    {
+      "nom": "hemerocallis fulva",
+      "communs": "lys d'un jour ; hémérocalle fauve ; lis rouge"
+    },
+    {
+      "nom": "heracleum sphondylium",
+      "communs": "berce d'hercule ; berce commune ; berce des prés ; berce sphondyle ; branc-ursine ; grande berce ; herbe du diable ; patte d'ours"
+    },
+    {
+      "nom": "hesperis matronalis",
+      "communs": "julienne des dames ; arragone ; giroflée des dames ; julienne des jardins"
+    },
+    {
+      "nom": "heuchera",
+      "communs": ""
+    },
+    {
+      "nom": "heuchera americana",
+      "communs": "heuchère d'Amérique ; désespoir-du-peintre d'amérique ; heuchère américaine"
+    },
+    {
+      "nom": "hibiscus syriacus",
+      "communs": "mauve en arbre ; althéa ; hibiscus de syrie ; hibiscus des jardins ; ketmie"
+    },
+    {
+      "nom": "hieracium murorum",
+      "communs": "epervière des murs"
+    },
+    {
+      "nom": "hieracium umbellatum",
+      "communs": "epervière en ombelle"
+    },
+    {
+      "nom": "hippophae",
+      "communs": "argousiers"
+    },
+    {
+      "nom": "hippophae rhamnoides",
+      "communs": "argousier ; argousier faux nerprun ; bourdaine marine ; epine luisante ; faux-nerprun ; griset ; saule épineux"
+    },
+    {
+      "nom": "hippophae salicifolia",
+      "communs": "argousier à feuilles de saule"
+    },
+    {
+      "nom": "holcus lanatus",
+      "communs": "houlque laineuse ; blanchard ; houque laineuse ; petite fenasse"
+    },
+    {
+      "nom": "holcus mollis",
+      "communs": "houlque molle ; houlque laineuse"
+    },
+    {
+      "nom": "hordeum murinum",
+      "communs": "orge des rats"
+    },
+    {
+      "nom": "hosta",
+      "communs": "hostas"
+    },
+    {
+      "nom": "hosta sieboldiana var. sieboldiana",
+      "communs": "hosta de montagne"
+    },
+    {
+      "nom": "hosta tardiana",
+      "communs": "hostas"
+    },
+    {
+      "nom": "houttuynia cordata",
+      "communs": "plante caméléon ; dokudami ; poivrier de chine"
+    },
+    {
+      "nom": "hovenia dulcis",
+      "communs": "raisinier de chine ; arbre aux raisins secs ; hovénie sucrée ; jujube zig-zag ; raisin de chine"
+    },
+    {
+      "nom": "humulus lupulus",
+      "communs": "houblon ; couleuvrée ; houblon grimpant ; houblon lupulin ; houblon vivace ; vigne du nord"
+    },
+    {
+      "nom": "hydrastis canadensis",
+      "communs": "fard inolien ; hydraste du Canada ; hydrastis du Canada ; racirie jaunisse ; sceau d'or"
+    },
+    {
+      "nom": "hylotelephium anacampseros",
+      "communs": "orpin bleu ; grand orpin bleuté ; orpin à feuilles rondes ; orpin courbé ; reprise des montagnes"
+    },
+    {
+      "nom": "hylotelephium maximum",
+      "communs": "herbe à la coupure ; grand orpin ; orpin reprise"
+    },
+    {
+      "nom": "hylotelephium spectabile",
+      "communs": "orpin remarquable ; hylotéléphium admirable ; orpin admirable"
+    },
+    {
+      "nom": "hylotelephium telephium",
+      "communs": "grand orpin ; herbe à la coupure ; herbe de la st jean ; herbe des charpentiers ; orpin reprise"
+    },
+    {
+      "nom": "hyoscyamus niger",
+      "communs": "jusquiame noire ; jusquiane noire"
+    },
+    {
+      "nom": "hypericum nummularium",
+      "communs": "millepertuis nummulaire ; nummulaire des chartreux ; vulnéraire"
+    },
+    {
+      "nom": "hypericum perforatum",
+      "communs": "millepertuis ; herbe à mille trous ; herbe de la saint-jean ; herbe percée ; millepertuis commun ; millepertuis perforé"
+    },
+    {
+      "nom": "hypochaeris glabra",
+      "communs": "porcelle glabre"
+    },
+    {
+      "nom": "iberis amara",
+      "communs": "ibéris amer"
+    },
+    {
+      "nom": "iberis sempervirens",
+      "communs": "corbeille d'argent ; ibéride toujours verte ; ibéris toujours vert ; thlaspi de candie"
+    },
+    {
+      "nom": "idesia polycarpa",
+      "communs": "idésia ; idésia polycarpe"
+    },
+    {
+      "nom": "ilex aquifolium",
+      "communs": "houx ; argolet ; houx commun ; houx d'europe"
+    },
+    {
+      "nom": "ilex paraguariensis",
+      "communs": "maté"
+    },
+    {
+      "nom": "indigofera heterantha",
+      "communs": "indigotier rose ; indigotier de l'himalaya"
+    },
+    {
+      "nom": "inula helenium",
+      "communs": "grande aunée ; inule aunée ; oeil-de-cheval"
+    },
+    {
+      "nom": "ipomoea aquatica",
+      "communs": "ipomée aquatique ; epinard aquatique ; kangkong ; liseron d'eau"
+    },
+    {
+      "nom": "ipomoea batatas",
+      "communs": "patate douce"
+    },
+    {
+      "nom": "ipomoea purpurea",
+      "communs": ""
+    },
+    {
+      "nom": "isatis tinctoria",
+      "communs": "herbe de st philippe ; guède ; herbe de saint philippe ; pastel des teinturiers"
+    },
+    {
+      "nom": "jacobaea adonidifolia",
+      "communs": "séneçon à feuilles d'adonis"
+    },
+    {
+      "nom": "jacobaea vulgaris",
+      "communs": "séneçon jacobée ; herbe de saint jacques ; jacobée commune ; séneçon de jacob"
+    },
+    {
+      "nom": "jubaea chilensis",
+      "communs": "cocotier du chili ; palmier du chili"
+    },
+    {
+      "nom": "juglans hindsii",
+      "communs": "noyer de californie"
+    },
+    {
+      "nom": "juglans mandshurica var. cordiformis",
+      "communs": "noyer cœur du japon"
+    },
+    {
+      "nom": "juglans nigra",
+      "communs": "noyer noir ; noyer d'amérique"
+    },
+    {
+      "nom": "juglans regia",
+      "communs": "noyer commun ; calottier ; noyer ; noyer anglais ; noyer royal"
+    },
+    {
+      "nom": "juncus acutiflorus",
+      "communs": "jonc à fleurs aigües ; jonc à tépales aigus"
+    },
+    {
+      "nom": "juncus bufonius",
+      "communs": "jonc des crapauds"
+    },
+    {
+      "nom": "juncus effusus",
+      "communs": "jonc commun ; jonc diffus ; jonc épars"
+    },
+    {
+      "nom": "juncus inflexus",
+      "communs": "jonc glauque ; jonc arqué ; jonc courbé ; jonc des jardiniers"
+    },
+    {
+      "nom": "juniperus",
+      "communs": ""
+    },
+    {
+      "nom": "juniperus communis",
+      "communs": "genévrier commun ; genièvre ; peteron ; pétrot"
+    },
+    {
+      "nom": "juniperus oxycedrus",
+      "communs": "génévrier cade ; arbre à cade ; cade ; cèdre piquant ; genévrier oxycèdre ; oxycèdre"
+    },
+    {
+      "nom": "juniperus phoenicea",
+      "communs": "génévrier de phénicie ; genévrier de lycie ; genévrier rouge"
+    },
+    {
+      "nom": "kadsura japonica",
+      "communs": "kadsura"
+    },
+    {
+      "nom": "kalopanax septemlobus",
+      "communs": "kalopanax à sept lobes ; faux-fatsia en arbre ; kalopanax du japon"
+    },
+    {
+      "nom": "knautia arvensis",
+      "communs": "knautie des champs ; langue-de-vache ; oreille d'âne ; oreille de lièvre ; scabieuse des champs"
+    },
+    {
+      "nom": "koeleria macrantha",
+      "communs": "koèlérie crispée ; keulérie à crête"
+    },
+    {
+      "nom": "koeleria vallesiana",
+      "communs": "koèlérie du valais"
+    },
+    {
+      "nom": "koelreuteria paniculata",
+      "communs": "savonnier ; koelreutéria paniculé ; savonnier de chine ; savonnier paniculé"
+    },
+    {
+      "nom": "laburnum anagyroides",
+      "communs": "cytise ; aubour ; cytise commun ; faux ébénier"
+    },
+    {
+      "nom": "lactuca perennis",
+      "communs": "laitue vivace ; bézègue"
+    },
+    {
+      "nom": "lactuca plumieri",
+      "communs": "laitue de plumier"
+    },
+    {
+      "nom": "lactuca sativa",
+      "communs": "laitue"
+    },
+    {
+      "nom": "lactuca serriola",
+      "communs": "laitue sauvage ; laitue scarole"
+    },
+    {
+      "nom": "lamium album",
+      "communs": "lamier blanc"
+    },
+    {
+      "nom": "lamium amplexicaule",
+      "communs": "lamier amplexicaule"
+    },
+    {
+      "nom": "lamium purpureum",
+      "communs": "lamier pourpre"
+    },
+    {
+      "nom": "lapageria rosea",
+      "communs": "copihue ; clochette chilienne ; lapagérie rose"
+    },
+    {
+      "nom": "lapsana communis",
+      "communs": "lampsane commune ; lapsane commune"
+    },
+    {
+      "nom": "lardizabala funaria",
+      "communs": "lardizabale"
+    },
+    {
+      "nom": "larix decidua",
+      "communs": "mélèze d'europe ; mélèze ; mélèze commun ; pin de briançon"
+    },
+    {
+      "nom": "lathyrus",
+      "communs": ""
+    },
+    {
+      "nom": "lathyrus aphaca",
+      "communs": "gesse sans feuilles"
+    },
+    {
+      "nom": "lathyrus hirsutus",
+      "communs": "gesse hirsute"
+    },
+    {
+      "nom": "lathyrus nissolia",
+      "communs": "gesse de nissole"
+    },
+    {
+      "nom": "lathyrus oleraceus",
+      "communs": "pois"
+    },
+    {
+      "nom": "lathyrus pratensis",
+      "communs": "gesse des prés"
+    },
+    {
+      "nom": "lathyrus tuberosus",
+      "communs": "gesse tubéreuse ; anotte ; gland de terre ; macusson ; truffe de lorraine"
+    },
+    {
+      "nom": "laurus nobilis",
+      "communs": "laurier sauce ; laurier ; laurier d'apollon ; laurier noble ; laurier vrai"
+    },
+    {
+      "nom": "lavandula angustifolia",
+      "communs": "lavande fine ; lavande ; lavande à feuilles étroites ; lavande de montagne ; lavande officinale ; lavande vraie"
+    },
+    {
+      "nom": "lavandula latifolia",
+      "communs": "lavande aspic ; aspic ; grande lavande ; lavande à feuilles larges"
+    },
+    {
+      "nom": "legousia speculum-veneris",
+      "communs": "miroir de vénus ; mirette ; spéculaire miroir de vénus"
+    },
+    {
+      "nom": "lemna minor",
+      "communs": "lentille d'eau"
+    },
+    {
+      "nom": "leontopodium nivale subsp. alpinum",
+      "communs": "edelweiss ; étoile des neiges ; pied de lion  leontopodium alpinum"
+    },
+    {
+      "nom": "leonurus cardiaca",
+      "communs": "agripaume cardiaque ; agripaume"
+    },
+    {
+      "nom": "lepidium campestre",
+      "communs": "passerage des champs"
+    },
+    {
+      "nom": "lepidium draba",
+      "communs": "pain blanc"
+    },
+    {
+      "nom": "lespedeza bicolor",
+      "communs": "lespédèze bicolore"
+    },
+    {
+      "nom": "lespedeza thunbergii",
+      "communs": "lespedeza de thunberg ; desmodium à fleurs pendantes"
+    },
+    {
+      "nom": "leucanthemum vulgare",
+      "communs": "marguerite ; leucanthème commun ; marguerite commune"
+    },
+    {
+      "nom": "levisticum officinale",
+      "communs": "livèche ; ache de montagne ; ache des montagnes ; céleri perpétuel ; livèche officinale"
+    },
+    {
+      "nom": "leycesteria formosa",
+      "communs": "arbre aux faisans ; leycestérie gracieuse"
+    },
+    {
+      "nom": "ligusticum scoticum",
+      "communs": "livèche écossaise ; persil de mer"
+    },
+    {
+      "nom": "ligustrum vulgare",
+      "communs": "troène d'europe ; raisin de chien ; troène champêtre ; troène commun"
+    },
+    {
+      "nom": "lilium martagon",
+      "communs": "lis martagon ; lis turban ; lys de catherine ; lys martagon"
+    },
+    {
+      "nom": "limonium vulgare",
+      "communs": "saladelle"
+    },
+    {
+      "nom": "linaria repens",
+      "communs": "linaire rampante ; linaire triée"
+    },
+    {
+      "nom": "linaria vulgaris",
+      "communs": "linaire commune ; chasse-venin"
+    },
+    {
+      "nom": "lindera benzoin",
+      "communs": "laurier benjoin ; laurier benzoin"
+    },
+    {
+      "nom": "linum bienne",
+      "communs": "lin à feuilles étroites"
+    },
+    {
+      "nom": "linum catharticum",
+      "communs": "lin purgatif"
+    },
+    {
+      "nom": "linum usitatissimum",
+      "communs": ""
+    },
+    {
+      "nom": "lithospermum officinale",
+      "communs": "grémil officinal ; herbe aux perles"
+    },
+    {
+      "nom": "litsea cubeba",
+      "communs": "litsée citronnée"
+    },
+    {
+      "nom": "lobularia maritima",
+      "communs": "alysson maritime ; alysse odorant"
+    },
+    {
+      "nom": "lolium multiflorum",
+      "communs": "ray-grass multiflore ; ray-grass italien"
+    },
+    {
+      "nom": "lolium perenne",
+      "communs": "ray-grass anglais ; ivraie vivace ; ray-grass commun"
+    },
+    {
+      "nom": "lolium rigidum",
+      "communs": "ray-grass rigide"
+    },
+    {
+      "nom": "lonicera caerulea",
+      "communs": "camérisier bleu ; baie de mai ; chèvrefeuille bleu"
+    },
+    {
+      "nom": "lonicera fragrantissima",
+      "communs": "Chèvrefeuille d'hiver ; chèvrefeuille à parfum ; chèvrefeuille de purpus ; chèvrefeuille très parfumé ; clématite d'hiver"
+    },
+    {
+      "nom": "lonicera kamtschatica",
+      "communs": "baie de mai"
+    },
+    {
+      "nom": "lonicera periclymenum",
+      "communs": "chèvrefeuille des bois ; chèvrefeuille grimpant ; chèvrefeuille périclymène ; cranquillier"
+    },
+    {
+      "nom": "lotus",
+      "communs": ""
+    },
+    {
+      "nom": "lotus corniculatus",
+      "communs": "lotier corniculé"
+    },
+    {
+      "nom": "lotus pedunculatus",
+      "communs": "lotier des marais ; lotier des fanges ; lotier pédonculé ; lotier velu"
+    },
+    {
+      "nom": "ludwigia grandiflora",
+      "communs": "jussie à grandes fleurs ; grande jussie ; ludwigie à grandes fleurs"
+    },
+    {
+      "nom": "luma apiculata",
+      "communs": "myrte du chili ; myrte luma"
+    },
+    {
+      "nom": "lunaria annua",
+      "communs": "lunaire ; herbe aux écus ; lunaire annuelle ; monnaie du pape"
+    },
+    {
+      "nom": "lupinus albus",
+      "communs": "lupin blanc ; lupin doux"
+    },
+    {
+      "nom": "lupinus arboreus",
+      "communs": "lupin arborescent ; lupin arboré ; lupin en arbre"
+    },
+    {
+      "nom": "luzula campestris",
+      "communs": "luzule des champs ; luzule champêtre"
+    },
+    {
+      "nom": "lycium barbarum",
+      "communs": "lyciet de barbarie ; baie de goji ; baie de jouvence ; goji ; lyciet commun"
+    },
+    {
+      "nom": "lycium chinense",
+      "communs": "baie de goji ; lyciet de chine"
+    },
+    {
+      "nom": "lycopus europaeus",
+      "communs": "chanvre d’eau ; lycope ; lycope d’europe ; marrube aquatique ; patte-de-loup"
+    },
+    {
+      "nom": "lysimachia arvensis",
+      "communs": "mouron rouge ; fausse morgeline ; menuchon ; miroir du temps ; mouron commun ; mouron des champs"
+    },
+    {
+      "nom": "lysimachia foemina",
+      "communs": "mouron bleu"
+    },
+    {
+      "nom": "lysimachia nummularia",
+      "communs": "lysimaque nummulaire ; herbe-aux-écus ; monnoyère"
+    },
+    {
+      "nom": "lythrum salicaria",
+      "communs": "salicaire ; herbe aux coliques ; lysimaque rouge ; salicaire officinale"
+    },
+    {
+      "nom": "maackia amurensis",
+      "communs": "maackie de l'amour ; arbre argenté du japon ; maackia de l'amour"
+    },
+    {
+      "nom": "maclura tricuspidata",
+      "communs": "cudranier"
+    },
+    {
+      "nom": "maianthemum racemosum",
+      "communs": "maïanthème à grappes ; faux sceau-de-salomon ; smilacine à grappes"
+    },
+    {
+      "nom": "malus",
+      "communs": "pommiers"
+    },
+    {
+      "nom": "malus domestica",
+      "communs": "pommier ; pomme ; pommier 'paradis' ; pommier commun ; pommier cultivé ; pommier domestique ; pommier nain"
+    },
+    {
+      "nom": "malva alcea",
+      "communs": "mauve alcée"
+    },
+    {
+      "nom": "malva moschata",
+      "communs": "mauve musquée"
+    },
+    {
+      "nom": "malva neglecta",
+      "communs": "mauve à feuilles rondes ; mauve commune ; mauve négligée ; petite mauve"
+    },
+    {
+      "nom": "malva sylvestris",
+      "communs": "grande mauve ; mauve sauvage ; mauve sylvestre"
+    },
+    {
+      "nom": "marrubium vulgare",
+      "communs": "marrube blanc ; marube commun"
+    },
+    {
+      "nom": "matricaria chamomilla",
+      "communs": "camomille matricaire ; camomille allemande ; camomille sauvage ; camomille vraie ; matricaire camomille ; matricaire déchirée ; matricaire tronquée ; petite camomille"
+    },
+    {
+      "nom": "matricaria discoidea",
+      "communs": "matricaire sans rayons"
+    },
+    {
+      "nom": "medicago arabica",
+      "communs": "luzerne maculée"
+    },
+    {
+      "nom": "medicago lupulina",
+      "communs": "minette ; lupuline ; luzerne lupuline ; luzerne-houblon"
+    },
+    {
+      "nom": "medicago monspeliaca",
+      "communs": "trigonelle de montpellier"
+    },
+    {
+      "nom": "medicago orbicularis",
+      "communs": "luzerne orbiculaire"
+    },
+    {
+      "nom": "medicago sativa",
+      "communs": "luzerne ; alfalfa ; luzerne commune ; luzerne cultivée"
+    },
+    {
+      "nom": "melampyrum arvense",
+      "communs": "blé de vache ; mélampyre des champs"
+    },
+    {
+      "nom": "melilotus albus",
+      "communs": "mélilot blanc"
+    },
+    {
+      "nom": "melilotus officinalis",
+      "communs": "melilot ; mélilot jaune ; mélilot officinal"
+    },
+    {
+      "nom": "melissa officinalis",
+      "communs": "mélisse officinale ; citronnelle ; mélisse ; mélisse citronnelle"
+    },
+    {
+      "nom": "melittis melissophyllum",
+      "communs": "mélitte à feuilles de mélisse"
+    },
+    {
+      "nom": "mentha",
+      "communs": "menthes"
+    },
+    {
+      "nom": "mentha aquatica",
+      "communs": "menthe aquatique ; baume d'eau ; menthe d'eau"
+    },
+    {
+      "nom": "mentha arvensis",
+      "communs": "menthe des champs ; baume des champs ; pouliot-thym"
+    },
+    {
+      "nom": "mentha longifolia",
+      "communs": "menthe sylvestre ; menthe à longues feuilles"
+    },
+    {
+      "nom": "mentha pulegium",
+      "communs": "menthe pouliot ; pouliot"
+    },
+    {
+      "nom": "mentha spicata",
+      "communs": "menthe verte ; menthe ; menthe en épi"
+    },
+    {
+      "nom": "menyanthes trifoliata",
+      "communs": "ményanthe trèfle d'eau ; ményanthe trifolié ; trèfle d'eau"
+    },
+    {
+      "nom": "mercurialis annua",
+      "communs": "mercuriale annuelle"
+    },
+    {
+      "nom": "mercurialis perennis",
+      "communs": "mercuriale vivace ; mercuriale pérenne"
+    },
+    {
+      "nom": "mertensia maritima",
+      "communs": "plante à huîtres ; mertensie maritime ; plante-huître"
+    },
+    {
+      "nom": "meum athamanticum",
+      "communs": "cistre ; fenouil des alpes"
+    },
+    {
+      "nom": "mibora minima",
+      "communs": "mibora naine"
+    },
+    {
+      "nom": "miscanthus longiberbis",
+      "communs": "herbe à éléphant"
+    },
+    {
+      "nom": "mitchella repens",
+      "communs": "pain de perdrix"
+    },
+    {
+      "nom": "molinia caerulea",
+      "communs": "molinie bleue"
+    },
+    {
+      "nom": "monarda didyma",
+      "communs": "monarde écarlate ; bergamote de pennsylvanie ; thé d'oswego ; thé des oswegos"
+    },
+    {
+      "nom": "montia fontana",
+      "communs": "montie de fontaine ; montia des fontaines"
+    },
+    {
+      "nom": "moringa oleifera",
+      "communs": "moringa"
+    },
+    {
+      "nom": "morus alba",
+      "communs": "mûrier ; mûrier blanc ; mûrier noir"
+    },
+    {
+      "nom": "morus nigra",
+      "communs": "mûrier noir"
+    },
+    {
+      "nom": "muehlenbeckia axillaris",
+      "communs": "muehlenbeckia"
+    },
+    {
+      "nom": "muenchhusia moscheutos",
+      "communs": "hibiscus des marais"
+    },
+    {
+      "nom": "mummenhoffia alliacea",
+      "communs": "tabouret à odeur d'ail"
+    },
+    {
+      "nom": "musa",
+      "communs": "bananiers rustiques"
+    },
+    {
+      "nom": "muscari comosum",
+      "communs": "muscari à toupet ; ail à toupet ; ail-à-la-serpent ; léopoldie à toupet"
+    },
+    {
+      "nom": "muscari neglectum",
+      "communs": "muscari négligé ; muscari à grappe ; muscari en grappe"
+    },
+    {
+      "nom": "myagrum perfoliatum",
+      "communs": "myagrum perfolié"
+    },
+    {
+      "nom": "myosotis arvensis",
+      "communs": "myosotis des champs ; myosotis intermédiaire"
+    },
+    {
+      "nom": "myosotis discolor",
+      "communs": "myosotis changeant ; myosostis versicolore ; myosotis bicolore"
+    },
+    {
+      "nom": "myrica",
+      "communs": ""
+    },
+    {
+      "nom": "myrica californica",
+      "communs": "myrique de californie"
+    },
+    {
+      "nom": "myrica cerifera",
+      "communs": "cirier ; arbre à suif"
+    },
+    {
+      "nom": "myrica gale",
+      "communs": "piment royal ; bois sent-bon ; cirier ; galé odorant ; myrte bâtard"
+    },
+    {
+      "nom": "myrica pensylvanica",
+      "communs": "myrique de pennsylvanie"
+    },
+    {
+      "nom": "myrica rubra",
+      "communs": "fraise chinoise ; yangmei"
+    },
+    {
+      "nom": "myrrhis odorata",
+      "communs": "myrrhide odorante ; cerfeuil anisé ; cerfeuil d'espagne ; cerfeuil musqué ; myrrhe odorant ; myrrhide odorant ; myrrhide odorant myrrhis odorata ; myrrhis odorant"
+    },
+    {
+      "nom": "myrteola nummularia",
+      "communs": "myrteola"
+    },
+    {
+      "nom": "myrtus communis",
+      "communs": "myrte commun"
+    },
+    {
+      "nom": "nageia nagi",
+      "communs": "nageia"
+    },
+    {
+      "nom": "nardus stricta",
+      "communs": "nard raide"
+    },
+    {
+      "nom": "nasturtium officinale",
+      "communs": "cresson officinal ; cresson ; cresson d'eau ; cresson de fontaine ; cresson des fontaines ; rorippe cresson-d'eau"
+    },
+    {
+      "nom": "nelumbo nucifera",
+      "communs": "lotus sacré ; lotus d'orient"
+    },
+    {
+      "nom": "noccaea perfoliata",
+      "communs": "tabouret perfolié ; monnoyère à feuilles embrassantes ; tabouret perfolié de linné"
+    },
+    {
+      "nom": "nuphar lutea",
+      "communs": "nénuphar jaune ; aillout d'eau ; nénufar jaune ; nénuphar commun"
+    },
+    {
+      "nom": "nymphaea alba",
+      "communs": "nymphéa blanc ; nénufar blanc ; nénuphar blanc"
+    },
+    {
+      "nom": "nyssa biflora",
+      "communs": "tupélo des ours"
+    },
+    {
+      "nom": "ocimum basilicum",
+      "communs": "basilic"
+    },
+    {
+      "nom": "ocimum gratissimum",
+      "communs": "basilic perpétuel ; basilic africain arbustif ; thé de gambie"
+    },
+    {
+      "nom": "ocimum kilimandscharicum",
+      "communs": "basilic camphré ; basilic du kenya"
+    },
+    {
+      "nom": "oenanthe crocata",
+      "communs": "oenanthe safranée ; pensacre"
+    },
+    {
+      "nom": "oenanthe pimpinelloides",
+      "communs": "œnanthe faux-boucage"
+    },
+    {
+      "nom": "oenothera biennis",
+      "communs": "onagre bisannuelle ; herbe-aux-ânes ; onagre"
+    },
+    {
+      "nom": "oenothera lindheimeri",
+      "communs": ""
+    },
+    {
+      "nom": "olea europaea",
+      "communs": "olivier ; olivier d'europe"
+    },
+    {
+      "nom": "onobrychis viciifolia",
+      "communs": "esparcette ; sainfoin ; sainfoin commun"
+    },
+    {
+      "nom": "onoclea struthiopteris",
+      "communs": "fougère autruche ; fougère d'allemagne ; fougère plume d'autruche ; plume d'autruche"
+    },
+    {
+      "nom": "onopordum acanthium",
+      "communs": "chardon de bourrique ; chardon aux ânes ; chardon d'ecosse ; chardon de bourrique  onopordum acanthium ; onoporde ; onopordon à feuilles d’acanthe ; onopordon acanthe ; onopordon fausse acanthe"
+    },
+    {
+      "nom": "ophrys apifera",
+      "communs": "ophrys abeille"
+    },
+    {
+      "nom": "oplopanax horridus",
+      "communs": "bois piquant ; devil's club"
+    },
+    {
+      "nom": "opuntia ficus-indica",
+      "communs": "figuier de barbarie"
+    },
+    {
+      "nom": "origanum vulgare",
+      "communs": "origan ; marjolaine bâtarde ; marjolaine sauvage ; marjolaine vivace ; origan commun ; thé rouge"
+    },
+    {
+      "nom": "orlaya grandiflora",
+      "communs": "orlaya à grandes fleurs"
+    },
+    {
+      "nom": "ornithogalum pyrenaicum",
+      "communs": "ornithogale des pyrénées ; asperge des bois ; aspergette"
+    },
+    {
+      "nom": "ornithogalum umbellatum",
+      "communs": "dame d’onze heures ; ornithogale à feuilles étroites ; ornithogale en ombelle"
+    },
+    {
+      "nom": "ornithopus compressus",
+      "communs": "pied d’oiseau comprimé"
+    },
+    {
+      "nom": "ornithopus perpusillus",
+      "communs": "ornithope délicat ; pied d’oiseau"
+    },
+    {
+      "nom": "oryza sativa",
+      "communs": "riz"
+    },
+    {
+      "nom": "osmanthus fragrans",
+      "communs": "osmanthe parfumé ; faux-olivier odorant ; olivier odorant ; osmanthe à parfum"
+    },
+    {
+      "nom": "osmunda regalis",
+      "communs": "fougère royale ; fougère fleurie ; osmonde royale"
+    },
+    {
+      "nom": "oxalis acetosella",
+      "communs": "alléluia ; oseille des bois ; oxalide des bois ; oxalide petite oseille ; oxalis des bois ; pain de coucou ; surelle"
+    },
+    {
+      "nom": "oxalis corniculata",
+      "communs": "oxalis cornue ; oxalide corniculée ; oxalide jaune rampante ; pied-de-pigeon ; trèfle jaune"
+    },
+    {
+      "nom": "oxalis pes-caprae",
+      "communs": "oxalis pied de chèvre ; oxalide des bermudes ; oxalide pied-de-chèvre"
+    },
+    {
+      "nom": "oxalis stricta",
+      "communs": "oxalis des fontaines ; oxalide d'europe ; oxalide des fontaines ; oxalide droite"
+    },
+    {
+      "nom": "oxalis tuberosa",
+      "communs": "oca du pérou ; oca d'amérique ; oxalide crénelée ; oxalis tubéreux ; truffette acide ; urelle tubéreuse"
+    },
+    {
+      "nom": "oxyria digyna",
+      "communs": "oxyrie à deux stigmates ; oxyria à deux styles ; patience à deux stigmates"
+    },
+    {
+      "nom": "paliurus spina-christi",
+      "communs": "epine du christ ; argalou ; paliure ; paliure porte-chapeau"
+    },
+    {
+      "nom": "panax ginseng",
+      "communs": ""
+    },
+    {
+      "nom": "panicum capillare",
+      "communs": "millet capillaire ; panic capillaire"
+    },
+    {
+      "nom": "papaver dubium",
+      "communs": "coquelicot douteux ; coquelicot douteux papaver dubium ; pavot douteux ; petit coquelicot"
+    },
+    {
+      "nom": "papaver rhoeas",
+      "communs": "coquelicot ; grand coquelicot"
+    },
+    {
+      "nom": "parietaria judaica",
+      "communs": "casse pierre ; pariétaire diffuse ; perce muraille"
+    },
+    {
+      "nom": "parietaria officinalis",
+      "communs": "casse pierre ; pariétaire"
+    },
+    {
+      "nom": "parthenocissus",
+      "communs": ""
+    },
+    {
+      "nom": "parthenocissus tricuspidata",
+      "communs": "vigne vierge ; lierre de boston ; vigne vierge japonaise ; vigne-vierge à trois pointes"
+    },
+    {
+      "nom": "paspalum dilatatum",
+      "communs": "digitaire dilatée ; millet bâtard ; paspale dilaté"
+    },
+    {
+      "nom": "paspalum distichum",
+      "communs": "digitaire vaginée ; paspale à deux épis ; paspale glauque"
+    },
+    {
+      "nom": "passiflora caerulea",
+      "communs": "fleur de la passion ; fleur de la passion passiflora caerulea ; passiflore bleue ; passiflore commune"
+    },
+    {
+      "nom": "passiflora incarnata",
+      "communs": "passiflore rouge ; liane de grenade ; passiflore officinale"
+    },
+    {
+      "nom": "pastinaca sativa",
+      "communs": "panais des bois ; panais"
+    },
+    {
+      "nom": "pastinaca sativa subsp. urens",
+      "communs": "panais urticant"
+    },
+    {
+      "nom": "paulownia",
+      "communs": "paulownias"
+    },
+    {
+      "nom": "pediomelum esculentum",
+      "communs": "psoralée comestible ; pomme de prairie"
+    },
+    {
+      "nom": "peltaria alliacea",
+      "communs": "peltarie à odeur d'ail"
+    },
+    {
+      "nom": "persea americana",
+      "communs": "avocatier"
+    },
+    {
+      "nom": "persicaria hydropiper",
+      "communs": "renouée poivre d’eau"
+    },
+    {
+      "nom": "persicaria lapathifolia",
+      "communs": "renouée à feuilles de patience ; renouée à feuilles d'oseille"
+    },
+    {
+      "nom": "persicaria maculosa",
+      "communs": "renouée persicaire"
+    },
+    {
+      "nom": "petasites hybridus",
+      "communs": "pétasite officinale ; chapeau du diable ; grand pétasite ; herbe à la peste ; pétasite hybride ; pétasite officinal"
+    },
+    {
+      "nom": "petasites japonicus",
+      "communs": "pétasite du japon ; fuki"
+    },
+    {
+      "nom": "petasites japonicus var. giganteus",
+      "communs": "fuki ; pétasite du japon"
+    },
+    {
+      "nom": "petroselinum crispum",
+      "communs": "persil"
+    },
+    {
+      "nom": "peucedanum alsaticum",
+      "communs": "peucédan d’alsace"
+    },
+    {
+      "nom": "peucedanum ostruthium",
+      "communs": "impératoire"
+    },
+    {
+      "nom": "peumus boldus",
+      "communs": "boldo"
+    },
+    {
+      "nom": "phacelia tanacetifolia",
+      "communs": ""
+    },
+    {
+      "nom": "phaseolus acutifolius",
+      "communs": "haricot tépari"
+    },
+    {
+      "nom": "phaseolus coccineus 'orteil de prêcheur'",
+      "communs": "haricot d'espagne 'orteil de prêcheur'"
+    },
+    {
+      "nom": "phaseolus lunatus",
+      "communs": "haricot lune"
+    },
+    {
+      "nom": "phaseolus vulgaris",
+      "communs": "haricot"
+    },
+    {
+      "nom": "philadelphus",
+      "communs": ""
+    },
+    {
+      "nom": "phillyrea latifolia",
+      "communs": "filaire à feuilles larges ; alavert à larges feuilles ; filaire à larges feuilles"
+    },
+    {
+      "nom": "phleum pratense",
+      "communs": "fléole des prés ; phléole des prés ; queue-de-rat ; timothée"
+    },
+    {
+      "nom": "phormium tenax",
+      "communs": "phormium tenace ; lin de nouvelle-zélande"
+    },
+    {
+      "nom": "phyllostachys",
+      "communs": "bambous"
+    },
+    {
+      "nom": "physalis heterophylla",
+      "communs": ""
+    },
+    {
+      "nom": "physalis peruviana",
+      "communs": "coqueret du pérou (physalis peruviana)"
+    },
+    {
+      "nom": "phyteuma orbiculare",
+      "communs": "raiponce orbiculaire ; herbe d'amour ; herbe ronde du diable"
+    },
+    {
+      "nom": "phyteuma spicatum",
+      "communs": "raiponce en épi"
+    },
+    {
+      "nom": "phytolacca americana",
+      "communs": "phytolaque d'amérique ; faux vin ; herbe à la laque ; laque végétale ; phytolaque américain ; phytolaque américaine ; raisin d'amérique ; vigne de judée"
+    },
+    {
+      "nom": "picea abies",
+      "communs": "épicéa ; epicéa à poix ; epicéa commun ; epicéa du nord ; epinette de norvège ; pesse ; sapin de norvège"
+    },
+    {
+      "nom": "picrasma quassioides",
+      "communs": "nigaki"
+    },
+    {
+      "nom": "picris hieracioides",
+      "communs": "picride spinuleuse"
+    },
+    {
+      "nom": "pilosella officinarum",
+      "communs": "epervière piloselle ; hieracium pilosella"
+    },
+    {
+      "nom": "pinus armandii",
+      "communs": ""
+    },
+    {
+      "nom": "pinus cembra",
+      "communs": "pin cembro ; arole ; arolle ; auvier ; pin des alpes"
+    },
+    {
+      "nom": "pinus gerardiana",
+      "communs": "pin de gérard"
+    },
+    {
+      "nom": "pinus halepensis",
+      "communs": "pin d'alep ; pin blanc ; pin blanc de provence"
+    },
+    {
+      "nom": "pinus koraiensis",
+      "communs": "pin de corée"
+    },
+    {
+      "nom": "pinus nigra subsp. laricio",
+      "communs": "Pin Laricio ; pin de corse ; pin noir de corse"
+    },
+    {
+      "nom": "pinus pinea",
+      "communs": "pin pignon ; pin d'italie ; pin parasol ; pinier"
+    },
+    {
+      "nom": "pinus radiata",
+      "communs": "pin radié ; pin de monterey ; pin insigne"
+    },
+    {
+      "nom": "pinus sibirica",
+      "communs": "pin de sibérie"
+    },
+    {
+      "nom": "pinus sylvestris",
+      "communs": "pin sylvestre ; pin commun ; pin de riga ; pin du nord"
+    },
+    {
+      "nom": "pinus uncinata",
+      "communs": "pin à crochets ; pin de montagne"
+    },
+    {
+      "nom": "pistacia chinensis",
+      "communs": "pistachier chinois ; pistachier de chine"
+    },
+    {
+      "nom": "pistacia lentiscus",
+      "communs": "pistachier lentisque ; arbre à mastic ; lentisque"
+    },
+    {
+      "nom": "pistacia vera",
+      "communs": "pistachier vrai ; pistachier commun ; pistachier cultivé"
+    },
+    {
+      "nom": "plantago",
+      "communs": ""
+    },
+    {
+      "nom": "plantago coronopus",
+      "communs": "plantain corne-de-cerf ; corne de bœuf ; herbe étoilée ; pied de corbeau ; pied-de-corneille"
+    },
+    {
+      "nom": "plantago lanceolata",
+      "communs": "plantain lancéolé ; herbe à cinq côtes ; herbe à cinq coutures ; plantain étroit"
+    },
+    {
+      "nom": "plantago major",
+      "communs": "grand plantain ; gros plantain ; plantain à bouquets ; plantain à grandes feuilles ; plantain des oiseaux ; plantain majeur"
+    },
+    {
+      "nom": "plantago media",
+      "communs": "plantain moyen ; langue d'agneau ; plantain bâtard ; plantain blanc ; plantain intermédiaire"
+    },
+    {
+      "nom": "plantago sempervirens",
+      "communs": "badasson ; plantain œil de chien"
+    },
+    {
+      "nom": "pleioblastus simonii",
+      "communs": "Arundinaria de Simon ; Bambou de Simon ; pléioblaste de simon"
+    },
+    {
+      "nom": "poa annua",
+      "communs": "pâturin annuel"
+    },
+    {
+      "nom": "poa pratensis",
+      "communs": "pâturin des prés"
+    },
+    {
+      "nom": "poa trivialis",
+      "communs": "pâturin trivial ; gazon d'angleterre ; pâturin commun ; pâturin rude"
+    },
+    {
+      "nom": "podocarpus totara",
+      "communs": "totara"
+    },
+    {
+      "nom": "polygala vulgaris",
+      "communs": "polygale commun ; herbe au lait"
+    },
+    {
+      "nom": "polygonatum",
+      "communs": ""
+    },
+    {
+      "nom": "polygonatum odoratum",
+      "communs": "sceau de salomon officinale"
+    },
+    {
+      "nom": "polygonum aviculare",
+      "communs": "renouée des oiseaux ; renouée traînasse"
+    },
+    {
+      "nom": "polypodium vulgare",
+      "communs": "polypode commun ; polypode vulgaire ; réglisse des bois ; réglisse sauvage"
+    },
+    {
+      "nom": "pontederia cordata",
+      "communs": "pontédérie ; pontédérie à feuilles en coeur"
+    },
+    {
+      "nom": "populus",
+      "communs": ""
+    },
+    {
+      "nom": "populus alba",
+      "communs": "peuplier blanc ; peuplier argenté ; peuplier de hollande ; ypréau"
+    },
+    {
+      "nom": "populus nigra",
+      "communs": "peuplier noir ; peuplier commun"
+    },
+    {
+      "nom": "populus tremula",
+      "communs": "peuplier tremble ; tremble ; tremble d'europe"
+    },
+    {
+      "nom": "portulaca oleracea",
+      "communs": "pourpier"
+    },
+    {
+      "nom": "potamogeton natans",
+      "communs": "potamot nageant ; langue de chien"
+    },
+    {
+      "nom": "potentilla argentea",
+      "communs": "potentille argentée"
+    },
+    {
+      "nom": "potentilla erecta",
+      "communs": "potentille tormentille"
+    },
+    {
+      "nom": "potentilla indica",
+      "communs": "potentille des indes ; duchesnée d'inde ; duchesnée des indes ; fraise crapaud ; fraise de l'eau ; fraise marron ; fraisier d’inde ; fraisier de duchesne ; potentille d'inde"
+    },
+    {
+      "nom": "potentilla reptans",
+      "communs": "potentille rampante ; herbe à cinq feuilles ; main-de-mars ; quintefeuille"
+    },
+    {
+      "nom": "prenanthes purpurea",
+      "communs": "prenanthe pourpre"
+    },
+    {
+      "nom": "primula elatior",
+      "communs": "coucou des bois ; coucou des bois primula elatior ; primevère des bois ; primevère élevée"
+    },
+    {
+      "nom": "primula veris",
+      "communs": "primevère officinale ; brérelle ; coqueluchon ; coucou ; herbe à la paralysie ; herbe de saint paul ; primerolle ; primevère de printemps ; printanière"
+    },
+    {
+      "nom": "primula vulgaris",
+      "communs": "primevère commune ; primevère à grandes fleurs ; primevère acaule ; primevère des jardins ; primevère sans tige"
+    },
+    {
+      "nom": "prinsepia utilis",
+      "communs": "prinsépia"
+    },
+    {
+      "nom": "proboscidea louisianica",
+      "communs": "martynie de louisiane"
+    },
+    {
+      "nom": "prumnopitys andina",
+      "communs": "lleuque ; if chilien ; podocarpe des andes"
+    },
+    {
+      "nom": "prunella vulgaris",
+      "communs": "brunelle commune ; brunette ; charbonnière ; herbe catois ; prunelle commune"
+    },
+    {
+      "nom": "prunus armeniaca",
+      "communs": "abricotier ; abricotier commun ; prunier abricotier ; prunier d'arménie"
+    },
+    {
+      "nom": "prunus avium",
+      "communs": "merisier ; cerisier des bois ; cerisier des oiseaux ; cerisier sauvage"
+    },
+    {
+      "nom": "prunus brigantina",
+      "communs": "prunier de briançon ; afatoulier ; marmottier ; prunier des alpes"
+    },
+    {
+      "nom": "prunus cerasifera",
+      "communs": "prunier myrobolan ; mirobolan ; mirobolant ; myrobolan ; prunier cerise ; prunier porte-cerise ; prunier sauvage"
+    },
+    {
+      "nom": "prunus cerasus",
+      "communs": "cerisier ; cerisier acide ; cerisier aigre ; cerisier vrai ; griottier ; griottier acide ; prunier cerisier"
+    },
+    {
+      "nom": "prunus domestica",
+      "communs": "prunier ; mirabellier ; prune ; prunier commun ; prunier domestique"
+    },
+    {
+      "nom": "prunus lusitanica",
+      "communs": "laurier du portugal ; faux-laurier portugais ; prunier du portugal"
+    },
+    {
+      "nom": "prunus persica",
+      "communs": "pêcher ; pêcher commun ; prunier de perse ; prunier pêcher"
+    },
+    {
+      "nom": "prunus pumila",
+      "communs": "cerisier des sables ; prunier nain"
+    },
+    {
+      "nom": "prunus spinosa",
+      "communs": "prunellier ; belossay ; buisson noir ; épine noire ; fourdinier ; mère du bois ; pelossier ; prunelier ; prunier épineux"
+    },
+    {
+      "nom": "prunus tomentosa",
+      "communs": "ragouminier"
+    },
+    {
+      "nom": "pseudopodospermum hispanicum",
+      "communs": "scorsonère"
+    },
+    {
+      "nom": "pseudosasa japonica",
+      "communs": "Bambou du Japon ; Bambou flèche ; bambou japonais ; Bambou métaké ; faux sasa du japon ; metake"
+    },
+    {
+      "nom": "pseudotsuga menziesii",
+      "communs": "douglas vert ; douglas ; douglas de menzies ; pin de l'oregon ; pin douglas ; sapin de douglas"
+    },
+    {
+      "nom": "pseudoturritis turrita",
+      "communs": "arabette de turis ; arabette tourette"
+    },
+    {
+      "nom": "psidium cattleianum",
+      "communs": "goyavier-fraise"
+    },
+    {
+      "nom": "pteridium aquilinum",
+      "communs": "fougère aigle ; aigle impérial ; grande fougère"
+    },
+    {
+      "nom": "pueraria montana",
+      "communs": "kudzu"
+    },
+    {
+      "nom": "pulicaria dysenterica",
+      "communs": "pulicaire dysenterique ; herbe de saint roch ; inule des prés"
+    },
+    {
+      "nom": "pulicaria vulgaris",
+      "communs": "herbe aux puces ; herbe aux puces  pulicaria vulgaris ; pulicaire commune"
+    },
+    {
+      "nom": "pulmonaria affinis",
+      "communs": "pulmonaire officinale"
+    },
+    {
+      "nom": "pulmonaria montana",
+      "communs": "pulmonaire tubéreuse ; pulmonaire des montagnes"
+    },
+    {
+      "nom": "pulmonaria officinalis",
+      "communs": "pulmonaire officinale"
+    },
+    {
+      "nom": "pulsatilla vulgaris",
+      "communs": "anémone pulsatille ; coquelourde ; herbe au vent"
+    },
+    {
+      "nom": "punica granatum",
+      "communs": "grenadier ; grenade ; grenadier à graines nombreuses ; grenadier commun"
+    },
+    {
+      "nom": "pyrus",
+      "communs": "poiriers ; nashis"
+    },
+    {
+      "nom": "pyrus communis",
+      "communs": "poirier ; aigrin ; poirier commun ; poirier cultivé ; poirier domestique"
+    },
+    {
+      "nom": "pyrus pyrifolia",
+      "communs": "nashi ; poirier asiatique"
+    },
+    {
+      "nom": "quercus coccifera",
+      "communs": "chêne kermès ; chêne à cochenilles ; chêne de palestine ; chêne des garrigues ; garric ; garrouille ; kermès"
+    },
+    {
+      "nom": "quercus ilex",
+      "communs": "chêne vert ; yeuse"
+    },
+    {
+      "nom": "quercus macrocarpa",
+      "communs": "chêne à gros glands ; chêne à gros fruits"
+    },
+    {
+      "nom": "quercus robur",
+      "communs": "chêne pédonculé ; chêne à grappes ; chêne commun ; chêne femelle ; chêne rouvre ; gravelin"
+    },
+    {
+      "nom": "quercus rotundifolia",
+      "communs": "chêne vert à glands doux ; chêne vert à gland doux"
+    },
+    {
+      "nom": "quercus rubra",
+      "communs": "chêne boréal ; Chene rouge ; Chêne rouge d'Amérique ; chêne rouge damérique"
+    },
+    {
+      "nom": "quillaja saponaria",
+      "communs": "bois de panama"
+    },
+    {
+      "nom": "rabelera holostea",
+      "communs": "henriette ; stellaire holostée"
+    },
+    {
+      "nom": "ranunculus aconitifolius",
+      "communs": "renoncule à feuilles d' aconit ; bouton d'argent ; renoncule à feuilles d'aconit"
+    },
+    {
+      "nom": "ranunculus acris",
+      "communs": "renoncule âcre ; bassinet ; bouton d'or ; fleur-de-beurre ; pied-de-coq"
+    },
+    {
+      "nom": "ranunculus arvensis",
+      "communs": "renoncule des champs"
+    },
+    {
+      "nom": "ranunculus bulbosus",
+      "communs": "renoncule bulbeuse ; rave de saint antoine"
+    },
+    {
+      "nom": "ranunculus ficaria",
+      "communs": "ficaire"
+    },
+    {
+      "nom": "ranunculus flammula",
+      "communs": "petite douve ; renoncule flamette"
+    },
+    {
+      "nom": "ranunculus paludosus",
+      "communs": "renoncule des marais ; renoncule flabellée"
+    },
+    {
+      "nom": "ranunculus repens",
+      "communs": "renoncule rampante ; bassinet ; bouton d'or ; pied-de-poule"
+    },
+    {
+      "nom": "ranunculus sardous",
+      "communs": "renoncule sarde"
+    },
+    {
+      "nom": "ranunculus sceleratus",
+      "communs": "renoncule scélérate ; herbe sardonique ; renoncule à feuilles de céleri"
+    },
+    {
+      "nom": "raphanus raphanistrum",
+      "communs": "ravenelle"
+    },
+    {
+      "nom": "raphanus raphanistrum subsp. sativus",
+      "communs": "radis ; radis d’hiver"
+    },
+    {
+      "nom": "rapistrum rugosum",
+      "communs": "rapistre rugueux"
+    },
+    {
+      "nom": "reichardia picroides",
+      "communs": "reichardie fausse picride ; cousteline ; cousteline commune ; picridie commune ; picridion commun ; reichardie ; terra grépia"
+    },
+    {
+      "nom": "reseda lutea",
+      "communs": "réséda jaune ; réséda bâtard ; réséda sauvage"
+    },
+    {
+      "nom": "reseda luteola",
+      "communs": "gaude ; gaude des teinturiers ; herbe à jaunir ; herbe jaune ; mignonette jaunâtre ; réséda des teinturiers ; réséda jaunâtre"
+    },
+    {
+      "nom": "reseda phyteuma",
+      "communs": "réséda raiponce"
+    },
+    {
+      "nom": "reynoutria japonica",
+      "communs": "renouée du japon"
+    },
+    {
+      "nom": "reynoutria sachalinensis",
+      "communs": "renouée des îles sachaline ; renouée de sakhaline"
+    },
+    {
+      "nom": "rhagadiolus edulis",
+      "communs": "rhagadiole succulente ; rhagadiolus comestible"
+    },
+    {
+      "nom": "rhamnus alaternus",
+      "communs": "nerprun alaterne ; alaterne ; bourgue épine"
+    },
+    {
+      "nom": "rhamnus cathartica",
+      "communs": "nerprun purgatif ; bourgue-épine ; nerprun cathartique ; nerprun officinal"
+    },
+    {
+      "nom": "rhaphithamnus spinosus",
+      "communs": "rhaphithamnus"
+    },
+    {
+      "nom": "rheum",
+      "communs": "rhubarbe des jardins"
+    },
+    {
+      "nom": "rheum alpinus",
+      "communs": "rhapontie des moines ; rhubarbe alpine"
+    },
+    {
+      "nom": "rheum hybridum",
+      "communs": "rhubarbe"
+    },
+    {
+      "nom": "rheum rhabarbarum",
+      "communs": "Rhubarbe ; Rhubarbe des jardins"
+    },
+    {
+      "nom": "rhinanthus alectorolophus",
+      "communs": "rhinanthe crête de coq"
+    },
+    {
+      "nom": "rhinanthus major var. major",
+      "communs": "rhinanthe crête de coq"
+    },
+    {
+      "nom": "rhinanthus minor",
+      "communs": "rhinanthe crête de coq ; petit cocriste ; petit rhinanthe"
+    },
+    {
+      "nom": "rhodiola rosea",
+      "communs": "orpin rose ; orpin odorant ; rhodiole ; rhodiole rose ; sedum rhodiola"
+    },
+    {
+      "nom": "rhus",
+      "communs": ""
+    },
+    {
+      "nom": "ribes culverwellii",
+      "communs": "Groseillier de Culverwell"
+    },
+    {
+      "nom": "ribes nidigrolaria",
+      "communs": "casseille"
+    },
+    {
+      "nom": "ribes nigrum",
+      "communs": "cassissier ; cassis ; groseillier noir"
+    },
+    {
+      "nom": "ribes rubrum",
+      "communs": "groseiller à grappes ; castillier ; groseillier ; groseillier à grappes ; groseillier rouge ; raisin de mars"
+    },
+    {
+      "nom": "ribes uva-crispa",
+      "communs": "groseillier épineux ; groseillier à maquereau ; groseillier à maquereaux ; groseillier des haies ; vinétier"
+    },
+    {
+      "nom": "robinia pseudoacacia",
+      "communs": "robinier ; acacia blanc ; carouge ; faux-acacia ; robinier faux acacia"
+    },
+    {
+      "nom": "rorippa sylvestris",
+      "communs": "cresson des bois"
+    },
+    {
+      "nom": "rosa arvensis",
+      "communs": "eglantier des champ ; eglantier des champs ; rose des champs ; rosier des champs ; rosier rampant"
+    },
+    {
+      "nom": "rosa canina",
+      "communs": "églantier ; eglantier des chiens ; rosier des chiens ; rosier des haies"
+    },
+    {
+      "nom": "rosa damascena",
+      "communs": "rosier de damas"
+    },
+    {
+      "nom": "rosa gallica",
+      "communs": "rose de france ; rose de provins"
+    },
+    {
+      "nom": "rosa palustris",
+      "communs": "rosier palustre"
+    },
+    {
+      "nom": "rosa rugosa",
+      "communs": "rosier rugueux ; rosier du japon"
+    },
+    {
+      "nom": "rubia peregrina",
+      "communs": "garance voyageuse"
+    },
+    {
+      "nom": "rubus",
+      "communs": "ronces fruitières ; framboisiers"
+    },
+    {
+      "nom": "rubus caesius",
+      "communs": "ronce bleue ; petite ronce ; ronce à fruits bleus ; ronce bleuâtre ; ronce des champs"
+    },
+    {
+      "nom": "rubus fruticosus",
+      "communs": "ronce ; ronce à fruits ; ronce commune ; ronce de bertram ; ronce des bois ; ronce ligneuse"
+    },
+    {
+      "nom": "rubus idaeus",
+      "communs": "framboise ; framboisier ; framboisier commun ; ronce du mont ida ; ronce framboisier"
+    },
+    {
+      "nom": "rubus loganobaccus",
+      "communs": "Ronce de Logtan ; muroise"
+    },
+    {
+      "nom": "rubus nepalensis",
+      "communs": ""
+    },
+    {
+      "nom": "rubus occidentalis",
+      "communs": "framboise noire"
+    },
+    {
+      "nom": "rubus phoenicolasius",
+      "communs": "framboisier du japon ; mûrier du japon ; ronce japonaise ; ronce-raisin"
+    },
+    {
+      "nom": "rubus rolfei",
+      "communs": ""
+    },
+    {
+      "nom": "rubus saxatilis",
+      "communs": "ronce de montagne ; ronce des rochers"
+    },
+    {
+      "nom": "rubus setchuenensis",
+      "communs": "ronce du sichuan"
+    },
+    {
+      "nom": "rubus tricolor",
+      "communs": "ronce tricolore ; ronce à trois couleurs ; ronce rampante"
+    },
+    {
+      "nom": "rubus ulmifolius",
+      "communs": "ronce commune ; ronce à feuille d'orme"
+    },
+    {
+      "nom": "rumex acetosa",
+      "communs": "grande oseille ; oseille aigre ; oseille commune ; oseille des prés ; surette"
+    },
+    {
+      "nom": "rumex acetosella",
+      "communs": "petite oseille ; oseille des brebis ; oseillette"
+    },
+    {
+      "nom": "rumex arifolius",
+      "communs": "oseille perpétuelle"
+    },
+    {
+      "nom": "rumex bucephalophorus",
+      "communs": "oseille tête de bœuf ; rumex tête de buffle"
+    },
+    {
+      "nom": "rumex conglomeratus",
+      "communs": "parelle agglomérée ; oseille aggloméré ; patience aggloméré ; rumex aggloméré"
+    },
+    {
+      "nom": "rumex crispus",
+      "communs": "rumex crépu ; oseille crépue ; patience crépue"
+    },
+    {
+      "nom": "rumex obtusifolius",
+      "communs": "rumex à feuilles obtuses ; patience à feuilles obtuses ; patience sauvage ; rumex à feuilles arrondies"
+    },
+    {
+      "nom": "rumex patientia",
+      "communs": "oseille patience ; épinard-oseille ; oseille-épinard ; patience des jardins ; patience des moines"
+    },
+    {
+      "nom": "rumex pulcher",
+      "communs": "rumex violon"
+    },
+    {
+      "nom": "rumex sanguineus",
+      "communs": "oseille sanguine ; parelle sanguine ; patience sanguine ; rumex sanguin"
+    },
+    {
+      "nom": "ruscus aculeatus",
+      "communs": "fragon ; buis piquant ; epine de rat ; fragon petit houx ; fragonnette ; houx-frelon ; petit houx"
+    },
+    {
+      "nom": "ruta graveolens",
+      "communs": "rue officinale ; rue de chèvre ; rue des jardins ; rue fétide"
+    },
+    {
+      "nom": "sageretia paucicostata",
+      "communs": "sagérétie"
+    },
+    {
+      "nom": "sagittaria latifolia",
+      "communs": "sagittaire ; flèche d'eau ; patate d'eau ; sagittaire à larges feuilles ; sagittaire obtuse"
+    },
+    {
+      "nom": "salicornia europaea",
+      "communs": "salicorne herbacée"
+    },
+    {
+      "nom": "salix",
+      "communs": "saules"
+    },
+    {
+      "nom": "salix alba",
+      "communs": "saule blanc ; osier blanc ; saule commun"
+    },
+    {
+      "nom": "salix purpurea",
+      "communs": "osier rouge ; saule pourpre"
+    },
+    {
+      "nom": "salix viminalis",
+      "communs": "saule des vanniers ; osier blanc"
+    },
+    {
+      "nom": "salsola kali",
+      "communs": "soude"
+    },
+    {
+      "nom": "salvia officinalis",
+      "communs": "sauge officinale ; sauge ; sauge de jérusalem ; sauge de jérusalem  salvia officinalis"
+    },
+    {
+      "nom": "salvia pratensis",
+      "communs": "sauge des prés ; sauge commune"
+    },
+    {
+      "nom": "salvia rosmarinus",
+      "communs": "romarin ; encensier ; herbe aux couronnes ; romarin officinal ; sauge romarin"
+    },
+    {
+      "nom": "salvia sclarea",
+      "communs": "sauge sclarée ; toute bonne"
+    },
+    {
+      "nom": "sambucus canadensis",
+      "communs": "sureau du canada"
+    },
+    {
+      "nom": "sambucus ebulus",
+      "communs": "sureau yèble ; herbe à l'aveugle ; herbe à punaises ; herbe aux yeux ; hièble ; petit sureau"
+    },
+    {
+      "nom": "sambucus nigra",
+      "communs": "sureau noir ; sampéchier"
+    },
+    {
+      "nom": "sambucus racemosa",
+      "communs": "sureau à grappes ; sureau à grappe ; sureau de montagne ; sureau rouge"
+    },
+    {
+      "nom": "sanguinaria canadensis",
+      "communs": "sang-dragon ; sanguinaire ; sanguinaire du Canada"
+    },
+    {
+      "nom": "sanguisorba minor",
+      "communs": "petite pimprenelle ; petite sanguisorbe ; poterium sanguisorba"
+    },
+    {
+      "nom": "sanguisorba officinalis",
+      "communs": "grande sanguisorbe ; grande pimprenelle ; pimprenelle officinale ; sanguisorbe officinale"
+    },
+    {
+      "nom": "sanicula europaea",
+      "communs": "herbe de st laurent ; herbe de saint-laurent ; herbe de st laurent  sanicula europaea ; sanicle d'europe"
+    },
+    {
+      "nom": "sapindus mukorossi",
+      "communs": "savonnier indien"
+    },
+    {
+      "nom": "saponaria officinalis",
+      "communs": "saponaire officinale ; herbe à foulon ; herbe à savon ; savonnière"
+    },
+    {
+      "nom": "sasa kurilensis",
+      "communs": "bambou de kurile ; sasa des îles kouriles"
+    },
+    {
+      "nom": "satureja montana",
+      "communs": "sarriette vivace ; herbe aux satyres ; poivre d'âne ; sariette de montagne ; sarriette des montagnes ; sarriette sauvage"
+    },
+    {
+      "nom": "satureja spicigera",
+      "communs": "sarriette rampante"
+    },
+    {
+      "nom": "saxifraga granulata",
+      "communs": "casse pierre ; herbe à la gravelle ; saxifrage granulé"
+    },
+    {
+      "nom": "scabiosa columbaria",
+      "communs": "scabieuse colombaire"
+    },
+    {
+      "nom": "scandix pecten-veneris",
+      "communs": "peigne de vénus"
+    },
+    {
+      "nom": "schinus patagonicus",
+      "communs": "laura"
+    },
+    {
+      "nom": "schisandra chinensis",
+      "communs": "schisandre de chine ; baie aux cinq saveurs"
+    },
+    {
+      "nom": "schisandra propinqua",
+      "communs": "schisandra propinqua"
+    },
+    {
+      "nom": "scleranthus annuus",
+      "communs": "alène ; gnavelle annuelle ; scléranthe annuel"
+    },
+    {
+      "nom": "scleranthus perennis",
+      "communs": "gnavelle vivace ; scléranthe vivace"
+    },
+    {
+      "nom": "scorzonera humilis",
+      "communs": "scorzonère humble ; petite scorsonère"
+    },
+    {
+      "nom": "scorzoneroides autumnalis",
+      "communs": "liondent d’automne"
+    },
+    {
+      "nom": "scrophularia nodosa",
+      "communs": "scrofulaire noueuse"
+    },
+    {
+      "nom": "sedum album",
+      "communs": "orpin blanc ; sedum blanc ; trique madame"
+    },
+    {
+      "nom": "sedum sarmentosum",
+      "communs": "orpin de chine (dolnamul) ; dolnamul ; orpin d'asie ; orpin mousse d'or"
+    },
+    {
+      "nom": "semiarundinaria fastuosa",
+      "communs": "bambou ; bambou fier ; bambou noble ; narihira-dake"
+    },
+    {
+      "nom": "sempervivum tectorum",
+      "communs": "herbe du tonnerre ; artichaut bâtard ; joubarbe des toits"
+    },
+    {
+      "nom": "senecio inaequidens",
+      "communs": "séneçon du cap"
+    },
+    {
+      "nom": "senecio viscosus",
+      "communs": "séneçon visqueux"
+    },
+    {
+      "nom": "senecio vulgaris",
+      "communs": "séneçon commun ; herbe aux coitrons ; séneçon vulgaire"
+    },
+    {
+      "nom": "senna corymbosa",
+      "communs": "cassie ; senné"
+    },
+    {
+      "nom": "sequoiadendron giganteum",
+      "communs": "séquoia géant ; séquoiadendron ; wellingtonia"
+    },
+    {
+      "nom": "serratula tinctoria",
+      "communs": "sarette des teinturiers ; serratule des teinturiers"
+    },
+    {
+      "nom": "sesamum indicum",
+      "communs": ""
+    },
+    {
+      "nom": "seseli tortuosum",
+      "communs": "séséli tortueux"
+    },
+    {
+      "nom": "sesleria caerulea",
+      "communs": "seslérie blanchâtre ; seslérie bleue"
+    },
+    {
+      "nom": "setaria pumila",
+      "communs": "sétaire glauque"
+    },
+    {
+      "nom": "setaria verticillata",
+      "communs": "sétaire verticillée"
+    },
+    {
+      "nom": "setaria viridis",
+      "communs": "sétaire verte"
+    },
+    {
+      "nom": "shepherdia",
+      "communs": ""
+    },
+    {
+      "nom": "shepherdia canadensis",
+      "communs": "shépherdie"
+    },
+    {
+      "nom": "sideritis syriaca",
+      "communs": "crapaudine ; crapaudine de syrie ; malotira ; thé des bergers ; thé grec"
+    },
+    {
+      "nom": "silene dioica",
+      "communs": "compagnon rouge ; silène dioïque"
+    },
+    {
+      "nom": "silene flos-cuculi",
+      "communs": "oeillet fleur de coucou ; lychnis fleur-de-coucou ; œil de perdrix ; œillet des prés ; silène fleur-de-coucou"
+    },
+    {
+      "nom": "silene vulgaris",
+      "communs": "silène enflé ; behen blanc ; claquet ; cornillet ; pétardes ; silène commun ; tapotte"
+    },
+    {
+      "nom": "silybum marianum",
+      "communs": "chardon marie"
+    },
+    {
+      "nom": "simmondsia chinensis",
+      "communs": "jojoba"
+    },
+    {
+      "nom": "sinapis alba",
+      "communs": "moutarde blanche ; sénevé blanc"
+    },
+    {
+      "nom": "sinofranchetia chinensis",
+      "communs": "sinofranchetia"
+    },
+    {
+      "nom": "sisymbrium irio",
+      "communs": "sisymbre irio ; vélaret"
+    },
+    {
+      "nom": "sisymbrium officinale",
+      "communs": "herbe aux chantres"
+    },
+    {
+      "nom": "sium sisarum",
+      "communs": "sium chervis ; chervis"
+    },
+    {
+      "nom": "smallanthus sonchifolius",
+      "communs": "poire de terre"
+    },
+    {
+      "nom": "smilax aspera",
+      "communs": "salsepareille ; salsepareille d’europe ; smilax épineux"
+    },
+    {
+      "nom": "smyrnium olusatrum",
+      "communs": "maceron"
+    },
+    {
+      "nom": "soda inermis",
+      "communs": "soude salée"
+    },
+    {
+      "nom": "solanum dulcamara",
+      "communs": "douce-amère ; bronde ; crève-chien ; loque ; morelle ; morelle douce-amère ; morelle grimpante ; vigne de judée"
+    },
+    {
+      "nom": "solanum lycopersicum",
+      "communs": "tomate"
+    },
+    {
+      "nom": "solanum melongena",
+      "communs": "aubergine"
+    },
+    {
+      "nom": "solanum nigrum",
+      "communs": "morelle noire"
+    },
+    {
+      "nom": "solanum sisymbriifolium",
+      "communs": "morelle de balbis ; tomate-licthi"
+    },
+    {
+      "nom": "solanum tuberosum",
+      "communs": "pomme de terre"
+    },
+    {
+      "nom": "solidago",
+      "communs": ""
+    },
+    {
+      "nom": "solidago gigantea",
+      "communs": "solidage glabre ; solidage géant"
+    },
+    {
+      "nom": "solidago virgaurea",
+      "communs": "solidage verge d'or ; baguette d'aaron ; herbe des juifs ; soildage verge d'or ; verge d'or"
+    },
+    {
+      "nom": "sonchus arvensis",
+      "communs": "laiteron des champs"
+    },
+    {
+      "nom": "sonchus asper",
+      "communs": "laiteron rude"
+    },
+    {
+      "nom": "sonchus oleraceus",
+      "communs": "laiteron maraîcher"
+    },
+    {
+      "nom": "sorbus aucuparia",
+      "communs": "sorbier des oiseleurs ; sorbier des oiseaux ; sorbier sauvage"
+    },
+    {
+      "nom": "sorghum halepense",
+      "communs": "herbe de cuba ; sorgho d'alep"
+    },
+    {
+      "nom": "spergula arvensis",
+      "communs": "spergule des champs"
+    },
+    {
+      "nom": "spinacia oleracea",
+      "communs": "épinard"
+    },
+    {
+      "nom": "sporobolus indicus",
+      "communs": "sporobole tenace ; sporobole des indes"
+    },
+    {
+      "nom": "stachys affinis",
+      "communs": "épiaire affine ; artichaut chinois ; crosne du japon ; épiaire de siebold"
+    },
+    {
+      "nom": "stachys arvensis",
+      "communs": "epiaire des champs"
+    },
+    {
+      "nom": "stachys palustris",
+      "communs": "épiaire des marais ; ortie bourbière"
+    },
+    {
+      "nom": "stachys sylvatica",
+      "communs": "épiaire des bois ; ortie puante"
+    },
+    {
+      "nom": "staphylea",
+      "communs": ""
+    },
+    {
+      "nom": "staphylea pinnata",
+      "communs": "faux-pistachier d'europe ; faux pistachier ; nez coupé"
+    },
+    {
+      "nom": "stauntonia chinensis",
+      "communs": "stauntonia"
+    },
+    {
+      "nom": "stauntonia latifolia",
+      "communs": "holboellia ; holboélie à larges feuilles"
+    },
+    {
+      "nom": "stellaria graminea",
+      "communs": "stellaire graminée ; stellaire à feuilles de graminée"
+    },
+    {
+      "nom": "stellaria media",
+      "communs": "mouron blanc ; morgeline ; mouron des oiseaux ; stellaire intermédiaire"
+    },
+    {
+      "nom": "stellaria nemorum",
+      "communs": "stellaire des bois"
+    },
+    {
+      "nom": "streptopus amplexifolius",
+      "communs": "streptope à feuilles embrassantes"
+    },
+    {
+      "nom": "styphnolobium japonicum",
+      "communs": "arbre des pagodes ; sophora du japon"
+    },
+    {
+      "nom": "suaeda maritima",
+      "communs": "soude maritime"
+    },
+    {
+      "nom": "succisa pratensis",
+      "communs": "mors du diable ; herbe du diable ; succise des prés"
+    },
+    {
+      "nom": "symphoricarpos",
+      "communs": ""
+    },
+    {
+      "nom": "symphyotrichum squamatum",
+      "communs": "aster écailleux"
+    },
+    {
+      "nom": "symphytum asperum",
+      "communs": "consoude de russie ; consoude hérissée"
+    },
+    {
+      "nom": "symphytum officinale",
+      "communs": "grande consoude ; consoude officinale"
+    },
+    {
+      "nom": "syringa vulgaris",
+      "communs": "lilas commun ; lilas ; lilas des jardins"
+    },
+    {
+      "nom": "tagetes erecta",
+      "communs": "tagète"
+    },
+    {
+      "nom": "tagetes lemmonii",
+      "communs": "tagète arbustive ; tagète de lemmon"
+    },
+    {
+      "nom": "tagetes minuta",
+      "communs": "tagète de buenos-aires ; tagète minute"
+    },
+    {
+      "nom": "tanacetum parthenium",
+      "communs": "grande camomille du parthénon ; grande camomille ; matricaire des vierges ; partenelle ; tanaisie fausse-camomille"
+    },
+    {
+      "nom": "tanacetum vulgare",
+      "communs": "tanaisie ; absinthe ; amande glaciale ; barbotine ; sent-bon ; tanaisie commune"
+    },
+    {
+      "nom": "taraxacum",
+      "communs": ""
+    },
+    {
+      "nom": "taraxacum sect. taraxacum",
+      "communs": "pissenlit"
+    },
+    {
+      "nom": "tasmannia lanceolata",
+      "communs": "poivre de tasmanie"
+    },
+    {
+      "nom": "taxus baccata",
+      "communs": "if ; if à baies ; if commun ; if d'europe ; ifreteau"
+    },
+    {
+      "nom": "teesdalia nudicaulis",
+      "communs": "téesdalie à tiges nues"
+    },
+    {
+      "nom": "temu cruckshanksii",
+      "communs": "temu"
+    },
+    {
+      "nom": "tetradium daniellii",
+      "communs": "arbre à miel"
+    },
+    {
+      "nom": "tetragonia tetragonioides",
+      "communs": "tétragone cornue"
+    },
+    {
+      "nom": "teucrium chamaedrys",
+      "communs": "germandrée petit chêne ; germandrée petit-chêne véritable"
+    },
+    {
+      "nom": "teucrium scorodonia",
+      "communs": "germandrée des bois ; germandrée scorodoine ; sauge des bois"
+    },
+    {
+      "nom": "theligonum cynocrambe",
+      "communs": "cynocrambe prostré"
+    },
+    {
+      "nom": "thlaspi arvense",
+      "communs": "monnoyère ; monnoyère thlaspi arvense ; tabouret des champs"
+    },
+    {
+      "nom": "thuja plicata",
+      "communs": "thuya plié ; cèdre de l'ouest ; cèdre rouge de l'ouest ; thuya de lobb ; thuya géant ; thuya géant de californie"
+    },
+    {
+      "nom": "thymus nitens",
+      "communs": "thym luisant ; serpolet luisant"
+    },
+    {
+      "nom": "thymus pulegioides",
+      "communs": "serpolet ; thym de bergère ; thym faux pouillot ; thym faux pouliot ; thym serpolet"
+    },
+    {
+      "nom": "thymus vulgaris",
+      "communs": "thym ; farigoule ; farigoulette ; thym commun ; thym cultivé ; thym des jardins ; thym vulgaire"
+    },
+    {
+      "nom": "tiarella cordifolia",
+      "communs": "tiarelle ; tiarelle à feuilles cordées ; tiarelle cordifoliée ; tiarelle feuille-en-coeur"
+    },
+    {
+      "nom": "tilia cordata",
+      "communs": "tilleul à petites feuilles ; tilleul à feuilles en cœur ; tilleul cordé ; tilleul des bois"
+    },
+    {
+      "nom": "tilia henryana",
+      "communs": "tilleul de hongrie ; tilleul de henry"
+    },
+    {
+      "nom": "tilia platyphyllos",
+      "communs": "tilleul à grandes feuilles ; tilleul à feuilles larges ; tilleul de hollande"
+    },
+    {
+      "nom": "tilia tomentosa",
+      "communs": "tilleul argenté ; tilleul de hongrie ; tilleul tomenteux"
+    },
+    {
+      "nom": "toona sinensis",
+      "communs": "toona de chine ; cèdre de chine ; cédrèle ; cédrèle de chine ; faux-acajou"
+    },
+    {
+      "nom": "torilis arvensis",
+      "communs": "torilis de suisse ; torilis des champs"
+    },
+    {
+      "nom": "torreya nucifera",
+      "communs": "torreya à noix ; kaya ; torreya du japon"
+    },
+    {
+      "nom": "tragopogon pratensis",
+      "communs": "salsifis des prés"
+    },
+    {
+      "nom": "trapa natans",
+      "communs": "mâcre d'eau ; châtaigne d'eau ; cornus ; mâcre"
+    },
+    {
+      "nom": "tribulus terrestris",
+      "communs": "croix de malte ; tribule"
+    },
+    {
+      "nom": "trifolium",
+      "communs": ""
+    },
+    {
+      "nom": "trifolium arvense",
+      "communs": "trèfle pied de lièvre ; trèfle des champs"
+    },
+    {
+      "nom": "trifolium campestre",
+      "communs": "trèfle des champs ; trance ; trèfle champêtre ; trèfle couché ; trèfle jaune ; triboulet"
+    },
+    {
+      "nom": "trifolium dubium",
+      "communs": "trèfle douteux ; petit trèfle jaune ; trèfle nain"
+    },
+    {
+      "nom": "trifolium incarnatum",
+      "communs": "trèfle incarnat ; farouche ; trèfle du roussillon"
+    },
+    {
+      "nom": "trifolium pratense",
+      "communs": "trèfle des prés ; trèfle commun ; trèfle des prés  trifolium pratense ; trèfle violet"
+    },
+    {
+      "nom": "trifolium repens",
+      "communs": "trèfle rampant ; trèfle blanc"
+    },
+    {
+      "nom": "trifolium resupinatum",
+      "communs": "trèfle de perse ; trèfle résupiné"
+    },
+    {
+      "nom": "trifolium spadiceum",
+      "communs": "trèfle à spadice ; trèfle marron"
+    },
+    {
+      "nom": "trifolium subterraneum",
+      "communs": "trèfle semeur"
+    },
+    {
+      "nom": "trigonella esculenta",
+      "communs": "trigonelle cornue"
+    },
+    {
+      "nom": "tripleurospermum inodorum",
+      "communs": "matricaire inodore ; camomille inodore ; matricaire perforée"
+    },
+    {
+      "nom": "tripolium pannonicum",
+      "communs": "aster maritime ; aster tricolore"
+    },
+    {
+      "nom": "trisetum flavescens",
+      "communs": "trisète dorée ; avoine dorée ; avoine jaunâtre ; trisète jaunâtre"
+    },
+    {
+      "nom": "trocdaris verticillata",
+      "communs": "carvi des marais"
+    },
+    {
+      "nom": "tropaeolum majus",
+      "communs": "cresson d’inde ; capucine ; capucine des jardins ; capucine grimpante ; grande capucine"
+    },
+    {
+      "nom": "tropaeolum tuberosum",
+      "communs": "capucine tubéreuse ; capucine tuberculeuse"
+    },
+    {
+      "nom": "tulbaghia violacea",
+      "communs": "ail d'afrique du sud ; ail vivace violacé ; tulbaghie ; tulbaghie violacée"
+    },
+    {
+      "nom": "tussilago farfara",
+      "communs": "tussilage ; herbe de saint-quirin ; pas-d'âne ; tussilage pas-d'âne"
+    },
+    {
+      "nom": "typha angustifolia",
+      "communs": "massette à feuilles étroites ; quenouille à feuilles étroites"
+    },
+    {
+      "nom": "typha latifolia",
+      "communs": "massette ; masse-d'eau ; massette à feuilles larges ; quenouille à larges feuilles"
+    },
+    {
+      "nom": "ugni molinae",
+      "communs": "goyavier du chili"
+    },
+    {
+      "nom": "ulex europaeus",
+      "communs": "ajonc d'europe ; ajonc commun ; bois jonc ; genêt ; grand ajonc ; jonc marin ; jonc maritime ; landier ; vigneau ; zépinard des hauts"
+    },
+    {
+      "nom": "ulex minor",
+      "communs": "ajonc nain ; petit ajonc"
+    },
+    {
+      "nom": "ulmus minor",
+      "communs": "orme champêtre ; ipréau ; orme à feuilles de charme ; orme à petites feuilles ; orme cilié ; ormeau ; petit orme ; yvet"
+    },
+    {
+      "nom": "umbilicus rupestris",
+      "communs": "nombril de vénus ; ombilic des rochers"
+    },
+    {
+      "nom": "urospermum dalechampii",
+      "communs": "mourre de porc ; amargot commun ; mourre de porc  urospermum dalechampii ; urosperme de daléchamps"
+    },
+    {
+      "nom": "urtica dioica",
+      "communs": "ortie dioïque ; grande ortie"
+    },
+    {
+      "nom": "urtica pilulifera",
+      "communs": "ortie à pilules"
+    },
+    {
+      "nom": "urtica urens",
+      "communs": "ortie brûlante ; petite ortie"
+    },
+    {
+      "nom": "vaccinium corymbosum",
+      "communs": ""
+    },
+    {
+      "nom": "vaccinium macrocarpon",
+      "communs": "canneberge ; airelle à gros fruits ; cranberry"
+    },
+    {
+      "nom": "vaccinium myrtillus",
+      "communs": "myrtillier ; airelle myrtille ; brimbelle ; maurette ; myrtille"
+    },
+    {
+      "nom": "vaccinium uliginosum",
+      "communs": "myrtille des marais ; airelle des marais"
+    },
+    {
+      "nom": "vaccinium vitis-idaea",
+      "communs": "airelle ; airelle rouge ; canche ; myrtille rouge"
+    },
+    {
+      "nom": "valeriana carinata",
+      "communs": "doucette carènée ; doucette carènée valerianella carinata ; mâche à carène ; mâche carénée"
+    },
+    {
+      "nom": "valeriana locusta",
+      "communs": "mâche potagère ; mâche"
+    },
+    {
+      "nom": "valeriana officinalis",
+      "communs": "valériane officinale ; valériane ; valériane à petites feuilles ; valériane commune ; valériane des collines"
+    },
+    {
+      "nom": "valeriana phu",
+      "communs": "valériane dorée ; grande valériane ; mâche perpétuelle ; mâche vivace ; valériane phu"
+    },
+    {
+      "nom": "valeriana pumila",
+      "communs": "doucette naine ; mâche naine"
+    },
+    {
+      "nom": "valeriana rimosa",
+      "communs": "mâche auriculée"
+    },
+    {
+      "nom": "valeriana rubra",
+      "communs": "valeriane rouge ; centranthe rouge ; lilas d’espagne"
+    },
+    {
+      "nom": "veratrum album",
+      "communs": "vératre blanc ; ellébore blanc ; fausse gentiane ; hellébore blanc"
+    },
+    {
+      "nom": "verbascum thapsus",
+      "communs": "bouillon blanc ; bonhomme ; herbe de saint fiacre ; molène bouillon-blanc ; molène vulgaire ; oreille-de-loup ; tabac du diable"
+    },
+    {
+      "nom": "verbena officinalis",
+      "communs": "verveine officinale ; herbe aux sorcières ; herbe sacrée ; verveine sauvage"
+    },
+    {
+      "nom": "vernicia fordii",
+      "communs": "arbre à tung"
+    },
+    {
+      "nom": "veronica allionii",
+      "communs": "thé des alpes ; véronique d’allioni"
+    },
+    {
+      "nom": "veronica arvensis",
+      "communs": "véronique des champs"
+    },
+    {
+      "nom": "veronica beccabunga",
+      "communs": "cresson de cheval ; mouron d'eau ; salade de chouette ; véronique beccabonga ; véronique des ruisseaux"
+    },
+    {
+      "nom": "veronica chamaedrys",
+      "communs": "véronique petit-chêne ; fausse germandrée"
+    },
+    {
+      "nom": "veronica cymbalaria",
+      "communs": "véronique cymbalaire"
+    },
+    {
+      "nom": "veronica hederifolia",
+      "communs": "véronique à feuilles de lierre"
+    },
+    {
+      "nom": "veronica officinalis",
+      "communs": "thé d’europe ; herbe aux ladres ; véronique officinale ; véronique vraie"
+    },
+    {
+      "nom": "veronica persica",
+      "communs": "véronique de perse ; véronique commune"
+    },
+    {
+      "nom": "veronica polita",
+      "communs": "véronique luisante"
+    },
+    {
+      "nom": "veronica serpyllifolia",
+      "communs": "véronique à feuilles de serpolet"
+    },
+    {
+      "nom": "viburnum lantana",
+      "communs": "mancienne ; atatier ; auborne ; bardeau ; cochène ; crève-chien ; lantane ; mantiane ; valinier ; viorne cotonneuse ; viorne flexible ; viorne lantane ; viorne mancienne"
+    },
+    {
+      "nom": "viburnum opulus",
+      "communs": "viorne obier ; bois à quenouilles ; boule de neige ; caillebot ; charcoulier ; obier ; sureau d'eau ; viorne aquatique"
+    },
+    {
+      "nom": "viburnum tinus",
+      "communs": "laurier tin ; fatamot ; laurentin ; viorne tin"
+    },
+    {
+      "nom": "viburnum trilobum",
+      "communs": "viorne d’amérique ; viorne trilobée"
+    },
+    {
+      "nom": "vicia",
+      "communs": ""
+    },
+    {
+      "nom": "vicia cracca",
+      "communs": "vesce cracca ; jarosse ; pois à crapauds ; vesce à épis ; vesce craque ; vesce de cracovie ; vesce jargeau"
+    },
+    {
+      "nom": "vicia faba",
+      "communs": "Feve ; fève de marais ; fève-commune ; Féverole ; féverolle ; gourganne ; vesce comestible ; Vesce Fève"
+    },
+    {
+      "nom": "vicia hirsuta",
+      "communs": "vesce hirsute ; ers velu ; vesce hérissée"
+    },
+    {
+      "nom": "vicia sativa",
+      "communs": "vesce commune ; vesce cultivée"
+    },
+    {
+      "nom": "vicia sepium",
+      "communs": "vesce des haies ; vesce sauvage"
+    },
+    {
+      "nom": "vigna subterranea",
+      "communs": "pois de terre ; pois bambara"
+    },
+    {
+      "nom": "vigna unguiculata subsp. sesquipedalis",
+      "communs": "haricot kilomètre ; dolique asperge ; dolique asperge vert ; haricot dolique asperge ; haricot serpent"
+    },
+    {
+      "nom": "vinca minor",
+      "communs": "petite pervenche ; pervenche humble ; pervenche mineure ; violette de serpent"
+    },
+    {
+      "nom": "viola arvensis",
+      "communs": "pensée sauvage des champs ; pensée des champs"
+    },
+    {
+      "nom": "viola labradorica",
+      "communs": "violette du labrador"
+    },
+    {
+      "nom": "viola lutea",
+      "communs": "pensée d'auvergne ; violette d’auvergne"
+    },
+    {
+      "nom": "viola odorata",
+      "communs": "violette odorante ; violette"
+    },
+    {
+      "nom": "viola riviniana",
+      "communs": "violette de rivinus ; violette de rivinus  viola riviniana ; violette des bois"
+    },
+    {
+      "nom": "viola tricolor",
+      "communs": "pensée sauvage"
+    },
+    {
+      "nom": "viscum album",
+      "communs": "bois de la ste croix ; gui"
+    },
+    {
+      "nom": "vitex agnus-castus",
+      "communs": "vitex gattilier ; agneau chaste ; arbre au poivre ; arbre aux moines ; gattilier ; poivre des moines ; poivre sauvage"
+    },
+    {
+      "nom": "vitis",
+      "communs": "vignes"
+    },
+    {
+      "nom": "vitis vinifera",
+      "communs": "vigne ; la vigne ; vigne cultivée"
+    },
+    {
+      "nom": "waldsteinia ternata",
+      "communs": "Waldsteinia a trois feuilles"
+    },
+    {
+      "nom": "wisteria",
+      "communs": ""
+    },
+    {
+      "nom": "wisteria sinensis",
+      "communs": "glycine de chine"
+    },
+    {
+      "nom": "xanthium orientale",
+      "communs": "lampourde à gros fruits"
+    },
+    {
+      "nom": "xanthium spinosum",
+      "communs": "lampourde épineuse"
+    },
+    {
+      "nom": "xanthium strumarium",
+      "communs": "lampourde glouteron ; lampourde commune"
+    },
+    {
+      "nom": "xanthoceras sorbifolium",
+      "communs": "xanthocéras à feuilles de sorbier ; noyer de chine ; xanthocère à feuilles de sorbier"
+    },
+    {
+      "nom": "xanthochloa paniculata",
+      "communs": "fétuque dorée"
+    },
+    {
+      "nom": "yushania",
+      "communs": ""
+    },
+    {
+      "nom": "zanthoxylum armatum",
+      "communs": "poivre du sichuan (poivre timut selon provenance) ; poivrier à feuilles épineuses ; poivrier du timut"
+    },
+    {
+      "nom": "zanthoxylum piperitum",
+      "communs": "poivrier du sichuan japonais (sansho) ; poivre du sichuan ; poivrier du sichuan"
+    },
+    {
+      "nom": "zanthoxylum schinifolium",
+      "communs": "poivre du sichuan vert ; clavalier à feuilles de schinus ; poivrier du sansho"
+    },
+    {
+      "nom": "zanthoxylum simulans",
+      "communs": "poivrier de sichuan"
+    },
+    {
+      "nom": "zea mays",
+      "communs": "blé d'Inde ; Maïs ; Maïs commun ; maïs cultivé"
+    },
+    {
+      "nom": "zinnia elegans",
+      "communs": "zinnia ; zinnia commun ; zinnia des jardins ; zinnia élégant"
+    },
+    {
+      "nom": "zizania latifolia",
+      "communs": "riz sauvage de mandchourie"
+    },
+    {
+      "nom": "ziziphus jujuba",
+      "communs": "jujubier ; guindanlier ; jujubier commun"
+    }
+  ]
+}

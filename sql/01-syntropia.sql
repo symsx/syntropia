@@ -441,6 +441,19 @@ CREATE TABLE IF NOT EXISTS `espece` (
   `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `site_id`          INT UNSIGNED NOT NULL DEFAULT 0,
   `nom_scientifique` VARCHAR(160) NOT NULL,     -- la clé vers Plantae
+  -- UNE VARIÉTÉ N'EST PAS UNE AUTRE ESPÈCE, mais elle peut changer la
+  -- strate ou le rôle du tout au tout — remarque du porteur, 2026-09-18 :
+  -- le fraisier des bois et le fraisier du commerce n'occupent pas la
+  -- même strate ; un tournesol conduit à une fleur (peu de branches,
+  -- surtout du feuillage) se préfère pour la biomasse, un tournesol
+  -- classique et ramifié pour la graine. Même `nom_scientifique`,
+  -- lignes distinctes dans ce référentiel.
+  --
+  -- NOT NULL DEFAULT '' et non NULL : même raison que `site_id = 0`
+  -- plus bas — un index UNIQUE traite chaque NULL comme distinct, deux
+  -- lignes « variété non précisée » pour la même espèce passeraient
+  -- sans bruit. '' est le cas courant, l'espèce sans variété notée.
+  `variete`          VARCHAR(120) NOT NULL DEFAULT '',
   `nom_usuel`        VARCHAR(160) NULL,
 
   -- Multivalué par `|` — une consoude est bordure ET biomasse. Un ENUM
@@ -486,7 +499,7 @@ CREATE TABLE IF NOT EXISTS `espece` (
   `notes`            TEXT NULL,
 
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_espece` (`site_id`, `nom_scientifique`),
+  UNIQUE KEY `uq_espece` (`site_id`, `nom_scientifique`, `variete`),
   KEY `ix_espece_nom` (`nom_scientifique`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
