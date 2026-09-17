@@ -257,7 +257,10 @@ def base():
         return False
     if not verifier_ssh():
         return False
-    schemas = [("base_comptes", "00-comptes.sql"), ("base_syntropia", "01-syntropia.sql")]
+    # `02-especes-seed.sql` : du DML (INSERT IGNORE), rejoué comme le
+    # schéma — voir bin/dev.py § SCHEMAS, tenu assorti à cette liste.
+    schemas = [("base_comptes", "00-comptes.sql"), ("base_syntropia", "01-syntropia.sql"),
+               ("base_syntropia", "02-especes-seed.sql")]
     reussite = True
     for cle, fichier in schemas:
         chemin = RACINE / "sql" / fichier
