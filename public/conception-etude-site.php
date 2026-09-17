@@ -201,9 +201,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     cursor:pointer;
   }
   .carte-centrer:hover{ background:var(--accent-fond); }
+  .carte-avis{
+    position:absolute; left:1rem; top:1rem; right:1rem; z-index:4;
+    display:flex; flex-direction:column; gap:.5rem;
+  }
   .carte-sans-point{
-    position:absolute; left:1rem; top:1rem; right:1rem; z-index:4; margin:0;
-    background:var(--alerte); color:var(--bouton-encre); padding:.55rem .8rem;
+    margin:0; background:var(--alerte); color:var(--bouton-encre); padding:.55rem .8rem;
     border-radius:.6rem; font:400 .82rem/1.4 var(--texte);
   }
   .carte-sans-point a{ color:inherit; font-weight:600; }
@@ -378,11 +381,14 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
            data-latitude="latitude" data-longitude="longitude">
         <input type="hidden" id="latitude" value="<?= htmlspecialchars((string) ($site['latitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" id="longitude" value="<?= htmlspecialchars((string) ($site['longitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+        <div class="carte-avis" id="carte-avis">
 <?php if ($latitude === null || $longitude === null): ?>
         <p class="carte-sans-point"><strong>Le lieu n'est pas encore posé.</strong> La carte ne sait
            donc pas où se placer. <a href="definition-site.php">Posez le point du site</a>, et revenez —
            elle s'ouvrira sur votre terrain.</p>
 <?php endif; ?>
+        <p class="carte-sans-point" id="carte-cadastre-info" hidden></p>
+        </div>
         <p class="carte-reglures">
           <span id="carte-echelle" class="carte-echelle">échelle</span>
           <button type="button" id="carte-centrer" class="carte-centrer" hidden>cadrer sur mes tracés</button>

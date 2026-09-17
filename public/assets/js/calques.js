@@ -321,13 +321,24 @@
   }
 
   function etatCadastre() {
-    var el = $('cadastre-etat');
-    if (!el) { return; }
-    el.textContent = !cadastre.visible ? ''
+    var texteEtat = !cadastre.visible ? ''
       : (cadastre.parcelles.length
           ? cadastre.parcelles.length + ' parcelle' + (cadastre.parcelles.length > 1 ? 's' : '')
             + ' au cadastre — suivez leurs bords pour tracer vos limites.'
           : cadastre.message);
+    var el = $('cadastre-etat');
+    if (el) { el.textContent = texteEtat; }
+
+    // Case cochée, rien à dessiner (pas encore de réponse, ou une réponse
+    // vide — hors zoom, hors couverture…) : le petit texte du panneau
+    // Données se manque facilement, surtout panneau fermé. Le même message
+    // reparaît en bandeau sur la carte, là où le regard est déjà — même
+    // traitement visuel que « le lieu n'est pas encore posé ».
+    var banniere = $('carte-cadastre-info');
+    if (!banniere) { return; }
+    var visible = cadastre.visible && !cadastre.parcelles.length && cadastre.message !== '';
+    banniere.hidden = !visible;
+    banniere.textContent = visible ? cadastre.message : '';
   }
 
   // ---------------------------------------------------------------- listes
