@@ -578,7 +578,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <input id="parcelle-angle" type="range" min="0" max="179" step="1" value="0" style="width:100%">
         <output id="parcelle-angle-valeur" style="font:400 .78rem var(--texte); color:var(--muted);">0°</output>
 
-        <p class="pd-titre">Ce qui est tracé</p>
+        <p class="pd-titre">Les tracés</p>
         <ul class="calques-liste" id="calques-liste"></ul>
 
         <p class="pd-titre">Importer des tracés</p>
