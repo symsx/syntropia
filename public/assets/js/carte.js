@@ -5,10 +5,12 @@
  * ferait 150 Ko de code qu'on ne maintient pas, pour un besoin qui tient en
  * deux cents lignes — afficher des tuiles, les déplacer, poser un point.
  *
- * Les tuiles viennent d'OpenStreetMap : elles sont chargées par le
- * navigateur du visiteur, depuis un tiers. La carte est donc un CONFORT,
- * jamais un passage obligé — latitude et longitude restent saisissables à
- * la main, et le formulaire fonctionne sans ce fichier.
+ * Les tuiles viennent d'un tiers — OpenStreetMap par défaut, et, sur la grande
+ * carte du terrain, les fonds de l'IGN (plan, photographies aériennes, photos
+ * anciennes, infrarouge) : elles sont chargées par le navigateur du visiteur.
+ * La carte est donc un CONFORT, jamais un passage obligé — latitude et
+ * longitude restent saisissables à la main, et le formulaire fonctionne sans
+ * ce fichier.
  *
  * Porté de application/public/assets/carte.js (dépôt de référence),
  * logique inchangée — voir plan-du-site.md et architecture-technique.md,
@@ -18,7 +20,41 @@
   'use strict';
 
   var TUILE = 256;
-  var ZOOM_MIN = 3, ZOOM_MAX = 18;
+  var ZOOM_MIN = 3;
+
+  /* LES FONDS DE CARTE. Tous en Web Mercator, tuiles de 256 px : le moteur ne
+   * change pas, seuls l'adresse, le crédit et le zoom le plus fin changent.
+   * L'IGN sert ses couches par la Géoplateforme (WMTS, sans clé) : un fichier
+   * de tuiles par (zoom, colonne, rangée). **Chaque zoom maximal vient du
+   * catalogue de la Géoplateforme** (GetCapabilities), non d'une supposition —
+   * les photographies anciennes s'arrêtent au 18, le reste va au 19.
+   * `partiel` : une couverture qui ne couvre pas tout le territoire (les
+   * photos d'avant 1995) — une tuile absente n'y est pas une panne. */
+  function ign(couche, format, zoomMax, libelle, partiel) {
+    return {
+      libelle: libelle, zoomMax: zoomMax, partiel: !!partiel,
+      credit: '© IGN', lien: 'https://geoservices.ign.fr/',
+      url: function (z, x, y) {
+        return 'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' + couche
+          + '&STYLE=normal&FORMAT=' + format + '&TILEMATRIXSET=PM&TILEMATRIX=' + z
+          + '&TILEROW=' + y + '&TILECOL=' + x;
+      }
+    };
+  }
+  var FONDS = {
+    osm: {
+      libelle: 'Carte OpenStreetMap', zoomMax: 18, partiel: false,
+      credit: '© OpenStreetMap', lien: 'https://www.openstreetmap.org/copyright',
+      url: function (z, x, y) { return 'https://tile.openstreetmap.org/' + z + '/' + x + '/' + y + '.png'; }
+    },
+    plan: ign('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png', 19, 'Plan IGN'),
+    photo: ign('ORTHOIMAGERY.ORTHOPHOTOS', 'image/jpeg', 19, 'Photographie aérienne'),
+    irc: ign('ORTHOIMAGERY.ORTHOPHOTOS.IRC', 'image/jpeg', 19, 'Infrarouge (végétation)'),
+    p1980: ign('ORTHOIMAGERY.ORTHOPHOTOS.1980-1995', 'image/png', 18, 'Photo ancienne 1980-1995', true),
+    p1965: ign('ORTHOIMAGERY.ORTHOPHOTOS.1965-1980', 'image/png', 18, 'Photo ancienne 1965-1980', true),
+    p1950: ign('ORTHOIMAGERY.ORTHOPHOTOS.1950-1965', 'image/png', 18, 'Photo ancienne 1950-1965', true)
+  };
+  var CLE_FOND = 'syntropia_fond';
 
   // Web Mercator. Le monde entier fait 256 × 2^z pixels de côté.
   function lonEnX(lon, z) { return (lon + 180) / 360 * TUILE * Math.pow(2, z); }
@@ -51,11 +87,21 @@
     var marqueur = document.createElement('div');
     marqueur.className = 'carte-point';
     marqueur.hidden = !pose;
+    // Le fond : OpenStreetMap, sauf sur une carte qui offre le choix
+    // (`data-fond-choix` : l'identifiant d'un <select>) — où la préférence du
+    // visiteur, gardée dans son navigateur, l'emporte. Sans stockage
+    // (navigation privée…) la carte reste sur OpenStreetMap, sans erreur.
+    var choixFond = conteneur.dataset.fondChoix ? document.getElementById(conteneur.dataset.fondChoix) : null;
+    var idFond = 'osm';
+    if (choixFond) {
+      try { var garde = window.localStorage.getItem(CLE_FOND); if (garde && FONDS[garde]) { idFond = garde; } } catch (x) { /* confort */ }
+    }
+    var fond = FONDS[idFond];
     var credit = document.createElement('a');
     credit.className = 'carte-credit';
-    credit.href = 'https://www.openstreetmap.org/copyright';
+    credit.href = fond.lien;
     credit.rel = 'noreferrer';
-    credit.textContent = '© OpenStreetMap';
+    credit.textContent = fond.credit;
     conteneur.append(couche, marqueur, credit);
     conteneur.tabIndex = 0;
 
@@ -70,8 +116,10 @@
       if (++echecs < 3 || conteneur.querySelector('.carte-panne')) { return; }
       var mot = document.createElement('p');
       mot.className = 'carte-panne';
-      mot.textContent = 'Les tuiles ne se chargent pas. Saisissez les '
-        + 'coordonnées à la main : tout le reste fonctionne.';
+      // Une photo ancienne ne couvre pas tout : des tuiles absentes n'y sont pas une panne.
+      mot.textContent = fond.partiel
+        ? "Cette photographie ancienne ne couvre pas cet endroit — essayez une autre période, ou la photographie récente."
+        : 'Les tuiles ne se chargent pas. Saisissez les coordonnées à la main : tout le reste fonctionne.';
       conteneur.appendChild(mot);
     }
 
@@ -99,7 +147,7 @@
             // page consultée. La politique de la page reste donc stricte
             // partout ailleurs.
             img.referrerPolicy = 'origin';
-            img.src = 'https://tile.openstreetmap.org/' + cle + '.png';
+            img.src = fond.url(z, mx, ty);
             img.alt = '';
             img.loading = 'lazy';
             img.draggable = false;
@@ -148,7 +196,7 @@
     }
 
     function zoomer(delta, px, py) {
-      var nouveau = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z + delta));
+      var nouveau = Math.max(ZOOM_MIN, Math.min(fond.zoomMax, z + delta));
       if (nouveau === z) { return; }
       var l = conteneur.clientWidth, h = conteneur.clientHeight;
       // Garder sous le curseur le point qui s'y trouvait.
@@ -164,6 +212,8 @@
     // --- déplacement -------------------------------------------------
     var glisse = null, bouge = false;
     function debut(e) {
+      // Les réglages posés sur la carte (échelle, fond, cadrage) ne la font pas glisser.
+      if (e.target && e.target.closest && e.target.closest('.carte-reglures')) { return; }
       var p = e.touches ? e.touches[0] : e;
       glisse = { x: p.clientX, y: p.clientY };
       bouge = false;
@@ -198,6 +248,7 @@
     });
 
     conteneur.addEventListener('wheel', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.carte-reglures')) { return; }
       e.preventDefault();
       var r = conteneur.getBoundingClientRect();
       zoomer(e.deltaY < 0 ? 1 : -1, e.clientX - r.left, e.clientY - r.top);
@@ -251,10 +302,43 @@
         return 156543.03392 * Math.cos(la) / Math.pow(2, z);
       },
       centrer: function (la, lo, zoom) {
+        if (typeof zoom === 'number') { zoom = Math.min(zoom, fond.zoomMax); }
         if (typeof zoom === 'number' && zoom !== z) { z = zoom; tuiles = {}; couche.textContent = ''; }
         cx = lonEnX(lo, z); cy = latEnY(la, z); dessiner();
-      }
+      },
+      fond: function () { return idFond; },
+      changerFond: changerFond
     };
+
+    /* CHANGER DE FOND. Les tuiles déjà là sont celles de l'ancien fond : on les
+     * retire toutes. Si l'on était plus près que le nouveau fond ne le permet
+     * (une photo ancienne s'arrête au zoom 18), on recule au plus fin qu'il
+     * sert, sans bouger le centre. Ce qui est dessiné par-dessus suit. */
+    function changerFond(id) {
+      if (!FONDS[id] || id === idFond) { return; }
+      idFond = id; fond = FONDS[id];
+      credit.href = fond.lien; credit.textContent = fond.credit;
+      if (z > fond.zoomMax) {
+        var la = yEnLat(cy, z), lo = xEnLon(cx, z);
+        z = fond.zoomMax; cx = lonEnX(lo, z); cy = latEnY(la, z);
+      }
+      Object.keys(tuiles).forEach(function (c) { couche.removeChild(tuiles[c]); });
+      tuiles = {}; echecs = 0;
+      var panne = conteneur.querySelector('.carte-panne');
+      if (panne) { conteneur.removeChild(panne); }
+      try { window.localStorage.setItem(CLE_FOND, id); } catch (x) { /* confort */ }
+      dessiner();
+      conteneur.dispatchEvent(new CustomEvent('carte:fond', { bubbles: true, detail: { fond: id } }));
+    }
+    if (choixFond) {
+      Object.keys(FONDS).forEach(function (id) {
+        var o = document.createElement('option');
+        o.value = id; o.textContent = FONDS[id].libelle;
+        choixFond.appendChild(o);
+      });
+      choixFond.value = idFond;
+      choixFond.addEventListener('change', function () { changerFond(choixFond.value); });
+    }
 
     window.addEventListener('resize', dessiner);
     dessiner();

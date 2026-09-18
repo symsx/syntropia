@@ -201,9 +201,14 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   svg.calques.etiquette-saisie .calque-etiquette--mobile{ cursor:grabbing; }
 
   .carte-reglures{
-    position:absolute; left:1rem; bottom:1rem; z-index:4;
-    display:flex; align-items:center; gap:.7rem;
+    position:absolute; left:1rem; bottom:1rem; z-index:4; max-width:calc(100% - 2rem);
+    display:flex; align-items:center; flex-wrap:wrap; gap:.5rem .7rem;
   }
+  .carte-fond{
+    padding:.3rem .5rem; border:1px solid var(--line); border-radius:.5rem; background:var(--surface);
+    color:var(--ink); font:500 .74rem var(--texte); cursor:pointer; max-width:13rem;
+  }
+  .carte-fond:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .carte-echelle{
     display:inline-block; min-width:2.5rem; padding:.1rem .4rem;
     border:1px solid var(--line); border-top:0; background:var(--surface);
@@ -400,7 +405,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="carte-grande" data-carte data-fixe
+      <div class="carte-grande" data-carte data-fixe data-fond-choix="fond-carte"
            data-calques="<?= htmlspecialchars((string) json_encode($config, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>"
            data-latitude="latitude" data-longitude="longitude">
         <input type="hidden" id="latitude" value="<?= htmlspecialchars((string) ($site['latitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
@@ -415,6 +420,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         </div>
         <p class="carte-reglures">
           <span id="carte-echelle" class="carte-echelle">échelle</span>
+          <select id="fond-carte" class="carte-fond" aria-label="Fond de carte" title="Fond de carte"></select>
           <button type="button" id="carte-centrer" class="carte-centrer" hidden>cadrer sur mes tracés</button>
         </p>
       </div>
@@ -662,6 +668,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       <p>Vous allez dessiner votre terrain, calque par calque — les limites, l'eau, les vents, ce qui
          fait de l'ombre, et le contour de chaque parcelle. Un calque se complète le jour où l'on
          remarque quelque chose : commencez par ce qui se voit sans instrument.</p>
+      <p><strong>Le fond de carte</strong> se change en bas à gauche, et votre choix est retenu dans ce navigateur.
+         <em>Plan IGN</em> : les chemins, sentiers et bâtiments. <em>Photographie aérienne</em> : ce qu'on voit du ciel —
+         les arbres, les limites, l'eau ; elle va un cran plus près que la carte. <em>Infrarouge</em> : la végétation
+         vivante y ressort en rouge. <em>Photos anciennes</em> (1950 à 1995) : ce qu'était le terrain avant vous — haies
+         arrachées, mares comblées ; elles ne couvrent pas tout le territoire. Les fonds IGN sont © IGN, et se chargent
+         depuis les serveurs de l'IGN, comme ceux d'OpenStreetMap depuis les siens.</p>
 <?php if ($peutEcrire): ?>
       <p><strong>Cliquez sur la carte pour dessiner</strong> — un point d'un clic ; une ligne ou un
          contour point par point, double-clic ou Entrée pour finir, clic droit pour défaire le

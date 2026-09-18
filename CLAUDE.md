@@ -139,7 +139,7 @@ public/                racine servable du site en refonte
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
-    js/carte.js              moteur de tuiles sans dépendance (OpenStreetMap) — partagé par toute carte
+    js/carte.js              moteur de tuiles sans dépendance — OpenStreetMap par défaut, fonds IGN au choix sur la grande carte (table `FONDS`) — partagé par toute carte
     js/calques.js            dessin des calques sur carte.js — modes via Gabarit.onOutilChange(), placement de parcelle par rectangle
     js/etapes.js            le manifeste des phases — `pret: true` = la page existe déjà
     js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret` ; initTermes() arme la bulle de tout `.terme`
@@ -1165,6 +1165,37 @@ récit.*
   l'ancien `calques.js`) et l'aide du calque renvoie vers les liens. **Calque
   renommé** à la demande du porteur : « Les ombres — ce qui en fait » devient
   **« Projection des ombres »** (`Calques::CALQUES`, seul endroit).
+- **Fonds de carte au choix — 2026-09-18.** Demandé par le porteur après une
+  question sur les fonds gratuits avec chemins ou images satellite. Sur la
+  **grande carte** (`conception-etude-site.php`), un menu en bas à gauche :
+  Carte OpenStreetMap (défaut), **Plan IGN**, **Photographie aérienne**,
+  **Infrarouge (végétation)**, et trois **photos anciennes** (1950-1965,
+  1965-1980, 1980-1995). Tout est dans `carte.js` : une table `FONDS` (adresse
+  des tuiles, crédit, zoom maximal, `partiel`), le moteur ne change pas — tout
+  est en Web Mercator, tuiles de 256 px. Les fonds IGN viennent de la
+  **Géoplateforme** (`data.geopf.fr`, WMTS, sans clé) ; **chaque zoom maximal
+  vient de son catalogue** (`GetCapabilities`) : 19 pour le plan, la photo et
+  l'infrarouge (contre 18 pour OpenStreetMap — la photo va un cran plus près),
+  18 pour les photos anciennes. Le choix est retenu par visiteur
+  (`localStorage`, `syntropia_fond`) ; un stockage indisponible ou une valeur
+  inconnue retombent sur OpenStreetMap, sans erreur. La petite carte du
+  formulaire de site n'a **pas** de menu et reste sur OpenStreetMap. Changer de
+  fond retire les tuiles de l'ancien, recule le zoom si le nouveau fond ne va
+  pas aussi près (centre inchangé), met le crédit à jour (« © IGN ») et
+  redessine les tracés. **Photos anciennes** : leur couverture est partielle —
+  des tuiles absentes n'y sont pas une panne, le message le dit (« ne couvre
+  pas cet endroit — essayez une autre période ») au lieu du message générique.
+  Les réglages posés sur la carte (échelle, fond, cadrage) ne la font plus
+  glisser ni zoomer. Vérifié en CDP, avec de vraies tuiles : les sept fonds
+  chargent (18/18 tuiles) sauf 1965-1980 et 1980-1995, qui ne couvrent pas le
+  point de test — et c'est le message dédié qui s'affiche ; zoom 19 atteint sur
+  la photo, plafonné à 18 sur OpenStreetMap ; repli 19 → 18 au changement de
+  fond ; mémorisation au rechargement ; valeur invalide et stockage bloqué ;
+  lecteur (le menu est là, la carte se lit) ; tracés et étiquettes suivent.
+  **Non vérifié : les conditions d'utilisation des fonds IGN** (je crois à la
+  Licence ouverte avec la mention « © IGN », mais je ne l'ai pas lue) —
+  à confirmer sur geoservices.ign.fr avant un usage public. La photo anciennes
+  et l'infrarouge ne couvrent que la France. Pas encore déployé.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
