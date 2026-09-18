@@ -15,10 +15,12 @@ window.Gabarit = (function(){
   var fermetures = [];   // une fonction "fermer" par tiroir, pour Échap
   var ecouteursOutil = [];
   var bulle, bureau;
+  var pageDuParcours = false;   // vrai si la page porte une étape de etapes.js
 
   function init(config){
     config = config || {};
     var etape = etapeParId(config.etape);
+    pageDuParcours = !!etape;
     if (!etape) {
       // Une page hors parcours (accueil, connexion...) n'a légitimement
       // pas d'étape : avertir seulement si une étape a été demandée et
@@ -323,8 +325,30 @@ window.Gabarit = (function(){
         if (!j || !j.ok) return;
         ajouterEntreesDuMenu(menu);
         if (j.projets.length > 1) ajouterSelecteurProjets(j);
+        var actif = j.projets.filter(function(p){ return p.id === j.actif; })[0];
+        if (actif && actif.role === 'lecteur' && pageDuParcours) lectureSeule();
       })
       .catch(function(){ /* le sélecteur est un confort : jamais une erreur visible */ });
+  }
+
+  /* Un lecteur regarde le projet. Le serveur refuse de toute façon ses
+     écritures (Reponses, Parcelles, api-*) ; ceci ne fait que le dire, et
+     éviter qu'on remplisse un formulaire pour rien. Les champs des
+     formulaires de saisie sont grisés — « Continuer » reste actif, la
+     navigation continue —, et le plan de parcelle reste explorable : ce
+     qu'on y dessine n'est enregistré que par son bouton, grisé ici.
+     **Pages du parcours seulement** : « Nouveau projet » et « Inviter »
+     n'écrivent pas dans le projet regardé, et un lecteur doit pouvoir
+     ouvrir le sien ou inviter — un champ grisé n'est pas envoyé. */
+  function lectureSeule(){
+    var titre = document.querySelector('.bg-centre-titre');
+    // En tête : sur un petit écran le titre se tronque par la fin, et un
+    // repère placé là disparaîtrait.
+    if (titre) titre.textContent = 'Lecture seule — ' + titre.textContent;
+    document.querySelectorAll('#bureau form input:not([type=hidden]):not([type=submit]), #bureau form textarea, #bureau form select')
+      .forEach(function(c){ c.disabled = true; });
+    var plan = el('plan-bouton');
+    if (plan) plan.disabled = true;
   }
 
   function ajouterEntreesDuMenu(menu){

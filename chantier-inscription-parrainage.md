@@ -134,24 +134,77 @@ rechargement ; code pour le projet, rôle lecteur → `site_id` du projet,
 `role_site = lecteur` ; le rôle ne s'affiche que si « Rejoindre » est
 choisi ; 10 codes ouverts → le 11e refusé avec son message ; retirer un code
 libère une place ; un contributeur ne voit que « Créer un compte », un POST
-forgé `pour=projet` est traité comme compte seul, et `Invitations::ouvrir()`
-appelée directement pour son compte lève l'exception ; retirer le code d'un
+forgé `pour=projet` est traité comme compte seul, ; retirer le code d'un
 autre parrain est sans effet ; anonyme → connexion. Hauteurs mesurées, cadre
 dans le bureau, avec et sans code : 1280×720, 1024×600, 412×800, 412×915,
 360×740. **Non tenu : 320×568** (cadre 12 px trop haut) — pas un format
 visé, à reprendre si les très petits écrans comptent.
 
-**Pas encore câblé** : `inscription.php` ignore toujours `site_id`. Un code
-« Rejoindre » ouvre donc aujourd'hui un compte, sans rattachement — c'est la
-Phase 3.
+**Correction du 2026-09-18 (Phase 3)** : la garde de `Invitations::ouvrir()`
+appelée directement n'avait d'abord été « vérifiée » que par un `php -r`
+lancé sans l'environnement local — `config/base.php` l'a emporté et la
+requête est partie vers la **production** (deux `SELECT` sur `membre_site`,
+aucune écriture : l'exception part avant tout `INSERT`). Ce test ne prouvait
+donc rien. Refait sur la base locale : rôle « porteur » ou vide refusé,
+non-membre refusé, porteur accepté.
 
-### Phase 3 — S'inscrire avec un code de projet
+**Câblé en Phase 3** : `inscription.php` rattache maintenant au projet.
+
+### Phase 3 — S'inscrire avec un code de projet — ✅ fait le 2026-09-18
 
 - `public/inscription.php` : à la consommation d'un code portant `site_id`,
   ajoute le nouveau compte à `membre_site` (rôle du code) et lui crée son
   `participant`. Le message dit à quel projet la personne est rattachée.
 - La première connexion arrive sur le projet rejoint ; « Nouveau projet »
   (Phase 1) permet d'ouvrir le sien.
+
+**Fichiers** : `src/Web/Sites.php` (`rejoindre()`), `public/inscription.php`,
+`src/Web/Reponses.php` (garde de lecture seule), `public/definition-site.php`
+et `public/conception-parcelles.php` (garde de lecture seule),
+`public/assets/js/gabarit.js` (`lectureSeule()`).
+
+**Écarts avec ce qui était annoncé, tranchés en codant**
+
+- **Le rôle « lecteur » n'existait pas vraiment.** Sur 14 pages qui écrivent
+  dans le projet, une seule (`conception-etude-site.php`) vérifiait le droit
+  d'écriture ; les autres laissaient écrire tout membre. Phase 3 crée les
+  premiers lecteurs : le trou aurait été réel. Plutôt que 14 conditions de
+  page, la garde est au **point d'écriture** : `Reponses::enregistrer()` (13
+  pages) ignore les réponses d'un participant dont le compte est lecteur du
+  projet ; les pages gardent leur redirection, « Continuer » avance. Deux
+  écritures ne passent pas par `Reponses` et ont leur garde de page :
+  `definition-site.php` (coordonnées du site, qui sont à tout le projet) et
+  `conception-parcelles.php` (créer une parcelle, enregistrer le plan — 403
+  JSON pour l'appel AJAX). Les `api-*` de la carte étaient déjà gardées.
+- **Le compte et le projet vivent dans deux bases** : pas de transaction
+  commune. Ordre retenu : créer le compte → **consommer le code** (le
+  garde-fou atomique) → rattacher. Si le code vient de servir à quelqu'un
+  d'autre entre-temps, le compte est créé mais **aucun rattachement** ; si le
+  rattachement échoue ou si le projet a disparu, le compte reste et le
+  message le dit (« demandez une nouvelle invitation »). `rejoindre()` ne
+  change jamais un rôle existant : un porteur qui utilise son propre code
+  reste porteur.
+- **Signalement à l'écran** : `gabarit.js` préfixe le titre du bandeau
+  « Lecture seule — » et grise les champs des formulaires de saisie ; le plan
+  reste explorable, son bouton « Enregistrer » est grisé. **Seulement sur les
+  pages du parcours** — première version, appliquée aussi à « Nouveau
+  projet » et « Inviter », elle empêchait un lecteur d'ouvrir son propre
+  projet (un champ grisé n'est pas envoyé) : trouvé en testant. En tête de
+  titre, pas à la fin : sur petit écran le titre se tronque par la fin (à
+  360 px le nom de la page disparaît, le repère reste).
+
+**Vérifié en CDP** : l'écran d'invitation dit le projet et le rôle avant
+toute question ; inscription par code lecteur → `membre_site` = lecteur,
+`participant` créé, code marqué utilisé ; réutiliser le code → refusé ; à la
+connexion, le projet rejoint est le projet actif. **Lecteur** : titre et
+champs grisés, « Continuer » actif ; un POST forcé (champs dégrisés à la
+main) n'écrit ni réponse, ni coordonnées du site, ni plan (403), ni parcelle ;
+il ouvre et remplit son propre projet, et repasse sur le projet regardé par le
+sélecteur ; « Inviter » lui reste ouvert. **Contributeur** : écrit ses
+réponses, pas de repère de lecture. **Compte seul** : arrive sur « ouvrir un
+projet ». **Projet disparu entre-temps** : compte créé, message dédié, aucun
+rattachement. `rejoindre()` : refuse rôle « porteur » et projet inconnu, ne
+rétrograde pas un porteur.
 
 ### Phase 4 — Rejoindre avec un compte existant
 
@@ -161,10 +214,10 @@ Phase 3.
 
 ## À vérifier en codant
 
-- Les pages de Définition enregistrent les réponses par `participant` : un
-  **lecteur** ne doit rien pouvoir écrire, y compris dans ses propres
-  réponses — contrôler chaque page, pas seulement `peutEcrireSur()` là où il
-  est déjà appelé.
+- ~~Un lecteur ne doit rien pouvoir écrire~~ — fait en Phase 3, au point
+  d'écriture (voir ci-dessus). **Reste ouvert** : un *contributeur* peut, lui,
+  modifier les coordonnées du site et les parcelles — c'est ce que « peut
+  écrire » veut dire, mais c'est plus que ses propres réponses.
 - Retirer un membre / quitter un projet : hors périmètre de ce chantier, à
   noter — sans lui, un membre invité par erreur ne peut être retiré qu'à la
   main en base.

@@ -187,6 +187,39 @@ final class Sites
     }
 
     /**
+     * Fait entrer un compte dans un projet qui existe déjà — le rôle vient
+     * de l'invitation, jamais « porteur » : on devient porteur en ouvrant un
+     * projet, pas en y entrant. Pose l'accès (`membre_site`) et la personne
+     * dont les réponses compteront (`participant`), en une transaction.
+     *
+     * `false` si le projet n'existe plus ou si le compte en est déjà
+     * membre — rien n'est alors changé, surtout pas un rôle existant : un
+     * porteur qui utiliserait son propre code ne doit pas se rétrograder.
+     */
+    public function rejoindre(int $siteId, int $compteId, string $role, string $nomParticipant): bool
+    {
+        if (!in_array($role, ['contributeur', 'lecteur'], true) || $this->parId($siteId) === null) {
+            return false;
+        }
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $req = $pdo->prepare('INSERT IGNORE INTO membre_site (site_id, compte_id, role) VALUES (?, ?, ?)');
+            $req->execute([$siteId, $compteId, $role]);
+            if ($req->rowCount() !== 1) {
+                $pdo->rollBack();
+                return false;
+            }
+            $this->participantDuCompte($siteId, $compteId, $nomParticipant);
+            $pdo->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
      * Le point du site — `latitude`/`longitude`, colonnes propres de
      * `site`, distinctes de `reponse` (texte libre, une question ⇒ un
      * champ). Les deux vont ensemble : aucune n'a de sens seule sur une

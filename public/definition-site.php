@@ -30,7 +30,12 @@ $reponsesService = new Reponses();
 
 $erreurs = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null)) {
-    $erreurs = $sites->enregistrerParametres($siteId, (string) ($_POST['latitude'] ?? ''), (string) ($_POST['longitude'] ?? ''));
+    // Un lecteur regarde : les coordonnées du site (qui sont à tout le
+    // projet, pas à lui) ne s'écrivent pas depuis son compte. `Reponses`
+    // ignore de même ses réponses ; « Continuer » avance quand même.
+    $erreurs = $sites->peutEcrireSur($siteId, $compteId)
+        ? $sites->enregistrerParametres($siteId, (string) ($_POST['latitude'] ?? ''), (string) ($_POST['longitude'] ?? ''))
+        : [];
     if ($erreurs === []) {
         $reponsesService->enregistrerLot($siteId, $participantId, 'definition', [
             'site_commune'         => (string) ($_POST['commune'] ?? ''),

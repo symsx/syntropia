@@ -9,12 +9,11 @@ declare(strict_types=1);
  * sur le gabarit du bureau. **On entre parce que quelqu'un l'a
  * proposé** : pas d'inscription libre, voir `src/Web/Invitations.php`.
  *
- * Ce qui n'est pas encore là : aucune page « inviter quelqu'un » ne
- * peut encore ouvrir un code — cette page attend un code déjà ouvert
- * par quelqu'un d'autre (voir `Invitations::ouvrir()`), donné de vive
- * voix ou par écrit. Le rattachement à un site (`invitation.site_id`)
- * n'est pas câblé non plus : ce service (`Sites`) n'existe pas encore
- * dans syntropia.
+ * Un code est ouvert par `inviter.php`, donné de vive voix ou par écrit.
+ * S'il porte un projet (`invitation.site_id`), le nouveau compte y entre
+ * aussitôt, dans le rôle du code (`role_site`) — chantier
+ * `chantier-inscription-parrainage.md`, Phase 3. Il pourra ouvrir son
+ * propre projet ensuite, depuis le menu du compte.
  */
 
 require __DIR__ . '/../src/autoload.php';
@@ -26,6 +25,7 @@ use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Comptes;
 use Syntropia\Web\Invitations;
+use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
 $auth = new Authentification();
@@ -41,6 +41,14 @@ $invitations = new Invitations();
 $code = strtoupper(trim((string) ($_GET['code'] ?? $_POST['code'] ?? '')));
 $lu = $code === '' ? ['invitation' => null, 'souci' => null] : $invitations->parCode($code);
 $invitation = $lu['invitation'];
+
+// Le projet que le code ouvre, s'il en ouvre un — nom et rôle, pour le dire
+// avant de demander quoi que ce soit.
+$sitesService = new Sites();
+$projetInvite = $invitation !== null && $invitation['site_id'] !== null
+    ? $sitesService->parId((int) $invitation['site_id']) : null;
+$roleInvite = $invitation['role_site'] ?? null;
+$dit = ['contributeur' => 'en contribuant', 'lecteur' => 'en lisant'];
 $message = $lu['souci'];
 $classe = 'erreur';
 $fait = false;
@@ -82,13 +90,29 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
 
                 // L'invitation se consomme APRÈS la création, et la base
                 // tranche les simultanés — voir Invitations::consommer().
+                $classe = 'succes';
                 if (!$invitations->consommer((int) $invitation['id'], $nouveau)) {
-                    $classe = 'succes';
+                    // Perdue de justesse : le compte existe, mais le projet
+                    // n'est pas à lui — le code a servi à quelqu'un d'autre.
                     $message = "Cette invitation venait de servir à quelqu'un d'autre. "
                         . 'Votre compte est créé — vous pouvez vous connecter.';
-                } else {
-                    $classe = 'succes';
+                } elseif ($invitation['site_id'] === null) {
                     $message = 'Compte créé. Vous pouvez vous connecter.';
+                } else {
+                    // Le compte et le projet vivent dans deux bases : pas de
+                    // transaction commune. Si le rattachement échoue, le
+                    // compte reste — et le dit, plutôt que de le taire.
+                    try {
+                        $entre = $sitesService->rejoindre((int) $invitation['site_id'], $nouveau,
+                            (string) $roleInvite, $nomAffiche);
+                    } catch (\Throwable $e) {
+                        $entre = false;
+                    }
+                    $message = $entre && $projetInvite !== null
+                        ? sprintf('Compte créé. Vous entrez dans « %s », %s — vous pouvez vous connecter.',
+                            $projetInvite['nom'], $dit[$roleInvite] ?? 'dans le projet')
+                        : "Compte créé, mais le projet n'a pas pu vous être ouvert. "
+                            . 'Demandez une nouvelle invitation à qui vous a invité.';
                 }
                 $fait = true;
             } catch (\PDOException $e) {
@@ -225,6 +249,12 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
                <strong><?= htmlspecialchars((string) $invitation['parrain'], ENT_QUOTES, 'UTF-8') ?></strong><?php if (($invitation['intention'] ?? null) !== null): ?>
                — <em><?= htmlspecialchars((string) $invitation['intention'], ENT_QUOTES, 'UTF-8') ?></em>
             <?php endif; ?></p>
+<?php if ($projetInvite !== null): ?>
+            <p class="inscription-invitation">Pour rejoindre le projet
+               <strong>« <?= htmlspecialchars((string) $projetInvite['nom'], ENT_QUOTES, 'UTF-8') ?> »</strong>,
+               <?= htmlspecialchars($dit[$roleInvite] ?? 'dans le projet', ENT_QUOTES, 'UTF-8') ?>.
+               Vous pourrez ouvrir le vôtre ensuite.</p>
+<?php endif; ?>
 
             <form method="post">
               <input type="hidden" name="action" value="inscrire">

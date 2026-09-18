@@ -34,7 +34,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-inscription-parrainage.md` — le plan détaillé (4 phases) de
   l'inscription par code de parrainage : inviter quelqu'un à créer un
   compte, ou à rejoindre un projet (et un compte peut alors avoir
-  plusieurs projets). **Phases 1 et 2 faites le 2026-09-18** — voir § Point
+  plusieurs projets). **Phases 1 à 3 faites le 2026-09-18** — voir § Point
   de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
@@ -933,6 +933,30 @@ récit.*
   toujours `site_id` (un code « Rejoindre » ouvre un compte sans
   rattachement) — Phase 3. Ne pas déployer Phase 2 seule sans le savoir.
   Reste non tenu : 320×568. Détail : `chantier-inscription-parrainage.md`.
+- **S'inscrire avec un code de projet — Phase 3 du chantier « inscription
+  par parrainage », 2026-09-18.** `inscription.php` dit le projet et le
+  rôle avant toute question, puis, une fois le code consommé,
+  `Sites::rejoindre()` pose `membre_site` et `participant`. **Le rôle
+  « lecteur » n'existait pas vraiment** : sur 14 pages qui écrivent,
+  une seule vérifiait le droit d'écriture — la garde est maintenant au
+  point d'écriture (`Reponses::enregistrer()` ignore les réponses d'un
+  lecteur ; `definition-site.php` et `conception-parcelles.php` refusent
+  leurs écritures, 403 JSON pour l'AJAX du plan), `gabarit.js` préfixe le
+  titre « Lecture seule — » et grise les champs, **sur les pages du
+  parcours seulement** (première version, aussi appliquée à « Nouveau
+  projet »/« Inviter » : un lecteur ne pouvait plus ouvrir son projet,
+  un champ grisé n'étant pas envoyé — trouvé en testant). Compte et projet
+  sont dans deux bases : compte → **code consommé** (garde atomique) →
+  rattachement ; un échec de rattachement laisse le compte et le dit.
+  Vérifié en CDP : lecteur (POST forcé sans effet, mais son propre projet
+  s'ouvre et s'écrit), contributeur, compte seul, projet disparu, code
+  réutilisé. **Correction de ma vérification de la Phase 2** : la garde de
+  `Invitations::ouvrir()` avait été « testée » par un `php -r` direct — donc
+  sur la **production** (`config/base.php` l'emporte), deux `SELECT` sur
+  `membre_site`, aucune écriture — et ne prouvait rien ; refaite en local
+  avec `config/local.env` exporté. Reste ouvert : retirer un membre,
+  et un *contributeur* peut modifier coordonnées et parcelles du projet.
+  Ne pas déployer sans `bin/deployer.py base` (colonne `role_site`).
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -964,8 +988,8 @@ il apparaît réellement, pour ne pas noyer le motif.
 ### Prochaine étape
 
 1. **Chantier « inscription par parrainage »** — plan dans
-   `chantier-inscription-parrainage.md` ; Phases 1 et 2 faites, Phase 3
-   (inscription rattachée à un projet) suivante.
+   `chantier-inscription-parrainage.md` ; Phases 1 à 3 faites, Phase 4
+   (rejoindre un projet avec un compte existant) suivante.
 2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` (4 phases : base de végétaux
    `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,

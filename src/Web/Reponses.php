@@ -55,6 +55,13 @@ final class Reponses
     public function enregistrer(int $siteId, int $participantId, string $phase,
                                 string $question, string $texte): void
     {
+        // Un lecteur regarde : il n'écrit rien, pas même ses propres
+        // réponses. Les pages gardent leur redirection (« Continuer » doit
+        // encore avancer) — seule l'écriture est ignorée, ici, au point
+        // unique par où passent toutes les pages de saisie.
+        if ($this->estLecteur($participantId)) {
+            return;
+        }
         $texte = trim($texte);
         if ($texte === '') {
             $this->pdo()->prepare(
@@ -67,6 +74,17 @@ final class Reponses
              VALUES (?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE texte = VALUES(texte), phase = VALUES(phase)')
             ->execute([$siteId, $participantId, $phase, $question, $texte]);
+    }
+
+    /** Ce participant est-il rattaché à un compte qui ne fait que lire ce site ? */
+    private function estLecteur(int $participantId): bool
+    {
+        $req = $this->pdo()->prepare(
+            "SELECT 1 FROM participant p
+               JOIN membre_site m ON m.site_id = p.site_id AND m.compte_id = p.compte_id
+              WHERE p.id = ? AND m.role = 'lecteur'");
+        $req->execute([$participantId]);
+        return (bool) $req->fetchColumn();
     }
 
     /**

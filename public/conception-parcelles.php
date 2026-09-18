@@ -32,9 +32,22 @@ $codeSaisi = '';
 $nomSaisi = '';
 $typeSaisi = 'perenne';
 
+// Un lecteur regarde le projet : rien ne s'écrit d'ici — chantier
+// `chantier-inscription-parrainage.md`, Phase 3.
+$peutEcrire = $sites->peutEcrireSur($siteId, $compteId);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null)) {
     $action = (string) ($_POST['action'] ?? '');
-    if ($action === 'creer') {
+    if (!$peutEcrire) {
+        $refus = ['droit' => "Vous lisez ce projet : il ne se modifie pas depuis votre compte."];
+        $erreursCreation = $erreursPlan = $refus;
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['ok' => false, 'erreurs' => $refus, 'version' => null], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    } elseif ($action === 'creer') {
         $codeSaisi = (string) ($_POST['code'] ?? '');
         $nomSaisi = (string) ($_POST['nom'] ?? '');
         $typeSaisi = (string) ($_POST['type'] ?? 'perenne');
