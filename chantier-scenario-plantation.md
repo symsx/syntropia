@@ -443,7 +443,7 @@ ne porte aucune rusticité (elle vit chez Plantae : jointure à faire, ou donné
 à curater) ;
 proposer la strate d'une espèce connue (`espece.strates_possibles`) ; le mode
 « quantité calculée depuis le plan de bordures » ; l'aide propre au
-jardin-forêt. **Pas encore déployé.**
+jardin-forêt. **Déployé le 2026-09-18.**
 
 ## Ce que ce plan exclut explicitement
 

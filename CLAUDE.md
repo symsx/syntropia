@@ -1065,7 +1065,7 @@ récit.*
   passe sous le bandeau, « Continuer » chevauche le pied — même mesure sans
   le bloc de conduite) ; mon bloc y est compacté sur téléphone pour ne pas
   aggraver 412×915, où la page tenait. Détail :
-  `chantier-scenario-plantation.md` § Phase 2. Pas encore déployé.
+  `chantier-scenario-plantation.md` § Phase 2. Déployé le 2026-09-18.
 - **Le backend du scénario — Phase 3 du chantier « scénario de plantation »,
   2026-09-18.** `src/Scenario.php` (les règles : périodes, 24 fonctions,
   emplacements, validation tout-ou-rien, position 0-28 dans le temps, ordre de
@@ -1111,7 +1111,7 @@ récit.*
   recouvrait l'en-tête « Placenta 3 » (une page sans bandeau d'outils
   doit redéfinir `--haut-bandeaux`, comme `inviter.php`) ; et un compte
   sans parcelle voyait une page vide. Détail :
-  `chantier-scenario-plantation.md` § Phase 4. **Pas encore déployé.**
+  `chantier-scenario-plantation.md` § Phase 4. **Déployé le 2026-09-18.**
 - **Déplacer les étiquettes de la carte — outil « Étiquettes », 2026-09-18.**
   Demandé par le porteur : les noms des objets gênent parfois la lisibilité.
   Nouvel outil du bandeau (`⇄ Étiquettes`, en dernier, après un séparateur) :
@@ -1199,7 +1199,22 @@ récit.*
   **Non vérifié : les conditions d'utilisation des fonds IGN** (je crois à la
   Licence ouverte avec la mention « © IGN », mais je ne l'ai pas lue) —
   à confirmer sur geoservices.ign.fr avant un usage public. La photo anciennes
-  et l'infrarouge ne couvrent que la France. Pas encore déployé.
+  et l'infrarouge ne couvrent que la France. Déployé le 2026-09-18.
+- **Déploiement des Préférences, du scénario de plantation, de la carte —
+  2026-09-18 (seconde vague).** Sept commits, 44 fichiers (31 `public/`, 13
+  `src/`) : Préférences (`compte.php`), la conduite, le backend et la page du
+  scénario, l'outil « Étiquettes », l'aide relief/ombres (`ShadeMap`), les fonds
+  de carte, le calque « Projection des ombres ». **Aucun changement de schéma**
+  depuis la première vague : `base` non rejoué, `fichiers` seul (le simulateur
+  l'avait confirmé — `sql` « déjà à jour »). Vérifié : les 41 fichiers modifiés
+  identiques à la copie locale (`diff` par SSH), pages du parcours 302 pour un
+  anonyme, les trois API refusent (403/405), `src/`, `sql/`, `config/base.php`
+  403, pages publiques 200, nouveaux scripts servis, **syntaxe PHP 8.4 distante
+  de huit fichiers neufs sans erreur**. Comme la première fois, **les parcours
+  eux-mêmes ne sont pas testés en production** (règle du 2026-09-18) : à essayer
+  avec le vrai compte — la page Préférences, le scénario d'une parcelle, l'outil
+  Étiquettes, les fonds de carte (les tuiles IGN se chargent depuis le
+  navigateur du visiteur, non depuis alwaysdata).
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1236,7 +1251,7 @@ il apparaît réellement, pour ne pas noyer le motif.
 2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` — **terminé le 2026-09-18**, quatre
    phases (la base de végétaux ; la conduite ; le backend de
-   `scenario_ligne` ; la page). **Pas encore déployé.**
+   `scenario_ligne` ; la page). **Déployé le 2026-09-18.**
 3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
    reste à en tirer parti, mais **la donnée manque** : la table `espece`
    ne porte volontairement aucune rusticité (« elle se lit chez
@@ -1257,8 +1272,7 @@ il apparaît réellement, pour ne pas noyer le motif.
    chapitres à son rythme, en markdown, directement dans ce fichier.
 6. **`autres-documentations.php`** — page publique restante, non
    commencée.
-7. **`compte.php` / Préférences** — faite le 2026-09-18 (voir plus haut) ;
-   pas encore déployée.
+7. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
 8. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
