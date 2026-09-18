@@ -212,14 +212,58 @@ rétrograde pas un porteur.
   code, même consommation, mêmes garde-fous (déjà utilisé, expiré, révoqué) ;
   refuse poliment si la personne est déjà membre du projet.
 
+## Hors des quatre phases — voir et retirer les participants (2026-09-18)
+
+Demandé par le porteur entre les Phases 3 et 4 : qu'un porteur voie la liste
+de ceux qui ont accès à son projet et puisse retirer un accès. C'est le
+« retrait d'un membre » que ce plan avait noté comme hors périmètre.
+
+- `public/membres.php` (sur le gabarit, hors parcours), **réservée au
+  porteur du projet actif** ; entrée « Participants » dans le menu du compte,
+  posée par `gabarit.js` seulement si le projet actif a l'utilisateur pour
+  porteur. Liste paginée par 4 : nom, rôle (porteur / contribue / lit
+  seulement), depuis quand, identifiant. Un contributeur ou un lecteur qui
+  ouvre la page n'y trouve qu'un renvoi vers le porteur.
+- `Sites::membres()`, `Sites::retirerMembre()` (garde-fous dans le service :
+  seul un porteur retire, **jamais un porteur** — le projet garde toujours le
+  sien —, refus si la personne n'a déjà plus accès) et `Comptes::nomsParIds()`
+  (les noms vivent dans l'autre base : une requête pour toute la page).
+- **Ce que « retirer » fait** : supprime la ligne de `membre_site`, rien
+  d'autre. La personne (`participant`) et ses réponses **restent** dans le
+  projet — pour la même raison qu'une invitation se révoque sans s'effacer —
+  et, réinvitée, elle retrouve sa place et ses réponses (même `participant`).
+  Le projet disparaît de ses projets ; s'il n'en avait pas d'autre, elle
+  retombe sur « ouvrir un projet ». Confirmation avant de retirer.
+- **Bug trouvé au passage, et corrigé** : `participant` a une contrainte
+  `(site_id, nom)`. Deux personnes de même nom affiché dans un projet
+  (« Jean » et « Jean ») faisaient échouer `rejoindre()` de la Phase 3 — le
+  message « le projet n'a pas pu vous être ouvert », sans cause visible.
+  `participantDuCompte()` ajoute maintenant le numéro du compte au second
+  (« Jean (72) »).
+- **Pas fait, à décider** : changer le rôle d'un membre (contributeur ↔
+  lecteur) sans le retirer ni le réinviter ; qu'une personne **quitte** elle-
+  même un projet rejoint ; retirer aussi les invitations encore ouvertes d'un
+  membre retiré (elles restent valables).
+
+**Vérifié en CDP** : porteur et cinq membres → deux pages (4 + 2), le porteur
+sans bouton ; annuler la confirmation ne change rien ; retirer un lecteur →
+`membre_site` vidé, `participant` et réponses conservés, message affiché ;
+retirer le porteur (soi), un compte hors projet ou déjà retiré → refus avec
+son message, base intacte ; la personne retirée arrive sur « ouvrir un
+projet » et `api-projets` renvoie une liste vide ; un contributeur n'a ni
+l'entrée de menu ni la liste, et un POST direct de sa part ne retire personne ;
+un porteur qui n'est que contributeur ailleurs ne voit pas la liste de l'autre
+projet ; réinvitation → même `participant` retrouvé ; deux « Jean » dans le
+même projet acceptés. Cadre dans le bureau à 1280×720, 1024×600, 412×800,
+412×915, 360×740 ; **non tenu à 320×568** (comme `inviter.php`).
+
 ## À vérifier en codant
 
 - ~~Un lecteur ne doit rien pouvoir écrire~~ — fait en Phase 3, au point
   d'écriture (voir ci-dessus). **Reste ouvert** : un *contributeur* peut, lui,
   modifier les coordonnées du site et les parcelles — c'est ce que « peut
   écrire » veut dire, mais c'est plus que ses propres réponses.
-- Retirer un membre / quitter un projet : hors périmètre de ce chantier, à
-  noter — sans lui, un membre invité par erreur ne peut être retiré qu'à la
-  main en base.
+- ~~Retirer un membre~~ — fait (voir § ci-dessus). **Reste** : qu'une
+  personne quitte elle-même un projet rejoint.
 - Un porteur qui invite à son projet ne doit jamais pouvoir toucher aux
   droits de quelqu'un d'autre sur un autre projet.

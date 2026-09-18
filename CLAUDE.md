@@ -129,6 +129,7 @@ public/                racine servable du site en refonte
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
+  membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
   inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
@@ -954,9 +955,24 @@ récit.*
   `Invitations::ouvrir()` avait été « testée » par un `php -r` direct — donc
   sur la **production** (`config/base.php` l'emporte), deux `SELECT` sur
   `membre_site`, aucune écriture — et ne prouvait rien ; refaite en local
-  avec `config/local.env` exporté. Reste ouvert : retirer un membre,
-  et un *contributeur* peut modifier coordonnées et parcelles du projet.
+  avec `config/local.env` exporté. Reste ouvert : un *contributeur* peut modifier coordonnées et parcelles du projet.
   Ne pas déployer sans `bin/deployer.py base` (colonne `role_site`).
+- **Voir et retirer les participants d'un projet — 2026-09-18.** Demandé
+  par le porteur entre les Phases 3 et 4. `public/membres.php` (réservée au
+  porteur du projet actif, menu « Participants » posé par `gabarit.js`) :
+  liste paginée par 4 (nom, rôle, depuis quand) et « Retirer l'accès » avec
+  confirmation. `Sites::membres()`/`retirerMembre()` — garde-fous dans le
+  service : seul un porteur retire, jamais un porteur, refus si déjà
+  retiré ; `Comptes::nomsParIds()`. **Retirer ne supprime que
+  `membre_site`** : la personne (`participant`) et ses réponses restent, et
+  réinvitée elle les retrouve. **Bug de la Phase 3 trouvé et corrigé** :
+  `participant` est unique sur `(site_id, nom)` — deux « Jean » dans un projet
+  faisaient échouer `rejoindre()` sans cause visible ; le second devient
+  « Jean (72) ». Vérifié en CDP (pagination, annulation, retrait, refus par
+  POST direct de porteur/étranger/déjà retiré/contributeur, retiré → « ouvrir
+  un projet », réinvitation). Non tenu : 320×568. Reste à décider : changer un
+  rôle sans retirer, quitter soi-même un projet, invitations ouvertes d'un
+  membre retiré. Voir `chantier-inscription-parrainage.md`.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

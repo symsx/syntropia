@@ -312,8 +312,8 @@ window.Gabarit = (function(){
   /* ------------------------------------------------------- les projets */
   /* Un compte peut porter plusieurs projets (le sien, ceux rejoints sur
      invitation). Rien de cela n'est dans le HTML des pages : api-projets.php
-     dit lesquels, et ce code pose trois choses — « Nouveau projet » et
-     « Inviter » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
+     dit lesquels, et ce code pose trois choses — « Nouveau projet »,
+     « Inviter » et, pour un porteur, « Participants » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
      projets » en tête du panneau gauche. Une page publique (pas de menu de
      compte) n'appelle rien. */
   function initProjets(){
@@ -323,9 +323,9 @@ window.Gabarit = (function(){
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
         if (!j || !j.ok) return;
-        ajouterEntreesDuMenu(menu);
-        if (j.projets.length > 1) ajouterSelecteurProjets(j);
         var actif = j.projets.filter(function(p){ return p.id === j.actif; })[0];
+        ajouterEntreesDuMenu(menu, !!actif && actif.role === 'porteur');
+        if (j.projets.length > 1) ajouterSelecteurProjets(j);
         if (actif && actif.role === 'lecteur' && pageDuParcours) lectureSeule();
       })
       .catch(function(){ /* le sélecteur est un confort : jamais une erreur visible */ });
@@ -351,10 +351,13 @@ window.Gabarit = (function(){
     if (plan) plan.disabled = true;
   }
 
-  function ajouterEntreesDuMenu(menu){
+  function ajouterEntreesDuMenu(menu, estPorteur){
     var sep = menu.querySelector('.compte-menu-separateur');
-    [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
-     ['inviter.php', '✉', 'Inviter']].forEach(function(e){
+    var entrees = [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
+                   ['inviter.php', '✉', 'Inviter']];
+    // La liste de ceux qui ont accès au projet actif n'est pour son porteur.
+    if (estPorteur) entrees.push(['membres.php', '☰', 'Participants']);
+    entrees.forEach(function(e){
       var a = document.createElement('a');
       a.className = 'compte-menu-item';
       a.href = e[0];

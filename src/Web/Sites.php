@@ -143,9 +143,19 @@ final class Sites
         if (is_int($id) || is_string($id)) {
             return (int) $id;
         }
+        $nom = $nom !== '' ? $nom : 'Porteur';
         $req = $this->pdo()->prepare(
             'INSERT INTO participant (site_id, nom, compte_id) VALUES (?, ?, ?)');
-        $req->execute([$siteId, $nom !== '' ? $nom : 'Porteur', $compteId]);
+        try {
+            $req->execute([$siteId, $nom, $compteId]);
+        } catch (\PDOException $e) {
+            // `uq_participant (site_id, nom)` : deux personnes du même nom dans
+            // un projet. Le numéro du compte les distingue sans rien perdre.
+            if (!str_contains($e->getMessage(), 'Duplicate')) {
+                throw $e;
+            }
+            $req->execute([$siteId, $nom . ' (' . $compteId . ')', $compteId]);
+        }
         return (int) $this->pdo()->lastInsertId();
     }
 
@@ -184,6 +194,51 @@ final class Sites
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Ceux qui ont accès à ce projet, le porteur d'abord, puis par ancienneté.
+     * Les noms sont dans l'autre base : `Comptes::nomsParIds()` les donne.
+     *
+     * @return list<array{compte_id: int, role: string, depuis_le: string}>
+     */
+    public function membres(int $siteId): array
+    {
+        $req = $this->pdo()->prepare(
+            "SELECT compte_id, role, depuis_le FROM membre_site
+              WHERE site_id = ?
+              ORDER BY role = 'porteur' DESC, depuis_le, compte_id");
+        $req->execute([$siteId]);
+        return array_map(static fn (array $m): array => [
+            'compte_id' => (int) $m['compte_id'], 'role' => (string) $m['role'],
+            'depuis_le' => (string) $m['depuis_le']], $req->fetchAll());
+    }
+
+    /**
+     * Retire l'accès d'un compte à un projet. `null` si c'est fait, sinon le
+     * message à montrer — les garde-fous sont ici, pas seulement dans la page.
+     *
+     * Seul un porteur retire, et **jamais un porteur** : le projet garde
+     * toujours le sien. Ne touche que `membre_site` : la personne
+     * (`participant`) et ses réponses restent dans le projet, comme une
+     * invitation révoquée reste dans la table — la trace de ce qui a eu lieu.
+     * Réinvitée plus tard, elle retrouve ses réponses.
+     */
+    public function retirerMembre(int $siteId, int $compteCible, int $compteActeur): ?string
+    {
+        if ($this->roleSur($siteId, $compteActeur) !== 'porteur') {
+            return "Seul le porteur du projet peut retirer l'accès de quelqu'un.";
+        }
+        $role = $this->roleSur($siteId, $compteCible);
+        if ($role === null) {
+            return "Cette personne n'a plus accès à ce projet.";
+        }
+        if ($role === 'porteur') {
+            return 'Un porteur ne se retire pas : le projet garde toujours le sien.';
+        }
+        $this->pdo()->prepare('DELETE FROM membre_site WHERE site_id = ? AND compte_id = ?')
+            ->execute([$siteId, $compteCible]);
+        return null;
     }
 
     /**

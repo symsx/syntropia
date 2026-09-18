@@ -66,6 +66,31 @@ final class Comptes
         return $req->fetch() ?: null;
     }
 
+    /**
+     * Les noms de plusieurs comptes d'un coup — pour afficher une liste de
+     * membres, dont l'accès vit dans l'autre base.
+     *
+     * @param list<int> $ids
+     * @return array<int, array{identifiant: string, nom_affiche: string}>
+     */
+    public function nomsParIds(array $ids): array
+    {
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        if ($ids === []) {
+            return [];
+        }
+        $req = $this->pdo()->prepare(
+            'SELECT id, identifiant, nom_affiche FROM compte WHERE id IN ('
+            . implode(',', array_fill(0, count($ids), '?')) . ')');
+        $req->execute($ids);
+        $noms = [];
+        foreach ($req->fetchAll() as $ligne) {
+            $noms[(int) $ligne['id']] = ['identifiant' => (string) $ligne['identifiant'],
+                'nom_affiche' => (string) $ligne['nom_affiche']];
+        }
+        return $noms;
+    }
+
     public function nombre(): int
     {
         return (int) $this->pdo()->query('SELECT COUNT(*) FROM compte')->fetchColumn();
