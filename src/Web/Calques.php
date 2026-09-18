@@ -40,7 +40,7 @@ final class Calques
             'types' => ['ligne', 'point', 'grille']],
         'ombres' => ['libelle' => 'Les ombres — ce qui en fait',
             'teinte' => '#2F5A6B',
-            'aide' => "Un arbre, un bâtiment, un coteau : sa position et sa hauteur.",
+            'aide' => "Un arbre, un bâtiment, un coteau : sa position et sa hauteur. La période d'ombre se relève sur ShadeMap — les liens sont juste en dessous.",
             'types' => ['point', 'polygone']],
         'vents' => ['libelle' => 'Les vents',
             'teinte' => '#5E4A6E',

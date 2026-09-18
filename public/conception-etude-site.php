@@ -684,15 +684,15 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,
     etape: 'conception-etude-site'
   });
 </script>
-<script src="assets/js/carte.js"></script>
-<script src="assets/js/calques.js"></script>
+<script src="assets/js/carte.js?v=<?= filemtime(__DIR__ . '/assets/js/carte.js') ?>"></script>
+<script src="assets/js/calques.js?v=<?= filemtime(__DIR__ . '/assets/js/calques.js') ?>"></script>
 </body>
 </html>
