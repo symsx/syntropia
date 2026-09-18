@@ -33,7 +33,7 @@ appellent `Sites::pourCompte()`, qui renvoie *le* site du compte. Le cas 2
 (rejoindre un projet **et** avoir le sien) rouvre cette décision — de fait
 tranchée par le porteur le 2026-09-18.
 
-**Solution choisie : un « projet actif »** mémorisé en session. `pourCompte()`
+**Solution choisie : un « projet actif »** mémorisé dans un cookie, revérifié à chaque lecture. `pourCompte()`
 renvoie le projet actif (à défaut, le dernier utilisé, puis le premier) : les
 17 pages continuent de fonctionner **sans être touchées**. Un sélecteur dans
 le panneau gauche change le projet actif.
@@ -60,7 +60,7 @@ Phase 4  Rejoindre un projet avec un compte existant (cas 2, compte déjà là)
 
 **Fichiers**
 - `src/Web/Sites.php` : `deCompte()` (tous les projets d'un compte, avec le
-  rôle), `activer()` (retient le projet actif en session, refuse un projet
+  rôle), `activer()` (retient le projet actif par cookie, refuse un projet
   dont le compte n'est pas membre), `pourCompte()` renvoie le projet actif.
   `creer()` inchangée.
 - `public/api-projets.php` : GET → `{projets, actif, csrf}` ; POST →
