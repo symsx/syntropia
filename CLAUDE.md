@@ -1156,6 +1156,15 @@ récit.*
   Lambert 93 est refusé avec son motif. Non vérifié : le format réel d'un export
   ContourBuddy (aucun accès au site depuis ce poste) — `Geojson::lire()` lit le
   format, pas l'outil.
+- **Le bloc ShadeMap « introuvable » — 2026-09-18.** Signalé par le porteur avec
+  une capture : le calque était bien choisi (le formulaire d'import l'avait
+  repris), mais le panneau Données, long, était défilé tout en bas — le bloc,
+  juste sous « Sur quel calque », était hors de vue. Le choix d'un calque qui a
+  son bloc (vents, relief, ombres) **remonte maintenant le panneau** jusqu'à lui.
+  Les scripts de la carte portent un `?v=filemtime` (un navigateur gardait
+  l'ancien `calques.js`) et l'aide du calque renvoie vers les liens. **Calque
+  renommé** à la demande du porteur : « Les ombres — ce qui en fait » devient
+  **« Projection des ombres »** (`Calques::CALQUES`, seul endroit).
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

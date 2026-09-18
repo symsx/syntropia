@@ -38,7 +38,7 @@ final class Calques
             'teinte' => '#8A6A16',
             'aide' => "Les courbes de niveau, les points hauts et bas, le sens de la pente. La grille d'altitudes IGN se relève depuis cette carte.",
             'types' => ['ligne', 'point', 'grille']],
-        'ombres' => ['libelle' => 'Les ombres — ce qui en fait',
+        'ombres' => ['libelle' => 'Projection des ombres',
             'teinte' => '#2F5A6B',
             'aide' => "Un arbre, un bâtiment, un coteau : sa position et sa hauteur. La période d'ombre se relève sur ShadeMap — les liens sont juste en dessous.",
             'types' => ['point', 'polygone']],

@@ -824,6 +824,12 @@
       }
       nommerLesModes();
       etat(); tout();
+      // Le panneau est long : un calque qui a son bloc d'aide (vents, relief, ombres) le
+      // montre juste sous ce choix. Si on avait défilé plus bas, on remonte à lui —
+      // sans quoi le bloc s'affiche, hors de vue, et semble absent.
+      var blocs = { vents: 'vents-rose-bloc', relief: 'relief-bloc', ombres: 'ombres-bloc' };
+      var bloc = blocs[choixCalque.value] && $(blocs[choixCalque.value]);
+      if (bloc && !bloc.hidden) { choixCalque.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
     });
     texte('calque-aide', (cfg.calques[choixCalque.value] || {}).aide || '');
   }
