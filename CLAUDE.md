@@ -36,6 +36,10 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   compte, ou à rejoindre un projet (et un compte peut alors avoir
   plusieurs projets). **Les quatre phases sont faites (2026-09-18)** — voir § Point
   de reprise.
+- `chantier-export-import-projet.md` — le plan (4 phases) pour exporter et
+  importer un projet en un fichier JSON daté, demandé le 2026-09-18 ;
+  **noté, pas commencé** — un format est proposé (JSON plutôt que XML),
+  cinq points restent à décider avant de coder.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1240,17 +1244,23 @@ il apparaît réellement, pour ne pas noyer le motif.
    zone suppose de joindre `plantae-corpus` (une base externe, jointure
    applicative) ou de curater la rusticité des 46 espèces du cadre — à
    décider avec le porteur, pas avant.
-4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+4. **Exporter et importer un projet** — noté le 2026-09-18, plan dans
+   `chantier-export-import-projet.md` : un fichier JSON avec sa **date
+   d'export**, sans comptes ni accès, importé en un projet neuf. Le besoin est
+   déjà réel : le projet de production a été rapatrié en local par un script
+   ponctuel non conservé. Cinq points à décider avant de coder (qui exporte,
+   trace d'origine, plafonds…).
+5. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-5. **`autres-documentations.php`** — page publique restante, non
+6. **`autres-documentations.php`** — page publique restante, non
    commencée.
-6. **`compte.php` / Préférences** — faite le 2026-09-18 (voir plus haut) ;
+7. **`compte.php` / Préférences** — faite le 2026-09-18 (voir plus haut) ;
    pas encore déployée.
-7. **Au-delà du premier tour** : rien ne relit encore les réponses
+8. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-8. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+9. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-9. Aucune procédure n'automatise `bin/deployer.py` après chaque
+10. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
