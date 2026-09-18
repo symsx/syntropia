@@ -28,8 +28,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   2026-09-18, pas encore commencé — voir § Point de reprise.
 - `chantier-plan-de-parcelle.md` — le plan détaillé (2 phases) de la
   persistance du plan de parcelle (bordures, sens des planches,
-  dimensions), proposé le 2026-09-18, pas encore commencé — réplique
-  partielle et assumée de la référence, voir § Point de reprise.
+  dimensions), proposé le 2026-09-18. **Phase 1 faite le 2026-09-18** —
+  réplique partielle et assumée de la référence, voir § Point de
+  reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -720,9 +721,40 @@ récit.*
 - **Le plan de la parcelle (bordures, planches, dimensions) reste un
   prototype non persisté — signalé de nouveau par le porteur (« P1 fait
   toujours 8 × 12 m ») après les corrections ci-dessus, qui n'y changent
-  rien : ce n'est pas un bug, c'est la limite déjà documentée depuis la
+  rien : ce n'est pas un bug, c'était la limite déjà documentée depuis la
   Phase 3 du chantier carte.** Plan phasé posé dans
-  `chantier-plan-de-parcelle.md` (2 phases), pas encore commencé.
+  `chantier-plan-de-parcelle.md` (2 phases).
+- **Le plan de parcelle persiste enfin — Phase 1 du chantier « plan de
+  parcelle », 2026-09-18.** `src/Web/Parcelles.php` gagne
+  `enregistrerPlan()` (longueur, largeur, bordure externe des quatre
+  côtés en JSON dans `parcelle.plan`, sens des planches) avec un verrou
+  optimiste à l'identique de la référence — hash de la ligne `parcelle`
+  entière, `SELECT … FOR UPDATE`, message dédié si le plan a changé
+  entretemps plutôt qu'un écrasement silencieux. `conception-
+  parcelles.php` préremplit tout depuis la base à l'ouverture (une
+  parcelle jamais enregistrée garde les valeurs par défaut d'avant,
+  12 × 8 m, sans erreur) ; un bouton « Enregistrer le plan » à côté des
+  champs, `conception-parcelles.js` l'envoie par `fetch()` sans
+  recharger la page (le dessin resterait sinon désynchronisé de ce qui
+  vient d'être écrit). **Écart avec le plan initial, tranché en
+  codant** : `largeur_m` rejoint `longueur_m` dans `enregistrerPlan()`
+  plutôt que dans `enregistrer()` (« Pour la carte du terrain ») — les
+  deux formulaires auraient sinon porté chacun un champ pour la même
+  colonne `longueur_m`, pouvant diverger sans avertissement ; le champ
+  « Longueur d'une planche (m) » du second formulaire est retiré,
+  redondant avec « La parcelle » juste au-dessus. **Bug préexistant
+  trouvé en testant** : le message d'erreur de « Pour la carte du
+  terrain » utilisait `.join()` sur `$erreurs`, un tableau PHP à clés
+  nommées donc un objet une fois décodé en JSON — `.join()` y échoue
+  silencieusement, rattrapé par un `.catch()` qui affichait un message
+  trop générique ; corrigé (`Object.values(...).join(...)`) aux deux
+  formulaires. Vérifié en CDP : dimensionner puis recharger fait
+  revenir chaque valeur telle quelle ; un jeton de version périmé
+  refuse l'écriture avec le message dédié, rien n'est changé en base ;
+  le sélecteur « Poser une parcelle » de la carte interactive continue
+  de fonctionner sans erreur (Phase 2, qui le fait converger avec le
+  plan, reste à faire). Détail complet :
+  `chantier-plan-de-parcelle.md` § Phase 1.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -763,11 +795,10 @@ il apparaît réellement, pour ne pas noyer le motif.
 2. **Chantier « plan de parcelle »** — plan dans
    `chantier-plan-de-parcelle.md` (2 phases : persister le plan —
    bordures, sens des planches, dimensions —, puis faire converger
-   `nb_planches` avec la carte interactive). Proposé le 2026-09-18 suite
-   à un signalement du porteur (une parcelle affichait toujours 8 × 12 m,
-   rien ne s'enregistrait — le prototype SVG de `conception-parcelles.php`
-   est resté volontairement côté client depuis la Phase 3 du chantier
-   carte). Réplique partielle et assumée de la référence
+   `nb_planches` avec la carte interactive). **Phase 1 faite le
+   2026-09-18** (voir plus haut) — reste la Phase 2, qui touche
+   `Calques::parcellesAPlacer()`, déjà en production. Réplique partielle
+   et assumée de la référence
    (`src/Plan.php`/`ImplantationBordures.php`) : ni bordures internes, ni
    assignation d'espèce (suppose `scenario_ligne`, pas encore construit),
    ni formes non rectangulaires — voir le plan, § Ce que ce plan exclut.

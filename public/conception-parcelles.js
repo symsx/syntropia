@@ -215,7 +215,11 @@
             etatDimensions.textContent = 'Enregistré — pour la carte du terrain, sans effet sur le plan ci-dessus.';
             etatDimensions.hidden = false;
           } else {
-            erreurDimensions.textContent = (j.erreurs || []).join(' ') || 'Erreur inattendue.';
+            // Object.values, jamais .join direct : $erreurs est un tableau
+            // PHP à clés nommées (par champ), donc un objet JS une fois
+            // décodé — jamais un array, .join y échouerait silencieusement
+            // (attrapé par le .catch ci-dessous, un message trop générique).
+            erreurDimensions.textContent = Object.values(j.erreurs || {}).join(' ') || 'Erreur inattendue.';
             erreurDimensions.hidden = false;
           }
         })
@@ -223,6 +227,62 @@
           boutonDimensions.disabled = false;
           erreurDimensions.textContent = "L'enregistrement a échoué. Réessayez dans un moment.";
           erreurDimensions.hidden = false;
+        });
+    });
+  }
+
+  /* ----------------------------------------------- enregistrer le plan
+     lui-même — longueur, largeur, bordures, sens des planches. Chantier
+     « plan de parcelle », Phase 1 : jusqu'ici purement client, rien de
+     tout cela ne survivait à un rechargement. Même schéma que le
+     formulaire des mesures réelles ci-dessus (fetch, pas de rechargement)
+     — mais construit à la main plutôt que via FormData, ces champs ne
+     vivant pas dans un <form> (Entrée n'y déclenche donc jamais un envoi
+     natif pendant la saisie). */
+  var boutonPlan = document.getElementById('plan-bouton');
+  if (boutonPlan){
+    var erreurPlan = document.getElementById('plan-erreur');
+    var etatPlan = document.getElementById('plan-etat');
+    var champVersionPlan = document.getElementById('version-plan');
+    boutonPlan.addEventListener('click', function(){
+      boutonPlan.disabled = true;
+      erreurPlan.hidden = true;
+      etatPlan.hidden = true;
+      var corps = new URLSearchParams();
+      corps.set('action', 'plan');
+      corps.set('csrf', document.getElementById('plan-csrf').value);
+      corps.set('parcelle_id', document.getElementById('plan-parcelle-id').value);
+      corps.set('version_plan', champVersionPlan.value);
+      corps.set('longueur_m', champLongueur.value);
+      corps.set('largeur_m', champLargeur.value);
+      var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
+      corps.set('orientation_lignes', sensChoisi ? sensChoisi.value : 'nord-sud');
+      document.querySelectorAll('.bordure-active').forEach(function(c){
+        var cote = c.dataset.cote;
+        corps.set('bordures[' + cote + '][actif]', c.checked ? '1' : '');
+        corps.set('bordures[' + cote + '][largeur_m]', champDe(cote).value);
+      });
+      fetch(location.href, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: corps
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          boutonPlan.disabled = false;
+          if (j.ok){
+            champVersionPlan.value = j.version;
+            etatPlan.textContent = 'Plan enregistré.';
+            etatPlan.hidden = false;
+          } else {
+            erreurPlan.textContent = Object.values(j.erreurs || {}).join(' ') || 'Erreur inattendue.';
+            erreurPlan.hidden = false;
+          }
+        })
+        .catch(function(){
+          boutonPlan.disabled = false;
+          erreurPlan.textContent = "L'enregistrement a échoué. Réessayez dans un moment.";
+          erreurPlan.hidden = false;
         });
     });
   }

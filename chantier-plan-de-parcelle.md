@@ -98,7 +98,7 @@ Phase 2 est franchement séparable — Phase 1 seule répond déjà entièrement
 signalement du porteur. À ne poser que si Phase 1 est jugée utile telle
 quelle.
 
-### Phase 1 — Persister le plan (bordures, sens, dimensions)
+### Phase 1 — Persister le plan (bordures, sens, dimensions) — ✅ fait le 2026-09-18
 
 **But** : ce qui est dessiné à l'écran survit à un rechargement, avec un
 avertissement propre en cas de modification concurrente.
@@ -160,8 +160,36 @@ enregistrer, recharger la page — tout doit revenir tel quel, plus jamais
 l'un, tenter d'enregistrer dans l'autre sans recharger : message de verrou,
 rien d'écrasé. Une parcelle jamais enregistrée (comme `P1` rapatriée de
 production, `plan` NULL) doit s'afficher avec les valeurs par défaut
-actuelles, sans erreur. Vérifier aussi que `largeur_m` s'enregistre bien
-séparément du plan (deux formulaires, deux actions).
+actuelles, sans erreur.
+
+**Écart avec ce qui précède, tranché en codant** : `largeur_m` n'a pas
+rejoint la whitelist de `enregistrer()` (« Pour la carte du terrain ») comme
+annoncé plus haut — elle vit avec `longueur_m` dans `enregistrerPlan()` à la
+place. Les deux formulaires auraient sinon porté chacun un champ pour la
+même colonne `longueur_m` (le plan et « Pour la carte du terrain » avaient
+chacun le leur), pouvant diverger sans qu'aucune erreur ne le signale. Le
+champ « Longueur d'une planche (m) » du second formulaire est retiré —
+« La parcelle » au-dessus porte déjà la longueur réelle, pas besoin de la
+ressaisir. `enregistrer()` ne garde que `nb_planches`/`largeur_planche_m`/
+`passe_pied_m`.
+
+**Vérifié en CDP** : une parcelle jamais enregistrée affiche bien les
+valeurs par défaut (12×8, quatre bordures à 0,40 m, nord-sud) sans erreur ;
+un enregistrement réel (longueur 15, largeur 6, sens est-ouest, bordure sud
+à 1,20 m, bordure est désactivée) survit à un vrai rechargement de page,
+valeur par valeur ; un jeton de version périmé refuse l'écriture avec le
+message dédié, sans rien changer en base (revérifié par un rechargement) ;
+le bouton « Réinitialiser » du pied de page continue de fonctionner (remet
+les valeurs par défaut à l'écran, ne touche pas au plan enregistré ni au
+jeton de version) ; le sélecteur « Poser une parcelle » de la carte
+interactive continue de fonctionner sans erreur. **Bug trouvé en testant,
+préexistant** : le message d'erreur du formulaire « Pour la carte du
+terrain » (`Object.values` attendu, `.join()` employé) faisait silencieusement
+échouer l'affichage d'une erreur de validation — `$erreurs` est un tableau
+PHP à clés nommées, donc un objet JS une fois décodé, jamais un array ;
+`.join()` y échoue, rattrapé par le `.catch` du `fetch`, qui affichait un
+message trop générique. Corrigé aux deux endroits (le formulaire déjà en
+place, et le nouveau).
 
 ### Phase 2 — nb_planches calculé, plus saisi à la main
 

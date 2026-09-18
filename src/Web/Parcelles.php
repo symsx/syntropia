@@ -88,9 +88,14 @@ final class Parcelles
 
     /**
      * Les trois mesures dont `Calques::parcellesAPlacer()` (chantier
-     * « carte interactive », Phase 4 — pas encore construit) aura besoin
-     * pour calculer la largeur de la parcelle et proposer l'outil de
-     * placement par rectangle en Phase 5.
+     * « carte interactive », Phase 4) a besoin pour calculer la largeur de
+     * la parcelle et proposer l'outil de placement par rectangle.
+     *
+     * `longueur_m` n'est plus ici depuis le chantier « plan de parcelle »
+     * (2026-09-18) — c'est maintenant `enregistrerPlan()` qui l'écrit, en
+     * même temps que `largeur_m` : les deux sont la longueur et la largeur
+     * *réelles* de la parcelle, celles que dessine le plan juste au-dessus
+     * dans le panneau, pas une mesure propre à cette section.
      *
      * @param array<string, mixed> $valeurs
      * @return array<string, string> erreurs, vide si enregistré
@@ -132,31 +137,124 @@ final class Parcelles
             }
         }
 
-        // La longueur d'une planche — avec largeur_planche_m/nb_planches/
-        // passe_pied_m, la quatrième mesure dont `Calques::parcellesAPlacer()`
-        // a besoin pour proposer l'outil rectangle (Phase 4/5 de la carte) :
-        // sans elle, `largeur_m` se calcule mais `longueur_m` reste vide, et
-        // la parcelle ne se pose jamais que tracée à la main. Absente du
-        // premier passage de cette méthode (2026-09-16) — trouvé en testant
-        // la Phase 5, ajoutée ici plutôt que laissée de côté.
-        $longueur = null;
-        $brut = str_replace(',', '.', trim((string) ($valeurs['longueur_m'] ?? '')));
-        if ($brut !== '') {
-            if (!is_numeric($brut) || (float) $brut <= 0) {
-                $erreurs['longueur_m'] = 'La longueur doit être un nombre positif.';
-            } else {
-                $longueur = round((float) $brut, 2);
-            }
-        }
-
         if ($erreurs !== []) {
             return $erreurs;
         }
 
         $req = $this->pdo()->prepare(
-            'UPDATE parcelle SET nb_planches = ?, largeur_planche_m = ?, passe_pied_m = ?, longueur_m = ?
+            'UPDATE parcelle SET nb_planches = ?, largeur_planche_m = ?, passe_pied_m = ?
              WHERE id = ? AND site_id = ?');
-        $req->execute([$nbPlanches, $largeurPlanche, $passePied, $longueur, $id, $siteId]);
+        $req->execute([$nbPlanches, $largeurPlanche, $passePied, $id, $siteId]);
         return [];
+    }
+
+    /**
+     * Les quatre bordures externes, l'orientation des planches et les
+     * dimensions réelles — ce que `conception-parcelles.js` dessine.
+     * Chantier « plan de parcelle », Phase 1 (2026-09-18) : voir
+     * `chantier-plan-de-parcelle.md`. Réplique partielle et assumée de la
+     * référence (`src/Plan.php`/`ImplantationBordures.php`) — bordures
+     * externes seulement (la clé `bordures.externe` laisse la place à
+     * `bordures.interne` plus tard sans changer la forme déjà écrite),
+     * pas de rives, pas de rattrapage, pas d'assignation d'espèce.
+     *
+     * **Verrou optimiste**, à l'identique de la référence
+     * (`ImplantationBordures::version()`) : `SELECT … FOR UPDATE`, hash de
+     * la ligne `parcelle` actuelle comparé au jeton reçu — si une autre
+     * personne (ou un autre onglet) a écrit entretemps, le hash ne
+     * correspond plus, et on refuse plutôt que d'écraser silencieusement.
+     *
+     * @param array<string, mixed> $valeurs
+     * @return array{erreurs: array<string, string>, version: ?string}
+     */
+    public function enregistrerPlan(int $id, int $siteId, array $valeurs, string $versionRecue): array
+    {
+        $erreurs = [];
+
+        $longueur = null;
+        $brut = str_replace(',', '.', trim((string) ($valeurs['longueur_m'] ?? '')));
+        if (!is_numeric($brut) || (float) $brut <= 0) {
+            $erreurs['longueur_m'] = 'La longueur doit être un nombre positif.';
+        } else {
+            $longueur = round((float) $brut, 2);
+        }
+
+        $largeur = null;
+        $brut = str_replace(',', '.', trim((string) ($valeurs['largeur_m'] ?? '')));
+        if (!is_numeric($brut) || (float) $brut <= 0) {
+            $erreurs['largeur_m'] = 'La largeur doit être un nombre positif.';
+        } else {
+            $largeur = round((float) $brut, 2);
+        }
+
+        $orientation = (string) ($valeurs['orientation_lignes'] ?? '');
+        if (!in_array($orientation, ['nord-sud', 'est-ouest'], true)) {
+            $erreurs['orientation_lignes'] = 'Le sens des planches doit être nord-sud ou est-ouest.';
+        }
+
+        // Bordure externe — quatre côtés, chacun actif ou non et sa
+        // largeur (5 cm à 5 m, comme la référence : une bordure ne
+        // devient jamais ni un fil ni un champ).
+        $bordures = [];
+        foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
+            $brute = $valeurs['bordures'][$cote] ?? [];
+            $actif = !empty($brute['actif']);
+            $brutLargeur = str_replace(',', '.', trim((string) ($brute['largeur_m'] ?? '')));
+            if (!is_numeric($brutLargeur)) {
+                $erreurs['bordure_' . $cote] = 'La largeur de la bordure ' . $cote . ' doit être un nombre.';
+                continue;
+            }
+            $bordures[$cote] = ['actif' => $actif, 'largeur_m' => max(0.05, min(5.0, round((float) $brutLargeur, 2)))];
+        }
+
+        if ($erreurs !== []) {
+            return ['erreurs' => $erreurs, 'version' => null];
+        }
+
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ? FOR UPDATE');
+            $req->execute([$id, $siteId]);
+            $ligne = $req->fetch();
+            if ($ligne === false) {
+                $pdo->rollBack();
+                return ['erreurs' => ['version' => 'Cette parcelle est introuvable.'], 'version' => null];
+            }
+            if (!hash_equals(self::versionPlan($ligne), $versionRecue)) {
+                $pdo->rollBack();
+                return ['erreurs' => ['version' => 'Le plan a changé, rechargez la page avant de modifier.'], 'version' => null];
+            }
+
+            $plan = json_encode(['bordures' => ['externe' => $bordures]], JSON_UNESCAPED_UNICODE);
+            $req = $pdo->prepare(
+                'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?
+                 WHERE id = ? AND site_id = ?');
+            $req->execute([$longueur, $largeur, $orientation, $plan, $id, $siteId]);
+
+            $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ?');
+            $req->execute([$id, $siteId]);
+            $nouvelle = $req->fetch();
+            $pdo->commit();
+            return ['erreurs' => [], 'version' => self::versionPlan($nouvelle)];
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Le jeton du verrou optimiste — un hash de la ligne `parcelle`
+     * entière. Recalculé à chaque affichage (`conception-parcelles.php`),
+     * comparé à chaque écriture (`enregistrerPlan()`). Port direct de
+     * `ImplantationBordures::version()` côté référence, réduit à la seule
+     * ligne `parcelle` : pas de `scenario_ligne` à y mêler, cette table
+     * n'existe pas encore ici.
+     *
+     * @param array<string, mixed> $parcelle
+     */
+    public static function versionPlan(array $parcelle): string
+    {
+        return hash('sha256', json_encode($parcelle, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
     }
 }

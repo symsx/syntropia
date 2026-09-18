@@ -28,6 +28,7 @@ $parcellesService = new Parcelles();
 
 $erreursCreation = [];
 $erreursDimensions = [];
+$erreursPlan = [];
 $codeSaisi = '';
 $nomSaisi = '';
 $typeSaisi = 'perenne';
@@ -50,19 +51,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'nb_planches'       => $_POST['nb_planches'] ?? '',
             'largeur_planche_m' => $_POST['largeur_planche_m'] ?? '',
             'passe_pied_m'      => $_POST['passe_pied_m'] ?? '',
-            'longueur_m'        => $_POST['longueur_m'] ?? '',
         ]);
         // Appelé en tâche de fond par conception-parcelles.js (voir plus bas) :
         // une redirection rechargerait la page, et avec elle perdrait tout le
-        // plan dessiné à l'écran, purement client — rien de ce que dessine
-        // conception-parcelles.js n'est encore en base. Voir architecture-
-        // technique.md. Le POST classique (JS absent) garde la redirection.
+        // plan dessiné à l'écran — voir l'action « plan » ci-dessous, qui
+        // l'enregistre désormais pour de vrai. Le POST classique (JS absent)
+        // garde la redirection.
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['ok' => $erreursDimensions === [], 'erreurs' => $erreursDimensions], JSON_UNESCAPED_UNICODE);
             exit;
         }
         if ($erreursDimensions === []) {
+            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
+            exit;
+        }
+    } elseif ($action === 'plan') {
+        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
+        $resultatPlan = $parcellesService->enregistrerPlan($parcelleId, $siteId, [
+            'longueur_m'        => $_POST['longueur_m'] ?? '',
+            'largeur_m'         => $_POST['largeur_m'] ?? '',
+            'orientation_lignes' => $_POST['orientation_lignes'] ?? '',
+            'bordures'          => $_POST['bordures'] ?? [],
+        ], (string) ($_POST['version_plan'] ?? ''));
+        $erreursPlan = $resultatPlan['erreurs'];
+        // Même pari que l'action « dimensions » : appelée en tâche de fond,
+        // sans quoi une redirection rechargerait la page et retomberait sur
+        // les valeurs qui viennent d'être remplacées.
+        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['ok' => $erreursPlan === [], 'erreurs' => $erreursPlan,
+                'version' => $resultatPlan['version']], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        if ($erreursPlan === []) {
             header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
             exit;
         }
@@ -87,6 +109,48 @@ if (!$demandeNouvelle) {
 if ($parcelleActive === null && $parcelles === [] && $erreursCreation !== []) {
     // Échec de création avec zéro parcelle existante : rester sur le formulaire.
     $demandeNouvelle = true;
+}
+
+/* Ce que le plan affiche à l'ouverture — les valeurs enregistrées si la
+ * parcelle en a, les mêmes valeurs par défaut qu'avant sinon (12 x 8 m,
+ * quatre bordures à 0,40 m, nord-sud) : une parcelle jamais enregistrée
+ * (plan NULL) doit rester utilisable et identique à ce qu'elle montrait
+ * déjà, pas en erreur. Chantier « plan de parcelle », Phase 1. */
+$fr = static fn (float $v): string => number_format($v, 2, ',', '');
+$planLongueur = '12,00';
+$planLargeur = '8,00';
+$planOrientation = 'nord-sud';
+$planBordures = [
+    'nord'  => ['actif' => true, 'largeur_m' => 0.40],
+    'sud'   => ['actif' => true, 'largeur_m' => 0.40],
+    'ouest' => ['actif' => true, 'largeur_m' => 0.40],
+    'est'   => ['actif' => true, 'largeur_m' => 0.40],
+];
+$versionPlan = '';
+if ($parcelleActive !== null) {
+    $versionPlan = Parcelles::versionPlan($parcelleActive);
+    if ($parcelleActive['longueur_m'] !== null) {
+        $planLongueur = $fr((float) $parcelleActive['longueur_m']);
+    }
+    if ($parcelleActive['largeur_m'] !== null) {
+        $planLargeur = $fr((float) $parcelleActive['largeur_m']);
+    }
+    if (in_array($parcelleActive['orientation_lignes'] ?? '', ['nord-sud', 'est-ouest'], true)) {
+        $planOrientation = $parcelleActive['orientation_lignes'];
+    }
+    $planEnregistre = json_decode((string) ($parcelleActive['plan'] ?? ''), true);
+    $bordureEnregistree = $planEnregistre['bordures']['externe'] ?? null;
+    if (is_array($bordureEnregistree)) {
+        foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
+            if (is_array($bordureEnregistree[$cote] ?? null)
+                && isset($bordureEnregistree[$cote]['largeur_m'])) {
+                $planBordures[$cote] = [
+                    'actif' => !empty($bordureEnregistree[$cote]['actif']),
+                    'largeur_m' => (float) $bordureEnregistree[$cote]['largeur_m'],
+                ];
+            }
+        }
+    }
 }
 
 $nomAffiche = $auth->nomAffiche() ?? '';
@@ -348,39 +412,35 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     </button>
     <aside class="panneau-droit" id="panneau-droit" aria-hidden="true">
       <div class="pd-corps">
+        <input type="hidden" id="version-plan" value="<?= htmlspecialchars($versionPlan, ENT_QUOTES, 'UTF-8') ?>">
+        <input type="hidden" id="plan-csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+        <input type="hidden" id="plan-parcelle-id" value="<?= (int) $parcelleActive['id'] ?>">
         <p class="pd-titre">La parcelle <span class="pd-unite">(m)</span></p>
         <div class="pd-ligne">
           <span class="pd-ligne-nom">Longueur (est ↔ ouest)</span>
-          <input type="text" id="in-longueur" value="12,00" inputmode="decimal">
+          <input type="text" id="in-longueur" value="<?= htmlspecialchars($planLongueur, ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
         </div>
         <div class="pd-ligne">
           <span class="pd-ligne-nom">Largeur (nord ↔ sud)</span>
-          <input type="text" id="in-largeur" value="8,00" inputmode="decimal">
+          <input type="text" id="in-largeur" value="<?= htmlspecialchars($planLargeur, ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
         </div>
 
         <p class="pd-titre">Sens des planches</p>
         <div class="parc-choix">
-          <label><input type="radio" class="radio" name="sens-planches" id="sens-nord-sud" value="nord-sud" checked>Nord ↔ Sud</label>
-          <label><input type="radio" class="radio" name="sens-planches" id="sens-est-ouest" value="est-ouest">Est ↔ Ouest</label>
+          <label><input type="radio" class="radio" name="sens-planches" id="sens-nord-sud" value="nord-sud"<?= $planOrientation === 'nord-sud' ? ' checked' : '' ?>>Nord ↔ Sud</label>
+          <label><input type="radio" class="radio" name="sens-planches" id="sens-est-ouest" value="est-ouest"<?= $planOrientation === 'est-ouest' ? ' checked' : '' ?>>Est ↔ Ouest</label>
         </div>
 
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
+<?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
         <div class="pd-ligne">
-          <label class="pd-ligne-nom"><input type="checkbox" checked data-cote="nord" class="case bordure-active">Nord</label>
-          <input type="text" class="bordure-largeur" data-cote="nord" value="0,40" inputmode="decimal">
+          <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordures[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-active"><?= $libelle ?></label>
+          <input type="text" class="bordure-largeur" data-cote="<?= $cote ?>" value="<?= htmlspecialchars($fr($planBordures[$cote]['largeur_m']), ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
         </div>
-        <div class="pd-ligne">
-          <label class="pd-ligne-nom"><input type="checkbox" checked data-cote="sud" class="case bordure-active">Sud</label>
-          <input type="text" class="bordure-largeur" data-cote="sud" value="0,40" inputmode="decimal">
-        </div>
-        <div class="pd-ligne">
-          <label class="pd-ligne-nom"><input type="checkbox" checked data-cote="ouest" class="case bordure-active">Ouest</label>
-          <input type="text" class="bordure-largeur" data-cote="ouest" value="0,40" inputmode="decimal">
-        </div>
-        <div class="pd-ligne">
-          <label class="pd-ligne-nom"><input type="checkbox" checked data-cote="est" class="case bordure-active">Est</label>
-          <input type="text" class="bordure-largeur" data-cote="est" value="0,40" inputmode="decimal">
-        </div>
+<?php endforeach; ?>
+        <p class="pd-reel-erreur" id="plan-erreur"<?= $erreursPlan === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursPlan), ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="pd-reel-note" id="plan-etat" hidden></p>
+        <button type="button" class="pd-reel-bouton" id="plan-bouton">Enregistrer le plan</button>
 
         <p class="pd-titre">Ce que la géométrie donne</p>
         <dl class="pd-resultat" id="resultat">
@@ -388,14 +448,13 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <div class="pd-champ"><dt>Planches</dt><dd id="r-planches">—</dd></div>
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
-        <p class="pd-note">Prototype : le calcul ci-dessus est refait ici, en JavaScript. La persistance en base (<code>parcelle.plan</code>) n'est pas encore branchée — voir architecture-technique.md.</p>
 
         <div class="pd-reel">
           <p class="pd-titre">Pour la carte du terrain</p>
-          <p class="pd-reel-note">Ces mesures servent à poser cette parcelle sur
-             <a href="conception-etude-site.php">la carte interactive du terrain</a> — sans
-             longueur ni largeur, elle s'y trace à la main plutôt que par un rectangle posé
-             d'un clic.</p>
+          <p class="pd-reel-note">Ces trois mesures servent en plus à poser cette parcelle sur
+             <a href="conception-etude-site.php">la carte interactive du terrain</a>, par un
+             rectangle posé d'un clic — la longueur et la largeur ci-dessus y suffisent déjà,
+             pas besoin de les ressaisir.</p>
           <form method="post" id="dimensions-form">
             <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="action" value="dimensions">
@@ -414,11 +473,6 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
               <span class="pd-ligne-nom">Passe-pied (m)</span>
               <input type="text" name="passe_pied_m" inputmode="decimal"
                      value="<?= htmlspecialchars((string) ($parcelleActive['passe_pied_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-            </div>
-            <div class="pd-ligne">
-              <span class="pd-ligne-nom">Longueur d'une planche (m)</span>
-              <input type="text" name="longueur_m" inputmode="decimal"
-                     value="<?= htmlspecialchars((string) ($parcelleActive['longueur_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
             </div>
             <p class="pd-reel-erreur" id="dimensions-erreur"<?= $erreursDimensions === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>
             <p class="pd-reel-note" id="dimensions-etat" hidden></p>
