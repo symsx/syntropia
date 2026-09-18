@@ -61,6 +61,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Role.php, Profil.php   énumérations — droits et profils
   FicheTerrain.php       contenu des 7 fiches de relevé de sol — voir releve-vierge.php
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
+  ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
   Geojson.php             lit un GeoJSON externe (ContourBuddy, QGIS, Géoportail…), un tracé par morceau — inversion [lon,lat]→[lat,lon]
   Documentation.php      lit contenu/*.md, un chapitre par ligne « # » — livrets et glossaire
   Web/
@@ -1107,6 +1108,54 @@ récit.*
   doit redéfinir `--haut-bandeaux`, comme `inviter.php`) ; et un compte
   sans parcelle voyait une page vide. Détail :
   `chantier-scenario-plantation.md` § Phase 4. **Pas encore déployé.**
+- **Déplacer les étiquettes de la carte — outil « Étiquettes », 2026-09-18.**
+  Demandé par le porteur : les noms des objets gênent parfois la lisibilité.
+  Nouvel outil du bandeau (`⇄ Étiquettes`, en dernier, après un séparateur) :
+  on **glisse** le nom d'un objet, un **trait pointillé** le relie encore à son
+  objet dès qu'il s'en éloigne de plus de 24 px, un **double-clic** le remet à
+  sa place. Sa place est `proprietes.etiquette = [lat, lon]` — une position sur
+  Terre, pas un décalage en pixels, donc fidèle au zoom (vérifié : l'origine du
+  texte se réduit exactement comme la distance entre objets) ; **aucun changement
+  de schéma**. Seules les étiquettes qui appartiennent à un objet bougent
+  (points, lignes, polygones, parcelles) ; pas les altitudes des courbes, le
+  cadastre ni l'aperçu d'une parcelle. Une écriture par geste, au relâchement ;
+  les autres propriétés (`hauteur_m`, `angle`…) voyagent avec, le serveur
+  remplaçant `proprietes` en bloc. La carte reste libre de se faire glisser :
+  seules les étiquettes reprennent la souris (`pointer-events` rendu au texte
+  seul, le reste du SVG restant transparent). **Validation serveur ajoutée**
+  (`Calques::valider()`) : la position doit être un couple sur Terre, sinon
+  refus — l'API acceptait sinon `["a","b"]`, et l'étiquette disparaissait ; le
+  client ignore de toute façon une position illisible. **Bug trouvé en
+  testant** : un simple clic redessinait tout le calque, si bien que le texte
+  visé au 2ᵉ clic d'un double-clic n'existait plus ; le clic sans mouvement ne
+  redessine plus rien. Vérifié en CDP avec de vrais gestes souris : clic sans
+  effet, glisser, persistance au rechargement, trait de rappel, zoom, glisser de
+  la carte en mode Étiquettes, double-clic (remise en place, sans écriture sur une
+  étiquette jamais déplacée), ligne et polygone, retour aux autres outils, lecteur
+  (pas de barre d'outils, POST direct 403), valeurs forgées refusées.
+- **Relief et ombres depuis des sites externes — 2026-09-18.** Ce que fait la
+  référence (`syntropie`) : pour le relief, **ContourBuddy** génère des courbes de
+  niveau depuis la même altimétrie IGN et les **exporte en GeoJSON** ; pour les
+  ombres, **ShadeMap** n'est qu'un **lien** (aucun format d'export lisible n'y a
+  été trouvé). Dans syntropia, l'import GeoJSON existait déjà (Phase 10) mais
+  tout en bas du panneau, sans rapport avec le calque regardé. Fait :
+  (1) **l'import suit le calque actif** (« sur le calque » reprend celui qu'on a
+  choisi), et les blocs « relief » et « ombres » ont chacun un lien « Importer un
+  fichier ↓ » qui règle le calque ; le bloc relief renvoie vers ContourBuddy ;
+  (2) **`src/ShadeMap.php`** porté, et un **bloc « ombres »** dans le panneau
+  Données (visible quand le calque est choisi) : les quatre liens ShadeMap —
+  21 décembre, 21 juin, 22 septembre, exposition annuelle — ouverts sur le
+  terrain **au midi solaire du lieu** (vérifié : 11:58 à Greenwich le 21
+  décembre, 12:01 le 21 juin, une heure de moins à 15° E), en `_blank` +
+  `noopener`, et **sans lieu posé** une invitation à le faire. **Ce qui n'est
+  pas possible** : importer de ShadeMap — il ne livre pas de tracés ; ce qu'on y
+  lit se note à la main dans le nom du tracé (« chêne, ombre du 28 oct. au 8
+  fév. »), et le bloc le dit. Un import réel a été vérifié : un GeoJSON façon
+  ContourBuddy (3 courbes `elevation` + un polygone) pose 4 tracés, les courbes
+  nommées « 312 m »… avec `[lon,lat]` correctement inversé ; un fichier en
+  Lambert 93 est refusé avec son motif. Non vérifié : le format réel d'un export
+  ContourBuddy (aucun accès au site depuis ce poste) — `Geojson::lire()` lit le
+  format, pas l'outil.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

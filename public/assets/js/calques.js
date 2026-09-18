@@ -59,7 +59,7 @@
    * inerte tant que la Phase 6 n'a pas posé le bouton et `cfg.apiCadastre`. */
   var cadastre = { visible: false, parcelles: [], message: '', minuteur: null, encours: false };
 
-  var mode = 'deplacer';          // deplacer · point · ligne · polygone · libre · rectangle
+  var mode = 'deplacer';          // deplacer · point · ligne · polygone · libre · rectangle · etiquette
   var enCours = null;             // { calque, type, points: [[lat, lon]] }
   var rect = null;                // { parcelle, centre, angle, largeur, longueur }
   var enLibre = false;
@@ -125,10 +125,30 @@
     (parent || svg).appendChild(n);
     return n;
   }
-  function etiquette(p, mot, teinte) {
+  /* L'ÉTIQUETTE D'UN OBJET. Par défaut à huit points de son ancrage, en haut
+   * à droite. Une étiquette qui gêne se déplace (outil « Étiquettes ») : sa
+   * place est alors une position sur Terre, `proprietes.etiquette = [lat, lon]`,
+   * et non un décalage en pixels — sans quoi elle glisserait au moindre zoom.
+   * Quand elle s'éloigne de son objet, un trait pointillé les relie encore.
+   * `el` n'est passé que pour les étiquettes qui appartiennent à un objet :
+   * les altitudes des courbes, le cadastre et l'aperçu d'une parcelle
+   * ne se déplacent pas. */
+  var DECALAGE_ETIQUETTE = [8, -8];
+  var ECART_GUIDE = 24;
+  function etiquette(p, mot, teinte, el) {
     if (!mot) { return; }
     var q = px(p);
-    var t = noeud('text', { x: q[0] + 8, y: q[1] - 8, fill: teinte, 'class': 'calque-etiquette' });
+    var propre = el && el.proprietes && el.proprietes.etiquette;
+    // Une position illisible (écrite à la main dans la base) ne fait jamais disparaître l'étiquette.
+    if (propre && !(propre.length === 2 && isFinite(propre[0]) && isFinite(propre[1]))) { propre = null; }
+    var o = propre ? px(propre) : [q[0] + DECALAGE_ETIQUETTE[0], q[1] + DECALAGE_ETIQUETTE[1]];
+    if (propre && Math.hypot(o[0] - q[0], o[1] - q[1]) > ECART_GUIDE) {
+      noeud('line', { x1: q[0], y1: q[1], x2: o[0], y2: o[1] - 4, stroke: teinte, 'stroke-width': 1.2,
+        'stroke-opacity': 0.7, 'stroke-dasharray': '3 3', 'class': 'calque-guide', 'data-id': el.id });
+    }
+    var t = noeud('text', { x: o[0], y: o[1], fill: teinte,
+      'class': 'calque-etiquette' + (el ? ' calque-etiquette--mobile' : '') });
+    if (el) { t.setAttribute('data-id', el.id); t.setAttribute('data-ancre', q[0] + ',' + q[1]); }
     t.textContent = mot;
   }
   function chemin(points) {
@@ -173,7 +193,7 @@
       var q = px(el.geometrie[0]);
       noeud('circle', { cx: q[0], cy: q[1], r: 6, fill: teinte, stroke: '#fff', 'stroke-width': 2 }, g);
       var h = el.proprietes && el.proprietes.hauteur_m ? ' · ' + el.proprietes.hauteur_m + ' m' : '';
-      etiquette(el.geometrie[0], (el.libelle || '') + h, teinte);
+      etiquette(el.geometrie[0], (el.libelle || '') + h, teinte, el);
     } else if (el.type === 'ligne') {
       var vent = el.calque === 'vents';
       var largeur = vent ? trait(el) : 3;
@@ -184,7 +204,7 @@
       if (vent && el.proprietes && el.proprietes.intensite === 'dominant') {
         mot = (mot ? mot + ' · ' : '') + 'dominant';
       }
-      etiquette(el.geometrie[Math.floor(el.geometrie.length / 2)], mot, teinte);
+      etiquette(el.geometrie[Math.floor(el.geometrie.length / 2)], mot, teinte, el);
     } else if (el.type === 'grille') {
       var a = px(el.geometrie[0]), b = px(el.geometrie[1]);
       noeud('rect', { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]),
@@ -212,7 +232,7 @@
       noeud('polygon', { points: chemin(el.geometrie), fill: teinte, 'fill-opacity': parcelle ? 0.12 : 0.22,
         stroke: teinte, 'stroke-width': parcelle ? 3 : 2,
         'stroke-dasharray': parcelle ? '' : '6 4' }, g);
-      etiquette(centre(el.geometrie), el.libelle, teinte);
+      etiquette(centre(el.geometrie), el.libelle, teinte, el);
     }
   }
 
@@ -479,7 +499,7 @@
     var attendus = ((cfg.calques[calque] || {}).types) || [];
     Array.prototype.forEach.call(document.querySelectorAll('#outils-liste label[for^="outil-"]'), function (label) {
       var valeur = (label.getAttribute('for') || '').replace(/^outil-/, '');
-      if (valeur === 'deplacer' || valeur === '') { label.classList.remove('mode--autre'); label.title = ''; return; }
+      if (valeur === 'deplacer' || valeur === 'etiquette' || valeur === '') { label.classList.remove('mode--autre'); label.title = ''; return; }
       var type = valeur === 'libre' ? 'polygone' : valeur;
       var pertinent = attendus.indexOf(type) !== -1;
       label.classList.toggle('mode--autre', !pertinent);
@@ -499,6 +519,7 @@
         : 'Cliquez sur la carte à l\'endroit du centre de la parcelle ' + rect.parcelle.code + '.';
     } else if (!enCours) {
       mot = { deplacer: 'Glissez pour déplacer, molette pour zoomer.',
+              etiquette: 'Glissez une étiquette pour la déplacer ; double-clic pour la remettre à sa place.',
               point: 'Cliquez : un point.',
               ligne: 'Cliquez point après point ; double-clic ou Entrée pour finir, clic droit pour défaire.',
               polygone: 'Cliquez le contour ; double-clic ou Entrée pour fermer, clic droit pour défaire.',
@@ -525,6 +546,8 @@
     if (r) { r.hidden = (choixCalque || {}).value !== 'vents'; }
     var rf = $('relief-bloc');
     if (rf) { rf.hidden = (choixCalque || {}).value !== 'relief'; }
+    var om = $('ombres-bloc');
+    if (om) { om.hidden = (choixCalque || {}).value !== 'ombres'; }
   }
   function ajouterPoint(e) {
     enCours.points.push(latlon(e));
@@ -561,7 +584,7 @@
     if (enLibre) { enLibre = false; terminer(); }
   });
   svg.addEventListener('click', function (e) {
-    if (mode === 'deplacer' || mode === 'libre') { return; }
+    if (mode === 'deplacer' || mode === 'libre' || mode === 'etiquette') { return; }
     if (presse && Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 4) { return; }
     if (mode === 'rectangle') {
       if (!rect) { return; }
@@ -576,7 +599,7 @@
   /* LE CLIC DROIT DÉFAIT LE DERNIER POINT. Un tracé se rate d'un point,
    * pas en entier. Le menu du navigateur est écarté pendant qu'on dessine. */
   svg.addEventListener('contextmenu', function (e) {
-    if (mode === 'deplacer') { return; }
+    if (mode === 'deplacer' || mode === 'etiquette') { return; }
     e.preventDefault();
     if (rect && rect.centre) { rect.centre = null; etat(); tout(); return; }
     if (!enCours || !enCours.points.length) { annuler(); return; }
@@ -585,7 +608,97 @@
     etat(); tout();
   });
 
+  /* DÉPLACER UNE ÉTIQUETTE. On saisit le texte, il suit le pointeur (avec son
+   * trait de rappel), et c'est au relâchement seulement qu'on enregistre : une
+   * écriture par geste, pas une par pixel. Le clic sans mouvement ne fait rien. */
+  var glisse = null;
+  function objetDe(noeudTexte) {
+    var id = noeudTexte && noeudTexte.getAttribute('data-id');
+    var trouves = elements.filter(function (e) { return String(e.id) === String(id); });
+    return trouves[0] || null;
+  }
+  function etiquetteSous(e) {
+    if (mode !== 'etiquette' || !cfg.peutEcrire) { return null; }
+    var t = e.target && e.target.closest ? e.target.closest('text.calque-etiquette--mobile') : null;
+    return t && objetDe(t) ? t : null;
+  }
+  svg.addEventListener('pointerdown', function (e) {
+    var t = etiquetteSous(e);
+    if (!t) { return; }
+    e.preventDefault(); e.stopPropagation();
+    var el = objetDe(t);
+    var ancre = t.getAttribute('data-ancre').split(',').map(Number);
+    var guide = svg.querySelector('line.calque-guide[data-id="' + el.id + '"]');
+    var guideCree = !guide;
+    if (!guide) {
+      guide = document.createElementNS(NS, 'line');
+      guide.setAttribute('class', 'calque-guide');
+      guide.setAttribute('stroke', t.getAttribute('fill'));
+      guide.setAttribute('stroke-width', 1.2);
+      guide.setAttribute('stroke-opacity', 0.7);
+      guide.setAttribute('stroke-dasharray', '3 3');
+      guide.style.display = 'none';
+      svg.insertBefore(guide, t);
+    }
+    glisse = { el: el, texte: t, guide: guide, guideCree: guideCree, ancre: ancre, bouge: false,
+      depart: [parseFloat(t.getAttribute('x')), parseFloat(t.getAttribute('y'))],
+      souris: [e.clientX, e.clientY] };
+    try { t.setPointerCapture(e.pointerId); } catch (x) { /* la capture est un confort */ }
+    svg.classList.add('etiquette-saisie');
+  });
+  svg.addEventListener('pointermove', function (e) {
+    if (!glisse) { return; }
+    var dx = e.clientX - glisse.souris[0], dy = e.clientY - glisse.souris[1];
+    if (!glisse.bouge && Math.hypot(dx, dy) < 3) { return; }
+    glisse.bouge = true;
+    var x = glisse.depart[0] + dx, y = glisse.depart[1] + dy;
+    glisse.texte.setAttribute('x', x); glisse.texte.setAttribute('y', y);
+    glisse.pos = [x, y];
+    var loin = Math.hypot(x - glisse.ancre[0], y - glisse.ancre[1]) > ECART_GUIDE;
+    glisse.guide.style.display = loin ? '' : 'none';
+    glisse.guide.setAttribute('x1', glisse.ancre[0]); glisse.guide.setAttribute('y1', glisse.ancre[1]);
+    glisse.guide.setAttribute('x2', x); glisse.guide.setAttribute('y2', y - 4);
+  });
+  function lacher(e, annule) {
+    if (!glisse) { return; }
+    var g = glisse; glisse = null;
+    svg.classList.remove('etiquette-saisie');
+    // Un clic sans mouvement ne redessine rien : le texte visé doit exister encore
+    // au second clic d'un double-clic (qui remet l'étiquette en place).
+    if (annule) { tout(); return; }
+    if (!g.bouge) {
+      if (g.guideCree && g.guide.parentNode) { g.guide.parentNode.removeChild(g.guide); }
+      return;
+    }
+    var p = conteneur.carte.versLatLon(g.pos[0], g.pos[1]);
+    poserEtiquette(g.el, [arrondi(p[0], 5), arrondi(p[1], 5)]);
+  }
+  svg.addEventListener('pointerup', function (e) { lacher(e, false); });
+  svg.addEventListener('pointercancel', function (e) { lacher(e, true); });
+
+  /* Pose l'étiquette de cet objet — ou la remet à sa place (`pos` nul). Les
+   * autres propriétés (hauteur, angle, surface…) voyagent avec : le serveur
+   * remplace `proprietes` en bloc. */
+  function poserEtiquette(el, pos) {
+    var props = {};
+    Object.keys(el.proprietes || {}).forEach(function (k) { props[k] = el.proprietes[k]; });
+    if (pos) { props.etiquette = pos; } else { delete props.etiquette; }
+    envoyer({ action: 'modifier', id: el.id, proprietes: JSON.stringify(props) }).then(function (j) {
+      if (!j.ok) { message(j.message); tout(); return; }
+      el.proprietes = j.element.proprietes;
+      tout();
+      message(pos ? 'Étiquette déplacée.' : 'Étiquette remise à sa place.');
+    }).catch(function () { message("Le serveur n'a pas répondu — l'étiquette reste où elle était."); tout(); });
+  }
+
   svg.addEventListener('dblclick', function (e) {
+    var t = etiquetteSous(e);
+    if (t) {
+      e.preventDefault();
+      var el = objetDe(t);
+      if (el.proprietes && el.proprietes.etiquette) { poserEtiquette(el, null); }
+      return;
+    }
     e.preventDefault();
     if (enCours && (mode === 'ligne' || mode === 'polygone')) { terminer(); }
   });
@@ -603,8 +716,12 @@
       bouton.checked = true;
       bouton.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    svg.style.pointerEvents = mode === 'deplacer' ? 'none' : 'auto';
-    svg.style.cursor = mode === 'deplacer' ? '' : 'crosshair';
+    // Déplacer et Étiquettes laissent la carte se faire glisser : seules les
+    // étiquettes, en mode Étiquettes, reprennent la souris (voir le CSS de la page).
+    var carteLibre = mode === 'deplacer' || mode === 'etiquette';
+    svg.style.pointerEvents = carteLibre ? 'none' : 'auto';
+    svg.style.cursor = carteLibre ? '' : 'crosshair';
+    svg.classList.toggle('mode-etiquette', mode === 'etiquette');
     if (mode !== 'rectangle') { rect = null; }
     enCours = null; enLibre = false;
     nommerLesModes();
@@ -682,9 +799,23 @@
     });
   }
 
+  /* L'IMPORT SUIT LE CALQUE. Le formulaire d'import est en bas du panneau, loin de
+   * ce qu'on regarde : « sur le calque » reprend donc celui qu'on a choisi, et les
+   * liens « Importer un fichier » des blocs relief et ombres règlent le leur. */
+  var calqueImport = $('import-calque');
+  function suivreCalque() {
+    if (calqueImport && choixCalque && cfg.calques[choixCalque.value]) { calqueImport.value = choixCalque.value; }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('a.va-import'), function (a) {
+    a.addEventListener('click', function () {
+      if (calqueImport && a.dataset.calque) { calqueImport.value = a.dataset.calque; }
+    });
+  });
+
   var choixCalque = $('calque-choix');
   if (choixCalque) {
     choixCalque.addEventListener('change', function () {
+      suivreCalque();
       texte('calque-aide', (cfg.calques[choixCalque.value] || {}).aide || '');
       if (enCours && enCours.points.length) {
         enCours.calque = choixCalque.value;

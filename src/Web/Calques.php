@@ -267,6 +267,19 @@ final class Calques
             if (!is_array($decode)) {
                 $erreurs['proprietes'] = 'Propriétés illisibles.';
             } else {
+                // La place d'une étiquette déplacée : un couple [latitude, longitude]
+                // sur Terre, ou rien — jamais un texte, qui ferait disparaître l'étiquette.
+                if (array_key_exists('etiquette', $decode)) {
+                    $e = $decode['etiquette'];
+                    if ($e === null) {
+                        unset($decode['etiquette']);
+                    } elseif (!is_array($e) || count($e) !== 2 || !is_numeric($e[0] ?? null)
+                        || !is_numeric($e[1] ?? null) || abs((float) $e[0]) > 90 || abs((float) $e[1]) > 180) {
+                        $erreurs['proprietes'] = "La position de l'étiquette est illisible.";
+                    } else {
+                        $decode['etiquette'] = [round((float) $e[0], 5), round((float) $e[1], 5)];
+                    }
+                }
                 $proprietes = json_encode($decode, JSON_UNESCAPED_UNICODE);
             }
         }

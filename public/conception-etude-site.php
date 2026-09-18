@@ -9,6 +9,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Geojson;
 use Syntropia\Relief;
 use Syntropia\Role;
+use Syntropia\ShadeMap;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Calques;
 use Syntropia\Web\Sites;
@@ -190,6 +191,15 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     stroke:#fff; stroke-width:3px; stroke-linejoin:round;
   }
 
+  /* L'outil « Étiquettes » : la carte reste libre de se faire glisser, seules les
+     étiquettes des objets reprennent la souris. */
+  svg.calques.mode-etiquette .calque-etiquette--mobile{
+    pointer-events:all; cursor:grab; touch-action:none; user-select:none;
+    text-decoration:underline dotted; text-underline-offset:3px;
+  }
+  svg.calques.mode-etiquette .calque-etiquette--mobile:hover{ fill-opacity:.85; }
+  svg.calques.etiquette-saisie .calque-etiquette--mobile{ cursor:grabbing; }
+
   .carte-reglures{
     position:absolute; left:1rem; bottom:1rem; z-index:4;
     display:flex; align-items:center; gap:.7rem;
@@ -264,6 +274,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .discret:hover{ color:var(--alerte); }
 
   #vents-rose-bloc{ margin-top:.7rem; }
+  .moments-soleil{ list-style:none; margin:.2rem 0 .6rem; padding:0; }
+  .moments-soleil li{ margin:.35rem 0; font:400 .8rem/1.35 var(--texte); }
+  .moments-soleil a{ color:var(--accent-titre); font-weight:600; }
+  .moments-soleil small{ color:var(--muted); font-size:.72rem; }
+  .va-import{ color:var(--accent-titre); font-weight:600; white-space:nowrap; }
   .vents-formulaire{ display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font:400 .82rem var(--texte); color:var(--ink); margin:.5rem 0; }
   .vents-formulaire input{ width:3rem; padding:.3rem .4rem; font:400 .82rem var(--texte); color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:.4rem; }
   .rose-vents{ margin:.8rem 0; }
@@ -351,6 +366,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 
       <input type="radio" name="outil" id="outil-libre">
       <label class="outil-bouton" for="outil-libre">✏ À main levée</label>
+
+      <span class="outil-separateur"></span>
+
+      <input type="radio" name="outil" id="outil-etiquette">
+      <label class="outil-bouton" for="outil-etiquette">⇄ Étiquettes</label>
     </div>
   </div>
 <?php endif; ?>
@@ -522,6 +542,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
              terrain déjà tracé — quelques secondes, rien à mesurer. ⚠ La maille du modèle est
              d'environ 5 m : elle donne la forme d'ensemble, jamais le détail d'une baissière ou
              d'un fossé.</p>
+          <p class="pd-aide"><strong>Ou importez des courbes déjà tracées</strong> —
+             <a target="_blank" rel="noopener" href="https://contour-buddy1.vercel.app">ContourBuddy</a>
+             les génère depuis la même altimétrie IGN et les exporte en GeoJSON ; un relevé sorti de
+             QGIS convient aussi. <a href="#import-bloc" class="va-import" data-calque="relief">Importer un fichier ↓</a></p>
           <button type="button" id="altitude-relever" class="pd-bouton-discret">Relever le relief</button>
           <p class="pd-aide" id="altitude-etat"><?php if ($grille !== null): ?><?= htmlspecialchars(
               $grille['libelle'] . ', relevé le ' . ($grille['proprietes']['releve_le'] ?? '?'),
@@ -533,6 +557,31 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
              (de <?= (int) round($pente['mini']) ?> à <?= (int) round($pente['maxi']) ?> m).</p>
           <p class="pd-aide"><?= htmlspecialchars(Relief::ceQuElleCommande($pente['pente_pct']), ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
+        </div>
+
+        <div id="ombres-bloc" hidden>
+          <p class="pd-aide">Le calcul d'une ombre demande deux mesures — la hauteur de l'obstacle et sa
+             distance — et un arbre se mesure mal, souvent chez le voisin.
+             <a target="_blank" rel="noopener" href="https://shademap.app">ShadeMap</a> donne
+             <strong>directement les dates de début et de fin de l'ombre portée</strong>, à partir du relief
+             et des bâtiments : placez le repère sur la parcelle, faites défiler l'année, et notez les deux dates.</p>
+<?php if ($latitude !== null && $longitude !== null): ?>
+          <p class="pd-aide"><strong>Je peux l'ouvrir sur votre terrain</strong>, au jour qui compte, au
+             <strong>midi solaire du lieu</strong> — l'instant où l'ombre est la plus courte. Chaque lien s'ouvre dans
+             un autre onglet, et rien de votre projet n'y part hors la position.</p>
+          <ul class="moments-soleil">
+<?php foreach (ShadeMap::moments($latitude, $longitude) as $moment): ?>
+            <li><a target="_blank" rel="noopener" href="<?= htmlspecialchars($moment['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($moment['titre'], ENT_QUOTES, 'UTF-8') ?></a>
+                <br><small><?= htmlspecialchars($moment['quoi'], ENT_QUOTES, 'UTF-8') ?></small></li>
+<?php endforeach; ?>
+          </ul>
+<?php else: ?>
+          <p class="pd-aide">Posez d'abord le lieu (étape « Site ») : les liens s'ouvriront sur votre terrain.</p>
+<?php endif; ?>
+          <p class="pd-aide"><strong>ShadeMap ne livre pas de tracés</strong> que l'atelier puisse lire : ce que vous y
+             lisez se note à la main, dans le nom du tracé — « chêne, ombre du 28 oct. au 8 fév. ». Une période relevée
+             sur le terrain <strong>prime</strong> sur ce qu'il affiche. Si vous avez ailleurs le contour d'un ombrage en
+             GeoJSON, il s'importe comme le relief : <a href="#import-bloc" class="va-import" data-calque="ombres">Importer un fichier ↓</a></p>
         </div>
 
         <label class="pd-label" for="trace-libelle">Son nom</label>
@@ -574,7 +623,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="pd-titre">Les tracés</p>
         <ul class="calques-liste" id="calques-liste"></ul>
 
-        <p class="pd-titre">Importer des tracés</p>
+        <p class="pd-titre" id="import-bloc">Importer des tracés</p>
         <p class="pd-aide">Des courbes de niveau tracées ailleurs — <a target="_blank" rel="noopener"
            href="https://contour-buddy1.vercel.app">ContourBuddy</a> les génère depuis la même
            altimétrie IGN et les exporte en GeoJSON —, un relevé sorti de QGIS, une trace GPS
@@ -618,6 +667,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
          contour point par point, double-clic ou Entrée pour finir, clic droit pour défaire le
          dernier point, Échap pour tout annuler. <strong>À main levée</strong> : maintenez le clic et
          suivez le contour, relâchez pour finir.</p>
+      <p><strong>Une étiquette gêne ?</strong> Choisissez l'outil <strong>Étiquettes</strong> : glissez le nom
+         d'un objet où il se lit mieux — un trait pointillé le relie encore à son objet —, et
+         double-cliquez-le pour le remettre à sa place. La carte reste libre de se déplacer.</p>
       <p id="calque-aide"></p>
 <?php else: ?>
       <p>Vous êtes lecteur sur ce site : la carte se lit, rien ne s'y dessine.</p>
