@@ -172,6 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="projet-bouton">Commencer</button>
           </form>
+<?php if (!$dejaUn): ?>
+          <p class="projet-chapeau" style="margin:.9rem 0 0;font-size:.82rem">Quelqu'un vous a donné un code ?
+             <a href="rejoindre.php" style="color:var(--accent-titre);font-weight:600">Rejoindre son projet</a></p>
+<?php endif; ?>
         </div>
       </div>
     </main>

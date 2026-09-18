@@ -34,7 +34,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-inscription-parrainage.md` — le plan détaillé (4 phases) de
   l'inscription par code de parrainage : inviter quelqu'un à créer un
   compte, ou à rejoindre un projet (et un compte peut alors avoir
-  plusieurs projets). **Phases 1 à 3 faites le 2026-09-18** — voir § Point
+  plusieurs projets). **Les quatre phases sont faites (2026-09-18)** — voir § Point
   de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
@@ -129,6 +129,7 @@ public/                racine servable du site en refonte
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
+  rejoindre.php              rejoindre un projet avec un code — pour un compte existant ; menu du compte (gabarit.js), et lien d'invitation ouvert connecté (inscription.php)
   membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
   inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
@@ -973,6 +974,25 @@ récit.*
   un projet », réinvitation). Non tenu : 320×568. Reste à décider : changer un
   rôle sans retirer, quitter soi-même un projet, invitations ouvertes d'un
   membre retiré. Voir `chantier-inscription-parrainage.md`.
+- **Rejoindre un projet avec un compte existant — Phase 4, dernière, du
+  chantier « inscription par parrainage », 2026-09-18. Le chantier est
+  terminé.** `public/rejoindre.php` : on lit le code, on **montre** le projet,
+  le parrain et le rôle, puis on confirme ; le projet s'ajoute à ceux du
+  compte et devient actif. Un lien d'invitation ouvert par un compte connecté
+  y mène (au lieu de le renvoyer sur ses parcelles), un compte sans projet en
+  trouve le lien sur « ouvrir un projet », et le menu du compte a
+  « Rejoindre un projet ». **On ne brûle pas un code pour rien** : code d'un
+  compte seul, projet déjà accessible (dont le code du porteur lui-même),
+  projet disparu — tous détectés avant de consommer, et le message dit que le
+  code reste valable. Aucun service nouveau (`parCode`/`consommer` +
+  `Sites::rejoindre`/`activer`). Vérifié en CDP sur tous ces cas, plus code
+  consommé entre l'aperçu et la confirmation, POST à jeton faux, et un compte
+  sans projet qui rejoint en contributeur et écrit. Tient à 320×568.
+  **Déploiement** : Phases 2 à 4 et « Participants » vont ensemble, avec
+  `bin/deployer.py base` (colonne `invitation.role_site`) — **rien du
+  parrainage n'est encore en production**, ni la zone USDA ni la bordure
+  interne corrigée. Reste hors plan : changer un rôle sans retirer, quitter
+  soi-même un projet, invitations ouvertes d'un membre retiré.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1004,8 +1024,8 @@ il apparaît réellement, pour ne pas noyer le motif.
 ### Prochaine étape
 
 1. **Chantier « inscription par parrainage »** — plan dans
-   `chantier-inscription-parrainage.md` ; Phases 1 à 3 faites, Phase 4
-   (rejoindre un projet avec un compte existant) suivante.
+   `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
+   « Participants » ; reste à déployer (avec `bin/deployer.py base`).
 2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` (4 phases : base de végétaux
    `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,

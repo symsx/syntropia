@@ -206,11 +206,63 @@ projet ». **Projet disparu entre-temps** : compte créé, message dédié, aucu
 rattachement. `rejoindre()` : refuse rôle « porteur » et projet inconnu, ne
 rétrograde pas un porteur.
 
-### Phase 4 — Rejoindre avec un compte existant
+### Phase 4 — Rejoindre avec un compte existant — ✅ fait le 2026-09-18
 
 - `public/rejoindre.php` : saisie d'un code par un compte connecté — même
   code, même consommation, mêmes garde-fous (déjà utilisé, expiré, révoqué) ;
   refuse poliment si la personne est déjà membre du projet.
+
+**Fichiers** : `public/rejoindre.php` ; `public/inscription.php` (un lien
+d'invitation ouvert par un compte **connecté** mène à `rejoindre.php?code=…`
+au lieu de le renvoyer sur ses parcelles) ; `public/definition-projet.php`
+(un compte sans projet y trouve « Quelqu'un vous a donné un code ? ») ;
+`public/assets/js/gabarit.js` (« Rejoindre un projet » dans le menu du
+compte, pour tout compte). Aucun service nouveau : `Invitations::parCode()`/
+`consommer()` et `Sites::rejoindre()`/`activer()` de la Phase 3.
+
+**Choix, tranchés en codant**
+
+- **Deux temps** : on lit le code et on *montre* le projet, qui invite et le
+  rôle, puis on confirme. Rejoindre un projet ne se fait pas d'un clic sur un
+  lien.
+- **On ne brûle pas un code pour rien** : les cas où rien ne peut être fait
+  sont détectés **avant** de consommer — code d'un compte seul (il attend
+  quelqu'un qui n'a pas de compte), projet auquel on a déjà accès (le code du
+  porteur lui-même, ou un second code pour le même projet), projet disparu.
+  Dans les trois, le message dit que le code reste valable.
+- **Ordre de consommation** identique à l'inscription : le code d'abord (la
+  garde atomique), le rattachement ensuite ; si le rattachement échoue après,
+  le message le dit et renvoie vers qui a invité. Le projet rejoint devient
+  le projet actif.
+- Le compte qui rejoint est noté `filleul_id` du code, comme un nouvel
+  inscrit : `parrainDe()`, qui le lirait, n'est appelée nulle part.
+- **Non fait** : aucune limite de tentatives sur la saisie d'un code — sur
+  8 caractères d'un alphabet de 32, deviner est hors de portée, et
+  `inscription.php` est déjà ouverte à un anonyme dans les mêmes conditions.
+
+**Vérifié en CDP** : anonyme → connexion ; lien d'inscription ouvert connecté →
+`rejoindre.php?code=…` ; l'aperçu montre projet, parrain, intention et rôle,
+code non consommé ; confirmer → `membre_site` (lecteur), `participant`,
+code consommé, `filleul` = le compte, projet rejoint actif, sélecteur
+« Mes projets » présent, titre « Lecture seule » ; même code réutilisé →
+« déjà servi » ; code d'un compte seul, second code du même projet, projet
+supprimé → messages dédiés et **code non consommé** ; code retiré, de mauvaise
+forme ou inconnu → messages ; saisie en minuscules acceptée ; code consommé
+entre l'aperçu et la confirmation → refus, aucun accès posé ; POST à jeton
+faux → rien consommé ; compte **sans projet** : voit le lien sur « ouvrir un
+projet », rejoint en contributeur, écrit ses réponses sans repère de lecture.
+Cadre dans le bureau à 1280×720, 1024×600, 412×800, 412×915, 360×740 et
+**320×568** (marges positives dans les trois états : saisie, aperçu, erreur).
+
+## Chantier terminé
+
+Les quatre phases sont faites (2026-09-18), plus la page « Participants ».
+Reste, hors plan : changer le rôle d'un membre sans le retirer, qu'une
+personne quitte elle-même un projet rejoint, le sort des invitations encore
+ouvertes d'un membre retiré, et un *contributeur* qui peut modifier
+coordonnées et parcelles du projet. **Déploiement** : les Phases 2 à 4 et
+« Participants » vont ensemble, avec `bin/deployer.py base` (colonne
+`invitation.role_site`) — rien de tout cela n'est en production.
 
 ## Hors des quatre phases — voir et retirer les participants (2026-09-18)
 

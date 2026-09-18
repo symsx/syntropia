@@ -31,7 +31,11 @@ Authentification::demarrer($_SERVER);
 $auth = new Authentification();
 
 if ($auth->estConnecte()) {
-    header('Location: ' . Configuration::base() . 'conception-parcelles.php');
+    // Un lien d'invitation ouvert par quelqu'un qui a déjà un compte : c'est
+    // « rejoindre », pas « s'inscrire ». Le code suit.
+    $codeLien = strtoupper(trim((string) ($_GET['code'] ?? '')));
+    header('Location: ' . Configuration::base()
+        . ($codeLien !== '' ? 'rejoindre.php?code=' . rawurlencode($codeLien) : 'conception-parcelles.php'));
     exit;
 }
 

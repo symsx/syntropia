@@ -313,7 +313,7 @@ window.Gabarit = (function(){
   /* Un compte peut porter plusieurs projets (le sien, ceux rejoints sur
      invitation). Rien de cela n'est dans le HTML des pages : api-projets.php
      dit lesquels, et ce code pose trois choses — « Nouveau projet »,
-     « Inviter » et, pour un porteur, « Participants » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
+     « Rejoindre un projet », « Inviter » et, pour un porteur, « Participants » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
      projets » en tête du panneau gauche. Une page publique (pas de menu de
      compte) n'appelle rien. */
   function initProjets(){
@@ -354,6 +354,7 @@ window.Gabarit = (function(){
   function ajouterEntreesDuMenu(menu, estPorteur){
     var sep = menu.querySelector('.compte-menu-separateur');
     var entrees = [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
+                   ['rejoindre.php', '⇥', 'Rejoindre un projet'],
                    ['inviter.php', '✉', 'Inviter']];
     // La liste de ceux qui ont accès au projet actif n'est pour son porteur.
     if (estPorteur) entrees.push(['membres.php', '☰', 'Participants']);
