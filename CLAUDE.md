@@ -776,6 +776,21 @@ récit.*
   parcelle » de la carte interactive affiche aussitôt « 6 × 15 m » sans
   qu'aucun champ séparé n'ait été rempli. Détail complet :
   `chantier-plan-de-parcelle.md` § Phase 2.
+- **Orientation d'une parcelle posée par rectangle, corrigée —
+  2026-09-18.** Signalé par le porteur juste après la Phase 2
+  ci-dessus : une parcelle de 17 × 4 m se posait tournée de 90°.
+  `coins()` (`assets/js/calques.js`, Phase 5 du chantier carte, écrite
+  avant que `largeur_m`/`longueur_m` aient un sens de direction fixe)
+  faisait « largeur d'est en ouest, longueur du sud au nord » —
+  l'inverse exact des libellés de `conception-parcelles.php`
+  (« Longueur (est ↔ ouest) », « Largeur (nord ↔ sud) »). Invisible tant
+  que ces deux colonnes n'étaient que des valeurs recalculées sans
+  direction fixe ; visible dès qu'elles en portent une vraie (Phases 1-2
+  du chantier « plan de parcelle »). N'affecte que les nouveaux
+  placements — un tracé déjà enregistré garde ses points géographiques
+  tels quels, non recalculés à l'affichage. Vérifié en CDP : 17
+  (longueur, est-ouest) × 4 (largeur, nord-sud) se pose maintenant en
+  rectangle large et court, dans le bon sens.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
