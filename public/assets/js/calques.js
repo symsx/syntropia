@@ -100,14 +100,18 @@
   function arrondi(v, d) { return Math.round(v * Math.pow(10, d)) / Math.pow(10, d); }
   function fmt(m) { return m >= 10000 ? arrondi(m / 10000, 2) + ' ha' : arrondi(m, 0) + ' m²'; }
 
-  /* Les quatre coins d'une parcelle posée par ses dimensions : largeur
-   * d'est en ouest, longueur du sud au nord, puis rotation d'un angle
-   * compté depuis le nord, dans le sens des aiguilles d'une montre. */
+  /* Les quatre coins d'une parcelle posée par ses dimensions : longueur
+   * d'est en ouest, largeur du sud au nord — mêmes noms que « Longueur
+   * (est ↔ ouest) »/« Largeur (nord ↔ sud) » de conception-parcelles.php,
+   * pas l'inverse (bug trouvé le 2026-09-18 : une parcelle de 17 x 4 m
+   * se posait tournée de 90°, largeur et longueur confondues) — puis
+   * rotation d'un angle compté depuis le nord, dans le sens des
+   * aiguilles d'une montre. */
   function coins(r) {
     var m = metresParDegre(r.centre[0]);
     var a = r.angle * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
     return [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(function (s) {
-      var x = s[0] * r.largeur / 2, y = s[1] * r.longueur / 2;
+      var x = s[0] * r.longueur / 2, y = s[1] * r.largeur / 2;
       var xr = x * ca + y * sa, yr = -x * sa + y * ca;
       return [arrondi(r.centre[0] + yr / m[0], 5), arrondi(r.centre[1] + xr / m[1], 5)];
     });
