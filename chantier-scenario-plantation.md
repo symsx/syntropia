@@ -116,7 +116,7 @@ référence elle-même n'a pas fini.
 Phase 1  ✅ La base de végétaux — table `espece`, backend, seed curaté + export Plantae
 Phase 2  ✅ Conduite et héritage site/parcelle — `syntropique`/`jardin-foret`
 Phase 3  ✅ Backend du scénario — `scenario_ligne`, validation, positions temporelles
-Phase 4  `conception-scenario.php` — la page, sur le bureau, pret:true
+Phase 4  ✅ `conception-scenario.php` — la page, sur le bureau, pret:true
 ```
 
 Chaque phase est livrable et testable seule. La Phase 4 dépend des
@@ -363,7 +363,7 @@ sans confirmation, `details` fusionnés et non remplacés, ligne d'une autre
 parcelle inaccessible par son identifiant, retrait, suppression en cascade
 avec la parcelle).
 
-### Phase 4 — `conception-scenario.php` — la page
+### Phase 4 — `conception-scenario.php` — la page ✅ (fait le 2026-09-18)
 
 **But** : la page elle-même, sur le gabarit « le bureau » — bascule
 `pret: true`.
@@ -394,6 +394,54 @@ strates et périodes, modifier, retirer, vérifier la persistance au
 rechargement, vérifier le refus d'écriture pour un compte lecture
 seule, vérifier le rendu à 412px (bureau sans défilement, tableau
 temps × strates étroit — le point le plus probable de régression).
+
+**Fait** : `public/conception-scenario.php` ; `etapes.js` (`pret: true`) ;
+`conception-parcelles.php` (le lien « Le scénario » du panneau gauche devient
+réel).
+
+**Le risque annoncé — « la largeur du tableau »** est levé par deux vues :
+- **syntropie** : une **frise SVG** (`viewBox` de 1000 de large, sept périodes,
+  une voie de 28 unités par plante, hachures pour le retrait progressif). Elle
+  garde son rapport et se réduit pour tenir dans le bureau, quel que soit le
+  nombre de végétaux — à 1024×600 avec 17 végétaux, le texte des barres tombe à
+  ≈ 9 px, encore lisible ; la bulle (`Gabarit.bulle`) donne le détail ;
+- **téléphone (< 40 rem) et jardin-forêt** : une **vue par strate en
+  pastilles**, dont la taille de police se réduit jusqu'à tenir (`ajuster()`,
+  plancher 7 px) — un tableau à sept colonnes ne se lit pas à 412 px, une
+  frise réduite non plus.
+
+**Écarts avec ce qui était annoncé**
+
+- **La saisie est dans le panneau Données**, pas dans la page : deux onglets
+  (un végétal ; les productions de la parcelle), en CSS pur comme
+  `compte.php`. Le guide de composition est dans le panneau Informations.
+- **Aucun JavaScript pour éditer** : chaque bande est un lien
+  `?parcelle=…&vegetal=…`, le formulaire est rendu par le serveur et le panneau
+  s'ouvre seul. La seule logique client : ouvrir le panneau, la bulle, et
+  l'ajustement des pastilles.
+- **« Une autre production »** : la référence ne proposait que les souhaits du
+  rêve. Ici, un porteur qui n'a rien écrit dans Objectifs se retrouvait devant
+  un choix vide — une ligne libre l'évite (validée par `Scenarios::productions()`).
+- **Des végétaux à « reclasser »** : si la conduite d'une parcelle change alors
+  qu'elle porte des végétaux d'un autre vocabulaire de strates, ils apparaissent
+  sous une ligne « À reclasser », modifiables pour leur donner une strate valide.
+- Pas de bouton « Imprimer » ni de page d'impression (la référence en avait
+  un) : hors périmètre, et un tableau qui tient à l'écran s'imprime déjà.
+- Pas de « quantité calculée depuis le plan » : `quantite_mode` reste `manuel`.
+
+**Vérifié** — CDP sur la base locale : voir CLAUDE.md § Point de reprise pour
+la liste ; trois défauts de mise en page trouvés en mesurant et corrigés (le
+bureau centre son contenu, donc rien ne pouvait se réduire ; l'onglet
+« Informations » recouvrait l'en-tête ; un compte sans parcelle voyait une
+page vide).
+
+## Chantier terminé
+
+Les quatre phases sont faites (2026-09-18). **Reste, hors plan** : filtrer les
+suggestions d'espèces par rusticité (la zone USDA du site existe maintenant) ;
+proposer la strate d'une espèce connue (`espece.strates_possibles`) ; le mode
+« quantité calculée depuis le plan de bordures » ; l'aide propre au
+jardin-forêt. **Pas encore déployé.**
 
 ## Ce que ce plan exclut explicitement
 

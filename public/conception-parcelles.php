@@ -355,7 +355,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <p class="pg-titre"><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $parcelleActive['nom'], ENT_QUOTES, 'UTF-8') ?></p>
           <ul class="pg-liste">
             <li><a href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>" class="active" aria-current="page"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
-            <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
+            <li><a href="conception-scenario.php?parcelle=<?= (int) $parcelleActive['id'] ?>"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
             <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">✎</span><span class="pg-libelle">Le suivi</span></a></li>
           </ul>
         </div>

@@ -110,6 +110,7 @@ public/                racine servable du site en refonte
   definition-site.php        étape 4 (Définition) — le lieu (carte réelle) et ce qu'on observe, deux groupes
   conception-etude-site.php  étape 1 (Conception) — la carte interactive du terrain, calques.js
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
+  conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
   conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
@@ -369,13 +370,12 @@ récit.*
   premier site s'ouvre sur `definition-projet.php` (passage obligé, hors
   `etapes.js`), avant la première question de Définition ; un projet de
   plus, sur `definition-projet.php?nouveau=1`.
-- **Deux étapes restent volontairement reportées**, à part entière —
-  pas construites en version allégée, `pret` absent dans `etapes.js` :
-  `conception-scenario.php` (scénario de plantation — espèces, strates,
-  associations culturales ; `scenario.php`, 336 lignes dans le dépôt de
-  référence) et `conception-materiel-et-eau.php` (`directives.txt` :
-  « pour chaque parcelle », mêmes données absentes que le scénario).
-  Les deux demandent un vrai scénario en base, qui n'existe pas encore.
+- **Une étape reste volontairement reportée**, à part entière — pas
+  construite en version allégée, `pret` absent dans `etapes.js` :
+  `conception-materiel-et-eau.php` (`directives.txt` : « pour chaque
+  parcelle »). Elle s'appuiera sur le scénario, qui existe depuis le
+  2026-09-18 : `conception-scenario.php` (scénario de plantation) est
+  `pret: true` — voir `chantier-scenario-plantation.md`.
   `conception-etude-site.php` (la carte interactive) n'est plus
   reportée du tout : `pret: true` depuis la Phase 5, et le chantier
   « carte interactive du terrain » est maintenant terminé, dix phases
@@ -629,8 +629,9 @@ récit.*
   la prose libre écrite par le porteur, sa longueur n'est pas bornée).
   `documentation-saf.md` n'est encore qu'un modèle, le porteur écrit son
   contenu à son rythme.
-- **Le parcours au complet, sauf les deux étapes reportées** —
-  dix-huit des vingt étapes de `etapes.js` portent `pret: true`.
+- **Le parcours au complet, sauf une étape reportée** —
+  dix-neuf des vingt étapes de `etapes.js` portent `pret: true` (reste
+  `conception-materiel-et-eau`).
   Détail : `architecture-technique.md` § Le parcours complet, de
   Calendrier à Suivi.
 - **Petit écran, deux vrais bugs trouvés sur capture d'écran réelle et
@@ -1074,6 +1075,38 @@ récit.*
   23 refus de saisie et le verrou de version) — pas d'endpoint, donc pas de
   `curl` ; le script s'arrête si l'hôte n'est pas `127.0.0.1`. Pas encore
   déployé. Détail : `chantier-scenario-plantation.md` § Phase 3.
+- **La page du scénario — Phase 4, dernière, du chantier « scénario de
+  plantation », 2026-09-18. Le chantier est terminé, quatre phases.**
+  `public/conception-scenario.php`, étape 4 de Conception, `pret: true` ;
+  « Le scénario » est devenu un vrai lien dans le panneau gauche de
+  `conception-parcelles.php`. **Le tableau tient dans le bureau sans
+  défiler** : en syntropie, une **frise SVG** (les sept périodes en
+  colonnes, une voie par plante, hachures pour le retrait progressif) qui
+  s'ajuste toujours à la place — la référence, elle, était un long
+  document ; sur téléphone et en jardin-forêt (qui n'a pas d'axe du
+  temps), une **vue par strate en pastilles** dont la taille se réduit
+  jusqu'à tenir. Saisie dans le panneau Données, en deux onglets CSS purs
+  (un végétal ; les productions de la parcelle), le guide de composition
+  dans le panneau Informations (ordre de remplissage, 70-80 % de biomasse,
+  au moins deux espèces par strate, lumière par strate selon Joala — avec
+  la réserve de la source). Toute écriture passe par `Scenarios` ; POST
+  suivi d'une redirection, la saisie n'est perdue que si elle a réussi.
+  Vérifié en CDP : productions (dont « une autre production »), ajout /
+  modification / « ajouter comme nouveau » / renommage avec et sans
+  confirmation / retrait avec confirmation, **conflit de version**, strate
+  d'un autre vocabulaire, conduite non choisie, jardin-forêt sans champs de
+  temps, végétaux à « reclasser » quand la conduite change, lecteur (barres
+  lisibles, tout le reste absent, POST forgé 403), envois forgés (jeton,
+  action inconnue, production hors propositions, id d'une autre parcelle),
+  17 végétaux sans défilement de 1024×600 à 1440×900 et sur téléphone
+  jusqu'à 320×568, thème sombre. **Trois défauts trouvés en mesurant et
+  corrigés** : le bureau centre son contenu (`align-items:center`), donc
+  ni la frise ni les pastilles ne pouvaient se réduire — le cadre
+  débordait de 134 px avec 17 végétaux ; l'onglet « Informations »
+  recouvrait l'en-tête « Placenta 3 » (une page sans bandeau d'outils
+  doit redéfinir `--haut-bandeaux`, comme `inviter.php`) ; et un compte
+  sans parcelle voyait une page vide. Détail :
+  `chantier-scenario-plantation.md` § Phase 4. **Pas encore déployé.**
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1108,13 +1141,12 @@ il apparaît réellement, pour ne pas noyer le motif.
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
    « Participants » ; **déployé le 2026-09-18**.
 2. **Chantier « scénario de plantation »** — plan dans
-   `chantier-scenario-plantation.md` (4 phases). **Phases 1 à 3 faites le
-   2026-09-18** (la base de végétaux ; la conduite ; le backend de
-   `scenario_ligne`, voir plus haut). Prochaine : Phase 4, la page
-   `conception-scenario.php`.
+   `chantier-scenario-plantation.md` — **terminé le 2026-09-18**, quatre
+   phases (la base de végétaux ; la conduite ; le backend de
+   `scenario_ligne` ; la page). **Pas encore déployé.**
 3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
-   reste à en tirer parti : filtrer les espèces du scénario par
-   rusticité une fois `conception-scenario.php` construit.
+   reste à en tirer parti : la page du scénario existe maintenant —
+   filtrer ses suggestions d'espèces par rusticité.
 4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
 5. **`autres-documentations.php`** — page publique restante, non

@@ -51,7 +51,7 @@ Une ou plusieurs parcelles, dites « tortues » (Anaëlle Théry).
 | 1 | `conception-etude-site.php` | Cartographie, topologie, altitude, projections d'ombre | ⏳ carte interactive, chantier séparé |
 | 2 | `conception-etude-sol.php` + `releve-vierge.php` | Fiches de diagnostic du sol et de l'environnement, à remplir sur place et imprimables — contenu porté de `src/FicheTerrain.php` | ✅ |
 | 3 | `conception-parcelles.php` | Création des parcelles — code, nom, type, réels et en liste ; les trois mesures pour la carte (planches, passe-pied) | ✅ (le plan lui-même — bordures, planches dessinées — reste un prototype non persisté) |
-| 4 | `conception-scenario.php` | Scénario de plantation — dimension temps (quoi, quand) et plan (quoi, où) ; si potager ou maraîchage, propose des associations culturales | ⏳ parcelle par parcelle, chantier séparé |
+| 4 | `conception-scenario.php` | Scénario de plantation — dimension temps (quoi, quand) et plan (quoi, où) ; si potager ou maraîchage, propose des associations culturales | ✅ parcelle par parcelle — frise temps × strates, saisie dans le panneau Données |
 | 5 | `conception-materiel-et-eau.php` | Récapitulatif du matériel végétal à se procurer, besoins en eau, stockage ou accès à l'eau | ⏳ parcelle par parcelle, même report que l'étape 4 |
 | 6 | `conception-calendrier.php` | Calendrier du projet — quoi faire, quand, saison par saison | ✅ |
 
