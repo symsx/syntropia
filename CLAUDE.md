@@ -926,14 +926,14 @@ récit.*
   `gabarit.js`. **Piège trouvé** : `ADD COLUMN IF NOT EXISTS` (celui de
   l'incident `espece.variete`) n'existe que sur MariaDB, or le poste local
   est en MySQL 8 — la migration passe par `information_schema` + `PREPARE`
-  et tourne des deux côtés ; **en production, `bin/deployer.py base` la
-  posera**. Vérifié en CDP, y compris les refus (contributeur, POST forgé,
+  et tourne des deux côtés ; **en production, `bin/deployer.py base` l'a
+  posée le 2026-09-18** (MariaDB 11.4). Vérifié en CDP, y compris les refus (contributeur, POST forgé,
   11e code, code d'un autre parrain, anonyme). Un mauvais cas de mise en
   page trouvé et corrigé en mesurant : à 1024×600, le cadre était tronqué
   en silence par `overflow:hidden` — jamais visible sans mesure directe du
   cadre contre le bureau. **Pas encore câblé** : `inscription.php` ignore
   toujours `site_id` (un code « Rejoindre » ouvre un compte sans
-  rattachement) — Phase 3. Ne pas déployer Phase 2 seule sans le savoir.
+  rattachement) — Phase 3. (Phases 2 à 4 déployées ensemble.)
   Reste non tenu : 320×568. Détail : `chantier-inscription-parrainage.md`.
 - **S'inscrire avec un code de projet — Phase 3 du chantier « inscription
   par parrainage », 2026-09-18.** `inscription.php` dit le projet et le
@@ -957,7 +957,6 @@ récit.*
   sur la **production** (`config/base.php` l'emporte), deux `SELECT` sur
   `membre_site`, aucune écriture — et ne prouvait rien ; refaite en local
   avec `config/local.env` exporté. Reste ouvert : un *contributeur* peut modifier coordonnées et parcelles du projet.
-  Ne pas déployer sans `bin/deployer.py base` (colonne `role_site`).
 - **Voir et retirer les participants d'un projet — 2026-09-18.** Demandé
   par le porteur entre les Phases 3 et 4. `public/membres.php` (réservée au
   porteur du projet actif, menu « Participants » posé par `gabarit.js`) :
@@ -988,11 +987,28 @@ récit.*
   `Sites::rejoindre`/`activer`). Vérifié en CDP sur tous ces cas, plus code
   consommé entre l'aperçu et la confirmation, POST à jeton faux, et un compte
   sans projet qui rejoint en contributeur et écrit. Tient à 320×568.
-  **Déploiement** : Phases 2 à 4 et « Participants » vont ensemble, avec
-  `bin/deployer.py base` (colonne `invitation.role_site`) — **rien du
-  parrainage n'est encore en production**, ni la zone USDA ni la bordure
-  interne corrigée. Reste hors plan : changer un rôle sans retirer, quitter
+  **Déployé le 2026-09-18** — voir la puce « Déploiement du parrainage »
+  plus bas. Reste hors plan : changer un rôle sans retirer, quitter
   soi-même un projet, invitations ouvertes d'un membre retiré.
+- **Déploiement du parrainage, de la zone USDA et de la bordure interne —
+  2026-09-18.** Huit commits, 17 fichiers (11 `public/`, 5 `src/`,
+  `sql/00-comptes.sql`). **Ordre suivi : `base` d'abord** (la colonne
+  `invitation.role_site` est nullable — l'ancien code tournait encore
+  pendant l'intervalle), **puis `fichiers`**. Avant : l'état de la production
+  lu sans rien changer (MariaDB 11.4.13, PHP 8.4.25, un compte, un projet, zéro
+  invitation, l'utilisateur a tous les droits) ; la migration n'avait tourné
+  que sur MySQL — sa forme `information_schema` + `PREPARE` a été validée sur
+  MariaDB **sans l'exécuter** (l'`ALTER` seulement préparé) ; Open-Meteo
+  joignable depuis alwaysdata (200 en 0,28 s, curl PHP présent). Après : la
+  colonne existe, données inchangées (1 compte, 0 invitation, 1 projet), les
+  17 fichiers identiques à la copie locale (`diff` par SSH), pages du
+  parcours 302 pour un anonyme, `api-projets`/`api-usda` 403/405, `src/`,
+  `sql/` et `config/base.php` 403, `inscription.php` 200. **Non vérifié en
+  production** (règle du 2026-09-18 : on teste en local) : les parcours
+  eux-mêmes — inviter, s'inscrire avec un code, rejoindre, retirer, estimer
+  la zone USDA — à essayer avec un vrai compte. Retour arrière : la colonne
+  est inoffensive pour l'ancien code, re-déployer les fichiers d'un état
+  antérieur suffit.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1025,7 +1041,7 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 1. **Chantier « inscription par parrainage »** — plan dans
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
-   « Participants » ; reste à déployer (avec `bin/deployer.py base`).
+   « Participants » ; **déployé le 2026-09-18**.
 2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` (4 phases : base de végétaux
    `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,
