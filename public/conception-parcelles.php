@@ -6,9 +6,11 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Heritage;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Sites;
 
@@ -66,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'rattrapage'        => $_POST['rattrapage'] ?? '',
             'bordures'          => $_POST['bordures'] ?? [],
             'bordures_interne'  => $_POST['bordures_interne'] ?? [],
+            'conduite'          => $_POST['conduite'] ?? null,
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -197,6 +200,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
      coupe-vent, défense) : vert plutôt qu'or, même palette que les
      planches (--socle-accent). Chantier « plan de parcelle », Phase 4. */
   .plan-bordure-interne{ fill:var(--socle-accent-doux); fill-opacity:.6; stroke:var(--socle-accent); stroke-width:2; }
+  #in-conduite{
+    grid-column:1 / -1; width:100%; padding:.4rem .5rem; font:400 .86rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
+  }
+  #in-conduite:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
@@ -436,6 +444,26 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <input type="hidden" id="version-plan" value="<?= htmlspecialchars($versionPlan, ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" id="plan-csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
         <input type="hidden" id="plan-parcelle-id" value="<?= (int) $parcelleActive['id'] ?>">
+<?php
+$conduiteSite = Conduite::depuis($site['conduite'] ?? null);
+$siteAChoisi = trim((string) ($site['conduite'] ?? '')) !== '';
+$conduiteResolue = Heritage::conduite($parcelleActive, $site);
+$texteConduite = static function (Conduite $c): string {
+    return $c->explication() . ($c->reserve() !== null ? ' ' . $c->reserve() : '');
+};
+$resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, par ' . $c->critereDeStrate() . '.';
+?>
+        <p class="pd-titre">Conduite</p>
+        <div class="pd-ligne">
+          <select id="in-conduite" aria-label="Conduite de la parcelle">
+            <option value=""<?= trim((string) ($parcelleActive['conduite'] ?? '')) === '' ? ' selected' : '' ?> data-resume="<?= htmlspecialchars(($siteAChoisi ? '' : 'Le site n’a pas encore choisi : la syntropie s’applique en attendant. ') . $resume($conduiteSite), ENT_QUOTES, 'UTF-8') ?>">Comme le site — <?= $siteAChoisi ? htmlspecialchars($conduiteSite->libelle(), ENT_QUOTES, 'UTF-8') : 'pas encore choisie' ?></option>
+<?php foreach (Conduite::toutes() as $cas): ?>
+            <option value="<?= $cas->value ?>"<?= trim((string) ($parcelleActive['conduite'] ?? '')) === $cas->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($resume($cas) . ($cas->reserve() !== null ? ' ' . $cas->reserve() : ''), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($cas->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+          </select>
+        </div>
+        <p class="pd-note" id="conduite-resume"><?= htmlspecialchars($resume($conduiteResolue['conduite']) . ($conduiteResolue['conduite']->reserve() !== null ? ' ' . $conduiteResolue['conduite']->reserve() : ''), ENT_QUOTES, 'UTF-8') ?> Le vocabulaire des strates du scénario en dépend.</p>
+
         <p class="pd-titre">La parcelle <span class="pd-unite">(m)</span></p>
         <div class="pd-ligne">
           <span class="pd-ligne-nom">Longueur (est ↔ ouest)</span>

@@ -88,8 +88,8 @@ référence elle-même n'a pas fini.
   se concentrent sur le mode syntropique — le jardin-forêt reste
   sélectionnable et fonctionnel avec son vocabulaire de strates, mais
   sans le même niveau de contenu d'accompagnement avant qu'un corpus
-  jardin-forêt dédié ne soit travaillé. **À confirmer avant de coder
-  la Phase 2.**
+  jardin-forêt dédié ne soit travaillé. **Confirmé par le porteur le
+  2026-09-18** : les deux conduites, l'aide sur le syntropique seulement.
 - **`plan.php`/`ImplantationBordures` restent hors périmètre**, comme
   déjà tranché pour la carte interactive — 795 lignes à eux deux côté
   référence, un chantier séparé sur la persistance de `parcelle.plan`.
@@ -114,7 +114,7 @@ référence elle-même n'a pas fini.
 
 ```
 Phase 1  ✅ La base de végétaux — table `espece`, backend, seed curaté + export Plantae
-Phase 2  Conduite et héritage site/parcelle — `syntropique`/`jardin-foret`
+Phase 2  ✅ Conduite et héritage site/parcelle — `syntropique`/`jardin-foret`
 Phase 3  Backend du scénario — `scenario_ligne`, validation, positions temporelles
 Phase 4  `conception-scenario.php` — la page, sur le bureau, pret:true
 ```
@@ -201,7 +201,7 @@ la lecture au cadre ; `retirer()` avec `siteId=0` est refusé (après
 correction du bug ci-dessus). L'export Plantae → JSON tourne et produit
 1271 entrées, comme la référence.
 
-### Phase 2 — Conduite et héritage site/parcelle
+### Phase 2 — Conduite et héritage site/parcelle ✅ (fait le 2026-09-18)
 
 **But** : `site.conduite`/`parcelle.conduite` (déjà en base,
 `NULL` par défaut) deviennent choisissables, avec la résolution « le
@@ -237,6 +237,53 @@ vocabulaire de strates à proposer.
 conduite propre hérite bien de celle du site, qu'une parcelle avec sa
 propre conduite prime, que les deux vocabulaires de strates
 (quatre/neuf) sont bien ceux attendus selon la conduite résolue.
+
+**Fait** : `src/Conduite.php` (port réduit : `libelle`, `explication`,
+`critereDeStrate`, `strates`, `scenarioADesTemps`, `uniteDeConception`,
+`sensDeLaTaille`, `depuis`, `strateValide`, `toutesLesStrates`, `toutes`, et
+`reserve()` — le mot honnête à côté du choix : les textes d'aide sont écrits
+pour la syntropie), `src/Web/Heritage.php` (`resoudre()`, `conduite()`),
+`Sites::enregistrerConduite()`, `Parcelles::enregistrerPlan()` (clé
+`conduite` : vide = hérite, absente = inchangée, sous le même verrou de
+version), le choix du site sur `definition-site.php` et celui de la parcelle
+dans le panneau « Plan » de `conception-parcelles.php`, avec son résumé
+(« 9 strates, par la place et la hauteur adulte »).
+
+**Écarts avec ce qui était annoncé**
+
+- Le choix de la parcelle n'est **pas** « dans le panneau où les dimensions se
+  saisissent » sous forme de champ à part : il s'y range en tête, au-dessus de
+  « La parcelle », et part avec « Enregistrer le plan » — un seul bouton, un
+  seul verrou de version, plutôt qu'un second formulaire pour une seule colonne.
+- **Sur `definition-site.php`, le bloc est compacté sur téléphone** : titre et
+  aide y disparaissent (le texte passe dans le panneau Informations). Sans
+  cela, « Continuer » sortait du bureau à 412×915, où la page tenait — le bloc
+  pesait 137 px sur les colonnes empilées.
+- Les strates de `Conduite` sont comparées à l'énumération SQL de
+  `scenario_ligne.strate` : identiques, les treize (4 syntropiques, 9
+  jardin-forêt).
+
+**Vérifié** : en CLI, sur la base locale (`config/local.env` exporté) — parcelle
+vide + site jardin-forêt → jardin-forêt/site ; parcelle propre prime ; aucun
+choix → syntropique/`aucun` ; valeur inconnue sans exception ; quatre et neuf
+strates ; `1_canopee` valide en jardin-forêt et refusée en syntropie, `haute`
+l'inverse ; axe du temps oui/non. En CDP — **site** : « pas encore choisie »,
+l'aide suit le choix, enregistrement à « Continuer », rechargement fidèle,
+valeur forgée refusée avec son message, retour à vide → `NULL` ; **parcelle** :
+« Comme le site — pas encore choisie », puis « Comme le site — Syntropie »,
+choix propre enregistré et rechargé sans toucher l'autre parcelle, retour à
+« comme le site » → `NULL`, valeur forgée refusée, **conflit de version** (un
+autre membre change la conduite entre-temps → « Le plan a changé »,
+sa valeur conservée) ; **lecteur** : champ grisé, POST forcé sans effet.
+
+**Constat préexistant, non corrigé — à décider** : `definition-site.php`
+déborde déjà sur les écrans courts. À 1280×720 le contenu de la colonne du lieu
+(640 px) dépasse le bureau (622 px) : l'en-tête passe **sous** le bandeau et
+« Continuer » chevauche le pied de page — même mesure avec et sans le bloc de
+conduite (708 px pour un bureau qui finit à 677 px). Idem à 1024×600, 412×800
+et 360×740. Une capture réelle le montre ; c'est une des pages les plus
+chargées du parcours. Une piste : les deux groupes en onglets CSS pur (comme
+`compte.php`) dès que la hauteur manque.
 
 ### Phase 3 — Backend du scénario
 

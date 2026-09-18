@@ -6,6 +6,7 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Documentation;
 use Syntropia\Role;
@@ -36,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     $erreurs = $sites->peutEcrireSur($siteId, $compteId)
         ? $sites->enregistrerParametres($siteId, (string) ($_POST['latitude'] ?? ''), (string) ($_POST['longitude'] ?? ''))
         : [];
+    if ($erreurs === [] && $sites->peutEcrireSur($siteId, $compteId)
+        && !$sites->enregistrerConduite($siteId, (string) ($_POST['conduite'] ?? ''))) {
+        $erreurs = ['conduite' => 'La conduite est « Syntropie » ou « Jardin-forêt ».'];
+    }
     if ($erreurs === []) {
         $reponsesService->enregistrerLot($siteId, $participantId, 'definition', [
             'site_commune'         => (string) ($_POST['commune'] ?? ''),
@@ -93,7 +98,11 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
     width:100%; padding:.45rem .6rem; font:400 .88rem var(--texte); color:var(--ink);
     background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
   }
-  .site-champ input:focus, .site-champ textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .site-champ select{
+    width:100%; padding:.45rem .6rem; font:400 .88rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
+  }
+  .site-champ input:focus, .site-champ textarea:focus, .site-champ select:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .site-champ textarea{
     width:100%; padding:.45rem .6rem; font:400 .88rem/1.35 var(--texte); color:var(--ink);
     background:var(--surface); border:1px solid var(--line); border-radius:.5rem; resize:none;
@@ -160,6 +169,10 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
     .site-champ{ margin-bottom:.4rem; }
     .site-champ label, .site-champ legend{ margin-bottom:.15rem; }
     .site-champ small{ margin-bottom:.1rem; }
+    /* le bloc « conduite » ne garde que son champ : titre et aide vivent
+       dans le panneau Informations — sans quoi « Continuer » sort du bureau
+       à 412×915, où la page tenait */
+    .site-groupe-conduite, #conduite-aide{ display:none; }
     .site-carte-champs{ margin-bottom:.25rem; }
     .site-carte{ height:4.6rem; }
     .site-choix{ gap:.3rem .5rem; }
@@ -310,6 +323,24 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
                 <small>Gel tardif, vents forts, sécheresse estivale…</small>
                 <textarea id="climat" name="climat" rows="3" placeholder="Ce que vous observez d'inhabituel, ou dont on vous a parlé."><?= htmlspecialchars($reponses['site_climat'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
               </div>
+
+              <p class="site-groupe-titre site-groupe-conduite">Comment vous le conduirez</p>
+<?php
+$conduiteChoisie = Conduite::tryFrom((string) ($_POST['conduite'] ?? $site['conduite'] ?? ''));
+$aideConduite = 'Décide du vocabulaire des strates du scénario : quatre en syntropie, neuf en jardin-forêt.';
+$texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
+    : $c->explication() . ($c->reserve() !== null ? ' ' . $c->reserve() : '');
+?>
+              <div class="site-champ">
+                <label for="conduite">Conduite</label>
+                <small id="conduite-aide" data-defaut="<?= htmlspecialchars($aideConduite, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($texteConduite($conduiteChoisie), ENT_QUOTES, 'UTF-8') ?></small>
+                <select id="conduite" name="conduite">
+                  <option value="">— pas encore choisie —</option>
+<?php foreach (Conduite::toutes() as $cas): ?>
+                  <option value="<?= $cas->value ?>" data-explication="<?= htmlspecialchars($texteConduite($cas), ENT_QUOTES, 'UTF-8') ?>"<?= $conduiteChoisie === $cas ? ' selected' : '' ?>><?= htmlspecialchars($cas->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -332,6 +363,11 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
          un diagnostic précis — celui-là vient en phase Conception (étude du site,
          étude du sol), fiche en main, sur place. Une estimation suffit partout où
          vous hésitez.</p>
+      <p>La <strong>conduite</strong> dit dans quel monde vous plantez : en syntropie, on plante dense
+         et on pense la succession, la taille est le moteur ; en jardin-forêt, chaque plante est posée à sa
+         place définitive. Elle décide du vocabulaire des strates du scénario — quatre en syntropie, par le
+         besoin en lumière ; neuf en jardin-forêt, par la place et la hauteur adulte. Une parcelle peut être
+         conduite autrement que le site, et rien n'est gravé.</p>
       <p>La zone climatique USDA classe les lieux par leur froid hivernal minimal :
          elle ne dit rien de l'été, mais elle borne ce qui peut passer l'hiver sans
          protection.</p>
@@ -355,6 +391,18 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 <script src="assets/js/carte.js"></script>
 <script>
   Gabarit.init({ etape: 'definition-site' });
+
+  // La conduite choisie s'explique à l'endroit où on la choisit : le texte de
+  // l'option prend la place de l'aide, sans ajouter de hauteur à une page qui
+  // ne défile jamais.
+  (function(){
+    var choix = document.getElementById('conduite');
+    var aide = document.getElementById('conduite-aide');
+    choix.addEventListener('change', function(){
+      var o = choix.options[choix.selectedIndex];
+      aide.textContent = o.dataset.explication || aide.dataset.defaut;
+    });
+  })();
 
   // Estimer la zone USDA depuis la position du formulaire (même pas encore
   // enregistrée). Le résultat remplit le champ, qui reste modifiable ; le

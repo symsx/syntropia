@@ -175,6 +175,17 @@ final class Parcelles
             $erreurs['rattrapage'] = 'Le rattrapage doit se faire sur les planches ou sur les passe-pieds.';
         }
 
+        // La conduite propre à cette parcelle — « » (vide) : elle hérite du site ;
+        // `null` (clé absente) : on n'y touche pas. Chantier « scénario de
+        // plantation », Phase 2.
+        $conduite = null;
+        if (($valeurs['conduite'] ?? null) !== null) {
+            $conduite = trim((string) $valeurs['conduite']);
+            if ($conduite !== '' && \Syntropia\Conduite::tryFrom($conduite) === null) {
+                $erreurs['conduite'] = 'La conduite est « Syntropie » ou « Jardin-forêt » — ou celle du site.';
+            }
+        }
+
         // Bordure externe (bloque-herbe, coupe-vent, défense) et bordure
         // interne (fournisseurs de biomasse) — même forme, quatre côtés
         // chacun actif ou non et sa largeur (5 cm à 5 m, comme la
@@ -224,9 +235,13 @@ final class Parcelles
             $plan = json_encode(['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne],
                 'rattrapage' => $rattrapage], JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(
-                'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?
-                 WHERE id = ? AND site_id = ?');
-            $req->execute([$longueur, $largeur, $orientation, $plan, $nbPlanches, $id, $siteId]);
+                'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?'
+                . ($conduite !== null ? ', conduite = ?' : '')
+                . ' WHERE id = ? AND site_id = ?');
+            $req->execute(array_merge(
+                [$longueur, $largeur, $orientation, $plan, $nbPlanches],
+                $conduite !== null ? [$conduite !== '' ? $conduite : null] : [],
+                [$id, $siteId]));
 
             $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ?');
             $req->execute([$id, $siteId]);

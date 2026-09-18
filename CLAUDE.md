@@ -1043,6 +1043,23 @@ récit.*
   récapitulatif la tronquait de 14 px — corrigé en retirant une note
   redondante avec le panneau Informations et en masquant le titre (qui
   répète le bandeau) sur les écrans peu hauts.
+- **La conduite — Phase 2 du chantier « scénario de plantation »,
+  2026-09-18.** `src/Conduite.php` (syntropie ou jardin-forêt : vocabulaire
+  des strates 4 ou 9, unité de conception, sens de la taille, et une
+  `reserve()` honnête : les textes d'aide sont écrits pour la syntropie),
+  `src/Web/Heritage.php` (le plus précis gagne : parcelle, puis site, puis
+  syntropie par défaut). Choix du site dans `definition-site.php`, choix de
+  la parcelle dans le panneau « Plan » de `conception-parcelles.php` (vide =
+  hérite du site), enregistré avec le plan sous le même verrou de version.
+  Décidé avec le porteur : les deux conduites, aide sur le syntropique
+  seulement. Les treize strates de `Conduite` sont identiques à l'énumération
+  SQL de `scenario_ligne.strate`. Vérifié en CLI (local) et en CDP, dont le
+  conflit de version et le lecteur. **Constat préexistant, non corrigé** :
+  `definition-site.php` déborde sur les écrans courts (à 1280×720 l'en-tête
+  passe sous le bandeau, « Continuer » chevauche le pied — même mesure sans
+  le bloc de conduite) ; mon bloc y est compacté sur téléphone pour ne pas
+  aggraver 412×915, où la page tenait. Détail :
+  `chantier-scenario-plantation.md` § Phase 2. Pas encore déployé.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1077,12 +1094,9 @@ il apparaît réellement, pour ne pas noyer le motif.
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
    « Participants » ; **déployé le 2026-09-18**.
 2. **Chantier « scénario de plantation »** — plan dans
-   `chantier-scenario-plantation.md` (4 phases : base de végétaux
-   `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,
-   page `conception-scenario.php`). **Phase 1 faite le 2026-09-18**
-   (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
-   le plan, § Décisions tranchées) : le niveau d'accompagnement à
-   donner à la conduite jardin-forêt dès cette première version.
+   `chantier-scenario-plantation.md` (4 phases). **Phases 1 et 2 faites le
+   2026-09-18** (la base de végétaux ; la conduite et son héritage, voir
+   plus haut). Prochaine : Phase 3, le backend de `scenario_ligne`.
 3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
    reste à en tirer parti : filtrer les espèces du scénario par
    rusticité une fois `conception-scenario.php` construit.

@@ -303,6 +303,7 @@
       corps.set('csrf', document.getElementById('plan-csrf').value);
       corps.set('parcelle_id', document.getElementById('plan-parcelle-id').value);
       corps.set('version_plan', champVersionPlan.value);
+      corps.set('conduite', document.getElementById('in-conduite').value);
       corps.set('longueur_m', champLongueur.value);
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
@@ -355,6 +356,15 @@
   Gabarit.onOutilChange(function(id){
     bureau.classList.toggle('outil-deplacer-actif', id === 'outil-deplacer');
   });
+  // Le résumé de la conduite suit le choix, sans ajouter de ligne au panneau.
+  var choixConduite = document.getElementById('in-conduite');
+  if (choixConduite){
+    choixConduite.addEventListener('change', function(){
+      document.getElementById('conduite-resume').textContent =
+        choixConduite.options[choixConduite.selectedIndex].dataset.resume + ' Le vocabulaire des strates du scénario en dépend.';
+    });
+  }
+
   Gabarit.onReset(function(){
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });

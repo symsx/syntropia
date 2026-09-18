@@ -197,6 +197,23 @@ final class Sites
     }
 
     /**
+     * La conduite du site — `syntropique`, `jardin-foret`, ou rien (« pas
+     * encore choisi », `NULL`). Une valeur hors de ces trois est refusée :
+     * `false`, rien n'est écrit. Les parcelles qui ne précisent pas la leur
+     * en héritent (`Heritage::conduite()`).
+     */
+    public function enregistrerConduite(int $siteId, string $valeur): bool
+    {
+        $valeur = trim($valeur);
+        if ($valeur !== '' && \Syntropia\Conduite::tryFrom($valeur) === null) {
+            return false;
+        }
+        $this->pdo()->prepare('UPDATE site SET conduite = ? WHERE id = ?')
+            ->execute([$valeur !== '' ? $valeur : null, $siteId]);
+        return true;
+    }
+
+    /**
      * Ceux qui ont accès à ce projet, le porteur d'abord, puis par ancienneté.
      * Les noms sont dans l'autre base : `Comptes::nomsParIds()` les donne.
      *
