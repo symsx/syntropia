@@ -8,7 +8,12 @@
   var svg = document.getElementById('plan');
   var champLongueur = document.getElementById('in-longueur');
   var champLargeur = document.getElementById('in-largeur');
-  var PLANCHE = 1.2, PASSE_PIED = 0.5;
+  // Chargées de PLAN_CONSTANTES (conception-parcelles.php, depuis
+  // Parcelles::PLANCHE_M/PASSE_PIED_M) plutôt que recopiées en dur ici :
+  // le calcul serveur de nb_planches doit voir les mêmes nombres que
+  // l'aperçu tracé à l'écran, jamais deux sources qui pourraient diverger.
+  var cfgPlan = (typeof PLAN_CONSTANTES !== 'undefined') ? PLAN_CONSTANTES : {};
+  var PLANCHE = cfgPlan.planche || 1.2, PASSE_PIED = cfgPlan.passePied || 0.5;
 
   function nombre(valeur){ return parseFloat(String(valeur).replace(',', '.')) || 0; }
   function fmt(valeur, decimales){ return valeur.toFixed(decimales === undefined ? 2 : decimales).replace('.', ','); }
@@ -185,60 +190,14 @@
     Gabarit.bulle.cacher();
   });
 
-  /* ------------------------------------- enregistrer les mesures réelles
-     (pour la carte du terrain) sans recharger la page — un rechargement
-     perdrait tout le plan ci-dessus, purement client (voir en-tête du
-     fichier PHP) : longueur/largeur, bordures, sens des planches, rien
-     de tout cela n'est encore en base. */
-  var formDimensions = document.getElementById('dimensions-form');
-  if (formDimensions){
-    var boutonDimensions = document.getElementById('dimensions-bouton');
-    var erreurDimensions = document.getElementById('dimensions-erreur');
-    var etatDimensions = document.getElementById('dimensions-etat');
-    formDimensions.addEventListener('submit', function(e){
-      e.preventDefault();
-      boutonDimensions.disabled = true;
-      erreurDimensions.hidden = true;
-      etatDimensions.hidden = true;
-      // location.href, jamais `formDimensions.action` : le champ caché
-      // nommé "action" (POST vers ce même script) masque la propriété
-      // native du formulaire, qui renverrait alors cet input, non l'URL.
-      fetch(location.href, {
-        method: 'POST',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        body: new FormData(formDimensions)
-      })
-        .then(function(r){ return r.json(); })
-        .then(function(j){
-          boutonDimensions.disabled = false;
-          if (j.ok){
-            etatDimensions.textContent = 'Enregistré — pour la carte du terrain, sans effet sur le plan ci-dessus.';
-            etatDimensions.hidden = false;
-          } else {
-            // Object.values, jamais .join direct : $erreurs est un tableau
-            // PHP à clés nommées (par champ), donc un objet JS une fois
-            // décodé — jamais un array, .join y échouerait silencieusement
-            // (attrapé par le .catch ci-dessous, un message trop générique).
-            erreurDimensions.textContent = Object.values(j.erreurs || {}).join(' ') || 'Erreur inattendue.';
-            erreurDimensions.hidden = false;
-          }
-        })
-        .catch(function(){
-          boutonDimensions.disabled = false;
-          erreurDimensions.textContent = "L'enregistrement a échoué. Réessayez dans un moment.";
-          erreurDimensions.hidden = false;
-        });
-    });
-  }
-
   /* ----------------------------------------------- enregistrer le plan
      lui-même — longueur, largeur, bordures, sens des planches. Chantier
      « plan de parcelle », Phase 1 : jusqu'ici purement client, rien de
-     tout cela ne survivait à un rechargement. Même schéma que le
-     formulaire des mesures réelles ci-dessus (fetch, pas de rechargement)
-     — mais construit à la main plutôt que via FormData, ces champs ne
-     vivant pas dans un <form> (Entrée n'y déclenche donc jamais un envoi
-     natif pendant la saisie). */
+     tout cela ne survivait à un rechargement — Phase 2 y ajoute le calcul
+     serveur de nb_planches, qui n'a donc plus besoin d'être saisi
+     séparément (voir Parcelles::enregistrerPlan()). Construit à la main
+     plutôt que via FormData : ces champs ne vivent pas dans un <form>
+     (Entrée n'y déclenche donc jamais un envoi natif pendant la saisie). */
   var boutonPlan = document.getElementById('plan-bouton');
   if (boutonPlan){
     var erreurPlan = document.getElementById('plan-erreur');

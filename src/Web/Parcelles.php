@@ -8,8 +8,9 @@ use PDO;
 use Syntropia\Database;
 
 /**
- * Les parcelles d'un site — création, et les trois mesures dont la
- * carte du terrain aura besoin pour les y poser.
+ * Les parcelles d'un site — création, et le plan (dimensions, bordures,
+ * sens des planches) dont la carte du terrain aura besoin pour les y
+ * poser.
  *
  * Réduit par rapport à `application/src/Web/Parcelles.php` (dépôt de
  * référence, 121 lignes) : pas de `Heritage::PROPRES_A_LA_PARCELLE`, pas
@@ -18,9 +19,31 @@ use Syntropia\Database;
  * d'attributs complète n'est pas construite. Whitelist explicite, dans
  * le moule de `Sites.php`. Voir CLAUDE.md § Point de reprise, chantier
  * « carte interactive du terrain », Phase 3.
+ *
+ * **`enregistrer()` (nb_planches/largeur_planche_m/passe_pied_m saisis à
+ * la main) a disparu avec la Phase 2 du chantier « plan de parcelle »**
+ * (2026-09-18) : `enregistrerPlan()` calcule maintenant `nb_planches`
+ * lui-même, et `Calques::parcellesAPlacer()` lit `largeur_m` directement
+ * — plus rien ne consommait `largeur_planche_m`/`passe_pied_m` une fois
+ * ce calcul déplacé ici, la section « Pour la carte du terrain » de
+ * `conception-parcelles.php` a donc disparu avec la méthode. Les deux
+ * colonnes restent en base (non migrées, juste plus lues ni écrites) —
+ * voir `chantier-plan-de-parcelle.md` § Phase 2.
  */
 final class Parcelles
 {
+    /**
+     * La largeur d'une planche et le passe-pied entre deux — fixes pour
+     * l'instant, pas encore un réglage par parcelle (voir
+     * `chantier-plan-de-parcelle.md` § Ce que ce plan exclut). Seule
+     * source pour ces deux nombres : `conception-parcelles.js` les lit
+     * d'ici (via la config JSON de la page) plutôt que de les recopier en
+     * dur une seconde fois — sans quoi le calcul serveur de `nb_planches`
+     * et l'aperçu du plan à l'écran pourraient un jour diverger.
+     */
+    public const PLANCHE_M = 1.2;
+    public const PASSE_PIED_M = 0.5;
+
     public function __construct(private ?PDO $pdo = null) {}
 
     private function pdo(): PDO
@@ -87,68 +110,6 @@ final class Parcelles
     }
 
     /**
-     * Les trois mesures dont `Calques::parcellesAPlacer()` (chantier
-     * « carte interactive », Phase 4) a besoin pour calculer la largeur de
-     * la parcelle et proposer l'outil de placement par rectangle.
-     *
-     * `longueur_m` n'est plus ici depuis le chantier « plan de parcelle »
-     * (2026-09-18) — c'est maintenant `enregistrerPlan()` qui l'écrit, en
-     * même temps que `largeur_m` : les deux sont la longueur et la largeur
-     * *réelles* de la parcelle, celles que dessine le plan juste au-dessus
-     * dans le panneau, pas une mesure propre à cette section.
-     *
-     * @param array<string, mixed> $valeurs
-     * @return array<string, string> erreurs, vide si enregistré
-     */
-    public function enregistrer(int $id, int $siteId, array $valeurs): array
-    {
-        $erreurs = [];
-
-        $nbPlanches = null;
-        $brut = trim((string) ($valeurs['nb_planches'] ?? ''));
-        if ($brut !== '') {
-            if (!ctype_digit($brut) || (int) $brut < 1 || (int) $brut > 255) {
-                $erreurs['nb_planches'] = 'Le nombre de planches doit être un entier entre 1 et 255.';
-            } else {
-                $nbPlanches = (int) $brut;
-            }
-        }
-
-        $largeurPlanche = null;
-        // La virgule française passe : les champs (data-carte mis à part)
-        // se saisissent comme le prototype SVG voisin le fait déjà en JS
-        // (conception-parcelles.js, fonction `nombre()`) — même convention.
-        $brut = str_replace(',', '.', trim((string) ($valeurs['largeur_planche_m'] ?? '')));
-        if ($brut !== '') {
-            if (!is_numeric($brut) || (float) $brut <= 0) {
-                $erreurs['largeur_planche_m'] = 'La largeur de planche doit être un nombre positif.';
-            } else {
-                $largeurPlanche = round((float) $brut, 2);
-            }
-        }
-
-        $passePied = null;
-        $brut = str_replace(',', '.', trim((string) ($valeurs['passe_pied_m'] ?? '')));
-        if ($brut !== '') {
-            if (!is_numeric($brut) || (float) $brut < 0) {
-                $erreurs['passe_pied_m'] = 'Le passe-pied doit être un nombre positif ou nul.';
-            } else {
-                $passePied = round((float) $brut, 2);
-            }
-        }
-
-        if ($erreurs !== []) {
-            return $erreurs;
-        }
-
-        $req = $this->pdo()->prepare(
-            'UPDATE parcelle SET nb_planches = ?, largeur_planche_m = ?, passe_pied_m = ?
-             WHERE id = ? AND site_id = ?');
-        $req->execute([$nbPlanches, $largeurPlanche, $passePied, $id, $siteId]);
-        return [];
-    }
-
-    /**
      * Les quatre bordures externes, l'orientation des planches et les
      * dimensions réelles — ce que `conception-parcelles.js` dessine.
      * Chantier « plan de parcelle », Phase 1 (2026-09-18) : voir
@@ -211,6 +172,24 @@ final class Parcelles
             return ['erreurs' => $erreurs, 'version' => null];
         }
 
+        // Le nombre de planches — un résultat du plan, pas une saisie.
+        // Chantier « plan de parcelle », Phase 2 (2026-09-18) : même
+        // formule que `redessiner()` côté client (conception-
+        // parcelles.js), axe choisi par le sens des planches — largeur
+        // utile (longueur moins bordures ouest/est) en nord-sud, hauteur
+        // utile (largeur moins bordures nord/sud) en est-ouest.
+        $largeurUtile = max(0.0, $longueur
+            - ($bordures['ouest']['actif'] ? $bordures['ouest']['largeur_m'] : 0.0)
+            - ($bordures['est']['actif'] ? $bordures['est']['largeur_m'] : 0.0));
+        $hauteurUtile = max(0.0, $largeur
+            - ($bordures['nord']['actif'] ? $bordures['nord']['largeur_m'] : 0.0)
+            - ($bordures['sud']['actif'] ? $bordures['sud']['largeur_m'] : 0.0));
+        $base = $orientation === 'nord-sud' ? $largeurUtile : $hauteurUtile;
+        $pas = self::PLANCHE_M + self::PASSE_PIED_M;
+        $nbPlanches = $base > self::PLANCHE_M
+            ? max(1, (int) floor(($base - self::PLANCHE_M) / $pas) + 1)
+            : ($base > 0 ? 1 : 0);
+
         $pdo = $this->pdo();
         $pdo->beginTransaction();
         try {
@@ -228,9 +207,9 @@ final class Parcelles
 
             $plan = json_encode(['bordures' => ['externe' => $bordures]], JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(
-                'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?
+                'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?
                  WHERE id = ? AND site_id = ?');
-            $req->execute([$longueur, $largeur, $orientation, $plan, $id, $siteId]);
+            $req->execute([$longueur, $largeur, $orientation, $plan, $nbPlanches, $id, $siteId]);
 
             $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ?');
             $req->execute([$id, $siteId]);

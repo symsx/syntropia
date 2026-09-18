@@ -27,7 +27,6 @@ $siteId = (int) $site['id'];
 $parcellesService = new Parcelles();
 
 $erreursCreation = [];
-$erreursDimensions = [];
 $erreursPlan = [];
 $codeSaisi = '';
 $nomSaisi = '';
@@ -45,27 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             exit;
         }
         $erreursCreation = $resultat['erreurs'];
-    } elseif ($action === 'dimensions') {
-        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
-        $erreursDimensions = $parcellesService->enregistrer($parcelleId, $siteId, [
-            'nb_planches'       => $_POST['nb_planches'] ?? '',
-            'largeur_planche_m' => $_POST['largeur_planche_m'] ?? '',
-            'passe_pied_m'      => $_POST['passe_pied_m'] ?? '',
-        ]);
-        // Appelé en tâche de fond par conception-parcelles.js (voir plus bas) :
-        // une redirection rechargerait la page, et avec elle perdrait tout le
-        // plan dessiné à l'écran — voir l'action « plan » ci-dessous, qui
-        // l'enregistre désormais pour de vrai. Le POST classique (JS absent)
-        // garde la redirection.
-        if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['ok' => $erreursDimensions === [], 'erreurs' => $erreursDimensions], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-        if ($erreursDimensions === []) {
-            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
-            exit;
-        }
     } elseif ($action === 'plan') {
         $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
         $resultatPlan = $parcellesService->enregistrerPlan($parcelleId, $siteId, [
@@ -75,9 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'bordures'          => $_POST['bordures'] ?? [],
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
-        // Même pari que l'action « dimensions » : appelée en tâche de fond,
-        // sans quoi une redirection rechargerait la page et retomberait sur
-        // les valeurs qui viennent d'être remplacées.
+        // Appelée en tâche de fond par conception-parcelles.js : une
+        // redirection rechargerait la page et retomberait sur les valeurs
+        // qui viennent d'être remplacées. Le POST classique (JS absent)
+        // garde la redirection.
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['ok' => $erreursPlan === [], 'erreurs' => $erreursPlan,
@@ -210,10 +189,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .parc-bouton:hover{ opacity:.92; }
   .parc-annuler{ display:block; text-align:center; margin-top:.7rem; font:400 .8rem var(--texte); color:var(--muted); }
 
-  /* les trois mesures réelles, dans le panneau droit — distinctes du
-     prototype de plan au-dessus (non persisté, voir sa note) */
-  .pd-reel{ margin-top:1.4rem; padding-top:1.1rem; border-top:1px dashed var(--line); }
-  .pd-reel .pd-ligne input[type=text]{ width:5rem; text-align:right; }
+  /* le bouton d'enregistrement du plan, et ses messages d'état — noms
+     hérités de « les mesures réelles », un bloc distinct disparu avec la
+     Phase 2 du chantier « plan de parcelle » (voir Parcelles::enregistrer) */
   .pd-reel-note{ font:400 .74rem/1.35 var(--texte); color:var(--muted); margin:.5rem 0 .6rem; }
   .pd-reel-bouton{
     width:100%; margin-top:.2rem; padding:.5rem; border:0; border-radius:.5rem;
@@ -440,6 +418,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php endforeach; ?>
         <p class="pd-reel-erreur" id="plan-erreur"<?= $erreursPlan === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursPlan), ENT_QUOTES, 'UTF-8') ?></p>
         <p class="pd-reel-note" id="plan-etat" hidden></p>
+        <p class="pd-reel-note">Enregistrer pose aussi cette parcelle, dimensionnée, sur
+           <a href="conception-etude-site.php">la carte interactive du terrain</a> — par un
+           rectangle posé d'un clic, plus rien à ressaisir.</p>
         <button type="button" class="pd-reel-bouton" id="plan-bouton">Enregistrer le plan</button>
 
         <p class="pd-titre">Ce que la géométrie donne</p>
@@ -448,37 +429,6 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <div class="pd-champ"><dt>Planches</dt><dd id="r-planches">—</dd></div>
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
-
-        <div class="pd-reel">
-          <p class="pd-titre">Pour la carte du terrain</p>
-          <p class="pd-reel-note">Ces trois mesures servent en plus à poser cette parcelle sur
-             <a href="conception-etude-site.php">la carte interactive du terrain</a>, par un
-             rectangle posé d'un clic — la longueur et la largeur ci-dessus y suffisent déjà,
-             pas besoin de les ressaisir.</p>
-          <form method="post" id="dimensions-form">
-            <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
-            <input type="hidden" name="action" value="dimensions">
-            <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
-            <div class="pd-ligne">
-              <span class="pd-ligne-nom">Nombre de planches</span>
-              <input type="text" name="nb_planches" inputmode="numeric"
-                     value="<?= htmlspecialchars((string) ($parcelleActive['nb_planches'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-            </div>
-            <div class="pd-ligne">
-              <span class="pd-ligne-nom">Largeur d'une planche (m)</span>
-              <input type="text" name="largeur_planche_m" inputmode="decimal"
-                     value="<?= htmlspecialchars((string) ($parcelleActive['largeur_planche_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-            </div>
-            <div class="pd-ligne">
-              <span class="pd-ligne-nom">Passe-pied (m)</span>
-              <input type="text" name="passe_pied_m" inputmode="decimal"
-                     value="<?= htmlspecialchars((string) ($parcelleActive['passe_pied_m'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-            </div>
-            <p class="pd-reel-erreur" id="dimensions-erreur"<?= $erreursDimensions === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursDimensions), ENT_QUOTES, 'UTF-8') ?></p>
-            <p class="pd-reel-note" id="dimensions-etat" hidden></p>
-            <button type="submit" class="pd-reel-bouton" id="dimensions-bouton">Enregistrer ces mesures</button>
-          </form>
-        </div>
       </div>
     </aside>
 <?php endif; ?>
@@ -544,6 +494,13 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   });
 </script>
 <?php if (!$demandeNouvelle): ?>
+<script>
+  // Largeur de planche et passe-pied : une seule source, Parcelles::PLANCHE_M/
+  // PASSE_PIED_M — sans quoi le calcul serveur de nb_planches et l'aperçu du
+  // plan à l'écran pourraient un jour diverger. Voir chantier-plan-de-
+  // parcelle.md § Phase 2.
+  var PLAN_CONSTANTES = { planche: <?= Parcelles::PLANCHE_M ?>, passePied: <?= Parcelles::PASSE_PIED_M ?> };
+</script>
 <script src="conception-parcelles.js"></script>
 <?php endif; ?>
 </body>

@@ -191,7 +191,7 @@ PHP à clés nommées, donc un objet JS une fois décodé, jamais un array ;
 message trop générique. Corrigé aux deux endroits (le formulaire déjà en
 place, et le nouveau).
 
-### Phase 2 — nb_planches calculé, plus saisi à la main
+### Phase 2 — nb_planches calculé, plus saisi à la main — ✅ fait le 2026-09-18
 
 **But** : une seule source pour le nombre de planches, celle que le plan
 calcule déjà à l'écran (`redessiner()` le fait déjà, en JS) — plus de champ
@@ -220,11 +220,30 @@ parcellesAPlacer()`, un mécanisme déjà construit, testé et déployé (Phase
 4/5 du chantier carte interactive, en production). Un risque à part, à ne
 pas mélanger avec la persistance elle-même.
 
-**Test** : poser une parcelle dimensionnée par son plan sur la carte
-interactive (outil rectangle) — la largeur proposée doit correspondre
-exactement à ce que montre `conception-parcelles.php`, plus au calcul
-séparé d'avant. Revérifier le test de non-régression déjà écrit pour cette
-carte (`chantier-carte-interactive.md` § Phase 5).
+**Écart avec ce qui précède, tranché avec le porteur avant de coder** :
+une fois `nb_planches` calculé, `largeur_planche_m` et `passe_pied_m` (les
+deux derniers champs de « Pour la carte du terrain ») ne nourrissaient plus
+rien nulle part — `parcellesAPlacer()` lit `largeur_m` directement, et le
+calcul de `nb_planches` utilise les constantes fixes
+`Parcelles::PLANCHE_M`/`PASSE_PIED_M`, pas ces deux colonnes. Plutôt que de
+garder deux champs qui ont l'air de compter mais ne comptent plus, toute la
+section « Pour la carte du terrain » (le formulaire, sa route POST
+`dimensions`, `Parcelles::enregistrer()`) a été retirée — question posée
+au porteur, tranchée pour la suppression. Les deux colonnes restent en
+base, non migrées, simplement plus lues ni écrites. « La parcelle » (le
+bloc du haut) porte maintenant seule la longueur et la largeur, avec une
+note qui dit à quoi ça sert aussi (poser sur la carte).
+
+**Vérifié en CDP** : la section « Pour la carte du terrain » a bien
+disparu (`#dimensions-form` absent du DOM) ; `PLAN_CONSTANTES` (1,2/0,5)
+se charge côté client depuis `Parcelles::PLANCHE_M`/`PASSE_PIED_M`, pas
+recopié en dur une seconde fois ; un plan enregistré (longueur 15, largeur
+6, nord-sud, bordures à 0,40 m) écrit `nb_planches = 8` en base, exactement
+le compte affiché en direct par `redessiner()` avant l'enregistrement ; le
+sélecteur « Poser une parcelle » de la carte interactive affiche aussitôt
+« 6 × 15 m » sans qu'aucun champ séparé n'ait été rempli ; la config JSON
+lue par `calques.js` porte bien `largeur_m`/`longueur_m`/`nb_planches`
+corrects, lus directement des colonnes.
 
 ## Ce que ce plan exclut explicitement
 

@@ -28,9 +28,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   2026-09-18, pas encore commencé — voir § Point de reprise.
 - `chantier-plan-de-parcelle.md` — le plan détaillé (2 phases) de la
   persistance du plan de parcelle (bordures, sens des planches,
-  dimensions), proposé le 2026-09-18. **Phase 1 faite le 2026-09-18** —
-  réplique partielle et assumée de la référence, voir § Point de
-  reprise.
+  dimensions), proposé le 2026-09-18. **Les deux phases sont faites,
+  chantier terminé le 2026-09-18** — réplique partielle et assumée de la
+  référence, voir § Point de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -752,9 +752,30 @@ récit.*
   revenir chaque valeur telle quelle ; un jeton de version périmé
   refuse l'écriture avec le message dédié, rien n'est changé en base ;
   le sélecteur « Poser une parcelle » de la carte interactive continue
-  de fonctionner sans erreur (Phase 2, qui le fait converger avec le
-  plan, reste à faire). Détail complet :
+  de fonctionner sans erreur. Détail complet :
   `chantier-plan-de-parcelle.md` § Phase 1.
+- **`nb_planches` calculé, plus saisi à la main — Phase 2 du chantier
+  « plan de parcelle », dernière phase, 2026-09-18. Le chantier « plan
+  de parcelle » est terminé, les deux phases faites.**
+  `Parcelles::enregistrerPlan()` calcule `nb_planches` lui-même (mêmes
+  constantes `PLANCHE_M`/`PASSE_PIED_M` que le calcul JS, exposées au
+  client par `conception-parcelles.php` plutôt que recopiées en dur une
+  seconde fois — sans quoi les deux auraient pu diverger) ;
+  `Calques::parcellesAPlacer()` lit `largeur_m` directement plutôt que
+  de la recalculer. **Écart avec le plan initial, question posée au
+  porteur avant de coder** : une fois `nb_planches` calculé,
+  `largeur_planche_m`/`passe_pied_m` (les deux derniers champs de
+  « Pour la carte du terrain ») ne nourrissaient plus rien nulle part —
+  toute la section a été retirée plutôt que de garder deux champs qui
+  ont l'air de compter mais ne comptent plus (choix confirmé par le
+  porteur, pas supposé). Les deux colonnes restent en base, non
+  migrées, simplement plus lues ni écrites. Vérifié en CDP : un plan
+  enregistré (15 × 6 m, nord-sud, bordures à 0,40 m) écrit
+  `nb_planches = 8` en base, exactement le compte affiché en direct
+  par le plan avant l'enregistrement ; le sélecteur « Poser une
+  parcelle » de la carte interactive affiche aussitôt « 6 × 15 m » sans
+  qu'aucun champ séparé n'ait été rempli. Détail complet :
+  `chantier-plan-de-parcelle.md` § Phase 2.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -792,33 +813,23 @@ il apparaît réellement, pour ne pas noyer le motif.
    (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
    le plan, § Décisions tranchées) : le niveau d'accompagnement à
    donner à la conduite jardin-forêt dès cette première version.
-2. **Chantier « plan de parcelle »** — plan dans
-   `chantier-plan-de-parcelle.md` (2 phases : persister le plan —
-   bordures, sens des planches, dimensions —, puis faire converger
-   `nb_planches` avec la carte interactive). **Phase 1 faite le
-   2026-09-18** (voir plus haut) — reste la Phase 2, qui touche
-   `Calques::parcellesAPlacer()`, déjà en production. Réplique partielle
-   et assumée de la référence
-   (`src/Plan.php`/`ImplantationBordures.php`) : ni bordures internes, ni
-   assignation d'espèce (suppose `scenario_ligne`, pas encore construit),
-   ni formes non rectangulaires — voir le plan, § Ce que ce plan exclut.
-3. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
+2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
    noté, pas commencé. Aucun service USDA officiel n'accepte de
    coordonnées (seulement des codes postaux américains) ; calculable
    depuis un historique météo (Open-Meteo, même source que la rose des
    vents de `conception-etude-site.php` — voir `src/Web/Vents.php`).
    Remplacerait le champ texte libre actuel de `definition-site.php`.
-4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-5. **`autres-documentations.php`** — page publique restante, non
+4. **`autres-documentations.php`** — page publique restante, non
    commencée.
-6. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
    dans le menu du compte).
-7. **Au-delà du premier tour** : rien ne relit encore les réponses
+6. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-8. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-9. Aucune procédure n'automatise `bin/deployer.py` après chaque
+8. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.

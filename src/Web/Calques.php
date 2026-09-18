@@ -108,24 +108,27 @@ final class Calques
      * Les parcelles d'un site avec ce qu'il faut pour les poser : leurs
      * dimensions, et l'élément qui les porte déjà s'il existe.
      *
+     * `largeur_m` se lit directement depuis la colonne depuis le chantier
+     * « plan de parcelle », Phase 2 (2026-09-18) — avant cette date,
+     * cette méthode la recalculait depuis `nb_planches`/
+     * `largeur_planche_m`/`passe_pied_m`, seules valeurs alors fiables ;
+     * `Parcelles::enregistrerPlan()` écrit maintenant une vraie
+     * `largeur_m` à chaque enregistrement du plan, plus besoin de la
+     * reconstituer ici. Voir `chantier-plan-de-parcelle.md` § Phase 2.
+     *
      * @return list<array<string, mixed>>
      */
     public function parcellesAPlacer(int $siteId): array
     {
         $req = $this->pdo()->prepare(
-            'SELECT p.id, p.code, p.nom, p.surface_m2, p.nb_planches, p.longueur_m,
-                    p.largeur_planche_m, p.passe_pied_m,
+            'SELECT p.id, p.code, p.nom, p.surface_m2, p.nb_planches, p.longueur_m, p.largeur_m,
                     (SELECT c.id FROM calque_element c
                       WHERE c.parcelle_id = p.id AND c.calque = "parcelles" LIMIT 1) AS element_id
                FROM parcelle p WHERE p.site_id = ? ORDER BY p.code');
         $req->execute([$siteId]);
         $parcelles = [];
         foreach ($req->fetchAll() as $p) {
-            // La largeur d'une tortue : n planches, et n − 1 passe-pieds entre elles.
-            $n = (int) ($p['nb_planches'] ?? 0);
-            $lp = (float) ($p['largeur_planche_m'] ?? 0);
-            $pp = (float) ($p['passe_pied_m'] ?? 0);
-            $p['largeur_m'] = $n > 0 && $lp > 0 ? round($n * $lp + max(0, $n - 1) * $pp, 2) : null;
+            $p['largeur_m'] = $p['largeur_m'] !== null ? (float) $p['largeur_m'] : null;
             $p['longueur_m'] = $p['longueur_m'] !== null ? (float) $p['longueur_m'] : null;
             $parcelles[] = $p;
         }
