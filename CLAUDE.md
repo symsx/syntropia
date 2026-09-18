@@ -26,11 +26,11 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-scenario-plantation.md` — le plan détaillé (4 phases) du
   scénario de plantation et de la base de végétaux, proposé le
   2026-09-18, pas encore commencé — voir § Point de reprise.
-- `chantier-plan-de-parcelle.md` — le plan détaillé (2 phases) de la
-  persistance du plan de parcelle (bordures, sens des planches,
-  dimensions), proposé le 2026-09-18. **Les deux phases sont faites,
-  chantier terminé le 2026-09-18** — réplique partielle et assumée de la
-  référence, voir § Point de reprise.
+- `chantier-plan-de-parcelle.md` — le plan détaillé (4 phases) de la
+  persistance du plan de parcelle (bordures externe et interne, sens des
+  planches, dimensions, rattrapage), proposé le 2026-09-18. **Les quatre
+  phases sont faites, chantier terminé le 2026-09-18** — réplique
+  partielle et assumée de la référence, voir § Point de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -723,7 +723,7 @@ récit.*
   toujours 8 × 12 m ») après les corrections ci-dessus, qui n'y changent
   rien : ce n'est pas un bug, c'était la limite déjà documentée depuis la
   Phase 3 du chantier carte.** Plan phasé posé dans
-  `chantier-plan-de-parcelle.md` (2 phases).
+  `chantier-plan-de-parcelle.md` (4 phases).
 - **Le plan de parcelle persiste enfin — Phase 1 du chantier « plan de
   parcelle », 2026-09-18.** `src/Web/Parcelles.php` gagne
   `enregistrerPlan()` (longueur, largeur, bordure externe des quatre
@@ -755,8 +755,7 @@ récit.*
   de fonctionner sans erreur. Détail complet :
   `chantier-plan-de-parcelle.md` § Phase 1.
 - **`nb_planches` calculé, plus saisi à la main — Phase 2 du chantier
-  « plan de parcelle », dernière phase, 2026-09-18. Le chantier « plan
-  de parcelle » est terminé, les deux phases faites.**
+  « plan de parcelle », 2026-09-18.**
   `Parcelles::enregistrerPlan()` calcule `nb_planches` lui-même (mêmes
   constantes `PLANCHE_M`/`PASSE_PIED_M` que le calcul JS, exposées au
   client par `conception-parcelles.php` plutôt que recopiées en dur une
@@ -791,6 +790,54 @@ récit.*
   tels quels, non recalculés à l'affichage. Vérifié en CDP : 17
   (longueur, est-ouest) × 4 (largeur, nord-sud) se pose maintenant en
   rectangle large et court, dans le bon sens.
+- **Rattrapage homogène et planche de bord à portée simple — Phase 3 du
+  chantier « plan de parcelle », 2026-09-18.** Signalé par le porteur
+  après usage réel de la Phase 1 : les planches se répartissaient par pas
+  fixe (1,20 m) sans absorber le reste, et une planche qui touche une
+  bordure par sa longueur (au lieu d'un passe-pied) restait aussi large
+  qu'une planche intérieure — inatteignable sur plus d'un mètre depuis le
+  passe-pied voisin. `BORD_PLANCHE_M=0.6` fixe désormais la première et la
+  dernière planche de chaque rang ; le reste (`disponible −
+  2×BORD_PLANCHE_M − idéal des planches intérieures`) se distribue au
+  choix de l'utilisateur sur les planches intérieures ou sur les
+  passe-pieds (`rattrapage`, stocké dans `parcelle.plan`), jamais les
+  deux à la fois. Vérifié en CDP sur 12 × 8 m (bordures 0,40 m,
+  nord-sud) : les deux modes remplissent exactement la largeur
+  disponible, les deux planches de bord mesurent 0,60 m dans les deux
+  cas. Détail complet : `chantier-plan-de-parcelle.md` § Phase 3.
+- **Bordure interne, pour la biomasse — Phase 4 du chantier « plan de
+  parcelle », dernière phase, 2026-09-18. Le chantier « plan de
+  parcelle » est terminé, les quatre phases faites.** Signalé par le
+  porteur : les « tortues » d'Anaëlle Théry portent une bordure externe
+  (bloque-herbe, coupe-vent, défense contre les animaux) et une bordure
+  interne (fournisseurs de biomasse), or seule l'externe existait dans
+  l'atelier. Vérification préalable contre `connaissances/
+  livre-bienvenue-en-syntropie/ch14-une-histoire-de-tortue.md` : la
+  source décrit en réalité une bande unique à deux rangs de plantation,
+  pas deux anneaux séparés — écart signalé au porteur, qui a confirmé
+  vouloir malgré tout deux bordures géométriquement distinctes, plus
+  visuel. `bordures.interne` rejoint `bordures.externe` dans
+  `parcelle.plan`, même forme (quatre côtés, actif/largeur), positionnée
+  immédiatement à l'intérieur de l'externe (ou dès le bord de la
+  parcelle si l'externe est inactive sur ce côté) ; géométrie seulement,
+  aucune espèce assignée — ça suppose `scenario_ligne`, toujours absent.
+  Distincte visuellement (vert biomasse contre or de l'externe) ;
+  modifiable par les champs texte seulement, pas de glisser-déposer sur
+  le dessin (scopé à l'externe). Vérifié en CDP, y compris le cas limite
+  laissé pour la fin (bordure interne active sur un côté où l'externe
+  est inactive) : le rectangle interne part bien du bord réel de la
+  parcelle, sans erreur, et l'état survit à un rechargement complet.
+  Détail complet : `chantier-plan-de-parcelle.md` § Phase 4.
+- **Surface des planches de culture affichée séparément — 2026-09-18.**
+  Demandé par le porteur : « Surface utile » (déjà affichée) compte tout
+  ce que les bordures laissent, passe-pieds compris — pas la vraie
+  surface cultivable. Nouvelle ligne « Surface des planches » dans « Ce
+  que la géométrie donne » (`conception-parcelles.php`/`.js`) : somme des
+  largeurs de planches du rang, multipliée par la profondeur utile
+  perpendiculaire au sens des planches — recalculée à chaque redessin,
+  comme le reste du tableau. Vérifié en CDP : distincte de la surface
+  utile, se met à jour correctement au changement de dimensions et de
+  sens des planches.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

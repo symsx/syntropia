@@ -29,6 +29,17 @@
     return b;
   }
 
+  /* La bordure interne (biomasse) — Phase 4 : même lecture que l'externe,
+     champs distincts. */
+  function bordureInterne(){
+    var b = {};
+    document.querySelectorAll('.bordure-interne-active').forEach(function(c){
+      var cote = c.dataset.cote;
+      b[cote] = c.checked ? nombre(champDeInterne(cote).value) : 0;
+    });
+    return b;
+  }
+
   /* La largeur de chaque planche d'un rang, et de chaque passe-pied entre
    * elles — en mètres. Chantier « plan de parcelle », Phase 3
    * (2026-09-18) : les deux planches de bord (la première et la
@@ -71,6 +82,7 @@
     var longueur = Math.max(1, nombre(champLongueur.value));
     var largeur = Math.max(1, nombre(champLargeur.value));
     var b = bordures();
+    var bi = bordureInterne();
     var ECH = 100; // 1 m = 100 unités svg
     var L = longueur * ECH, H = largeur * ECH;
 
@@ -86,6 +98,17 @@
     rs.setAttribute('y', H - bs); rs.setAttribute('width', L); rs.setAttribute('height', bs); rs.style.display = b.sud ? '' : 'none';
     ro.setAttribute('height', H); ro.setAttribute('width', bo); ro.style.display = b.ouest ? '' : 'none';
     re.setAttribute('x', L - be); re.setAttribute('height', H); re.setAttribute('width', be); re.style.display = b.est ? '' : 'none';
+
+    // Bordure interne — juste à l'intérieur de l'externe, sur chaque côté
+    // actif (même si l'externe du même côté ne l'est pas : elle part alors
+    // du bord de la parcelle). Phase 4.
+    var bni = bi.nord * ECH, bsi = bi.sud * ECH, boi = bi.ouest * ECH, bei = bi.est * ECH;
+    var rni = document.getElementById('bordure-interne-nord'), rsi = document.getElementById('bordure-interne-sud');
+    var roi = document.getElementById('bordure-interne-ouest'), rei = document.getElementById('bordure-interne-est');
+    rni.setAttribute('y', bn); rni.setAttribute('width', L); rni.setAttribute('height', bni); rni.style.display = bi.nord ? '' : 'none';
+    rsi.setAttribute('y', H - bs - bsi); rsi.setAttribute('width', L); rsi.setAttribute('height', bsi); rsi.style.display = bi.sud ? '' : 'none';
+    roi.setAttribute('x', bo); roi.setAttribute('height', H); roi.setAttribute('width', boi); roi.style.display = bi.ouest ? '' : 'none';
+    rei.setAttribute('x', L - be - bei); rei.setAttribute('height', H); rei.setAttribute('width', bei); rei.style.display = bi.est ? '' : 'none';
 
     document.getElementById('mesure-longueur').setAttribute('x', L / 2);
     document.getElementById('mesure-longueur').textContent = fmt(longueur) + ' m';
@@ -115,8 +138,8 @@
     // préférence de terrain.
     var planches = document.getElementById('planches');
     planches.innerHTML = '';
-    var largeurUtile = Math.max(0, longueur - b.ouest - b.est);
-    var hauteurUtile = Math.max(0, largeur - b.nord - b.sud);
+    var largeurUtile = Math.max(0, longueur - b.ouest - b.est - bi.ouest - bi.est);
+    var hauteurUtile = Math.max(0, largeur - b.nord - b.sud - bi.nord - bi.sud);
     var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
     var sens = sensChoisi ? sensChoisi.value : 'nord-sud';
     var rattrapageChoisi = document.querySelector('input[name="rattrapage"]:checked');
@@ -126,32 +149,41 @@
     var nbPlanches = layout.n;
 
     if (sens === 'nord-sud'){
-      var x = b.ouest * ECH;
+      var x = bo + boi;
       for (var i = 0; i < layout.largeurs.length; i++){
         var w = layout.largeurs[i] * ECH;
         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('class', 'plan-planche');
-        rect.setAttribute('x', x); rect.setAttribute('y', bn);
-        rect.setAttribute('width', w); rect.setAttribute('height', Math.max(0, H - bn - bs));
+        rect.setAttribute('x', x); rect.setAttribute('y', bn + bni);
+        rect.setAttribute('width', w); rect.setAttribute('height', Math.max(0, H - bn - bni - bs - bsi));
         planches.appendChild(rect);
         x += w + (layout.passePieds[i] || 0) * ECH;
       }
     } else {
-      var y = b.nord * ECH;
+      var y = bn + bni;
       for (var j = 0; j < layout.largeurs.length; j++){
         var h = layout.largeurs[j] * ECH;
         var rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect2.setAttribute('class', 'plan-planche');
-        rect2.setAttribute('x', bo); rect2.setAttribute('y', y);
-        rect2.setAttribute('width', Math.max(0, L - bo - be)); rect2.setAttribute('height', h);
+        rect2.setAttribute('x', bo + boi); rect2.setAttribute('y', y);
+        rect2.setAttribute('width', Math.max(0, L - bo - boi - be - bei)); rect2.setAttribute('height', h);
         planches.appendChild(rect2);
         y += h + (layout.passePieds[j] || 0) * ECH;
       }
     }
 
     var surfaceUtile = largeurUtile * hauteurUtile;
+    // La surface des planches elles-mêmes — les seules à cultiver,
+    // passe-pieds exclus, contrairement à « Surface utile » ci-dessus qui
+    // compte tout ce que les bordures laissent, passe-pieds compris.
+    // Chaque planche d'un rang a la même profondeur (l'autre dimension
+    // utile, perpendiculaire au sens des planches) : la somme des largeurs
+    // du tableau suffit, pas besoin de reparcourir le dessin.
+    var profondeur = sens === 'nord-sud' ? hauteurUtile : largeurUtile;
+    var surfacePlanches = layout.largeurs.reduce(function(s, l){ return s + l; }, 0) * profondeur;
     var lineaire = (b.nord ? longueur : 0) + (b.sud ? longueur : 0) + (b.ouest ? largeur : 0) + (b.est ? largeur : 0);
     document.getElementById('r-surface').textContent = fmt(surfaceUtile) + ' m²';
+    document.getElementById('r-surface-planches').textContent = fmt(surfacePlanches) + ' m²';
     document.getElementById('r-planches').textContent = nbPlanches;
     document.getElementById('r-planche-bord').textContent = layout.largeurs.length ? fmt(layout.largeurs[0]) + ' m' : '—';
     document.getElementById('r-planche-interieure').textContent = layout.largeurs.length > 2 ? fmt(layout.largeurs[1]) + ' m' : '—';
@@ -159,27 +191,40 @@
     document.getElementById('r-lineaire').textContent = fmt(lineaire) + ' m';
   }
 
-  document.querySelectorAll('.bordure-active, .bordure-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"]').forEach(function(el){
+  document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"]').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
   });
+  function champDeInterne(cote){ return document.querySelector('.bordure-interne-largeur[data-cote="' + cote + '"]'); }
 
   /* -------------------------------------------------------------- la bulle */
   var libellesCote = { nord: 'nord', sud: 'sud', ouest: 'ouest', est: 'est' };
   function texteBulle(rect){
+    var interne = rect.classList.contains('plan-bordure-interne');
     var cote = libellesCote[rect.dataset.cote];
-    var champ = champDe(rect.dataset.cote);
+    var champ = interne ? champDeInterne(rect.dataset.cote) : champDe(rect.dataset.cote);
     var valeur = champ ? champ.value + ' m' : '';
-    if (document.getElementById('outil-deplacer').checked){
-      return enCours ? 'Bordure ' + cote + ' — ' + valeur : 'Tirez pour changer la largeur — ' + cote + ', ' + valeur;
+    var mot = interne ? 'Bordure interne ' : 'Bordure ';
+    if (!interne && document.getElementById('outil-deplacer').checked){
+      return enCours ? mot + cote + ' — ' + valeur : 'Tirez pour changer la largeur — ' + cote + ', ' + valeur;
     }
-    return 'Bordure ' + cote + ' — ' + valeur;
+    return mot + cote + ' — ' + valeur;
   }
   function montrerBulle(rect){
     var horizontal = rect.dataset.cote === 'nord' || rect.dataset.cote === 'sud';
     Gabarit.bulle.montrer(rect, texteBulle(rect), horizontal ? 'horizontal' : 'vertical');
   }
-  document.querySelectorAll('rect[data-cote]').forEach(function(rect){
+  // .plan-bordure seulement, pas .plan-bordure-interne : la bordure interne
+  // se règle par ses champs dans le panneau, pas encore glissable sur le
+  // plan — voir chantier-plan-de-parcelle.md § Phase 4, hors périmètre
+  // assumé pour cette phase.
+  document.querySelectorAll('.plan-bordure[data-cote]').forEach(function(rect){
+    rect.addEventListener('pointerenter', function(){ if (!enCours) montrerBulle(rect); });
+    rect.addEventListener('pointerleave', function(){ if (!enCours) Gabarit.bulle.cacher(); });
+  });
+  // La bordure interne reste survolable — juste pas glissable — pour lire
+  // sa largeur d'un coup d'œil comme l'externe.
+  document.querySelectorAll('.plan-bordure-interne[data-cote]').forEach(function(rect){
     rect.addEventListener('pointerenter', function(){ if (!enCours) montrerBulle(rect); });
     rect.addEventListener('pointerleave', function(){ if (!enCours) Gabarit.bulle.cacher(); });
   });
@@ -202,7 +247,7 @@
 
   svg.addEventListener('pointerdown', function(e){
     if (!document.getElementById('outil-deplacer').checked) return;
-    var rect = e.target.closest('rect[data-cote]');
+    var rect = e.target.closest('.plan-bordure[data-cote]');
     if (!rect) return;
     var point = versMetres(e.clientX, e.clientY);
     if (!point) return;
@@ -265,6 +310,11 @@
         corps.set('bordures[' + cote + '][actif]', c.checked ? '1' : '');
         corps.set('bordures[' + cote + '][largeur_m]', champDe(cote).value);
       });
+      document.querySelectorAll('.bordure-interne-active').forEach(function(c){
+        var cote = c.dataset.cote;
+        corps.set('bordures_interne[' + cote + '][actif]', c.checked ? '1' : '');
+        corps.set('bordures_interne[' + cote + '][largeur_m]', champDeInterne(cote).value);
+      });
       fetch(location.href, {
         method: 'POST',
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
@@ -305,6 +355,8 @@
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });
+    document.querySelectorAll('.bordure-interne-active').forEach(function(c){ c.checked = false; });
+    document.querySelectorAll('.bordure-interne-largeur').forEach(function(c){ c.value = '0,40'; });
     document.getElementById('sens-nord-sud').checked = true;
     document.getElementById('rattrapage-passe-pieds').checked = true;
     redessiner();

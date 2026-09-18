@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'orientation_lignes' => $_POST['orientation_lignes'] ?? '',
             'rattrapage'        => $_POST['rattrapage'] ?? '',
             'bordures'          => $_POST['bordures'] ?? [],
+            'bordures_interne'  => $_POST['bordures_interne'] ?? [],
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -110,6 +111,29 @@ $planBordures = [
     'ouest' => ['actif' => true, 'largeur_m' => 0.40],
     'est'   => ['actif' => true, 'largeur_m' => 0.40],
 ];
+// Inactive par défaut — contrairement à l'externe, une bordure interne
+// (les fournisseurs de biomasse) ne s'impose pas. Chantier « plan de
+// parcelle », Phase 4 (2026-09-18).
+$planBordureInterne = [
+    'nord'  => ['actif' => false, 'largeur_m' => 0.40],
+    'sud'   => ['actif' => false, 'largeur_m' => 0.40],
+    'ouest' => ['actif' => false, 'largeur_m' => 0.40],
+    'est'   => ['actif' => false, 'largeur_m' => 0.40],
+];
+$litBordures = static function (array $defaut, mixed $enregistre): array {
+    if (!is_array($enregistre)) {
+        return $defaut;
+    }
+    foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
+        if (is_array($enregistre[$cote] ?? null) && isset($enregistre[$cote]['largeur_m'])) {
+            $defaut[$cote] = [
+                'actif' => !empty($enregistre[$cote]['actif']),
+                'largeur_m' => (float) $enregistre[$cote]['largeur_m'],
+            ];
+        }
+    }
+    return $defaut;
+};
 $versionPlan = '';
 if ($parcelleActive !== null) {
     $versionPlan = Parcelles::versionPlan($parcelleActive);
@@ -126,18 +150,8 @@ if ($parcelleActive !== null) {
     if (in_array($planEnregistre['rattrapage'] ?? '', ['planches', 'passe-pieds'], true)) {
         $planRattrapage = $planEnregistre['rattrapage'];
     }
-    $bordureEnregistree = $planEnregistre['bordures']['externe'] ?? null;
-    if (is_array($bordureEnregistree)) {
-        foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
-            if (is_array($bordureEnregistree[$cote] ?? null)
-                && isset($bordureEnregistree[$cote]['largeur_m'])) {
-                $planBordures[$cote] = [
-                    'actif' => !empty($bordureEnregistree[$cote]['actif']),
-                    'largeur_m' => (float) $bordureEnregistree[$cote]['largeur_m'],
-                ];
-            }
-        }
-    }
+    $planBordures = $litBordures($planBordures, $planEnregistre['bordures']['externe'] ?? null);
+    $planBordureInterne = $litBordures($planBordureInterne, $planEnregistre['bordures']['interne'] ?? null);
 }
 
 $nomAffiche = $auth->nomAffiche() ?? '';
@@ -166,6 +180,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .outil-deplacer-actif .plan-bordure[data-cote="est"]{ cursor:ew-resize; }
   .plan-bordure:hover{ fill-opacity:.78; }
   .plan-bordure.en-glissement{ fill-opacity:.9; stroke-width:3; }
+  /* Bordure interne — la biomasse, distincte de l'externe (bloque-herbe,
+     coupe-vent, défense) : vert plutôt qu'or, même palette que les
+     planches (--socle-accent). Chantier « plan de parcelle », Phase 4. */
+  .plan-bordure-interne{ fill:var(--socle-accent-doux); fill-opacity:.6; stroke:var(--socle-accent); stroke-width:2; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
@@ -371,6 +389,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <rect class="plan-bordure" data-cote="sud"   id="bordure-sud"   x="0"    y="760" width="1200" height="40"/>
           <rect class="plan-bordure" data-cote="ouest" id="bordure-ouest" x="0"    y="0"   width="40"   height="800"/>
           <rect class="plan-bordure" data-cote="est"   id="bordure-est"   x="1160" y="0"   width="40"   height="800"/>
+          <rect class="plan-bordure-interne" data-cote="nord"  id="bordure-interne-nord"  x="0" y="0" width="1200" height="0"/>
+          <rect class="plan-bordure-interne" data-cote="sud"   id="bordure-interne-sud"   x="0" y="0" width="1200" height="0"/>
+          <rect class="plan-bordure-interne" data-cote="ouest" id="bordure-interne-ouest" x="0" y="0" width="0" height="800"/>
+          <rect class="plan-bordure-interne" data-cote="est"   id="bordure-interne-est"   x="0" y="0" width="0" height="800"/>
 
           <line class="plan-fleche" id="fleche-longueur" x1="0" y1="-16" x2="1200" y2="-16" marker-start="url(#fl)" marker-end="url(#fl)"/>
           <text class="plan-mesure" id="mesure-longueur" x="600" y="-24" text-anchor="middle">12,00 m</text>
@@ -427,10 +449,22 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         </div>
 
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
+        <p class="pd-note">Bloque-herbe, coupe-vent, défense contre les animaux — une haie
+           défensive en bord de parcelle.</p>
 <?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
         <div class="pd-ligne">
           <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordures[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-active"><?= $libelle ?></label>
           <input type="text" class="bordure-largeur" data-cote="<?= $cote ?>" value="<?= htmlspecialchars($fr($planBordures[$cote]['largeur_m']), ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
+        </div>
+<?php endforeach; ?>
+
+        <p class="pd-titre">Bordure interne <span class="pd-unite">(m)</span></p>
+        <p class="pd-note">Les fournisseurs de biomasse, juste à l'intérieur de la bordure
+           externe — inactive par défaut, une parcelle n'en a pas forcément besoin.</p>
+<?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
+        <div class="pd-ligne">
+          <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordureInterne[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-interne-active"><?= $libelle ?></label>
+          <input type="text" class="bordure-interne-largeur" data-cote="<?= $cote ?>" value="<?= htmlspecialchars($fr($planBordureInterne[$cote]['largeur_m']), ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
         </div>
 <?php endforeach; ?>
         <p class="pd-reel-erreur" id="plan-erreur"<?= $erreursPlan === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursPlan), ENT_QUOTES, 'UTF-8') ?></p>
@@ -443,6 +477,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="pd-titre">Ce que la géométrie donne</p>
         <dl class="pd-resultat" id="resultat">
           <div class="pd-champ"><dt>Surface utile</dt><dd id="r-surface">—</dd></div>
+          <div class="pd-champ"><dt>Surface des planches</dt><dd id="r-surface-planches">—</dd></div>
           <div class="pd-champ"><dt>Planches</dt><dd id="r-planches">—</dd></div>
           <div class="pd-champ"><dt>Planche de bord</dt><dd id="r-planche-bord">—</dd></div>
           <div class="pd-champ"><dt>Planche intérieure</dt><dd id="r-planche-interieure">—</dd></div>
@@ -452,6 +487,8 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="pd-note">La planche de bord (la première et la dernière de chaque rang) touche
            la bordure plutôt qu'un passe-pied : elle ne se travaille que d'un seul côté, d'où sa
            largeur plus étroite — voir chantier-plan-de-parcelle.md § Phase 3.</p>
+        <p class="pd-note">« Surface utile » compte tout ce que les bordures laissent, passe-pieds
+           compris ; « Surface des planches » ne compte que ce qui se cultive vraiment.</p>
       </div>
     </aside>
 <?php endif; ?>

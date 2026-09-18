@@ -175,20 +175,14 @@ final class Parcelles
             $erreurs['rattrapage'] = 'Le rattrapage doit se faire sur les planches ou sur les passe-pieds.';
         }
 
-        // Bordure externe — quatre côtés, chacun actif ou non et sa
-        // largeur (5 cm à 5 m, comme la référence : une bordure ne
-        // devient jamais ni un fil ni un champ).
-        $bordures = [];
-        foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
-            $brute = $valeurs['bordures'][$cote] ?? [];
-            $actif = !empty($brute['actif']);
-            $brutLargeur = str_replace(',', '.', trim((string) ($brute['largeur_m'] ?? '')));
-            if (!is_numeric($brutLargeur)) {
-                $erreurs['bordure_' . $cote] = 'La largeur de la bordure ' . $cote . ' doit être un nombre.';
-                continue;
-            }
-            $bordures[$cote] = ['actif' => $actif, 'largeur_m' => max(0.05, min(5.0, round((float) $brutLargeur, 2)))];
-        }
+        // Bordure externe (bloque-herbe, coupe-vent, défense) et bordure
+        // interne (fournisseurs de biomasse) — même forme, quatre côtés
+        // chacun actif ou non et sa largeur (5 cm à 5 m, comme la
+        // référence : une bordure ne devient jamais ni un fil ni un
+        // champ). Chantier « plan de parcelle », Phase 4 (2026-09-18) pour
+        // l'interne — géométrie seulement, pas d'assignation d'espèce.
+        $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_');
+        $bordureInterne = $this->litBordures($valeurs['bordures_interne'] ?? [], $erreurs, 'bordure_interne_');
 
         if ($erreurs !== []) {
             return ['erreurs' => $erreurs, 'version' => null];
@@ -198,14 +192,14 @@ final class Parcelles
         // Chantier « plan de parcelle », Phase 2 (2026-09-18) : même
         // formule que `redessiner()` côté client (conception-
         // parcelles.js), axe choisi par le sens des planches — largeur
-        // utile (longueur moins bordures ouest/est) en nord-sud, hauteur
-        // utile (largeur moins bordures nord/sud) en est-ouest.
-        $largeurUtile = max(0.0, $longueur
-            - ($bordures['ouest']['actif'] ? $bordures['ouest']['largeur_m'] : 0.0)
-            - ($bordures['est']['actif'] ? $bordures['est']['largeur_m'] : 0.0));
-        $hauteurUtile = max(0.0, $largeur
-            - ($bordures['nord']['actif'] ? $bordures['nord']['largeur_m'] : 0.0)
-            - ($bordures['sud']['actif'] ? $bordures['sud']['largeur_m'] : 0.0));
+        // utile (longueur moins bordures ouest/est, externe et interne
+        // cumulées) en nord-sud, hauteur utile (largeur moins bordures
+        // nord/sud) en est-ouest.
+        $totalCote = static fn (string $cote): float =>
+            ($bordures[$cote]['actif'] ? $bordures[$cote]['largeur_m'] : 0.0)
+            + ($bordureInterne[$cote]['actif'] ? $bordureInterne[$cote]['largeur_m'] : 0.0);
+        $largeurUtile = max(0.0, $longueur - $totalCote('ouest') - $totalCote('est'));
+        $hauteurUtile = max(0.0, $largeur - $totalCote('nord') - $totalCote('sud'));
         $base = $orientation === 'nord-sud' ? $largeurUtile : $hauteurUtile;
         $pas = self::PLANCHE_M + self::PASSE_PIED_M;
         $nbPlanches = $base > self::PLANCHE_M
@@ -227,7 +221,8 @@ final class Parcelles
                 return ['erreurs' => ['version' => 'Le plan a changé, rechargez la page avant de modifier.'], 'version' => null];
             }
 
-            $plan = json_encode(['bordures' => ['externe' => $bordures], 'rattrapage' => $rattrapage], JSON_UNESCAPED_UNICODE);
+            $plan = json_encode(['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne],
+                'rattrapage' => $rattrapage], JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(
                 'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?
                  WHERE id = ? AND site_id = ?');
@@ -242,6 +237,32 @@ final class Parcelles
             $pdo->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Une bordure (externe ou interne) — quatre côtés, chacun actif ou
+     * non et sa largeur bornée à 0,05–5 m. Les erreurs de validation
+     * s'ajoutent à `$erreurs` (passé par référence, clés préfixées pour
+     * distinguer externe/interne) plutôt que d'être retournées à part.
+     *
+     * @param array<string, mixed> $brutes
+     * @param array<string, string> $erreurs
+     * @return array<string, array{actif: bool, largeur_m: float}>
+     */
+    private function litBordures(array $brutes, array &$erreurs, string $prefixeErreur): array
+    {
+        $bordures = [];
+        foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
+            $brute = $brutes[$cote] ?? [];
+            $actif = !empty($brute['actif']);
+            $brutLargeur = str_replace(',', '.', trim((string) ($brute['largeur_m'] ?? '')));
+            if (!is_numeric($brutLargeur)) {
+                $erreurs[$prefixeErreur . $cote] = 'La largeur de la bordure ' . $cote . ' doit être un nombre.';
+                continue;
+            }
+            $bordures[$cote] = ['actif' => $actif, 'largeur_m' => max(0.05, min(5.0, round((float) $brutLargeur, 2)))];
+        }
+        return $bordures;
     }
 
     /**

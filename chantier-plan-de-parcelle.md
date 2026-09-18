@@ -105,6 +105,8 @@ vérification contre `connaissances/livre-bienvenue-en-syntropie/
 ch14-une-histoire-de-tortue.md` — voir son § pour le détail de ce qui s'y
 trouve et ce qui en diffère).
 
+**Les quatre phases sont faites, chantier terminé le 2026-09-18.**
+
 ### Phase 1 — Persister le plan (bordures, sens, dimensions) — ✅ fait le 2026-09-18
 
 **But** : ce qui est dessiné à l'écran survit à un rechargement, avec un
@@ -339,7 +341,7 @@ intérieures sur la capture. En rattrapage « planches » : intérieure
 la largeur disponible dans les deux modes, calcul à la main confirmé.
 Enregistrement et rechargement fidèles au choix de rattrapage.
 
-### Phase 4 — Bordure interne, pour la biomasse
+### Phase 4 — Bordure interne, pour la biomasse — ✅ fait le 2026-09-18
 
 **But** : une deuxième bordure, distincte de la bordure externe déjà
 construite en Phase 1 — décision tranchée avec le porteur le 2026-09-18,
@@ -400,6 +402,20 @@ propre à chacun, visuellement distincte de l'externe ; la zone de planches
 se resserre en conséquence ; enregistrement et rechargement fidèles ;
 bordure interne active sur un côté où l'externe est inactive : part du
 bord de la parcelle sans erreur.
+
+**Vérifié en CDP** : bordure interne active à l'ouest et à l'est (0,30 m),
+inactive au nord et au sud — préremplissage fidèle après rechargement,
+rendu SVG distinct (teinte verte biomasse contre or de l'externe). Cas
+limite délibérément gardé pour la fin : bordure externe désactivée au nord,
+bordure interne activée au nord seule (0,25 m) — le rectangle interne part
+bien de `y=0` (bord réel de la parcelle) avec la bonne hauteur, sans
+erreur ni décalage fantôme dû à une externe absente ; enregistrement puis
+rechargement complet (nouvelle navigation, pas un simple redessin)
+confirment que l'état (externe nord inactive, interne nord active à 0,25 m)
+survit bien tel quel. Glisser-déposer scopé à la seule bordure externe sur
+le dessin (`.plan-bordure[data-cote]`) — la bordure interne reste modifiable
+par les champs texte seulement, pas de conflit de glisser entre les deux
+anneaux.
 
 ## Ce que ce plan exclut explicitement
 
