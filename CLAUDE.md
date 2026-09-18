@@ -70,6 +70,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
     Vents.php                rose des vents calculée à la demande (Open-Meteo) — jamais persistée ; appelé par conception-etude-site.php
     Altimetrie.php           altitude IGN — un point, ou une grille pour le relief ; filtre le sentinel z=-99999 ; appelé par api-altitude.php
+    ZoneUsda.php             zone de rusticité USDA estimée depuis 30 ans de minima (Open-Meteo, 1991-2020) — jamais persistée seule ; appelé par api-usda.php
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
@@ -122,6 +123,7 @@ public/                racine servable du site en refonte
   api-calques.php            POST ajouter/modifier/retirer un tracé — appelée par conception-etude-site.php (assets/js/calques.js)
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
+  api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
@@ -838,6 +840,32 @@ récit.*
   comme le reste du tableau. Vérifié en CDP : distincte de la surface
   utile, se met à jour correctement au changement de dimensions et de
   sens des planches.
+- **Zone climatique USDA estimée, plus seulement saisie — 2026-09-18.**
+  `src/Web/ZoneUsda.php` + `public/api-usda.php` (POST, connecté + jeton +
+  `roleSur()`, lecture seule) ; bouton « Estimer » à côté du champ de
+  `definition-site.php`, qui remplit le champ — toujours modifiable, la
+  saisie de la personne prime — depuis la position du formulaire (pas
+  besoin qu'elle soit déjà enregistrée). **Méthode** : la définition USDA
+  elle-même refaite — moyenne, sur 1991-2020 (période de la carte USDA
+  2023), du minimum annuel de température, rangée par tranches de 5 °F
+  (1a dès −60 °F) ; un seul appel Open-Meteo (`temperature_2m_min`
+  quotidien, même source que la rose des vents, ~190 Ko). Aucun service
+  USDA n'accepte de coordonnées hors États-Unis, d'où le calcul maison.
+  **Estimation, pas mesure** : maille de quelques km, une cuvette à air
+  froid sera plus froide — dit à l'écran (panneau Informations), un
+  écart d'une demi-zone avec une carte publiée est normal. Contrôle sur
+  des lieux connus : Bordeaux 9a, Paris 8b, Marseille 10a, Limoges 9a
+  (limite 8b/9a, 20,1 °F). Vérifié en CDP : sans position → message
+  dédié, position posée → champ rempli et détail affiché à la place de
+  l'aide (une ligne, aucune hauteur ajoutée à l'état par défaut),
+  saisie manuelle enregistrée et rechargée, seuils de conversion
+  vérifiés (−40 °C → 3a, plafonds 1a/13b). **Trouvé en testant** :
+  résolution DNS locale parfois > 5 s (`CONNECTTIMEOUT` porté à 10 s ici ;
+  `Vents.php` garde 5 s). **Constat préexistant** : à 412×800 et
+  360×740, `definition-site.php` débordait déjà avant ce changement
+  (« Continuer » à 790 px pour un bureau finissant à 757 px) — à 412×915
+  ça tient ; à traiter à part si les petits écrans bas comptent. Après
+  une estimation, le message ajoute environ 15 px de plus.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -875,12 +903,9 @@ il apparaît réellement, pour ne pas noyer le motif.
    (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
    le plan, § Décisions tranchées) : le niveau d'accompagnement à
    donner à la conduite jardin-forêt dès cette première version.
-2. **Zone climatique USDA, déterminée plutôt que saisie** — chantier
-   noté, pas commencé. Aucun service USDA officiel n'accepte de
-   coordonnées (seulement des codes postaux américains) ; calculable
-   depuis un historique météo (Open-Meteo, même source que la rose des
-   vents de `conception-etude-site.php` — voir `src/Web/Vents.php`).
-   Remplacerait le champ texte libre actuel de `definition-site.php`.
+2. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
+   reste à en tirer parti : filtrer les espèces du scénario par
+   rusticité une fois `conception-scenario.php` construit.
 3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
 4. **`autres-documentations.php`** — page publique restante, non

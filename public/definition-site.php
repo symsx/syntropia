@@ -98,6 +98,12 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   .site-unite{ display:flex; align-items:center; gap:.4rem; }
   .site-unite input{ flex:1; }
   .site-unite span{ font:400 .82rem var(--texte); color:var(--muted); }
+  .site-estimer{
+    padding:.42rem .8rem; border:1px solid var(--accent); border-radius:.5rem; background:transparent;
+    color:var(--accent-titre); font:600 .8rem var(--titre); cursor:pointer; white-space:nowrap;
+  }
+  .site-estimer:hover:not(:disabled){ background:var(--accent-doux); }
+  .site-estimer:disabled{ opacity:.6; cursor:progress; }
   .site-choix{ display:flex; gap:.7rem; flex-wrap:wrap; }
   .site-choix label{ display:flex; align-items:center; gap:.35rem; font:400 .82rem var(--texte); color:var(--ink); }
 
@@ -264,9 +270,12 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
               </div>
               <div class="site-champ">
                 <label for="usda"><?= Documentation::terme($termes, 'zone-climatique-usda', 'Zone climatique USDA') ?></label>
-                <small>Le froid hivernal minimal du lieu, si vous le connaissez.</small>
-                <input type="text" id="usda" name="usda" placeholder="Ex. 8b"
-                       value="<?= htmlspecialchars($reponses['site_usda'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                <small id="usda-aide" data-defaut="Le froid hivernal minimal — à saisir, ou à estimer.">Le froid hivernal minimal — à saisir, ou à estimer.</small>
+                <div class="site-unite">
+                  <input type="text" id="usda" name="usda" placeholder="Ex. 8b"
+                         value="<?= htmlspecialchars($reponses['site_usda'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                  <button type="button" class="site-estimer" id="usda-estimer">Estimer</button>
+                </div>
               </div>
               <fieldset class="site-champ">
                 <legend>Exposition dominante</legend>
@@ -321,6 +330,11 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
       <p>La zone climatique USDA classe les lieux par leur froid hivernal minimal :
          elle ne dit rien de l'été, mais elle borne ce qui peut passer l'hiver sans
          protection.</p>
+      <p>« Estimer » la calcule depuis la position posée sur la carte : la moyenne,
+         sur trente ans, du jour le plus froid de chaque année. La maille météo fait
+         quelques kilomètres — une cuvette où le froid s'accumule sera plus froide
+         que l'estimation. Un écart d'une demi-zone est normal ; votre observation
+         sur place prime.</p>
     </div>
   </aside>
 
@@ -336,6 +350,34 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 <script src="assets/js/carte.js"></script>
 <script>
   Gabarit.init({ etape: 'definition-site' });
+
+  // Estimer la zone USDA depuis la position du formulaire (même pas encore
+  // enregistrée). Le résultat remplit le champ, qui reste modifiable ; le
+  // détail (minimum moyen, période) prend la place de l'aide, pour ne pas
+  // allonger une page qui ne défile jamais.
+  (function(){
+    var bouton = document.getElementById('usda-estimer');
+    var champ = document.getElementById('usda');
+    var aide = document.getElementById('usda-aide');
+    bouton.addEventListener('click', function(){
+      var corps = new URLSearchParams();
+      corps.set('csrf', <?= json_encode($auth->jeton()) ?>);
+      corps.set('site_id', <?= json_encode($siteId) ?>);
+      corps.set('latitude', document.getElementById('latitude').value);
+      corps.set('longitude', document.getElementById('longitude').value);
+      bouton.disabled = true;
+      bouton.textContent = 'Calcul…';
+      aide.textContent = 'Trente ans de relevés météo à lire — quelques secondes.';
+      fetch('api-usda.php', { method: 'POST', body: corps, credentials: 'same-origin' })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if (j.ok) { champ.value = j.zone; }
+          aide.textContent = j.message + (j.ok ? ' Corrigez si vous savez mieux.' : '');
+        })
+        .catch(function(){ aide.textContent = "Le calcul a échoué — saisissez la zone si vous la connaissez."; })
+        .then(function(){ bouton.disabled = false; bouton.textContent = 'Estimer'; });
+    });
+  })();
 </script>
 </body>
 </html>
