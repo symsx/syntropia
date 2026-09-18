@@ -6,6 +6,11 @@ méthodes de la "Syntropie".
 
 Tout se trouve à un seul endroit sur ce site.
 
+Note importante ; cet outil est proposé en tant qu'aide 
+à la conception et au suivi de systèmes agroforestiers 
+syntropiques et ne remplace en aucun cas une formation 
+dans ce domaine.
+
 Syntropia accompagne la conception et la conduite d'un système agroforestier
 syntropique — de la première idée jusqu'au suivi, saison après saison en se
 basant sur des ressouces de référence : 
