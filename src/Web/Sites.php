@@ -8,22 +8,21 @@ use PDO;
 use Syntropia\Database;
 
 /**
- * Le site — un seul par compte, pour l'instant.
+ * Les sites — plusieurs par compte depuis le 2026-09-18 : le sien, et ceux
+ * qu'on a rejoints par invitation (chantier `chantier-inscription-
+ * parrainage.md`).
  *
- * Inspiré d'`application/src/Web/Sites.php` (dépôt de référence), mais
- * réduit à ce que `directives.txt` demande aujourd'hui : « un seul
- * projet par utilisateur avec un site et *n* parcelles ». Pas de liste
- * de sites, pas de code d'invitation à un site précis — ces pièces
- * reviendront avec `Web/Invitations.php` (rattachement à un site) et
- * `compte.php`, le jour où un compte pourra porter plus d'un projet ou
- * en rejoindre un autre que le sien.
+ * Inspiré d'`application/src/Web/Sites.php` (dépôt de référence). **Le
+ * projet actif** : `pourCompte()` renvoie toujours UN site — celui que le
+ * compte a activé (cookie `syntropia_projet`, revalidé à chaque lecture
+ * contre `membre_site`), à défaut le premier. Les pages qui appellent
+ * `pourCompte()` n'ont donc pas à savoir qu'il y en a plusieurs.
  *
  * `membre_site` (l'accès) et `participant` (une personne dont les
  * réponses comptent) restent deux tables distinctes, comme dans le
  * dépôt de référence : la première ouvre les données, la seconde nomme
  * quelqu'un. `creer()` pose les deux en une transaction, avec le même
- * compte des deux côtés — c'est tout ce qu'un seul porteur, sans
- * personne d'autre encore invitée, demande.
+ * compte des deux côtés.
  */
 final class Sites
 {
@@ -38,24 +37,71 @@ final class Sites
     // Lire
     // ------------------------------------------------------------------
 
+    /** Le cookie qui retient le projet actif — l'identifiant seul, jamais un droit. */
+    private const COOKIE_ACTIF = 'syntropia_projet';
+
     /**
-     * Le site de ce compte, ou `null` s'il n'en a pas encore ouvert.
+     * Tous les sites d'un compte, avec son rôle sur chacun (`role`).
+     * Dans l'ordre d'ouverture — le premier reste celui que l'on ouvrait
+     * quand un compte n'en avait qu'un.
      *
-     * Un seul, pour l'instant : le premier trouvé si jamais il y en
-     * avait plusieurs (accès donné à la main en base).
+     * @return list<array<string, mixed>>
+     */
+    public function deCompte(int $compteId): array
+    {
+        $req = $this->pdo()->prepare(
+            'SELECT s.*, m.role FROM site s
+               JOIN membre_site m ON m.site_id = s.id
+              WHERE m.compte_id = ?
+              ORDER BY s.id');
+        $req->execute([$compteId]);
+        return $req->fetchAll();
+    }
+
+    /**
+     * Le site actif de ce compte, ou `null` s'il n'en a aucun.
+     *
+     * Le cookie dit lequel la personne a choisi ; il est revérifié contre
+     * ses appartenances à chaque lecture — un projet dont elle a été
+     * retirée, ou un cookie forgé, retombe sur le premier sans erreur.
      *
      * @return array<string, mixed>|null
      */
     public function pourCompte(int $compteId): ?array
     {
-        $req = $this->pdo()->prepare(
-            'SELECT s.* FROM site s
-               JOIN membre_site m ON m.site_id = s.id
-              WHERE m.compte_id = ?
-              ORDER BY s.id
-              LIMIT 1');
-        $req->execute([$compteId]);
-        return $req->fetch() ?: null;
+        $sites = $this->deCompte($compteId);
+        if ($sites === []) {
+            return null;
+        }
+        $voulu = (int) ($_COOKIE[self::COOKIE_ACTIF] ?? 0);
+        foreach ($sites as $site) {
+            if ((int) $site['id'] === $voulu) {
+                return $site;
+            }
+        }
+        return $sites[0];
+    }
+
+    /**
+     * Retient ce site comme actif. Refuse — `false` — un site dont le
+     * compte n'est pas membre : on n'active jamais ce qu'on ne peut pas
+     * ouvrir.
+     */
+    public function activer(int $siteId, int $compteId): bool
+    {
+        if ($this->roleSur($siteId, $compteId) === null) {
+            return false;
+        }
+        $_COOKIE[self::COOKIE_ACTIF] = (string) $siteId;
+        if (!headers_sent()) {
+            setcookie(self::COOKIE_ACTIF, (string) $siteId, [
+                'expires' => time() + 365 * 24 * 3600,
+                'path' => \Syntropia\Configuration::base(),
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+        }
+        return true;
     }
 
     /** @return array<string, mixed>|null */

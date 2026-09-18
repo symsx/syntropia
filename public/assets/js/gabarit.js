@@ -40,6 +40,7 @@ window.Gabarit = (function(){
     initTiroirInfo();
     initOutils();
     initCompteMenu();
+    initProjets();
     initEchap();
     initTermes();
 
@@ -304,6 +305,80 @@ window.Gabarit = (function(){
       ouvrir(false);
     });
     fermetures.push(function(){ ouvrir(false); });
+  }
+
+  /* ------------------------------------------------------- les projets */
+  /* Un compte peut porter plusieurs projets (le sien, ceux rejoints sur
+     invitation). Rien de cela n'est dans le HTML des pages : api-projets.php
+     dit lesquels, et ce code pose deux choses — « Nouveau projet » dans le
+     menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
+     projets » en tête du panneau gauche. Une page publique (pas de menu de
+     compte) n'appelle rien. */
+  function initProjets(){
+    var menu = el('compte-menu');
+    if (!menu || !window.fetch) return;
+    fetch('api-projets.php', { credentials: 'same-origin' })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if (!j || !j.ok) return;
+        ajouterNouveauProjet(menu);
+        if (j.projets.length > 1) ajouterSelecteurProjets(j);
+      })
+      .catch(function(){ /* le sélecteur est un confort : jamais une erreur visible */ });
+  }
+
+  function ajouterNouveauProjet(menu){
+    var sep = menu.querySelector('.compte-menu-separateur');
+    var a = document.createElement('a');
+    a.className = 'compte-menu-item';
+    a.href = 'definition-projet.php?nouveau=1';
+    a.innerHTML = '<span class="compte-menu-puce">+</span>Nouveau projet';
+    menu.insertBefore(a, sep || null);
+  }
+
+  var LIBELLE_ROLE = { porteur: 'porteur', contributeur: 'contributeur', lecteur: 'lecteur' };
+
+  function ajouterSelecteurProjets(j){
+    var corps = document.querySelector('.pg-corps');
+    if (!corps) return;
+    var section = document.createElement('div');
+    section.className = 'pg-section';
+    section.innerHTML = '<p class="pg-titre">Mes projets</p>';
+    var liste = document.createElement('ul');
+    liste.className = 'pg-liste';
+    j.projets.forEach(function(p){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#';
+      var actif = p.id === j.actif;
+      if (actif){ a.className = 'active'; a.setAttribute('aria-current', 'true'); }
+      var puce = document.createElement('span');
+      puce.className = 'pg-puce';
+      puce.textContent = actif ? '●' : '○';
+      var libelle = document.createElement('span');
+      libelle.className = 'pg-libelle';
+      libelle.textContent = p.nom + (p.role !== 'porteur' ? ' — ' + (LIBELLE_ROLE[p.role] || p.role) : '');
+      a.appendChild(puce);
+      a.appendChild(libelle);
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        if (actif) return;
+        var corpsPost = new URLSearchParams();
+        corpsPost.set('csrf', j.csrf);
+        corpsPost.set('site_id', p.id);
+        fetch('api-projets.php', { method: 'POST', body: corpsPost, credentials: 'same-origin' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(rep){
+            // Sans la requête : un `?parcelle=` du projet quitté n'existe
+            // pas dans le nouveau.
+            if (rep && rep.ok) window.location.href = window.location.pathname;
+          });
+      });
+      li.appendChild(a);
+      liste.appendChild(li);
+    });
+    section.appendChild(liste);
+    corps.insertBefore(section, corps.firstChild);
   }
 
   function initEchap(){

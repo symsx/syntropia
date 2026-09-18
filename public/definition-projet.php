@@ -33,7 +33,12 @@ $auth->exige(Role::Utilisateur);
 $sites = new Sites();
 $compteId = (int) $auth->compteId();
 
-if ($sites->pourCompte($compteId) !== null) {
+// « ?nouveau » ouvre un projet de plus, à côté de ceux qu'on a déjà — le
+// sien ou ceux rejoints par invitation. Sans lui, un compte qui a déjà un
+// projet n'a rien à faire ici.
+$nouveau = isset($_GET['nouveau']);
+$dejaUn = $sites->pourCompte($compteId) !== null;
+if ($dejaUn && !$nouveau) {
     header('Location: ' . Configuration::base() . 'definition-vision.php');
     exit;
 }
@@ -48,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($nom === '') {
             $erreur = 'Le nom du projet est nécessaire pour commencer.';
         } else {
-            $sites->creer($nom, $compteId, $auth->nomAffiche() ?? 'Porteur');
+            $id = $sites->creer($nom, $compteId, $auth->nomAffiche() ?? 'Porteur');
+            $sites->activer($id, $compteId);
             header('Location: ' . Configuration::base() . 'definition-vision.php');
             exit;
         }
@@ -148,9 +154,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="bureau" id="bureau">
       <div class="projet-centre">
         <div class="projet-cadre">
-          <h1>Ouvrir votre projet</h1>
+          <h1><?= $dejaUn ? 'Ouvrir un nouveau projet' : 'Ouvrir votre projet' ?></h1>
           <p class="projet-chapeau">Un nom suffit pour commencer — vous pourrez le
-             préciser à l'étape « Site », dans quelques instants.</p>
+             préciser à l'étape « Site », dans quelques instants.<?= $dejaUn
+                 ? ' Vos autres projets restent où ils sont : le sélecteur du panneau de gauche permet de passer de l\'un à l\'autre.'
+                 : '' ?></p>
           <?php if ($erreur !== null): ?>
             <p class="projet-erreur"><?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?></p>
           <?php endif; ?>
@@ -177,8 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Un seul projet par compte, pour l'instant — un site, et autant de
-         parcelles qu'il en faudra. Le nom peut changer plus tard ; rien
+      <p>Un projet, c'est un site, et autant de parcelles qu'il en faudra.
+         Un compte peut en porter plusieurs, et rejoindre ceux d'autres
+         personnes sur invitation. Le nom peut changer plus tard ; rien
          d'autre ne se décide ici. Vos réponses aux étapes suivantes
          s'enregistrent dès que vous les donnez, et vous les retrouverez
          en y revenant.</p>

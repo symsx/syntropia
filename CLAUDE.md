@@ -31,6 +31,11 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   planches, dimensions, rattrapage), proposé le 2026-09-18. **Les quatre
   phases sont faites, chantier terminé le 2026-09-18** — réplique
   partielle et assumée de la référence, voir § Point de reprise.
+- `chantier-inscription-parrainage.md` — le plan détaillé (4 phases) de
+  l'inscription par code de parrainage : inviter quelqu'un à créer un
+  compte, ou à rejoindre un projet (et un compte peut alors avoir
+  plusieurs projets). **Phase 1 faite le 2026-09-18** — voir § Point de
+  reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -62,7 +67,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Comptes.php            dépôt des comptes (base syntropia_comptes)
     Authentification.php   session, connexion, CSRF, garde-page
     Invitations.php         codes d'invitation — condition de l'inscription
-    Sites.php                le site d'un compte — un seul, pour l'instant
+    Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
     Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
@@ -124,6 +129,7 @@ public/                racine servable du site en refonte
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
+  api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
@@ -351,9 +357,14 @@ récit.*
 - Menus et barre d'outils : du plus utilisé au moins utilisé, sauf les
   listes de parcours (phases, étapes d'une parcelle) qui gardent
   l'ordre chronologique. Voir § Architecture.
-- **Un seul projet par compte** — pas de liste de sites. Un site s'ouvre
-  une fois, sur `definition-projet.php` (passage obligé, hors
-  `etapes.js`), avant la première question de Définition.
+- **Un compte peut avoir plusieurs projets** (le sien, ceux rejoints sur
+  invitation) — décision rouverte par le porteur le 2026-09-18, qui
+  remplace « un seul projet par compte ». Un **projet actif** (cookie
+  `syntropia_projet`, revérifié contre `membre_site`) : `Sites::
+  pourCompte()` renvoie toujours UN site, les pages n'ont pas changé. Un
+  premier site s'ouvre sur `definition-projet.php` (passage obligé, hors
+  `etapes.js`), avant la première question de Définition ; un projet de
+  plus, sur `definition-projet.php?nouveau=1`.
 - **Deux étapes restent volontairement reportées**, à part entière —
   pas construites en version allégée, `pret` absent dans `etapes.js` :
   `conception-scenario.php` (scénario de plantation — espèces, strates,
@@ -877,6 +888,29 @@ récit.*
   (« Continuer » à 790 px pour un bureau finissant à 757 px) — à 412×915
   ça tient ; à traiter à part si les petits écrans bas comptent. Après
   une estimation, le message ajoute environ 15 px de plus.
+- **Plusieurs projets par compte — Phase 1 du chantier « inscription par
+  parrainage », 2026-09-18.** Le porteur veut deux cas : inviter
+  quelqu'un à créer un compte (il ouvre son projet), et inviter quelqu'un
+  à rejoindre un projet existant (il peut aussi ouvrir le sien) — le
+  second rouvre « un seul projet par compte », décision retirée plus haut.
+  Décisions tranchées avec lui : tout utilisateur connecté peut inviter à
+  créer un compte ; le porteur seul invite à son projet, en choisissant
+  `contributeur` ou `lecteur` ; passage d'un projet à l'autre par un
+  sélecteur du panneau gauche, pas par un écran de choix à la connexion.
+  `Sites::deCompte()`/`activer()`, `pourCompte()` renvoie le projet actif ;
+  `public/api-projets.php` ; `gabarit.js` (`initProjets()`) pose « Nouveau
+  projet » dans le menu du compte et, s'il y a plusieurs projets, la
+  section « Mes projets » en tête du panneau gauche — **aucune des ~27
+  pages n'a été touchée** (le menu du compte est dupliqué dans chacune,
+  d'où l'injection JS). Vérifié en CDP : sélecteur absent avec un seul
+  projet, deux projets, bascule retenue au rechargement, réponses de
+  Définition bien séparées par projet, cookie forgé vers un projet
+  étranger sans effet (retombe sur le premier), POST d'activation d'un
+  projet étranger 403, anonyme 403. Phases 2 à 4 (page « Inviter »,
+  inscription rattachée à un projet, rejoindre avec un compte existant)
+  pas commencées ; détail et points à vérifier (droits d'un lecteur sur
+  ses propres réponses, retrait d'un membre) dans
+  `chantier-inscription-parrainage.md`.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -907,27 +941,30 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-1. **Chantier « scénario de plantation »** — plan dans
+1. **Chantier « inscription par parrainage »** — plan dans
+   `chantier-inscription-parrainage.md` ; Phase 1 faite, Phase 2 (page
+   « Inviter ») suivante.
+2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` (4 phases : base de végétaux
    `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,
    page `conception-scenario.php`). **Phase 1 faite le 2026-09-18**
    (voir plus haut). Un point reste à trancher avant la Phase 2 (voir
    le plan, § Décisions tranchées) : le niveau d'accompagnement à
    donner à la conduite jardin-forêt dès cette première version.
-2. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
+3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
    reste à en tirer parti : filtrer les espèces du scénario par
    rusticité une fois `conception-scenario.php` construit.
-3. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-4. **`autres-documentations.php`** — page publique restante, non
+5. **`autres-documentations.php`** — page publique restante, non
    commencée.
-5. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
+6. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
    dans le menu du compte).
-6. **Au-delà du premier tour** : rien ne relit encore les réponses
+7. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-7. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+8. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-8. Aucune procédure n'automatise `bin/deployer.py` après chaque
+9. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
