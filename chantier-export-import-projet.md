@@ -102,20 +102,44 @@ Phase 3  Aller-retour — export → import → export : identique aux identifia
 Phase 4  (facultatif) Les tracés en GeoJSON, pour QGIS et les autres outils
 ```
 
-## À décider avant de coder
+## Décidé le 2026-09-18
 
-1. **Qui peut exporter ?** Proposition : le **porteur seul** — le fichier porte
-   les réponses de **tous** les participants, pas seulement les siennes.
-2. **Que devient la date d'export à l'écran ?** Proposition minimale : dans le
-   fichier et à l'aperçu d'import. Un « dernier export : … » sur le projet
-   demanderait une colonne — à trancher.
-3. **Garder la trace d'origine d'un projet importé** (« importé de… le… ») :
-   où, sans migration ? (dans les réponses, dans une note, ou une colonne).
-4. **Les plafonds** : la limite d'envoi de PHP est de 2 Mo en local ; un projet
-   riche en relevés d'altitude peut la dépasser — l'export doit rester sous la
-   limite de l'import, ou la limite se relève.
-5. **La conduite du site** et les surcharges d'espèces : à reprendre telles
-   quelles, ou à revalider à l'arrivée ?
+1. **Le porteur seul exporte.** Le fichier porte les réponses de **tous** les
+   participants, pas seulement les siennes : ce n'est pas un droit à donner à
+   un contributeur ou à un lecteur.
+2. **La date d'export s'affiche à l'écran** : dans le fichier (`exporte_le`),
+   à l'export (« exporté le… ») et **à l'aperçu d'import**, avant de valider.
+   Pas de « dernier export » sur le projet : cela demanderait une colonne,
+   et le porteur n'en a pas fait la demande.
+3. **La conduite du site et les surcharges d'espèces sont reprises telles
+   quelles**, sans revalidation à l'arrivée.
+4. **Le plafond d'import est bas** — voir la mesure ci-dessous.
+
+### Le volume d'un projet, mesuré
+
+Sur le projet réel « La Vadaux » (12 réponses, 1 parcelle, 8 tracés) : **environ
+14 Ko de données**, dont l'essentiel est la géométrie des tracés. Le plus gros
+tracé de tout le dépôt local fait **11 Ko**. Un projet riche — cinquante végétaux,
+une vingtaine de parcelles, des centaines de tracés — reste très en dessous
+de **1 Mo**. Un relevé d'altitudes (une grille d'environ 40 × 40 points) pèse
+une dizaine de Ko.
+
+**Plafond proposé : 1 Mo** (soit près de 70 fois le projet réel) — bien sous le
+plafond d'envoi de PHP (2 Mo en local, 256 Mo chez alwaysdata). Le seul moyen
+de le dépasser serait d'avoir importé des milliers de tracés GeoJSON (le
+formulaire d'import de la carte en accepte jusqu'à 300 de 1 500 points). Dans ce
+cas, **l'export refuse de produire un fichier qu'on ne pourrait pas réimporter**
+et dit quelle part est trop lourde — plutôt qu'un fichier muet qui échoue à
+l'arrivée.
+
+## Reste à confirmer
+
+**La trace d'origine d'un projet importé** (« importé le… d'un fichier exporté
+le… ») n'a pas été tranchée. **Proposition** : une colonne facultative
+`site.origine` (texte JSON : nom d'origine, `exporte_le`, `importe_le`) — une
+migration additive, du même type que `invitation.role_site` (déjà rejouable
+sur MySQL et MariaDB). Alternative sans migration : la noter dans une réponse
+du porteur, mais elle se mêlerait à des réponses qui n'en sont pas.
 
 ## Fichiers critiques
 
