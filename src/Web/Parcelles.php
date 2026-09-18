@@ -44,6 +44,16 @@ final class Parcelles
     public const PLANCHE_M = 1.2;
     public const PASSE_PIED_M = 0.5;
 
+    /**
+     * Une planche dont un grand côté touche une bordure plutôt qu'un
+     * passe-pied ne se travaille que d'un seul côté — environ 0,60 m de
+     * portée, contre 1,20 m en approchant des deux côtés. Les deux
+     * planches de bord d'un rang (la première et la dernière) font donc
+     * toujours cette largeur, jamais `PLANCHE_M` plein pot. Chantier
+     * « plan de parcelle », Phase 3 (2026-09-18).
+     */
+    public const BORD_PLANCHE_M = 0.6;
+
     public function __construct(private ?PDO $pdo = null) {}
 
     private function pdo(): PDO
@@ -112,12 +122,15 @@ final class Parcelles
     /**
      * Les quatre bordures externes, l'orientation des planches et les
      * dimensions réelles — ce que `conception-parcelles.js` dessine.
-     * Chantier « plan de parcelle », Phase 1 (2026-09-18) : voir
+     * Chantier « plan de parcelle » (2026-09-18) : voir
      * `chantier-plan-de-parcelle.md`. Réplique partielle et assumée de la
      * référence (`src/Plan.php`/`ImplantationBordures.php`) — bordures
      * externes seulement (la clé `bordures.externe` laisse la place à
      * `bordures.interne` plus tard sans changer la forme déjà écrite),
-     * pas de rives, pas de rattrapage, pas d'assignation d'espèce.
+     * pas de rives, pas d'assignation d'espèce. Le rattrapage (Phase 3)
+     * est enregistré tel quel (`planches`/`passe-pieds`) — la répartition
+     * elle-même est un calcul purement client, voir
+     * `conception-parcelles.js`.
      *
      * **Verrou optimiste**, à l'identique de la référence
      * (`ImplantationBordures::version()`) : `SELECT … FOR UPDATE`, hash de
@@ -151,6 +164,15 @@ final class Parcelles
         $orientation = (string) ($valeurs['orientation_lignes'] ?? '');
         if (!in_array($orientation, ['nord-sud', 'est-ouest'], true)) {
             $erreurs['orientation_lignes'] = 'Le sens des planches doit être nord-sud ou est-ouest.';
+        }
+
+        // Rattrapage — Phase 3 (2026-09-18) : le reste entre le nombre
+        // idéal de planches et la largeur utile réelle se répartit soit
+        // sur les planches intérieures, soit sur les passe-pieds, jamais
+        // les deux — voir chantier-plan-de-parcelle.md § Phase 3.
+        $rattrapage = (string) ($valeurs['rattrapage'] ?? '');
+        if (!in_array($rattrapage, ['planches', 'passe-pieds'], true)) {
+            $erreurs['rattrapage'] = 'Le rattrapage doit se faire sur les planches ou sur les passe-pieds.';
         }
 
         // Bordure externe — quatre côtés, chacun actif ou non et sa
@@ -205,7 +227,7 @@ final class Parcelles
                 return ['erreurs' => ['version' => 'Le plan a changé, rechargez la page avant de modifier.'], 'version' => null];
             }
 
-            $plan = json_encode(['bordures' => ['externe' => $bordures]], JSON_UNESCAPED_UNICODE);
+            $plan = json_encode(['bordures' => ['externe' => $bordures], 'rattrapage' => $rattrapage], JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(
                 'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?
                  WHERE id = ? AND site_id = ?');

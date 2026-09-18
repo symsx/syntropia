@@ -14,6 +14,7 @@
   // l'aperçu tracé à l'écran, jamais deux sources qui pourraient diverger.
   var cfgPlan = (typeof PLAN_CONSTANTES !== 'undefined') ? PLAN_CONSTANTES : {};
   var PLANCHE = cfgPlan.planche || 1.2, PASSE_PIED = cfgPlan.passePied || 0.5;
+  var BORD_PLANCHE = cfgPlan.bordPlanche || 0.6;
 
   function nombre(valeur){ return parseFloat(String(valeur).replace(',', '.')) || 0; }
   function fmt(valeur, decimales){ return valeur.toFixed(decimales === undefined ? 2 : decimales).replace('.', ','); }
@@ -26,6 +27,44 @@
       b[cote] = c.checked ? nombre(champDe(cote).value) : 0;
     });
     return b;
+  }
+
+  /* La largeur de chaque planche d'un rang, et de chaque passe-pied entre
+   * elles — en mètres. Chantier « plan de parcelle », Phase 3
+   * (2026-09-18) : les deux planches de bord (la première et la
+   * dernière, celles qui touchent une bordure plutôt qu'un passe-pied)
+   * font toujours BORD_PLANCHE, jamais PLANCHE plein pot — un seul côté
+   * accessible, moitié moins de portée. Le reste entre le compte idéal et
+   * la largeur disponible se répartit sur les planches intérieures ou sur
+   * les passe-pieds, au choix (`rattrapage`), jamais les deux. Même
+   * formule que `Parcelles::enregistrerPlan()` côté serveur (le nombre de
+   * planches, pas leur largeur individuelle — un calcul purement client,
+   * voir chantier-plan-de-parcelle.md § Phase 3). */
+  function planchesLayout(disponible, rattrapage){
+    var pas = PLANCHE + PASSE_PIED;
+    var n = disponible > PLANCHE ? Math.max(1, Math.floor((disponible - PLANCHE) / pas) + 1) : (disponible > 0 ? 1 : 0);
+    var largeurs = [], passePieds = [];
+    if (n <= 0){ return { n: 0, largeurs: largeurs, passePieds: passePieds }; }
+    if (n === 1){
+      largeurs = [Math.min(PLANCHE, disponible)];
+    } else if (n === 2){
+      // Ni l'une ni l'autre n'est intérieure : rien à qui laisser le
+      // rattrapage « planches », tout va au passe-pied qui les sépare.
+      largeurs = [BORD_PLANCHE, BORD_PLANCHE];
+      passePieds = [Math.max(0, disponible - 2 * BORD_PLANCHE)];
+    } else {
+      var nInt = n - 2;
+      var idealInt = nInt * PLANCHE + (n - 1) * PASSE_PIED;
+      var reste = (disponible - 2 * BORD_PLANCHE) - idealInt;
+      var pInt = PLANCHE, ppp = PASSE_PIED;
+      if (rattrapage === 'planches'){ pInt = PLANCHE + reste / nInt; }
+      else { ppp = PASSE_PIED + reste / (n - 1); }
+      largeurs.push(BORD_PLANCHE);
+      for (var i = 0; i < nInt; i++){ largeurs.push(pInt); }
+      largeurs.push(BORD_PLANCHE);
+      for (var j = 0; j < n - 1; j++){ passePieds.push(ppp); }
+    }
+    return { n: n, largeurs: largeurs, passePieds: passePieds };
   }
 
   function redessiner(){
@@ -78,35 +117,35 @@
     planches.innerHTML = '';
     var largeurUtile = Math.max(0, longueur - b.ouest - b.est);
     var hauteurUtile = Math.max(0, largeur - b.nord - b.sud);
-    var pas = PLANCHE + PASSE_PIED;
     var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
     var sens = sensChoisi ? sensChoisi.value : 'nord-sud';
-    var nbPlanches;
+    var rattrapageChoisi = document.querySelector('input[name="rattrapage"]:checked');
+    var rattrapage = rattrapageChoisi ? rattrapageChoisi.value : 'passe-pieds';
+    var disponible = sens === 'nord-sud' ? largeurUtile : hauteurUtile;
+    var layout = planchesLayout(disponible, rattrapage);
+    var nbPlanches = layout.n;
+
     if (sens === 'nord-sud'){
-      nbPlanches = largeurUtile > PLANCHE ? Math.max(1, Math.floor((largeurUtile - PLANCHE) / pas) + 1) : (largeurUtile > 0 ? 1 : 0);
-      var xDepart = b.ouest * ECH;
-      for (var i = 0; i < nbPlanches; i++){
-        var x = xDepart + i * pas * ECH;
-        var w = Math.min(PLANCHE * ECH, (longueur - b.est) * ECH - x);
-        if (w <= 0) break;
+      var x = b.ouest * ECH;
+      for (var i = 0; i < layout.largeurs.length; i++){
+        var w = layout.largeurs[i] * ECH;
         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect.setAttribute('class', 'plan-planche');
         rect.setAttribute('x', x); rect.setAttribute('y', bn);
         rect.setAttribute('width', w); rect.setAttribute('height', Math.max(0, H - bn - bs));
         planches.appendChild(rect);
+        x += w + (layout.passePieds[i] || 0) * ECH;
       }
     } else {
-      nbPlanches = hauteurUtile > PLANCHE ? Math.max(1, Math.floor((hauteurUtile - PLANCHE) / pas) + 1) : (hauteurUtile > 0 ? 1 : 0);
-      var yDepart = b.nord * ECH;
-      for (var j = 0; j < nbPlanches; j++){
-        var y = yDepart + j * pas * ECH;
-        var h = Math.min(PLANCHE * ECH, (largeur - b.sud) * ECH - y);
-        if (h <= 0) break;
+      var y = b.nord * ECH;
+      for (var j = 0; j < layout.largeurs.length; j++){
+        var h = layout.largeurs[j] * ECH;
         var rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         rect2.setAttribute('class', 'plan-planche');
         rect2.setAttribute('x', bo); rect2.setAttribute('y', y);
         rect2.setAttribute('width', Math.max(0, L - bo - be)); rect2.setAttribute('height', h);
         planches.appendChild(rect2);
+        y += h + (layout.passePieds[j] || 0) * ECH;
       }
     }
 
@@ -114,10 +153,13 @@
     var lineaire = (b.nord ? longueur : 0) + (b.sud ? longueur : 0) + (b.ouest ? largeur : 0) + (b.est ? largeur : 0);
     document.getElementById('r-surface').textContent = fmt(surfaceUtile) + ' m²';
     document.getElementById('r-planches').textContent = nbPlanches;
+    document.getElementById('r-planche-bord').textContent = layout.largeurs.length ? fmt(layout.largeurs[0]) + ' m' : '—';
+    document.getElementById('r-planche-interieure').textContent = layout.largeurs.length > 2 ? fmt(layout.largeurs[1]) + ' m' : '—';
+    document.getElementById('r-passe-pied').textContent = layout.passePieds.length ? fmt(layout.passePieds[0]) + ' m' : '—';
     document.getElementById('r-lineaire').textContent = fmt(lineaire) + ' m';
   }
 
-  document.querySelectorAll('.bordure-active, .bordure-largeur, #in-longueur, #in-largeur, input[name="sens-planches"]').forEach(function(el){
+  document.querySelectorAll('.bordure-active, .bordure-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"]').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
   });
@@ -216,6 +258,8 @@
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
       corps.set('orientation_lignes', sensChoisi ? sensChoisi.value : 'nord-sud');
+      var rattrapageChoisi = document.querySelector('input[name="rattrapage"]:checked');
+      corps.set('rattrapage', rattrapageChoisi ? rattrapageChoisi.value : 'passe-pieds');
       document.querySelectorAll('.bordure-active').forEach(function(c){
         var cote = c.dataset.cote;
         corps.set('bordures[' + cote + '][actif]', c.checked ? '1' : '');
@@ -262,6 +306,7 @@
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });
     document.getElementById('sens-nord-sud').checked = true;
+    document.getElementById('rattrapage-passe-pieds').checked = true;
     redessiner();
   });
 

@@ -92,11 +92,18 @@ le chantier scénario en avance, et sans lui. Ce plan ne le fait pas — voir
 ```
 Phase 1  Parcelles::enregistrerPlan() — bordures + sens + verrou optimiste
 Phase 2  Convergence avec la carte : nb_planches calculé, plus saisi à la main
+Phase 3  Rattrapage homogène + planches de bord à portée simple
+Phase 4  Bordure interne — deuxième anneau, biomasse plutôt que bloque-herbe
 ```
 
 Phase 2 est franchement séparable — Phase 1 seule répond déjà entièrement au
-signalement du porteur. À ne poser que si Phase 1 est jugée utile telle
-quelle.
+signalement du porteur. Phases 3 et 4 sont posées le 2026-09-18 suite à deux
+demandes du porteur après usage réel de la Phase 1 : une répartition plus
+juste des planches (Phase 3), et une deuxième bordure fidèle aux « tortues »
+d'Anaëlle Théry (Phase 4, décision tranchée avec le porteur après
+vérification contre `connaissances/livre-bienvenue-en-syntropie/
+ch14-une-histoire-de-tortue.md` — voir son § pour le détail de ce qui s'y
+trouve et ce qui en diffère).
 
 ### Phase 1 — Persister le plan (bordures, sens, dimensions) — ✅ fait le 2026-09-18
 
@@ -245,13 +252,163 @@ sélecteur « Poser une parcelle » de la carte interactive affiche aussitôt
 lue par `calques.js` porte bien `largeur_m`/`longueur_m`/`nb_planches`
 corrects, lus directement des colonnes.
 
+### Phase 3 — Rattrapage homogène, et une largeur simple pour les planches de bord — ✅ fait le 2026-09-18
+
+**But** : deux demandes du porteur après usage réel de la Phase 1.
+
+1. Aujourd'hui, `nbPlanches` planches de 1,20 m plein pot, espacées de
+   0,50 m plein pot, sont posées depuis le bord ouest (ou nord) — le reste
+   de l'espace disponible, s'il y en a, est perdu (jamais dessiné, jamais
+   compté). Le porteur veut répartir ce reste de façon homogène, en
+   laissant le choix : soit sur les planches (chacune un peu plus large),
+   soit sur les passe-pieds (chacun un peu plus large) — jamais les deux à
+   la fois. Valeurs de départ (« idéales ») : 1,20 m et 0,50 m.
+2. **Une planche qui touche une bordure par un de ses grands côtés — au
+   lieu d'un passe-pied — n'est accessible que d'un seul côté.** Le
+   jardinier peut atteindre environ 0,60 m depuis un passe-pied, contre
+   1,20 m en approchant des deux côtés à la fois. Ces planches de bord (la
+   première et la dernière de chaque rang, celles dont un grand côté touche
+   la bordure de départ ou d'arrivée plutôt qu'un passe-pied) doivent donc
+   toujours faire 0,60 m, jamais 1,20 m — quel que soit le rattrapage
+   choisi pour les planches intérieures.
+
+**Décisions tranchées avant de coder**
+
+- **`Parcelles::BORD_PLANCHE_M = 0.60`**, une troisième constante à côté de
+  `PLANCHE_M`/`PASSE_PIED_M`, même traitement (source unique, exposée au
+  client par `PLAN_CONSTANTES`).
+- **Le rattrapage choisi (`planches` ou `passe-pieds`) est un réglage par
+  parcelle**, enregistré dans `parcelle.plan` (JSON) aux côtés de
+  `bordures`/`orientation_lignes` — un nouveau radio « Rattrapage » dans le
+  panneau, même schéma que « Sens des planches ».
+- **`nb_planches` ne change pas de formule.** Le nombre de planches qui
+  tiennent reste calculé comme en Phase 2 (les valeurs idéales déterminent
+  le compte) — Phase 3 ne change que la **largeur affichée et dessinée**
+  de chaque planche, pas leur nombre. Aucune modification de
+  `Parcelles::enregistrerPlan()` n'est donc requise pour `nb_planches` lui-
+  même ; seul l'enregistrement du choix de rattrapage s'y ajoute.
+- **Cas `n ≤ 2`** : avec une ou deux planches, il n'y a pas de planche
+  « intérieure » à qui laisser le rattrapage « planches » — les deux
+  planches (ou l'unique) sont déjà des planches de bord, à 0,60 m. Le
+  rattrapage choisi n'a alors plus d'effet : tout le reste va au(x)
+  passe-pied(s), quel que soit le réglage. Pas une erreur, juste rien à
+  répartir ailleurs.
+- **Formule, un rang de `n ≥ 3` planches** (largeur ou hauteur utile
+  `disponible`, selon le sens des planches) :
+  - planches de bord (2, aux deux extrémités du rang) : `BORD_PLANCHE_M`
+    chacune, fixe.
+  - `n − 2` planches intérieures, `n − 1` passe-pieds — reste à
+    distribuer : `disponible − 2×BORD_PLANCHE_M − ((n−2)×PLANCHE_M +
+    (n−1)×PASSE_PIED_M)`.
+  - Rattrapage `planches` : chaque planche intérieure = `PLANCHE_M +
+    reste/(n−2)` ; passe-pieds inchangés.
+  - Rattrapage `passe-pieds` : chaque passe-pied = `PASSE_PIED_M +
+    reste/(n−1)` ; planches intérieures inchangées.
+
+**Fichiers**
+
+- `src/Web/Parcelles.php` (modifié) : `BORD_PLANCHE_M` ; `enregistrerPlan()`
+  whiteliste et écrit `rattrapage` (`planches`|`passe-pieds`) dans `plan`.
+- `public/conception-parcelles.php` (modifié) : radio « Rattrapage »,
+  préremplissage depuis `plan.rattrapage` (défaut `passe-pieds` — répartir
+  sur le passage plutôt que sur la culture, un choix par défaut aussi
+  défendable que l'autre, à changer si le porteur préfère l'inverse) ;
+  `BORD_PLANCHE_M` ajouté à `PLAN_CONSTANTES` ; le bloc « Ce que la
+  géométrie donne » redevient entièrement piloté par JS (largeur de bord,
+  largeur intérieure et passe-pied ne sont plus des constantes fixes
+  affichées telles quelles, elles dépendent maintenant du rattrapage et du
+  nombre de planches).
+- `public/conception-parcelles.js` (modifié) : `redessiner()` calcule un
+  tableau de largeurs (bord/intérieure) et de passe-pieds au lieu d'une
+  largeur unique, positionne chaque planche par décalage cumulé plutôt que
+  par un pas fixe.
+
+**Test** : une largeur utile qui ne divise pas exactement par 1,70 m
+(1,20 + 0,50) doit remplir tout l'espace, sans reste visible, dans les deux
+modes de rattrapage ; les deux planches de bord d'un rang restent à 0,60 m
+quel que soit le mode ; `n ≤ 2` bascule silencieusement tout le reste sur
+le(s) passe-pied(s).
+
+**Vérifié en CDP** : 12 × 8 m, bordures à 0,40 m, nord-sud — 6 planches,
+largeur utile 11,2 m. En rattrapage « passe-pieds » : bord 0,60 m,
+intérieure 1,20 m (inchangée), passe-pied 1,04 m (0,50 + le reste) — les
+deux planches de bord (première et dernière rendues en SVG) mesurent bien
+60 unités (0,60 m) chacune, visiblement plus étroites que les quatre
+intérieures sur la capture. En rattrapage « planches » : intérieure
+1,88 m, passe-pied 0,50 m (inchangé) — les deux totaux valent exactement
+la largeur disponible dans les deux modes, calcul à la main confirmé.
+Enregistrement et rechargement fidèles au choix de rattrapage.
+
+### Phase 4 — Bordure interne, pour la biomasse
+
+**But** : une deuxième bordure, distincte de la bordure externe déjà
+construite en Phase 1 — décision tranchée avec le porteur le 2026-09-18,
+après vérification contre `connaissances/livre-bienvenue-en-syntropie/
+ch14-une-histoire-de-tortue.md`. **Ce que la source dit, et où elle
+diffère de ce qui est construit ici** : le chapitre décrit une **bande
+unique** (« bord de carapace », ~1 m de large) portant **deux lignes de
+plantation en son sein** — une ligne côté intérieur (goji, chalef, menthe)
+et une ligne côté extérieur (lavande, hysope, romarin), chacune avec son
+propre retrait et espacement. Le porteur préfère, pour l'atelier, **deux
+bordures géométriquement distinctes** : une externe (bloque-herbe,
+coupe-vent, défense contre les animaux — une haie défensive) et une
+interne (fournisseurs de biomasse) — plus visuel, et plus proche de
+`bordures.externe`/`bordures.interne` déjà anticipées dans la forme JSON
+de la référence (`src/Plan.php`) que la Phase 1 a délibérément laissée de
+côté.
+
+**Décisions tranchées avant de coder**
+
+- **Géométrie seulement, comme la bordure externe** — quatre côtés,
+  chacun actif ou non et sa largeur (mêmes bornes 0,05–5 m). **Aucune
+  assignation d'espèce** (pas de lignes de plantation, pas de retrait ni
+  d'espacement façon `ImplantationBordures`) : ça suppose `scenario_ligne`,
+  toujours absent, et reste hors périmètre — voir § Ce que ce plan exclut.
+  Si le porteur veut aller jusqu'à assigner des espèces à chaque bordure,
+  ce sera après (ou avec) la Phase 3 de `chantier-scenario-plantation.md`.
+- **Position : immédiatement à l'intérieur de la bordure externe**, côté
+  par côté — la bordure interne d'un côté ne réduit l'espace utile que si
+  la bordure externe du même côté est active ; sinon elle part du bord de
+  la parcelle sur ce côté (une bordure interne peut exister sans bordure
+  externe du même côté, même si le cas est inhabituel).
+- **JSON** : `plan.bordures.interne`, même forme que `plan.bordures.externe`
+  — quatre côtés, `actif`/`largeur_m` chacun. `bordures.externe` reste
+  inchangée ; aucune migration.
+- **La largeur utile des planches (Phase 3) se calcule après les deux
+  bordures** — externe puis interne, cumulées sur chaque côté actif.
+- **Couleur/visuel distinct** de la bordure externe sur le plan SVG, pour
+  qu'on les distingue d'un coup d'œil (la référence ne s'en soucie pas de
+  la même façon, l'atelier a déjà cette exigence pour d'autres calques).
+
+**Fichiers**
+
+- `src/Web/Parcelles.php` (modifié) : `enregistrerPlan()` whiteliste et
+  valide `bordures.interne` (même code que `bordures.externe`, dupliqué ou
+  factorisé) ; le plan JSON écrit porte les deux clés.
+- `public/conception-parcelles.php` (modifié) : section « Bordure interne »
+  sous « Bordure externe », même structure de champs (case à cocher +
+  largeur, quatre côtés) ; préremplissage depuis `plan.bordures.interne`
+  (défaut : les quatre côtés inactifs — une bordure interne ne s'impose
+  pas, contrairement à l'externe déjà active par défaut).
+- `public/conception-parcelles.js` (modifié) : `redessiner()` dessine un
+  second rectangle de bordure par côté actif, entre la bordure externe et
+  la zone utile ; le calcul de la largeur/hauteur utile pour les planches
+  (Phase 3) soustrait les deux bordures cumulées.
+
+**Test** : bordure interne activée sur un ou plusieurs côtés, largeur
+propre à chacun, visuellement distincte de l'externe ; la zone de planches
+se resserre en conséquence ; enregistrement et rechargement fidèles ;
+bordure interne active sur un côté où l'externe est inactive : part du
+bord de la parcelle sans erreur.
+
 ## Ce que ce plan exclut explicitement
 
-- Bordures internes, rives, rattrapage — la clé JSON `bordures.externe` du
-  Phase 1 laisse la place à `bordures.interne` plus tard, sans y toucher
-  maintenant.
+- Rives — la référence en a un concept séparé (ce que devient le bord
+  d'une planche côté rive : rien, passe-pied, ou demi-planche) ; ni
+  demandé ni construit ici.
 - Un nombre de lignes de semis réglable par planche — le modèle reste
-  planche pleine, largeur et passe-pied fixes.
+  planche pleine (largeur homogène ou de bord depuis la Phase 3, jamais
+  redécoupée en plusieurs lignes de semis).
 - Toute assignation d'espèce (semis biomasse annuelle, pesée de graines,
   implantations de vivaces en bordure façon `ImplantationBordures`) —
   suppose `scenario_ligne`, à construire en Phase 3 de

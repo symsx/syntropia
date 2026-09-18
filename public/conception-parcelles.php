@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'longueur_m'        => $_POST['longueur_m'] ?? '',
             'largeur_m'         => $_POST['largeur_m'] ?? '',
             'orientation_lignes' => $_POST['orientation_lignes'] ?? '',
+            'rattrapage'        => $_POST['rattrapage'] ?? '',
             'bordures'          => $_POST['bordures'] ?? [],
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
@@ -99,6 +100,10 @@ $fr = static fn (float $v): string => number_format($v, 2, ',', '');
 $planLongueur = '12,00';
 $planLargeur = '8,00';
 $planOrientation = 'nord-sud';
+// « passe-pieds » par défaut — répartir le reste sur le passage plutôt
+// que sur la culture, un choix par défaut aussi défendable que l'autre.
+// Chantier « plan de parcelle », Phase 3 (2026-09-18).
+$planRattrapage = 'passe-pieds';
 $planBordures = [
     'nord'  => ['actif' => true, 'largeur_m' => 0.40],
     'sud'   => ['actif' => true, 'largeur_m' => 0.40],
@@ -118,6 +123,9 @@ if ($parcelleActive !== null) {
         $planOrientation = $parcelleActive['orientation_lignes'];
     }
     $planEnregistre = json_decode((string) ($parcelleActive['plan'] ?? ''), true);
+    if (in_array($planEnregistre['rattrapage'] ?? '', ['planches', 'passe-pieds'], true)) {
+        $planRattrapage = $planEnregistre['rattrapage'];
+    }
     $bordureEnregistree = $planEnregistre['bordures']['externe'] ?? null;
     if (is_array($bordureEnregistree)) {
         foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
@@ -409,6 +417,15 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <label><input type="radio" class="radio" name="sens-planches" id="sens-est-ouest" value="est-ouest"<?= $planOrientation === 'est-ouest' ? ' checked' : '' ?>>Est ↔ Ouest</label>
         </div>
 
+        <p class="pd-titre">Rattrapage</p>
+        <p class="pd-note">1,20 m de planche et 0,50 m de passe-pied ne divisent pas forcément la
+           largeur disponible tout rond — le reste se répartit sur les planches, ou sur les
+           passe-pieds, jamais les deux à la fois.</p>
+        <div class="parc-choix">
+          <label><input type="radio" class="radio" name="rattrapage" id="rattrapage-passe-pieds" value="passe-pieds"<?= $planRattrapage === 'passe-pieds' ? ' checked' : '' ?>>Sur les passe-pieds</label>
+          <label><input type="radio" class="radio" name="rattrapage" id="rattrapage-planches" value="planches"<?= $planRattrapage === 'planches' ? ' checked' : '' ?>>Sur les planches</label>
+        </div>
+
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
 <?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
         <div class="pd-ligne">
@@ -427,12 +444,14 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <dl class="pd-resultat" id="resultat">
           <div class="pd-champ"><dt>Surface utile</dt><dd id="r-surface">—</dd></div>
           <div class="pd-champ"><dt>Planches</dt><dd id="r-planches">—</dd></div>
-          <div class="pd-champ"><dt>Largeur de planche</dt><dd><?= htmlspecialchars($fr(Parcelles::PLANCHE_M), ENT_QUOTES, 'UTF-8') ?> m</dd></div>
-          <div class="pd-champ"><dt>Passe-pied</dt><dd><?= htmlspecialchars($fr(Parcelles::PASSE_PIED_M), ENT_QUOTES, 'UTF-8') ?> m</dd></div>
+          <div class="pd-champ"><dt>Planche de bord</dt><dd id="r-planche-bord">—</dd></div>
+          <div class="pd-champ"><dt>Planche intérieure</dt><dd id="r-planche-interieure">—</dd></div>
+          <div class="pd-champ"><dt>Passe-pied</dt><dd id="r-passe-pied">—</dd></div>
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
-        <p class="pd-note">Largeur de planche et passe-pied sont fixes pour l'instant, les mêmes pour
-           toutes les parcelles — pas encore un réglage propre à celle-ci.</p>
+        <p class="pd-note">La planche de bord (la première et la dernière de chaque rang) touche
+           la bordure plutôt qu'un passe-pied : elle ne se travaille que d'un seul côté, d'où sa
+           largeur plus étroite — voir chantier-plan-de-parcelle.md § Phase 3.</p>
       </div>
     </aside>
 <?php endif; ?>
@@ -503,7 +522,8 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   // PASSE_PIED_M — sans quoi le calcul serveur de nb_planches et l'aperçu du
   // plan à l'écran pourraient un jour diverger. Voir chantier-plan-de-
   // parcelle.md § Phase 2.
-  var PLAN_CONSTANTES = { planche: <?= Parcelles::PLANCHE_M ?>, passePied: <?= Parcelles::PASSE_PIED_M ?> };
+  var PLAN_CONSTANTES = { planche: <?= Parcelles::PLANCHE_M ?>, passePied: <?= Parcelles::PASSE_PIED_M ?>,
+    bordPlanche: <?= Parcelles::BORD_PLANCHE_M ?> };
 </script>
 <script src="conception-parcelles.js"></script>
 <?php endif; ?>
