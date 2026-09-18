@@ -38,8 +38,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   de reprise.
 - `chantier-export-import-projet.md` — le plan (4 phases) pour exporter et
   importer un projet en un fichier JSON daté, demandé le 2026-09-18 ;
-  **noté, pas commencé** — format JSON (plutôt que XML) ; décisions du
-  2026-09-18 consignées, un point reste à confirmer (la trace d'origine).
+  **noté, pas commencé, reporté à la fin de la première version fonctionnelle** —
+  format JSON (plutôt que XML) ; toutes les spécifications sont tranchées.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1246,13 +1246,13 @@ il apparaît réellement, pour ne pas noyer le motif.
    décider avec le porteur, pas avant.
 4. **Exporter et importer un projet** — noté le 2026-09-18, plan dans
    `chantier-export-import-projet.md` : un fichier JSON avec sa **date
-   d'export**, sans comptes ni accès, importé en un projet neuf. Le besoin est
-   déjà réel : le projet de production a été rapatrié en local par un script
-   ponctuel non conservé. **Décidé le 2026-09-18** : le porteur seul exporte ;
-   la date d'export s'affiche dans le fichier et à l'aperçu d'import ;
-   conduite et espèces reprises telles quelles ; plafond d'import 1 Mo (un
-   vrai projet pèse ≈ 14 Ko). **Reste à confirmer** : la trace d'origine
-   (colonne `site.origine` proposée).
+   d'export**, sans comptes ni accès, importé en un projet neuf. **Toutes les
+   spécifications sont tranchées** (le porteur seul exporte ; date d'export
+   dans le fichier et à l'aperçu d'import ; conduite et espèces reprises telles
+   quelles ; plafond d'import 1 Mo ; trace d'origine dans une colonne facultative
+   `site.origine`). **Reporté à la fin de la première version fonctionnelle**
+   — le modèle d'information peut encore changer : ne pas construire avant, et
+   relire `sql/01-syntropia.sql` au moment de s'y mettre.
 5. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
 6. **`autres-documentations.php`** — page publique restante, non

@@ -1,7 +1,16 @@
 # Exporter et importer un projet — plan
 
-**Demandé par le porteur le 2026-09-18. Rien n'est construit : ce document
-note l'intention et propose un format, pour en décider avant de coder.**
+**Demandé par le porteur le 2026-09-18. Rien n'est construit, et cela ne sera
+construit qu'à la fin de la première version fonctionnelle de Syntropia** —
+décision du porteur, le même jour : le modèle d'information peut encore changer,
+et un export doit refléter le schéma tel qu'il sera. Ce document garde les
+spécifications, toutes tranchées ; il attend son heure.
+
+**Quand le reprendre** : quand le porteur juge la première version fonctionnelle
+atteinte (le parcours de bout en bout, les étapes reportées faites ou
+écartées). Avant de coder, **relire `sql/01-syntropia.sql`** : la liste des
+tables et des colonnes ci-dessous date du 2026-09-18 et sera probablement
+périmée.
 
 ## Pourquoi
 
@@ -132,14 +141,14 @@ cas, **l'export refuse de produire un fichier qu'on ne pourrait pas réimporter*
 et dit quelle part est trop lourde — plutôt qu'un fichier muet qui échoue à
 l'arrivée.
 
-## Reste à confirmer
+## La trace d'origine — décidé le 2026-09-18
 
-**La trace d'origine d'un projet importé** (« importé le… d'un fichier exporté
-le… ») n'a pas été tranchée. **Proposition** : une colonne facultative
-`site.origine` (texte JSON : nom d'origine, `exporte_le`, `importe_le`) — une
-migration additive, du même type que `invitation.role_site` (déjà rejouable
-sur MySQL et MariaDB). Alternative sans migration : la noter dans une réponse
-du porteur, mais elle se mêlerait à des réponses qui n'en sont pas.
+Une **colonne facultative `site.origine`** : un texte JSON portant le **nom
+d'origine** du projet, la **date d'export** du fichier (`exporte_le`) et la
+**date d'import**. Une migration additive, du même type que
+`invitation.role_site` (rejouable sur MySQL et MariaDB par `information_schema`
++ `PREPARE`) — à poser avec la Phase 2, pas avant : un projet qui n'a jamais été
+importé la laisse vide.
 
 ## Fichiers critiques
 
