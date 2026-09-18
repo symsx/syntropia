@@ -427,8 +427,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <dl class="pd-resultat" id="resultat">
           <div class="pd-champ"><dt>Surface utile</dt><dd id="r-surface">—</dd></div>
           <div class="pd-champ"><dt>Planches</dt><dd id="r-planches">—</dd></div>
+          <div class="pd-champ"><dt>Largeur de planche</dt><dd><?= htmlspecialchars($fr(Parcelles::PLANCHE_M), ENT_QUOTES, 'UTF-8') ?> m</dd></div>
+          <div class="pd-champ"><dt>Passe-pied</dt><dd><?= htmlspecialchars($fr(Parcelles::PASSE_PIED_M), ENT_QUOTES, 'UTF-8') ?> m</dd></div>
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
+        <p class="pd-note">Largeur de planche et passe-pied sont fixes pour l'instant, les mêmes pour
+           toutes les parcelles — pas encore un réglage propre à celle-ci.</p>
       </div>
     </aside>
 <?php endif; ?>
