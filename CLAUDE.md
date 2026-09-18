@@ -34,8 +34,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-inscription-parrainage.md` — le plan détaillé (4 phases) de
   l'inscription par code de parrainage : inviter quelqu'un à créer un
   compte, ou à rejoindre un projet (et un compte peut alors avoir
-  plusieurs projets). **Phase 1 faite le 2026-09-18** — voir § Point de
-  reprise.
+  plusieurs projets). **Phases 1 et 2 faites le 2026-09-18** — voir § Point
+  de reprise.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -88,7 +88,7 @@ config/
   local.env              configuration locale — hors dépôt (.gitignore)
 sql/
   .htaccess              refuse tout accès web
-  00-comptes.sql          4 tables — compte, acces, tentative, invitation
+  00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
@@ -129,6 +129,7 @@ public/                racine servable du site en refonte
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
+  inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
@@ -911,6 +912,27 @@ récit.*
   pas commencées ; détail et points à vérifier (droits d'un lecteur sur
   ses propres réponses, retrait d'un membre) dans
   `chantier-inscription-parrainage.md`.
+- **Page « Inviter » — Phase 2 du chantier « inscription par
+  parrainage », 2026-09-18.** `public/inviter.php` (hors parcours, sur le
+  gabarit) : ouvrir un code pour un compte seul, ou — pour le porteur du
+  projet actif — pour rejoindre ce projet en `contributeur` ou `lecteur` ;
+  lister les siens (états, paginés par 3) et retirer ceux qui n'ont pas
+  servi. `Invitations::ouvrir()` porte les garde-fous (porteur seulement,
+  rôle jamais « porteur », **10 codes ouverts au plus** — ajout non prévu au
+  plan, sans quoi la page est un robinet à codes) ; nouvelle colonne
+  `invitation.role_site`. « Inviter » s'ajoute au menu du compte par
+  `gabarit.js`. **Piège trouvé** : `ADD COLUMN IF NOT EXISTS` (celui de
+  l'incident `espece.variete`) n'existe que sur MariaDB, or le poste local
+  est en MySQL 8 — la migration passe par `information_schema` + `PREPARE`
+  et tourne des deux côtés ; **en production, `bin/deployer.py base` la
+  posera**. Vérifié en CDP, y compris les refus (contributeur, POST forgé,
+  11e code, code d'un autre parrain, anonyme). Un mauvais cas de mise en
+  page trouvé et corrigé en mesurant : à 1024×600, le cadre était tronqué
+  en silence par `overflow:hidden` — jamais visible sans mesure directe du
+  cadre contre le bureau. **Pas encore câblé** : `inscription.php` ignore
+  toujours `site_id` (un code « Rejoindre » ouvre un compte sans
+  rattachement) — Phase 3. Ne pas déployer Phase 2 seule sans le savoir.
+  Reste non tenu : 320×568. Détail : `chantier-inscription-parrainage.md`.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -942,8 +964,8 @@ il apparaît réellement, pour ne pas noyer le motif.
 ### Prochaine étape
 
 1. **Chantier « inscription par parrainage »** — plan dans
-   `chantier-inscription-parrainage.md` ; Phase 1 faite, Phase 2 (page
-   « Inviter ») suivante.
+   `chantier-inscription-parrainage.md` ; Phases 1 et 2 faites, Phase 3
+   (inscription rattachée à un projet) suivante.
 2. **Chantier « scénario de plantation »** — plan dans
    `chantier-scenario-plantation.md` (4 phases : base de végétaux
    `espece`, conduite/héritage site-parcelle, backend `scenario_ligne`,

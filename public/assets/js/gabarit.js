@@ -310,8 +310,8 @@ window.Gabarit = (function(){
   /* ------------------------------------------------------- les projets */
   /* Un compte peut porter plusieurs projets (le sien, ceux rejoints sur
      invitation). Rien de cela n'est dans le HTML des pages : api-projets.php
-     dit lesquels, et ce code pose deux choses — « Nouveau projet » dans le
-     menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
+     dit lesquels, et ce code pose trois choses — « Nouveau projet » et
+     « Inviter » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
      projets » en tête du panneau gauche. Une page publique (pas de menu de
      compte) n'appelle rien. */
   function initProjets(){
@@ -321,19 +321,22 @@ window.Gabarit = (function(){
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
         if (!j || !j.ok) return;
-        ajouterNouveauProjet(menu);
+        ajouterEntreesDuMenu(menu);
         if (j.projets.length > 1) ajouterSelecteurProjets(j);
       })
       .catch(function(){ /* le sélecteur est un confort : jamais une erreur visible */ });
   }
 
-  function ajouterNouveauProjet(menu){
+  function ajouterEntreesDuMenu(menu){
     var sep = menu.querySelector('.compte-menu-separateur');
-    var a = document.createElement('a');
-    a.className = 'compte-menu-item';
-    a.href = 'definition-projet.php?nouveau=1';
-    a.innerHTML = '<span class="compte-menu-puce">+</span>Nouveau projet';
-    menu.insertBefore(a, sep || null);
+    [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
+     ['inviter.php', '✉', 'Inviter']].forEach(function(e){
+      var a = document.createElement('a');
+      a.className = 'compte-menu-item';
+      a.href = e[0];
+      a.innerHTML = '<span class="compte-menu-puce">' + e[1] + '</span>' + e[2];
+      menu.insertBefore(a, sep || null);
+    });
   }
 
   var LIBELLE_ROLE = { porteur: 'porteur', contributeur: 'contributeur', lecteur: 'lecteur' };

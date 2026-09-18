@@ -64,6 +64,21 @@ CREATE TABLE IF NOT EXISTS `compte` (
   UNIQUE KEY `uq_compte_courriel`    (`courriel`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
+-- Rattrapage d'une table `invitation` créée avant `role_site` :
+-- `CREATE TABLE IF NOT EXISTS` ne touche jamais une table déjà là. Écrit avec
+-- `information_schema` plutôt qu'`ADD COLUMN IF NOT EXISTS`, qui n'existe que
+-- sur MariaDB — ce fichier tourne aussi sur MySQL (poste local).
+SET @role_site_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                          WHERE TABLE_SCHEMA = DATABASE()
+                            AND TABLE_NAME = 'invitation'
+                            AND COLUMN_NAME = 'role_site');
+SET @ajout = IF(@role_site_existe = 0,
+                "ALTER TABLE `invitation` ADD COLUMN `role_site` ENUM('contributeur','lecteur') NULL AFTER `role_accorde`",
+                'DO 0');
+PREPARE ajout_role_site FROM @ajout;
+EXECUTE ajout_role_site;
+DEALLOCATE PREPARE ajout_role_site;
+
 -- Sans courriel, aucune réinitialisation de mot de passe n'est possible :
 -- c'est alors un administrateur qui remet une empreinte et lève
 -- `doit_changer_mdp`. Le champ reste facultatif pour ne pas exiger une
@@ -172,6 +187,12 @@ CREATE TABLE IF NOT EXISTS `invitation` (
   `site_id`       INT UNSIGNED NULL,
 
   `role_accorde`  ENUM('visiteur','utilisateur') NOT NULL DEFAULT 'utilisateur',
+
+  -- Le rôle DANS LE PROJET visé par `site_id` — distinct de `role_accorde`,
+  -- qui est le rôle du compte dans l'application. NULL quand `site_id` l'est :
+  -- une invitation à créer un compte seul ne rattache à aucun projet. Jamais
+  -- « porteur » : on devient porteur en ouvrant un projet, pas en y entrant.
+  `role_site`     ENUM('contributeur','lecteur') NULL,
   `cree_le`       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expire_le`     DATETIME NULL,
   `utilise_le`    DATETIME NULL,

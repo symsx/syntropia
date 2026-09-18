@@ -89,7 +89,7 @@ le projet 1 n'apparaît pas dans le projet 2 ; cookie forgé vers le projet
 d'un autre compte → retombe sur le premier sans erreur ; POST d'activation
 d'un projet étranger → 403 ; anonyme → 403.
 
-### Phase 2 — Inviter
+### Phase 2 — Inviter — ✅ fait le 2026-09-18
 
 **Fichiers**
 - `sql/00-comptes.sql` : `invitation.role_site ENUM('contributeur','lecteur')
@@ -104,6 +104,46 @@ d'un projet étranger → 403 ; anonyme → 403.
   compte seul, ou pour le projet actif si porteur, avec le rôle), lister les
   siens avec leur état, révoquer. Entrée « Inviter » ajoutée au menu du
   compte par `gabarit.js` (même mécanique que Phase 1).
+
+**Écarts avec ce qui était annoncé, tranchés en codant**
+
+- **Migration portable** : `ADD COLUMN IF NOT EXISTS` n'existe que sur
+  MariaDB (production) ; le poste local est en MySQL 8, qui le refuse. La
+  migration de `sql/00-comptes.sql` passe par `information_schema` + une
+  instruction préparée, et tourne des deux côtés, rejouable. Vérifiée en
+  local sur une table qui n'avait pas la colonne (elle l'a ajoutée), puis
+  rejouée sans effet. **En production : `bin/deployer.py base` la posera** ;
+  le `courriel_vise` de la table n'est pas exposé (rien ne le vérifie).
+- **Plafond de 10 codes ouverts** par personne (`MAX_OUVERTES`), dans
+  `Invitations::ouvrir()` — pas prévu au plan : sans lui, la page est un
+  robinet à codes. Le plafond compte les codes *ouverts* (ni utilisés, ni
+  retirés, ni expirés) : en retirer un libère une place.
+- **Garde-fous dans le service, pas seulement dans la page** : porteur
+  seulement, rôle dans `contributeur`/`lecteur` (jamais « porteur »).
+- **Le code n'est pas dans l'URL** : flash de session lu une seule fois
+  (`syntropia_code_ouvert`), pour qu'il ne reste pas dans l'historique. Le
+  lien complet se compose côté navigateur, depuis l'adresse réelle.
+- **Liste paginée par 3** (bureau sans défilement) ; **quand un code vient
+  d'être ouvert, la liste cède la place à un lien** — sans quoi, à
+  1024×600, le cadre était tronqué en silence par `overflow:hidden`
+  (mesuré : haut du cadre à −1 px).
+
+**Vérifié en CDP** : menu du compte (« Nouveau projet », « Inviter ») ; code
+pour un compte seul → `site_id`/`role_site` NULL en base, code absent au
+rechargement ; code pour le projet, rôle lecteur → `site_id` du projet,
+`role_site = lecteur` ; le rôle ne s'affiche que si « Rejoindre » est
+choisi ; 10 codes ouverts → le 11e refusé avec son message ; retirer un code
+libère une place ; un contributeur ne voit que « Créer un compte », un POST
+forgé `pour=projet` est traité comme compte seul, et `Invitations::ouvrir()`
+appelée directement pour son compte lève l'exception ; retirer le code d'un
+autre parrain est sans effet ; anonyme → connexion. Hauteurs mesurées, cadre
+dans le bureau, avec et sans code : 1280×720, 1024×600, 412×800, 412×915,
+360×740. **Non tenu : 320×568** (cadre 12 px trop haut) — pas un format
+visé, à reprendre si les très petits écrans comptent.
+
+**Pas encore câblé** : `inscription.php` ignore toujours `site_id`. Un code
+« Rejoindre » ouvre donc aujourd'hui un compte, sans rattachement — c'est la
+Phase 3.
 
 ### Phase 3 — S'inscrire avec un code de projet
 

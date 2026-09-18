@@ -19,9 +19,10 @@ use Syntropia\Role;
  * — ces quatre-là se confondent à l'oreille. Il n'a besoin d'aucun
  * courriel pour circuler.
  *
- * `ouvrir()` n'est pas encore appelée par aucune page de syntropia — il
- * n'y a pas encore de page « inviter quelqu'un » — mais elle est reprise
- * telle quelle, prête pour le jour où `compte.php` existera.
+ * `inviter.php` ouvre les codes (chantier `chantier-inscription-
+ * parrainage.md`, Phase 2). Un code sert deux gestes : créer un compte
+ * (`site_id` nul), ou créer un compte **et** rejoindre un projet (`site_id`
+ * et `role_site`).
  */
 final class Invitations
 {
@@ -30,6 +31,12 @@ final class Invitations
 
     /** Un mois. Une invitation qui traîne est une porte ouverte. */
     public const JOURS = 30;
+
+    /** Les codes qu'une même personne peut avoir ouverts en même temps. */
+    public const MAX_OUVERTES = 10;
+
+    /** Les rôles qu'un code peut donner dans un projet — jamais « porteur ». */
+    public const ROLES_SITE = ['contributeur', 'lecteur'];
 
     public function __construct(private ?PDO $pdo = null) {}
 
@@ -42,10 +49,35 @@ final class Invitations
     // Ouvrir
     // ------------------------------------------------------------------
 
+    /**
+     * Ouvre un code. Avec `$siteId`, le code rattache aussi au projet, dans
+     * le rôle `$roleSite`.
+     *
+     * Les garde-fous sont ici, pas seulement dans la page : seul le porteur
+     * d'un projet peut y inviter, et personne n'a plus de
+     * `MAX_OUVERTES` codes ouverts à la fois.
+     *
+     * @throws \DomainException avec un message à montrer tel quel
+     */
     public function ouvrir(int $parrainId, ?int $siteId = null,
-                           string $courriel = '', string $intention = '',
+                           string $roleSite = 'contributeur',
+                           string $intention = '', string $courriel = '',
                            Role $role = Role::Utilisateur): string
     {
+        if ($siteId !== null) {
+            if ((new Sites())->roleSur($siteId, $parrainId) !== 'porteur') {
+                throw new \DomainException("Seul le porteur d'un projet peut y inviter.");
+            }
+            if (!in_array($roleSite, self::ROLES_SITE, true)) {
+                throw new \DomainException('Le rôle dans le projet est « contributeur » ou « lecteur ».');
+            }
+        }
+        if ($this->nombreOuvertes($parrainId) >= self::MAX_OUVERTES) {
+            throw new \DomainException(sprintf(
+                'Vous avez déjà %d invitations ouvertes. Retirez-en une, ou attendez '
+                . "qu'elle serve, avant d'en ouvrir une autre.", self::MAX_OUVERTES));
+        }
+        $intention = mb_substr(trim($intention), 0, 190);
         do {
             $code = '';
             for ($i = 0; $i < 8; $i++) {
@@ -54,12 +86,13 @@ final class Invitations
             try {
                 $this->pdo()->prepare(
                     'INSERT INTO invitation
-                        (code, parrain_id, site_id, courriel_vise, intention,
+                        (code, parrain_id, site_id, role_site, courriel_vise, intention,
                          role_accorde, expire_le)
-                     VALUES (?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))')
+                     VALUES (?, ?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))')
                     ->execute([$code, $parrainId, $siteId,
+                        $siteId !== null ? $roleSite : null,
                         trim($courriel) !== '' ? trim($courriel) : null,
-                        trim($intention) !== '' ? trim($intention) : null,
+                        $intention !== '' ? $intention : null,
                         $role->value, self::JOURS]);
                 return $code;
             } catch (\PDOException $e) {
@@ -68,6 +101,17 @@ final class Invitations
                 }
             }
         } while (true);
+    }
+
+    /** Les codes de ce parrain qui ouvrent encore quelque chose. */
+    public function nombreOuvertes(int $parrainId): int
+    {
+        $req = $this->pdo()->prepare(
+            'SELECT COUNT(*) FROM invitation
+              WHERE parrain_id = ? AND utilise_le IS NULL AND revoque_le IS NULL
+                AND (expire_le IS NULL OR expire_le >= NOW())');
+        $req->execute([$parrainId]);
+        return (int) $req->fetchColumn();
     }
 
     /** Ferme une invitation sans l'effacer : la trace du geste reste. */
@@ -137,6 +181,33 @@ final class Invitations
               ORDER BY i.cree_le DESC');
         $req->execute([$parrainId]);
         return $req->fetchAll();
+    }
+
+    /**
+     * Une page des invitations d'un parrain, les plus récentes d'abord —
+     * `dUnParrain()` en rend tout, ce que l'écran d'un bureau sans
+     * défilement ne peut pas montrer.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function pageDUnParrain(int $parrainId, int $limite, int $decalage): array
+    {
+        $req = $this->pdo()->prepare(
+            'SELECT i.*, f.nom_affiche AS filleul
+               FROM invitation i
+               LEFT JOIN compte f ON f.id = i.filleul_id
+              WHERE i.parrain_id = ?
+              ORDER BY i.cree_le DESC, i.id DESC
+              LIMIT ' . max(1, $limite) . ' OFFSET ' . max(0, $decalage));
+        $req->execute([$parrainId]);
+        return $req->fetchAll();
+    }
+
+    public function nombreDUnParrain(int $parrainId): int
+    {
+        $req = $this->pdo()->prepare('SELECT COUNT(*) FROM invitation WHERE parrain_id = ?');
+        $req->execute([$parrainId]);
+        return (int) $req->fetchColumn();
     }
 
     /** @return array<string, mixed>|null */
