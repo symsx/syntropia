@@ -438,7 +438,9 @@ page vide).
 ## Chantier terminé
 
 Les quatre phases sont faites (2026-09-18). **Reste, hors plan** : filtrer les
-suggestions d'espèces par rusticité (la zone USDA du site existe maintenant) ;
+suggestions d'espèces par rusticité — la zone USDA du site existe, mais `espece`
+ne porte aucune rusticité (elle vit chez Plantae : jointure à faire, ou données
+à curater) ;
 proposer la strate d'une espèce connue (`espece.strates_possibles`) ; le mode
 « quantité calculée depuis le plan de bordures » ; l'aide propre au
 jardin-forêt. **Pas encore déployé.**

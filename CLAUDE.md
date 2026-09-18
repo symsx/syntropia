@@ -1145,8 +1145,12 @@ il apparaît réellement, pour ne pas noyer le motif.
    phases (la base de végétaux ; la conduite ; le backend de
    `scenario_ligne` ; la page). **Pas encore déployé.**
 3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
-   reste à en tirer parti : la page du scénario existe maintenant —
-   filtrer ses suggestions d'espèces par rusticité.
+   reste à en tirer parti, mais **la donnée manque** : la table `espece`
+   ne porte volontairement aucune rusticité (« elle se lit chez
+   Plantae », dit le schéma). Filtrer les suggestions du scénario par
+   zone suppose de joindre `plantae-corpus` (une base externe, jointure
+   applicative) ou de curater la rusticité des 46 espèces du cadre — à
+   décider avec le porteur, pas avant.
 4. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
 5. **`autres-documentations.php`** — page publique restante, non
