@@ -830,6 +830,17 @@ récit.*
   est inactive) : le rectangle interne part bien du bord réel de la
   parcelle, sans erreur, et l'état survit à un rechargement complet.
   Détail complet : `chantier-plan-de-parcelle.md` § Phase 4.
+- **Bordure interne : un vrai anneau, corrigé — 2026-09-18.** Signalé par
+  le porteur : les côtés est/ouest de la bordure interne allaient
+  jusqu'au bord de la parcelle et recouvraient les bordures externes
+  nord/sud (et nord/sud jusqu'aux externes est/ouest). Chaque côté
+  interne s'arrête maintenant aux bordures externes voisines, et
+  est/ouest s'arrêtent aux côtés nord/sud internes plutôt que de les
+  recouvrir ; un côté dont l'externe est inactive part du bord de la
+  parcelle. Dessin seulement (`redessiner()`), aucune donnée ni
+  calcul changés. Vérifié en CDP (12 × 8 m, externe 0,40, interne 0,30) :
+  rectangles aux bonnes coordonnées, capture sans recouvrement, et cas
+  externe nord+ouest inactives.
 - **Surface des planches de culture affichée séparément — 2026-09-18.**
   Demandé par le porteur : « Surface utile » (déjà affichée) compte tout
   ce que les bordures laissent, passe-pieds compris — pas la vraie

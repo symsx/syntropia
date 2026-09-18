@@ -99,16 +99,20 @@
     ro.setAttribute('height', H); ro.setAttribute('width', bo); ro.style.display = b.ouest ? '' : 'none';
     re.setAttribute('x', L - be); re.setAttribute('height', H); re.setAttribute('width', be); re.style.display = b.est ? '' : 'none';
 
-    // Bordure interne — juste à l'intérieur de l'externe, sur chaque côté
-    // actif (même si l'externe du même côté ne l'est pas : elle part alors
-    // du bord de la parcelle). Phase 4.
+    // Bordure interne — un anneau juste à l'intérieur de l'externe : chaque
+    // côté s'arrête aux bordures externes des côtés voisins (jamais jusqu'au
+    // bord de la parcelle), et les côtés est/ouest s'arrêtent aux côtés
+    // nord/sud internes plutôt que de les recouvrir. Un côté dont l'externe
+    // est inactive part du bord de la parcelle (largeur externe = 0). Phase 4.
     var bni = bi.nord * ECH, bsi = bi.sud * ECH, boi = bi.ouest * ECH, bei = bi.est * ECH;
     var rni = document.getElementById('bordure-interne-nord'), rsi = document.getElementById('bordure-interne-sud');
     var roi = document.getElementById('bordure-interne-ouest'), rei = document.getElementById('bordure-interne-est');
-    rni.setAttribute('y', bn); rni.setAttribute('width', L); rni.setAttribute('height', bni); rni.style.display = bi.nord ? '' : 'none';
-    rsi.setAttribute('y', H - bs - bsi); rsi.setAttribute('width', L); rsi.setAttribute('height', bsi); rsi.style.display = bi.sud ? '' : 'none';
-    roi.setAttribute('x', bo); roi.setAttribute('height', H); roi.setAttribute('width', boi); roi.style.display = bi.ouest ? '' : 'none';
-    rei.setAttribute('x', L - be - bei); rei.setAttribute('height', H); rei.setAttribute('width', bei); rei.style.display = bi.est ? '' : 'none';
+    var largeurAnneau = Math.max(0, L - bo - be);
+    var hauteurAnneau = Math.max(0, H - bn - bni - bs - bsi);
+    rni.setAttribute('x', bo); rni.setAttribute('y', bn); rni.setAttribute('width', largeurAnneau); rni.setAttribute('height', bni); rni.style.display = bi.nord ? '' : 'none';
+    rsi.setAttribute('x', bo); rsi.setAttribute('y', H - bs - bsi); rsi.setAttribute('width', largeurAnneau); rsi.setAttribute('height', bsi); rsi.style.display = bi.sud ? '' : 'none';
+    roi.setAttribute('x', bo); roi.setAttribute('y', bn + bni); roi.setAttribute('height', hauteurAnneau); roi.setAttribute('width', boi); roi.style.display = bi.ouest ? '' : 'none';
+    rei.setAttribute('x', L - be - bei); rei.setAttribute('y', bn + bni); rei.setAttribute('height', hauteurAnneau); rei.setAttribute('width', bei); rei.style.display = bi.est ? '' : 'none';
 
     document.getElementById('mesure-longueur').setAttribute('x', L / 2);
     document.getElementById('mesure-longueur').textContent = fmt(longueur) + ' m';
