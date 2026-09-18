@@ -40,6 +40,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   importer un projet en un fichier JSON daté, demandé le 2026-09-18 ;
   **noté, pas commencé, reporté à la fin de la première version fonctionnelle** —
   format JSON (plutôt que XML) ; toutes les spécifications sont tranchées.
+- `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
+  puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
+  plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1268,16 +1271,23 @@ il apparaît réellement, pour ne pas noyer le motif.
    `site.origine`). **Reporté à la fin de la première version fonctionnelle**
    — le modèle d'information peut encore changer : ne pas construire avant, et
    relire `sql/01-syntropia.sql` au moment de s'y mettre.
-5. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
+5. **Archiver et supprimer un projet** — spécifié le 2026-09-18, plan dans
+   `chantier-suppression-projet.md` : le porteur seul ; l'**archivage**
+   réversible d'abord (colonne `archive_le`), puis la **suppression
+   définitive** — nom retapé, écran de ce qui disparaît, participants listés,
+   rappel d'export (qui dépend du chantier export/import). **À réaliser plus
+   tard, sans date** ; aujourd'hui, aucun utilisateur ne peut supprimer un
+   projet, et la cascade du schéma en ferait un geste sans retour.
+6. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
    chapitres à son rythme, en markdown, directement dans ce fichier.
-6. **`autres-documentations.php`** — page publique restante, non
+7. **`autres-documentations.php`** — page publique restante, non
    commencée.
-7. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
-8. **Au-delà du premier tour** : rien ne relit encore les réponses
+8. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
+9. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-9. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+10. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-10. Aucune procédure n'automatise `bin/deployer.py` après chaque
+11. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
