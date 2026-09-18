@@ -130,6 +130,7 @@ public/                racine servable du site en refonte
   api-eau.php                POST l'eau OpenStreetMap autour du fond tracé — pose des tracés réels sur le calque eau, dédup par proprietes.osm
   api-usda.php               POST estime la zone USDA d'un point — lecture seule, appelée par le bouton « Estimer » de definition-site.php
   rejoindre.php              rejoindre un projet avec un code — pour un compte existant ; menu du compte (gabarit.js), et lien d'invitation ouvert connecté (inscription.php)
+  compte.php                 Préférences : récapitulatif du compte et de ses projets, nom affiché, mot de passe — 3 onglets ; `exige()` y renvoie un compte dont le mot de passe doit changer (?mdp=1)
   membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
   inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
@@ -395,8 +396,9 @@ récit.*
   d'elle-même en dernière position du panneau gauche, sur TOUTE page —
   les deux livrets et le glossaire, toujours au même endroit. Le compte
   (avatar + nom, en haut à droite) ouvre un vrai menu
-  (`initCompteMenu()`) : Mon projet, Préférences (`compte.php`, à
-  venir — grisée), Se déconnecter. `initTermes()` arme la bulle de tout
+  (`initCompteMenu()`) : Mon projet, Préférences (`compte.php`, faite le
+  2026-09-18), puis les entrées ajoutées par `initProjets()`, Se
+  déconnecter. `initTermes()` arme la bulle de tout
   `.terme` (survol ou focus clavier, jamais le `title` natif).
 - Le backend PHP (`src/` : `autoload`, `Configuration`, `Database`,
   `Role`, `Profil`, `FicheTerrain`, `Documentation`, `Web/Comptes`,
@@ -1009,6 +1011,38 @@ récit.*
   la zone USDA — à essayer avec un vrai compte. Retour arrière : la colonne
   est inoffensive pour l'ancien code, re-déployer les fichiers d'un état
   antérieur suffit.
+- **Préférences — `compte.php`, 2026-09-18.** Le lien existait, grisé,
+  dans le menu du compte de 25 pages depuis le début ; `Authentification::
+  exige()` y renvoyait déjà un compte dont le mot de passe doit changer
+  (`?mdp=1`) — un lien qui menait à une 404. Trois onglets en CSS pur
+  (`:has()`, un panneau à la fois, rien ne défile) : **Mon compte**
+  (nom, identifiant, courriel, rôle, date d'inscription, « arrivé par
+  l'invitation de… », projets avec le rôle sur chacun, le projet actif
+  marqué, trois visibles puis « et N autres »), **Nom affiché**, **Mot de
+  passe** (l'actuel exigé). Choix tranchés avec le porteur : le courriel
+  reste en lecture seule (rien ne l'envoie ni ne le vérifie). Le mot de
+  passe compte ses échecs et se ralentit comme la connexion (une session
+  volée ne doit pas pouvoir deviner le mot de passe pour le changer),
+  regénère l'identifiant de session, et efface le drapeau `doit_changer_mdp`.
+  `parrainDe()` — jamais appelée jusque-là — sert enfin, corrigée : la
+  **première** invitation utilisée, puisqu'un compte qui rejoint d'autres
+  projets par code en accumule d'autres. Le lien du menu est activé dans les
+  25 pages d'un seul remplacement (le balisage `a-venir` y était identique).
+  **Choix assumé** : changer le nom affiché ne touche pas `participant.nom`,
+  le nom que la personne portait en entrant dans un projet — c'est lui qui
+  identifie ses réponses ; la liste des participants montre, elle, le nom
+  affiché. **Non fait** : les autres sessions ouvertes du compte ne sont pas
+  fermées au changement de mot de passe (sessions PHP en fichiers, non
+  énumérables). Vérifié en CDP : récapitulatif d'un compte invité à cinq
+  projets et d'un compte sans parrain ni projet, onglets, nom vide/trop
+  long/valide (bandeau mis à jour, message flash lu une fois), mot de passe
+  faux/court/différent/identique/rafale (ralentissement)/valide, ancien
+  mot de passe refusé et nouveau accepté, jeton forgé refusé, changement
+  forcé (toute autre page renvoie vers `compte.php?mdp=1`, redirection après),
+  anonyme → connexion. Mise en page mesurée jusqu'à 320×568 : le
+  récapitulatif la tronquait de 14 px — corrigé en retirant une note
+  redondante avec le panneau Informations et en masquant le titre (qui
+  répète le bandeau) sur les écrans peu hauts.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1056,8 +1090,8 @@ il apparaît réellement, pour ne pas noyer le motif.
    chapitres à son rythme, en markdown, directement dans ce fichier.
 5. **`autres-documentations.php`** — page publique restante, non
    commencée.
-6. **`compte.php` / Préférences** — non commencé (lien déjà posé, grisé,
-   dans le menu du compte).
+6. **`compte.php` / Préférences** — faite le 2026-09-18 (voir plus haut) ;
+   pas encore déployée.
 7. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.

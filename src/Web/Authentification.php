@@ -222,6 +222,14 @@ final class Authentification
         exit;
     }
 
+    /** Le nom affiché a changé : la session en garde une copie pour l'affichage. */
+    public function rafraichirNomAffiche(string $nom): void
+    {
+        if (isset($_SESSION[self::PROPRE])) {
+            $_SESSION[self::PROPRE]['nom_affiche'] = $nom;
+        }
+    }
+
     /**
      * Oublie le drapeau après un changement, sans redemander la session.
      */

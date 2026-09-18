@@ -26,7 +26,7 @@ sans exception.
 
 | Route | Rôle | État |
 |---|---|---|
-| `compte.php` | Récapitule les informations de l'utilisateur, invite d'autres personnes à rejoindre son projet — un projet par utilisateur, un site, *n* parcelles | ○ |
+| `compte.php` | Préférences : récapitule les informations de l'utilisateur et ses projets, change le nom affiché et le mot de passe. (Inviter et gérer les participants vivent dans `inviter.php`, `rejoindre.php` et `membres.php` — un compte porte plusieurs projets depuis le 2026-09-18.) | ✅ |
 | `definition-projet.php` | Passage obligé, une seule fois, avant la première question de Définition : ouvre le site (nom du projet), condition pour que les réponses aient où s'enregistrer. Hors de la numérotation des étapes — ce n'est pas une étape qu'on retraverse | ✅ |
 
 ### Phase 1 — Définition

@@ -147,7 +147,7 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
         </button>
         <div class="compte-menu" id="compte-menu">
           <a class="compte-menu-item" href="conception-parcelles.php"><span class="compte-menu-puce">▤</span>Mon projet</a>
-          <a class="compte-menu-item a-venir" href="compte.php" tabindex="-1" aria-disabled="true"><span class="compte-menu-puce">⚙</span>Préférences</a>
+          <a class="compte-menu-item" href="compte.php"><span class="compte-menu-puce">⚙</span>Préférences</a>
           <div class="compte-menu-separateur"></div>
           <a class="compte-menu-item" href="deconnexion.php"><span class="compte-menu-puce">⏻</span>Se déconnecter</a>
         </div>

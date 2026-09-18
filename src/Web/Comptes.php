@@ -60,7 +60,8 @@ final class Comptes
     public function parId(int $id): ?array
     {
         $req = $this->pdo()->prepare(
-            'SELECT id, identifiant, courriel, nom_affiche, doit_changer_mdp, actif
+            'SELECT id, identifiant, courriel, nom_affiche, doit_changer_mdp, actif,
+                    cree_le, derniere_connexion
                FROM compte WHERE id = ?');
         $req->execute([$id]);
         return $req->fetch() ?: null;
@@ -152,6 +153,13 @@ final class Comptes
         $req = $this->pdo()->prepare(
             'UPDATE compte SET empreinte = ?, doit_changer_mdp = 0 WHERE id = ?');
         $req->execute([password_hash($motDePasse, PASSWORD_DEFAULT), $compteId]);
+    }
+
+    /** Le nom que les autres voient (`nom_affiche`). Jamais vide, 120 caractères au plus. */
+    public function changerNomAffiche(int $compteId, string $nom): void
+    {
+        $this->pdo()->prepare('UPDATE compte SET nom_affiche = ? WHERE id = ?')
+            ->execute([mb_substr(trim($nom), 0, 120), $compteId]);
     }
 
     public function marquerConnexion(int $compteId): void

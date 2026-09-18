@@ -210,14 +210,23 @@ final class Invitations
         return (int) $req->fetchColumn();
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * Par qui ce compte est arrivé : la **première** invitation qu'il a
+     * utilisée. Un compte qui rejoint ensuite d'autres projets par code en
+     * accumule d'autres (`rejoindre.php`) ; c'est la première qui dit
+     * comment il est entré.
+     *
+     * @return array<string, mixed>|null
+     */
     public function parrainDe(int $compteId): ?array
     {
         $req = $this->pdo()->prepare(
             'SELECT i.cree_le, i.utilise_le, c.nom_affiche AS parrain
                FROM invitation i
                JOIN compte c ON c.id = i.parrain_id
-              WHERE i.filleul_id = ?');
+              WHERE i.filleul_id = ?
+              ORDER BY i.utilise_le, i.id
+              LIMIT 1');
         $req->execute([$compteId]);
         return $req->fetch() ?: null;
     }
