@@ -1060,6 +1060,20 @@ récit.*
   le bloc de conduite) ; mon bloc y est compacté sur téléphone pour ne pas
   aggraver 412×915, où la page tenait. Détail :
   `chantier-scenario-plantation.md` § Phase 2. Pas encore déployé.
+- **Le backend du scénario — Phase 3 du chantier « scénario de plantation »,
+  2026-09-18.** `src/Scenario.php` (les règles : périodes, 24 fonctions,
+  emplacements, validation tout-ou-rien, position 0-28 dans le temps, ordre de
+  remplissage), `src/Web/Scenarios.php` (`souhaitsDuSite()`, `productions()`,
+  `enregistrer()` — ajout, modification, retrait, chacun sous `FOR UPDATE` et
+  verrou de version), `Parcelles::scenario()`. Port **réduit** : rien ne touche
+  `parcelle.plan` (`ImplantationBordures` reste hors périmètre). Écarts :
+  en jardin-forêt le temps n'est pas lu (de placenta1 au climax) ;
+  `productions()` refuse plutôt que tronquer les `VARCHAR(190)` ; les
+  souhaits viennent de `objectifs_productions` du participant, à défaut du
+  porteur. Testé par un script sur la **base locale** (82 vérifications, dont
+  23 refus de saisie et le verrou de version) — pas d'endpoint, donc pas de
+  `curl` ; le script s'arrête si l'hôte n'est pas `127.0.0.1`. Pas encore
+  déployé. Détail : `chantier-scenario-plantation.md` § Phase 3.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1094,9 +1108,10 @@ il apparaît réellement, pour ne pas noyer le motif.
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
    « Participants » ; **déployé le 2026-09-18**.
 2. **Chantier « scénario de plantation »** — plan dans
-   `chantier-scenario-plantation.md` (4 phases). **Phases 1 et 2 faites le
-   2026-09-18** (la base de végétaux ; la conduite et son héritage, voir
-   plus haut). Prochaine : Phase 3, le backend de `scenario_ligne`.
+   `chantier-scenario-plantation.md` (4 phases). **Phases 1 à 3 faites le
+   2026-09-18** (la base de végétaux ; la conduite ; le backend de
+   `scenario_ligne`, voir plus haut). Prochaine : Phase 4, la page
+   `conception-scenario.php`.
 3. **Zone climatique USDA** — faite le 2026-09-18 (voir plus haut) ;
    reste à en tirer parti : filtrer les espèces du scénario par
    rusticité une fois `conception-scenario.php` construit.

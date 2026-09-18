@@ -69,6 +69,22 @@ final class Parcelles
         return $req->fetchAll();
     }
 
+    /**
+     * Les végétaux du scénario d'une parcelle, dans l'ordre de remplissage
+     * (production principale, secondaire, biomasse, placentaires en dernier).
+     * Le contrôle d'appartenance de la parcelle à un site se fait à l'appel :
+     * `parId($id, $siteId)` d'abord.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function scenario(int $parcelleId): array
+    {
+        $req = $this->pdo()->prepare(
+            'SELECT * FROM scenario_ligne WHERE parcelle_id = ? ORDER BY ordre, id');
+        $req->execute([$parcelleId]);
+        return $req->fetchAll();
+    }
+
     /** Garde de site incluse — une parcelle ne se lit jamais hors de son site.
      * @return array<string, mixed>|null */
     public function parId(int $id, int $siteId): ?array

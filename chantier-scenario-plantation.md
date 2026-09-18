@@ -115,7 +115,7 @@ référence elle-même n'a pas fini.
 ```
 Phase 1  ✅ La base de végétaux — table `espece`, backend, seed curaté + export Plantae
 Phase 2  ✅ Conduite et héritage site/parcelle — `syntropique`/`jardin-foret`
-Phase 3  Backend du scénario — `scenario_ligne`, validation, positions temporelles
+Phase 3  ✅ Backend du scénario — `scenario_ligne`, validation, positions temporelles
 Phase 4  `conception-scenario.php` — la page, sur le bureau, pret:true
 ```
 
@@ -285,7 +285,7 @@ et 360×740. Une capture réelle le montre ; c'est une des pages les plus
 chargées du parcours. Une piste : les deux groupes en onglets CSS pur (comme
 `compte.php`) dès que la hauteur manque.
 
-### Phase 3 — Backend du scénario
+### Phase 3 — Backend du scénario ✅ (fait le 2026-09-18)
 
 **But** : la table `scenario_ligne` (déjà en base) devient écrivable,
 avec la même logique de validation et de position temporelle que la
@@ -315,6 +315,53 @@ libre ou curatée), vérifier le calcul de position temporelle, modifier,
 retirer, vérifier le verrou de version (une modification concurrente
 est refusée avec un message clair), vérifier qu'une strate hors
 vocabulaire de la conduite résolue est rejetée.
+
+**Fait** : `src/Scenario.php`, `src/Web/Scenarios.php`, `Parcelles::scenario()`.
+
+**Écarts avec ce qui était annoncé, tranchés en codant**
+
+- **Pas de `curl` : il n'y a pas d'endpoint.** La référence n'en a pas non plus
+  — `Scenarios` est appelée par la page, pas par une API. Le test est donc un
+  script PHP sur la base **locale** (82 vérifications), avec un garde-fou qui
+  s'arrête si l'hôte n'est pas `127.0.0.1` : `config/base.php` l'emporte sur
+  `local.env` (voir la mémoire du projet), un `php` lancé sans exporter
+  `local.env` viserait la production.
+- **`Scenario::selectionDe()` et `versionProductions()`** — la référence
+  recalculait ces deux choses dans la page ; elles vivent ici, avec la règle,
+  pour que la Phase 4 et le service disent la même chose du même jeton.
+- **En jardin-forêt, la saisie du temps n'est pas lue** : la plante est là de
+  `placenta1` au `climax` (repères 0 à 28, sans retrait), par
+  `Conduite::scenarioADesTemps()`. La référence exigeait quand même un début
+  et une fin. Ici : jamais devinés, jamais demandés.
+- **`souhaitsDuSite()`** : la référence tirait deux listes (principales,
+  secondaires) d'un « rêve » ; syntropia n'a qu'un champ,
+  `reponse.objectifs_productions`. Ce sont les réponses **du participant
+  connecté**, à défaut celles **du porteur** — un contributeur qui n'a pas
+  encore répondu ne trouve pas un choix vide. La distinction principale /
+  secondaire se fait parcelle par parcelle, dans `productions()`.
+- **`productions()` refuse plutôt que tronquer** : `production_principale` et
+  `production_secondaire` sont des `VARCHAR(190)` où les souhaits tiennent un
+  par ligne — trop long, une virgule dans un souhait (il se scinderait à la
+  relecture), un souhait à la fois principal et secondaire, ou aucun principal :
+  autant de refus avec leur message. Vider les secondaires écrit `NULL`.
+- **`souhaits()` garde la première graphie** (« tomates » puis « TOMATES » reste
+  « tomates ») ; la référence gardait la dernière.
+- Quantités et `quantite_mode` : `manuel` seulement, comme annoncé.
+
+**Vérifié** (script sur la base locale, comptes et projet créés puis supprimés) :
+segmentation des souhaits ; positions et libellés ; **23 refus de saisie**
+(strate d'un autre vocabulaire, sans nom, ni production ni fonction, fonction
+inconnue, début ≥ fin, repères hors 0-28, retrait hors présence, quantité et
+espacement hors bornes, texte trop long, emplacement/couleur/origine inconnus) ;
+ordre de remplissage (principale 1, secondaire 2, service ≤ placenta3 → 4,
+sinon 3) et couleurs par catégorie ; jardin-forêt sans temps ; productions
+(lecteur, étranger, parcelle inexistante, version périmée, écriture d'un
+contributeur, parcelle voisine intacte) ; végétaux (ajout par porteur et
+contributeur, lecteur et étranger refusés, **verrou de version** — la
+modification concurrente est refusée et ne change rien —, renommage refusé
+sans confirmation, `details` fusionnés et non remplacés, ligne d'une autre
+parcelle inaccessible par son identifiant, retrait, suppression en cascade
+avec la parcelle).
 
 ### Phase 4 — `conception-scenario.php` — la page
 
