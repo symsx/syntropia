@@ -79,7 +79,9 @@ COUVERTURE = {
 
 def git(*args):
     r = subprocess.run(["git", *args], cwd=RACINE, capture_output=True, text=True)
-    return r.stdout.strip() if r.returncode == 0 else ""
+    # rstrip seulement : `git status --porcelain` commence par un espace significatif
+    # (« ␣M fichier »), que strip() retirerait sur la première ligne.
+    return r.stdout.rstrip("\n") if r.returncode == 0 else ""
 
 
 def chapitres_du_livret():
@@ -106,7 +108,7 @@ def modifies_depuis(base, fichiers):
 
 def main():
     if "--relu" in sys.argv:
-        tete = git("rev-parse", "HEAD")
+        tete = git("rev-parse", "HEAD").strip()
         RELU.write_text(tete + "\n", encoding="utf-8")
         print(f"livret noté à jour au commit {tete[:7]} — pense à commiter {RELU.relative_to(RACINE)}")
         return 0
