@@ -128,12 +128,23 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-ateli
        derrière. Remarque du porteur, 2026-09-15. */
     main#bureau{ padding-top:2.6rem; }
     .doc-corps{ flex-direction:column; padding:.9rem .9rem .7rem; gap:.7rem; max-width:100%; }
-    .doc-chapitres-bloc{ flex:0 0 auto; width:100%; }
-    .doc-chapitres-titre{ margin-left:.2rem; }
-    .doc-chapitres{ flex-direction:row; flex-wrap:wrap; gap:.35rem; }
-    .doc-chapitres label{ padding:.3rem .55rem; font-size:.76rem; }
+    /* la liste des chapitres disparaît : en rangée de pastilles elle prenait
+       jusqu'à cinq lignes (9 chapitres) et la page débordait, or le bureau ne
+       défile jamais. On tourne alors les chapitres par les deux boutons du bas
+       de la page (« chapitre précédent / suivant », des labels : ils gardent leur
+       effet même si les boutons radio sont masqués). Décidé le 2026-09-19. */
+    .doc-chapitres-bloc{ display:none; }
     .doc-page{ padding:1rem 1.1rem .9rem; min-height:0; }
     .doc-chapitre p{ font-size:.84rem; }
+  }
+
+  /* téléphone très bas (320×568) : la page se resserre encore. */
+  @media (max-width:30rem) and (max-height:38rem){
+    main#bureau{ padding-top:2.2rem; }
+    .doc-page{ padding:.7rem .9rem .6rem; }
+    .doc-chapitre h2{ font-size:1rem; margin-bottom:.4rem; }
+    .doc-chapitre p{ font-size:.8rem; line-height:1.45; margin-bottom:.6rem; }
+    .doc-page-nav{ margin-top:.5rem; padding-top:.5rem; }
   }
 
 <?php foreach ($chapitres as $ch): $id = htmlspecialchars($ch['id'], ENT_QUOTES, 'UTF-8'); ?>

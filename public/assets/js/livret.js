@@ -31,7 +31,7 @@
     if (nav) { nav.remove(); }
   }
 
-  function budgetDisponible(article, page, bureau) {
+  function budgetDisponible(article, page, bureau, retenue) {
     var styleP = getComputedStyle(page);
     var budget = bureau.clientHeight - parseFloat(styleP.paddingTop) - parseFloat(styleP.paddingBottom);
 
@@ -51,10 +51,11 @@
     // Réservé pour la pagination interne elle-même — avant de savoir si
     // elle sera nécessaire. Mieux vaut paginer un peu tôt que déborder.
     budget -= 40;
-    return budget;
+    // Ce que la mesure a trouvé en trop, tour d'avant (voir paginerTout).
+    return budget - (retenue || 0);
   }
 
-  function paginerChapitre(article) {
+  function paginerChapitre(article, retenue) {
     defaire(article);
 
     var page = article.closest('.doc-page');
@@ -64,7 +65,7 @@
     var paragraphes = Array.prototype.slice.call(article.querySelectorAll(':scope > p:not(.doc-chapitre-repere)'));
     if (paragraphes.length === 0) { return; }
 
-    var disponible = budgetDisponible(article, page, bureau);
+    var disponible = budgetDisponible(article, page, bureau, retenue);
     var premierTop = paragraphes[0].offsetTop;
     var groupes = [[]];
     paragraphes.forEach(function (p) {
@@ -123,8 +124,41 @@
     montrer(0);
   }
 
+  /* De combien la page dépasse-t-elle le bureau, au pire ? Le budget est une
+   * estimation : il ignore les marges du cadre et, sur téléphone, la hauteur de
+   * la rangée de chapitres posée au-dessus — qui grandit avec le nombre de
+   * chapitres (9 chapitres : la page débordait de 123 px). On mesure donc, sous-
+   * page par sous-page (la page prend la hauteur de la plus haute), puis on
+   * remet chacune dans l'état où on l'a trouvée. */
+  function depassement() {
+    var page = document.querySelector('.doc-page');
+    var bureau = document.getElementById('bureau');
+    if (!page || !bureau) { return 0; }
+    var limite = bureau.getBoundingClientRect().bottom;
+    var blocs = Array.prototype.slice.call(document.querySelectorAll('.doc-sous-page'));
+    var etats = blocs.map(function (b) { return b.hidden; });
+    var pire = page.getBoundingClientRect().bottom - limite;
+    document.querySelectorAll('.doc-sous-pages').forEach(function (conteneur) {
+      var siens = Array.prototype.slice.call(conteneur.querySelectorAll('.doc-sous-page'));
+      siens.forEach(function (voulu) {
+        siens.forEach(function (b) { b.hidden = b !== voulu; });
+        pire = Math.max(pire, page.getBoundingClientRect().bottom - limite);
+      });
+      siens.forEach(function (b) { b.hidden = etats[blocs.indexOf(b)]; });
+    });
+    return Math.ceil(pire);
+  }
+
   function paginerTout() {
-    document.querySelectorAll('.doc-chapitre').forEach(paginerChapitre);
+    var retenue = 0;
+    for (var tour = 0; tour < 8; tour++) {
+      document.querySelectorAll('.doc-chapitre').forEach(function (a) { paginerChapitre(a, retenue); });
+      var trop = depassement();
+      if (trop <= 0) { break; }
+      // On coupe entre deux paragraphes : retrancher 13 px ne fait rien tant que le
+      // dernier paragraphe garde de la marge. La retenue double donc à chaque tour.
+      retenue += Math.max(trop, retenue);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', function () {

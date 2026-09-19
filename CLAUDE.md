@@ -1265,6 +1265,21 @@ récit.*
   dans un vrai navigateur, à surveiller. La barre d'outils défile horizontalement
   sous ~800 px (elle le faisait déjà sous ~650) ; le menu déroulant reste réservé
   aux téléphones.
+- **Livret « L'agroforesterie syntropique » écrit, et pagination des livrets
+  corrigée — 2026-09-19.** Le porteur a écrit `contenu/documentation-saf.md`
+  (9 chapitres, une vue d'ensemble des principes — pas un détail) ; texte
+  corrigé, et rendu compatible avec le format du livret (un chapitre par ligne
+  `# `, ni listes ni `##` : les retours à la ligne fusionnent). **Défaut révélé par
+  ces 9 chapitres** : sur téléphone, la rangée de pastilles « Chapitres » prenait
+  jusqu'à cinq lignes et la page débordait de 123 px à 412×800 (« L'atelier »
+  débordait déjà de 13 px à 360×740). Deux correctifs : (1) `livret.js` mesure
+  maintenant le débordement réel, sous-page par sous-page, et resserre son budget
+  (la retenue double à chaque tour, car on ne coupe qu'entre deux paragraphes) ;
+  (2) **sur téléphone la rangée de chapitres est masquée** dans les deux livrets — on
+  tourne les chapitres par les deux boutons du bas de la page (des `label`, qui
+  agissent même si les radios sont masqués). Décidé avec le porteur. Un cas
+  très bas (320×568) resserre encore la page. Mesuré en CDP, 6 tailles × chaque
+  chapitre des deux livrets : aucun débordement. **Pas encore déployé.**
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
