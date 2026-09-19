@@ -1,8 +1,7 @@
 # L'Atelier Syntropia
 
 L'objectif de cet atelier est de vous fournir un accompagnement et des
-outils pour concevoir, créer et assurer le suivi de cultures avec les
-méthodes de la « Syntropie ».
+outils pour concevoir, créer et assurer le suivi de cultures en agroforesterie syntropique.
 
 Tout se trouve à un seul endroit sur ce site.
 
@@ -12,21 +11,16 @@ syntropiques et ne remplace en aucun cas une formation
 dans ce domaine.
 
 Syntropia accompagne la conception et la conduite d'un système agroforestier
-syntropique — de la première idée jusqu'au suivi, saison après saison en se
-basant sur des ressources de référence :
-« Ce qui est important c'est l'intention, pas la forme » : le site dit ce
-qui est recherché, et pourquoi, plutôt que d'imposer une réponse.
+syntropique — de la première idée jusqu'au suivi, saison après saison en se basant sur des ressources telles que
+"Bienvenue en Syntropie" de Joala, les Webinaires Lina Faraj, les cours de formation Sylvanier des Alvéoles.
 
-Chaque étape demande des informations précises, et explique à quoi elles
-serviront plus loin — une donnée sans usage n'est jamais demandée pour
-elle-même. Les réponses d'une étape éclairent les suivantes : le projet se
-dessine au fur et à mesure, il n'est pas figé d'avance.
+Chaque étape demande des informations précises, et explique à quoi elles servent.
 
 # L'intention
 
 Que cela soit pour créer son jardin, cultiver sa nourriture, ou
-produire des végétaux que cela soit sur petite ou grande échelle,
-l'acte de cultiver est d'utilité publique.
+produire des végétaux, sur petite ou grande échelle,
+l'acte de cultiver est plus que jamais d'utilité publique.
 
 Aujourd'hui c'est même un acte citoyen qui s'accompagne d'un
 changement de mentalité ; notre civilisation a besoin de retrouver
@@ -36,8 +30,11 @@ L'agroforesterie syntropique, c'est :
 
 cultiver en association avec son environnement, sans besoins de s'aliéner avec des engrais, des pesticides et autres intrants.
 
-retrouver en tant qu'humain une place honorable dans ses impacts
-et
+Ce site Syntropia se veut donc comme un accompagnement pour
+faciliter la conception et le suivi de projet en SAF syntropique.
+
+Pour toutes questions ou déclaration d'anomalie au sujet de
+ce site merci d'envoyer un mail à ... en décrivant précisément l'endroit et le problème rencontré.
 
 # Où trouver quoi
 
