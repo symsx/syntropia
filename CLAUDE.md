@@ -1300,7 +1300,7 @@ récit.*
   **aucun débordement** de 1280×720 à 320×568 (l'eau passe en un bloc à la fois sous
   60rem ; les polices arrivent après le premier calcul, d'où `document.fonts.ready`).
   Livret « L'atelier » : chapitre « Concevoir : le matériel et l'eau » ajouté, garde-fou
-  `bin/verifier-documentation.py` complété. **Pas encore déployé.** **Non fait** : un
+  `bin/verifier-documentation.py` complété. **Déployé le 2026-09-19** (cinquième vague, voir plus bas). **Non fait** : un
   relevé n'est pas rattaché à un « point » réel de la parcelle (texte libre) ; le
   témoin n'est pas pris en compte ; aucune conversion du besoin en durée d'arrosoir
   (le débit de l'arroseur n'est pas connu).
@@ -1375,6 +1375,19 @@ récit.*
   local/distant sans écart, syntaxe PHP 8.4 distante, pages du parcours 302, `src/`, `contenu/`
   et `config/base.php` 403, le nouveau CSS et l'adresse servis. `bin/verifier-documentation.py`
   est aussi arrivé sur le serveur (`bin/` est envoyé, inoffensif : protégé par `.htaccess`).
+- **Déploiement de Matériel et eau — 2026-09-19 (cinquième vague).** Trois commits, 12
+  fichiers (4 `public/`, 4 `src/`, `contenu/documentation-atelier.md`, 2 dans `bin/`,
+  plus les dossiers sans écart). **Aucun changement de schéma** : `fichiers` seul. Avant de
+  l'envoyer, les colonnes utilisées lues **en lecture seule** sur la production
+  (`information_schema`) : `site.ressource_eau`/`_detail`, les neuf colonnes de
+  `releve_sol`, `parcelle.plan`/`nb_planches`/…, `scenario_ligne.origine`/`espacement_m`/
+  `nb_pieds`, `espece.espacement_*` — toutes présentes (leçon de `espece.variete` : une
+  table ancienne peut manquer d'une colonne récente). Vérifié : `rsync -c` local/distant
+  sans écart, syntaxe PHP 8.4 distante de sept fichiers sans erreur, la page 302 pour un
+  anonyme (POST compris), `src/`, `contenu/`, `sql/`, `bin/` et `config/base.php` 403,
+  `etapes.js` servi avec `pret: true`. **Comme avant, le parcours lui-même n'est pas testé
+  en production** (règle du 2026-09-18) : à essayer avec le vrai compte — le matériel d'une
+  parcelle, la vue « tout le projet », noter une ressource en eau et un test de sol.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
