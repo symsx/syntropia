@@ -2,7 +2,7 @@
 
 **Confié à Claude par le porteur le 2026-09-19** : « cela me prendrait trop de temps
 pour que cela corresponde à ce qui est déployé, il faut d'ailleurs la maintenir suite
-aux évolutions. Prévois donc ce chantier. » **Planifié, pas commencé.**
+aux évolutions. Prévois donc ce chantier. » **Phases 1 à 3 faites le 2026-09-19 ; le livret n'est pas encore déployé** (voir § État).
 
 Deux choses distinctes dans cette demande, et deux réponses :
 1. **Rattraper** — `contenu/documentation-atelier.md` (le livret « L'atelier », page
@@ -157,6 +157,55 @@ c'est la relecture du chapitre qui tranche.
    de référence : ») sont à finir par lui, je n'invente pas sa voix.
 4. **Rien sur ce qui n'existe pas encore** (« Matériel et eau », export, suppression) — pas
    de chapitre « à venir » : d'accord ?
+
+## État — 2026-09-19
+
+- **Phase 1 faite** : inventaire ci-dessous (§ Annexe), tiré des pages et de leurs panneaux
+  Informations.
+- **Phase 2 faite** : `contenu/documentation-atelier.md` réécrit, **onze chapitres** dans l'ordre
+  validé par le porteur (aperçu, comme le livret SAF). Vérifié : le moteur lit les 11
+  chapitres ; aucun chapitre ne déborde de 1280×720 à 320×568, pour les deux livrets (une
+  colonne de 11 chapitres débordait de 8 px à 1024×600 : compactée sur écran peu haut, dans
+  `documentation-site.php` et `documentation-saf.php`) ; orthographe relue (`aspell -l fr`).
+- **Phase 3 faite** : `bin/verifier-documentation.py` (table de couverture chapitre → fichiers ;
+  signale les pages non couvertes, et les chapitres à relire depuis la dernière relecture notée
+  dans `bin/documentation-atelier.relu` ; `--relu` la note, `--court` sert `deployer.py`, qui
+  **avertit sans jamais refuser**). Testé dans un clone jetable : page non couverte (code 2),
+  modification commitée et non commitée (code 1), effacement par `--relu`. La règle de
+  maintenance est dans le CLAUDE.md (§ Directives de travail) et en mémoire.
+- **Phase 4** : le rythme — à chaque déploiement, lancer le vérificateur.
+- **À faire par le porteur avant le déploiement** : finir **« L'intention »** — la phrase qui
+  finit par « et » (« retrouver en tant qu'humain une place honorable dans ses impacts et »)
+  — et la phrase du premier chapitre « en se basant sur des ressources de référence : »,
+  qui n'a pas de suite. Je les ai laissées telles quelles (c'est sa voix).
+- **Déploiement** : en attente de l'accord du porteur (`fichiers` seul, aucun schéma).
+
+## Annexe — l'inventaire (Phase 1)
+
+Ce qui est en production, page par page, et le chapitre du livret qui en parle.
+
+| Page | Ce qu'elle permet | Chapitre |
+|---|---|---|
+| `index`, `connexion`, `inscription`, `deconnexion` | présentation, connexion, inscription sur code | Où trouver quoi · Comptes |
+| `documentation-site`, `documentation-saf`, `glossaire` | les deux livrets, la recherche de mots | Où trouver quoi |
+| `definition-projet` | ouvrir un projet (nom) — passage obligé | Définir son projet |
+| `definition-vision`, `-objectifs`, `-moyens` | trois questions, trois questions, quatre questions ; réponses enregistrées | Définir son projet |
+| `definition-site` | le lieu (carte, zone USDA estimée), les observations, la conduite — 3 onglets | Définir son projet |
+| `conception-etude-site` | la carte : 10 calques, 7 outils, 7 fonds, cadastre / eau / vents / relief / ombres / GeoJSON | la carte du terrain |
+| `conception-etude-sol` | sept relevés, fiches à imprimer (`releve-vierge`) — pas de saisie en ligne | parcelles et scénario |
+| `conception-parcelles` | créer une parcelle, son plan (bordures, planches, sens), sa conduite | parcelles et scénario |
+| `conception-scenario` | la frise (syntropie) ou la vue par strate (jardin-forêt), les productions | parcelles et scénario |
+| `conception-calendrier` | un repère de rythme saison par saison, à main levée | parcelles et scénario |
+| `realisation-*` (4), `suivi-*` (4) | réponses enregistrées, une consignation qui se répète | Réaliser et suivre |
+| `compte`, `api-projets` | Préférences ; changer de projet actif | Comptes, projets et rôles |
+| `inviter`, `rejoindre`, `membres` | codes de parrainage ; rejoindre un projet ; participants et retrait | Inviter et rejoindre |
+
+**Constats faits en relisant les pages** (à traiter à part, hors livret) :
+- `conception-calendrier.php` et `realisation-outils-et-plans.php` disent dans leur panneau
+  Informations que le **scénario de plantation** est « une pièce du parcours pas encore
+  construite » : **c'est faux depuis le 2026-09-18** (il est en production). Textes à corriger.
+- `conception-etude-sol.php` : « la saisie numérique de ces relevés n'existe pas encore » —
+  exact, et le livret dit seulement « fiches à imprimer », sans le promettre.
 
 ## Fichiers critiques
 

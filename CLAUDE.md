@@ -45,8 +45,12 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
 - `chantier-documentation-atelier.md` — le plan (4 phases) pour mettre à jour le livret
   « L'atelier » (`contenu/documentation-atelier.md`) puis le maintenir : confié à
-  Claude par le porteur le 2026-09-19, **planifié, pas commencé** — voir § Directives
-  de travail pour la règle de maintenance.
+  Claude par le porteur le 2026-09-19, **phases 1 à 3 faites, livret pas encore déployé**
+  — voir § Directives de travail pour la règle de maintenance.
+- `chantier-manuel-utilisateur.md` — le plan (6 phases) d'un **manuel utilisateur illustré de
+  copies d'écran**, en markdown, **hors de l'atelier** (dossier `manuel/`, non déployé) :
+  demandé par le porteur le 2026-09-19, **planifié, pas commencé** ; les captures se
+  régénèrent par un script sur un projet de démonstration.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1368,8 +1372,9 @@ il apparaît réellement, pour ne pas noyer le motif.
 6. **`contenu/documentation-saf.md`** — écrit par Sylvain le 2026-09-19 (9 chapitres,
    déployé) ; il l'enrichit à son rythme, directement dans ce fichier.
    **`contenu/documentation-atelier.md`** — à ma charge : mise à jour puis maintenance,
-   plan dans `chantier-documentation-atelier.md` (à valider avec le porteur : niveau de
-   détail, onze chapitres, « L'intention » à finir par lui).
+   réécrit en onze chapitres le 2026-09-19 (plan dans `chantier-documentation-atelier.md`),
+   **pas encore déployé** : « L'intention » et une phrase du 1er chapitre restent à finir par
+   le porteur. **Manuel utilisateur illustré** : `chantier-manuel-utilisateur.md`, planifié.
 7. **`autres-documentations.php`** — page publique restante, non
    commencée.
 8. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
