@@ -52,6 +52,14 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   demandé par le porteur le 2026-09-19, **planifié, pas commencé — à entreprendre sur sa
   demande, à priori à la version 1.0** ; markdown **et PDF** ; les captures se régénèrent
   par un script sur un projet de démonstration. Décisions toutes tranchées.
+- `chantier-dossier-projet.md` — le plan (5 phases) du **Dossier Projet imprimable** : un
+  document papier du projet de la personne (vision, terrain, parcelles, scénario, matériel,
+  eau, calendrier), page hors gabarit comme `releve-vierge.php` (**seconde exception admise
+  par le porteur**, réservée aux documents papier), chapitres à choisir avant l'impression,
+  tracés seuls sans carte de tiers, entrée de menu « Dossier Projet » dans une section
+  placée avant « Documentation », puis un **sous-dossier par parcelle** qui sert de
+  document de chantier pour l'implantation. Demandé et **cadré le 2026-09-19** (les six
+  questions sont tranchées), **pas commencé**.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -77,6 +85,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Role.php, Profil.php   énumérations — droits et profils
   FicheTerrain.php       contenu des 7 fiches de relevé de sol — voir releve-vierge.php
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
+  Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
+  BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
   Geojson.php             lit un GeoJSON externe (ContourBuddy, QGIS, Géoportail…), un tracé par morceau — inversion [lon,lat]→[lat,lon]
   Documentation.php      lit contenu/*.md, un chapitre par ligne « # » — livrets et glossaire
@@ -93,6 +103,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Vents.php                rose des vents calculée à la demande (Open-Meteo) — jamais persistée ; appelé par conception-etude-site.php
     Altimetrie.php           altitude IGN — un point, ou une grille pour le relief ; filtre le sentinel z=-99999 ; appelé par api-altitude.php
     ZoneUsda.php             zone de rusticité USDA estimée depuis 30 ans de minima (Open-Meteo, 1991-2020) — jamais persistée seule ; appelé par api-usda.php
+    ReleveSol.php            relevés de sol d'une parcelle (`releve_sol`) — infiltration, état d'humidité, jours depuis la pluie ; appelé par conception-materiel-et-eau.php
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
@@ -129,6 +140,7 @@ public/                racine servable du site en refonte
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
   conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
   conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
+  conception-materiel-et-eau.php  étape 5 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
   realisation-preparation-parcelle.php  étape 1 (Réalisation)
@@ -396,12 +408,10 @@ récit.*
   premier site s'ouvre sur `definition-projet.php` (passage obligé, hors
   `etapes.js`), avant la première question de Définition ; un projet de
   plus, sur `definition-projet.php?nouveau=1`.
-- **Une étape reste volontairement reportée**, à part entière — pas
-  construite en version allégée, `pret` absent dans `etapes.js` :
-  `conception-materiel-et-eau.php` (`directives.txt` : « pour chaque
-  parcelle »). Elle s'appuiera sur le scénario, qui existe depuis le
-  2026-09-18 : `conception-scenario.php` (scénario de plantation) est
-  `pret: true` — voir `chantier-scenario-plantation.md`.
+- **Plus aucune étape n'est reportée** (2026-09-19) : `conception-materiel-et-eau.php`,
+  la dernière, est faite — voir § Matériel et eau plus bas. Elle s'appuie sur le
+  scénario (`conception-scenario.php`, `pret: true` depuis le 2026-09-18, voir
+  `chantier-scenario-plantation.md`).
   `conception-etude-site.php` (la carte interactive) n'est plus
   reportée du tout : `pret: true` depuis la Phase 5, et le chantier
   « carte interactive du terrain » est maintenant terminé, dix phases
@@ -655,9 +665,9 @@ récit.*
   la prose libre écrite par le porteur, sa longueur n'est pas bornée).
   `documentation-saf.md` n'est encore qu'un modèle, le porteur écrit son
   contenu à son rythme.
-- **Le parcours au complet, sauf une étape reportée** —
-  dix-neuf des vingt étapes de `etapes.js` portent `pret: true` (reste
-  `conception-materiel-et-eau`).
+- **Le parcours au complet** —
+  les vingt étapes de `etapes.js` portent `pret: true` (la dernière,
+  `conception-materiel-et-eau`, le 2026-09-19).
   Détail : `architecture-technique.md` § Le parcours complet, de
   Calendrier à Suivi.
 - **Petit écran, deux vrais bugs trouvés sur capture d'écran réelle et
@@ -1252,6 +1262,48 @@ récit.*
   onglet). Mesuré puis vérifié en CDP, 6 tailles × 3 onglets, sans débordement :
   1280×720, 1024×600, 412×800, 412×915, 360×740, 320×568 ; envoi et rechargement des
   trois onglets, carte redessinée, lecteur, flèches du clavier.
+- **Matériel et eau — dernière étape du parcours, 2026-09-19.**
+  `public/conception-materiel-et-eau.php`, `pret: true`, « Matériel et eau » ajouté
+  au panneau gauche de `conception-parcelles.php` et `conception-scenario.php`. Deux
+  onglets CSS purs, sur une parcelle (`?parcelle=ID`) ou **tout le projet**
+  (`?tout=1`, dès deux parcelles). **Matériel** : `src/Materiel.php` regroupe les
+  lignes du scénario par origine (à acheter, acheté et multiplié, à multiplier, à
+  laisser venir, à préciser) ; une quantité saisie prime, sinon **estimée** — une ligne
+  de plants par planche ou par bande de bordure, à l'espacement de la ligne (à défaut
+  celui du référentiel `espece`) — et dite « estimé » à l'écran ; jamais additionnée
+  quand elle manque. **Eau** : `src/BesoinEau.php`, trois blocs. (1) le besoin annuel en
+  trois états de sol, **tous montrés, aucun choisi** (Lopez : 750 L/m² dégradé, 300
+  intermédiaire, « moins » non chiffré ; 5 mm/jour en pointe ; réserve = besoin annuel,
+  mare creusée d'un tiers de plus), sur la surface **longueur × largeur** de la parcelle ;
+  (2) la ressource du site (`site.ressource_eau`/`_detail`, colonnes déjà au schéma,
+  jamais utilisées jusque-là ; `Sites::enregistrerEau()`), qui change le conseil de stockage
+  et, sans eau, renvoie vers la RNA en comptant les végétaux à transplanter ; (3) **la
+  fréquence d'arrosage d'après les tests de sol** — demandée par le porteur en cours de
+  route : un test (infiltration mm/h, état détrempé/ressuyé/sec dur, jours depuis la
+  pluie) s'écrit dans `releve_sol` (table déjà au schéma, `src/Web/ReleveSol.php` ; aucune
+  page ne l'écrivait avant), et `BesoinEau::frequence()` en tire passages par semaine,
+  millimètres par passage, durée minimale (ne pas verser plus vite que le sol ne boit).
+  **Provenance des nombres, dite à l'écran** : les volumes viennent de Lopez
+  (maraîchage d'annuelles — rien de chiffré pour une pérenne) ; les cinq classes
+  d'infiltration reprennent la table 7 de l'annexe 2 du manuel d'irrigation de la FAO
+  (vérifiée en ligne le 2026-09-19 ; la ligne « sable » y est imprimée « moins de 30 »,
+  lue « plus de 30 ») ; **les doses par passage (12/18/25 mm) sont un repère de l'atelier,
+  pas une norme** — le corpus dit seulement « sol qui boit vite : plus court et plus
+  fréquent ; sol tampon : long et espacé ». Le ressuyage se lit dans l'état d'humidité et
+  les jours : détrempé deux jours après la pluie = lent (deux passages au plus),
+  ressuyé au bout d'un jour = rapide ; une infiltration relevée hors sol ressuyé est
+  signalée « à refaire » (la fiche exige toujours le même état). **Aucun changement de
+  schéma.** Vérifié en CDP sur une base locale de test (supprimée ensuite) : quantités
+  estimées recalculées à la main (76/12/18 plants), ressource, test valide/vide/hors
+  bornes/retrait, trois classes d'infiltration, vue « tout le projet », lecteur (pas de
+  panneau, POST 403), jeton faux 403, thème sombre, pagination de 32 végétaux, et
+  **aucun débordement** de 1280×720 à 320×568 (l'eau passe en un bloc à la fois sous
+  60rem ; les polices arrivent après le premier calcul, d'où `document.fonts.ready`).
+  Livret « L'atelier » : chapitre « Concevoir : le matériel et l'eau » ajouté, garde-fou
+  `bin/verifier-documentation.py` complété. **Pas encore déployé.** **Non fait** : un
+  relevé n'est pas rattaché à un « point » réel de la parcelle (texte libre) ; le
+  témoin n'est pas pris en compte ; aucune conversion du besoin en durée d'arrosoir
+  (le débit de l'arroseur n'est pas connu).
 - **Repositionner une parcelle sur la carte — outil « Repositionner »,
   2026-09-19.** Demandé par le porteur : une parcelle posée ne se déplaçait
   qu'en la retirant puis en la reposant. Nouvel outil du bandeau
@@ -1389,14 +1441,20 @@ il apparaît réellement, pour ne pas noyer le motif.
    réécrit en onze chapitres le 2026-09-19 (plan dans `chantier-documentation-atelier.md`),
    **pas encore déployé** : « L'intention » et une phrase du 1er chapitre restent à finir par
    le porteur. **Manuel utilisateur illustré** : `chantier-manuel-utilisateur.md`, planifié — sur demande du porteur, à priori à la version 1.0.
-7. **`autres-documentations.php`** — page publique restante, non
+7. **Dossier Projet imprimable** — cadré le 2026-09-19, plan dans
+   `chantier-dossier-projet.md`, **les six questions sont tranchées** (seconde exception au
+   gabarit admise, tracés seuls, chapitres au choix, nom « Dossier Projet », réalisation et
+   suivi à voir à l'impression, sous-dossier de parcelle = document de chantier). **À
+   reprendre sur demande du porteur** ; à la Phase 1, ajouter au CLAUDE.md la seconde
+   exception (§ Directives de travail).
+8. **`autres-documentations.php`** — page publique restante, non
    commencée.
-8. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
-9. **Au-delà du premier tour** : rien ne relit encore les réponses
+9. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
+10. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-10. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
+11. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
    transmis, en cours. Confronter ses scénarios au code réel une fois
    produits.
-11. Aucune procédure n'automatise `bin/deployer.py` après chaque
+12. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
