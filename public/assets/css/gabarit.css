@@ -16,6 +16,9 @@
   --accent-doux:#DFC16F; --accent-fond:#F6EEDB; --bouton-encre:#FFFFFF;
   --socle-fond:#EDF2E7; --socle-accent:#4E7043; --socle-accent-doux:#9DBB8D;
   --ombre: rgba(38,49,42,.22);
+  /* le fond de la barre d'outils : en clair, --accent-fond est identique au fond de la page
+     (--fond) et la bande ne se voyait plus ; un ton de crème plus soutenu la détache. */
+  --outils-fond:#EFE2BF;
   --titre:'Clash Display', system-ui, -apple-system, sans-serif;
   --texte:'Archivo', system-ui, -apple-system, sans-serif;
   --haut-bandeaux: 6.2rem; /* 3.4rem (bandeau général) + 2.8rem (bandeau outils) */
@@ -28,6 +31,7 @@
     --accent-doux:#4B4025; --accent-fond:#382F1D; --bouton-encre:#1E1A11;
     --socle-fond:#121710; --socle-accent:#8AAE7B; --socle-accent-doux:#3A4B32;
     --ombre: rgba(0,0,0,.55);
+    --outils-fond:#382F1D;
   }
 }
 :root[data-theme="dark"]{
@@ -37,6 +41,7 @@
   --accent-doux:#4B4025; --accent-fond:#382F1D; --bouton-encre:#1E1A11;
   --socle-fond:#121710; --socle-accent:#8AAE7B; --socle-accent-doux:#3A4B32;
   --ombre: rgba(0,0,0,.55);
+  --outils-fond:#382F1D;
 }
 
 *{ box-sizing:border-box; }
@@ -157,7 +162,7 @@ code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); 
 /* --------------------------------------------------- bandeau contextuel */
 .bandeau-outils{
   grid-row:2; height:2.8rem; min-width:0; display:flex; align-items:center; gap:.35rem; padding:0 1rem;
-  background:var(--accent-fond); overflow-x:auto;
+  background:var(--outils-fond); border-bottom:1px solid var(--line); overflow-x:auto;
 }
 .bandeau-outils input{ position:absolute; opacity:0; pointer-events:none; }
 .outil-bouton{
