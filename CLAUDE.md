@@ -1310,6 +1310,19 @@ récit.*
   parcours eux-mêmes ne sont pas testés en production** (règle du 2026-09-18) : à essayer
   avec le vrai compte — les trois onglets du site, glisser et tourner une parcelle, le
   livret SAF sur téléphone.
+- **Déploiement du livret « L'atelier », de la barre d'outils et des textes corrigés —
+  2026-09-19 (quatrième vague).** Livret « L'atelier » réécrit en onze chapitres (adresse de
+  contact `jubile@alwaysdata.net`, boîte par défaut du compte, **redirigée vers la boîte
+  personnelle du porteur** depuis l'administration alwaysdata — les adresses supplémentaires
+  exigeraient un domaine à lui ; Thunderbird non configuré, sans importance), `gabarit.css`
+  (**la barre d'outils a son propre fond**, `--outils-fond` : en thème clair elle était de la
+  couleur de la page et ne se voyait plus), `documentation-{site,saf}.php` (colonne de chapitres
+  compactée sur écran peu haut), et trois textes périmés retirés (`conception-calendrier`,
+  `realisation-outils-et-plans`, `inscription` : « scénario pas encore construit », « pas encore
+  de page pour ouvrir une invitation »). `fichiers` seul, aucun schéma. Vérifié : `rsync -c`
+  local/distant sans écart, syntaxe PHP 8.4 distante, pages du parcours 302, `src/`, `contenu/`
+  et `config/base.php` 403, le nouveau CSS et l'adresse servis. `bin/verifier-documentation.py`
+  est aussi arrivé sur le serveur (`bin/` est envoyé, inoffensif : protégé par `.htaccess`).
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
