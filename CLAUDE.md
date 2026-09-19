@@ -49,8 +49,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   — voir § Directives de travail pour la règle de maintenance.
 - `chantier-manuel-utilisateur.md` — le plan (6 phases) d'un **manuel utilisateur illustré de
   copies d'écran**, en markdown, **hors de l'atelier** (dossier `manuel/`, non déployé) :
-  demandé par le porteur le 2026-09-19, **planifié, pas commencé** ; les captures se
-  régénèrent par un script sur un projet de démonstration.
+  demandé par le porteur le 2026-09-19, **planifié, pas commencé — à entreprendre sur sa
+  demande, à priori à la version 1.0** ; markdown **et PDF** ; les captures se régénèrent
+  par un script sur un projet de démonstration. Décisions toutes tranchées.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1374,7 +1375,7 @@ il apparaît réellement, pour ne pas noyer le motif.
    **`contenu/documentation-atelier.md`** — à ma charge : mise à jour puis maintenance,
    réécrit en onze chapitres le 2026-09-19 (plan dans `chantier-documentation-atelier.md`),
    **pas encore déployé** : « L'intention » et une phrase du 1er chapitre restent à finir par
-   le porteur. **Manuel utilisateur illustré** : `chantier-manuel-utilisateur.md`, planifié.
+   le porteur. **Manuel utilisateur illustré** : `chantier-manuel-utilisateur.md`, planifié — sur demande du porteur, à priori à la version 1.0.
 7. **`autres-documentations.php`** — page publique restante, non
    commencée.
 8. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;

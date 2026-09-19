@@ -3,7 +3,9 @@
 **Demandé par le porteur le 2026-09-19** : « un manuel utilisateur de l'atelier syntropia
 qui ne sera pas intégré à l'atelier mais fourni dans un document markdown. Ce manuel
 devra intégrer des copies d'écran afin d'expliquer les fonctionnalités de l'atelier. »
-**Planifié, pas commencé.**
+**Planifié, pas commencé. À entreprendre SUR DEMANDE du porteur, à priori lors d'une version
+1.0 de l'atelier** — décidé le 2026-09-19 : un manuel produit avant que l'atelier soit stable
+périmerait aussitôt. Toutes les décisions ci-dessous sont tranchées ; rien à redemander.
 
 ## Ce que c'est — et ce que ce n'est pas
 
@@ -140,7 +142,9 @@ livret) ; les messages d'erreur copiés du code.
 ### Phase 5 — vérification et remise
 - Chaque image existe, est référencée, et chaque référence existe (script de contrôle des
   liens).
-- Rendu vérifié (un aperçu markdown) ; export PDF proposé si le porteur le souhaite.
+- Rendu vérifié (un aperçu markdown) ; **export PDF** (décidé) : markdown → HTML → PDF par Chrome
+  headless, avec table des matières et saut de page avant chaque grande section ; chaque image
+  tient sur sa page.
 - **Relecture par le porteur.**
 - **Version** en tête du manuel : la date et le commit sur lesquels il a été produit — un
   manuel sans date ne dit pas de quoi il est le manuel.
@@ -160,20 +164,20 @@ quelles sections du manuel touchent des fichiers modifiés depuis la version pr�
 - Il **ne montre jamais le projet réel** du porteur ni de compte réel.
 - Il **ne traduit pas** (français seulement).
 
-## Décisions à confirmer par le porteur
+## Décisions du porteur — 2026-09-19
 
-1. **Niveau de détail** : « comment faire », pas à pas, avec les pièges — plus complet que le
-   livret (un aperçu). D'accord ?
-2. **Emplacement** : `manuel/` à la racine, **non déployé**, **versionné dans git** avec ses images
-   (moins de 10 Mo) — ou hors du dépôt ?
-3. **Projet de démonstration fictif**, sur un lieu public que je choisis (vous pouvez en
-   préférer un autre) — d'accord ?
-4. **Annotations numérotées** sur les captures (pastilles ①②③ expliquées dans le texte) — oui ?
-5. **Formats de sortie** : markdown seul, ou aussi un PDF ? (Le PDF se produit après coup, à
-   partir du markdown et des images.)
-6. **Quand ?** Après la mise à jour du livret « L'atelier » (leur vocabulaire est commun), et de
-   préférence quand le porteur juge l'atelier assez stable pour qu'un manuel ne périme pas
-   aussitôt.
+Le porteur a accepté le plan **tel que proposé**, avec un ajout (le PDF) :
+
+1. **Niveau de détail** : « comment faire », pas à pas, avec les pièges — plus complet que le livret. ✔
+2. **Emplacement** : `manuel/` à la racine, **non déployé**, **versionné dans git** avec ses images. ✔
+3. **Projet de démonstration fictif**, sur un lieu public choisi par Claude. ✔
+4. **Annotations numérotées** (pastilles ①②③ posées par le script). ✔
+5. **Formats de sortie : markdown ET PDF.** Le PDF est produit à partir du markdown et des
+   images ; outils déjà sur ce poste : `pandoc` et `python-markdown` (markdown → HTML), Chrome
+   headless (`--print-to-pdf`) — pas de LaTeX ni de weasyprint. Il fait partie de la Phase 5
+   (relu comme le reste : pagination, images entières, table des matières cliquable) et
+   `manuel/README.md` dit comment le régénérer.
+6. **Quand** : sur demande du porteur, à priori à la version 1.0 (voir en tête).
 
 ## Fichiers critiques
 

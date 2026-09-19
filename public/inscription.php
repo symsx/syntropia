@@ -313,8 +313,7 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
          Le code, dicté de vive voix, ne demande ni courriel ni service tiers
          pour circuler.</p>
       <p><strong>Ce qui n'est pas encore là</strong> — le courriel est demandé
-         mais non confirmé, et le compte est actif aussitôt créé ; il n'existe
-         pas encore de page pour ouvrir soi-même une invitation.</p>
+         mais non confirmé, et le compte est actif aussitôt créé.</p>
     </div>
   </aside>
 

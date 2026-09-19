@@ -150,7 +150,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
           <div class="outils-champ">
             <label for="plan_notes">Notes sur le plan d'implantation</label>
-            <small>Le vrai plan viendra avec le scénario de plantation, pas encore construit — ces notes patientent en attendant.</small>
+            <small>Où planter quoi, tel que vous l'envisagez — le scénario de plantation (en Conception) dit quoi, à quelle strate et pour combien de temps.</small>
             <textarea id="plan_notes" name="plan_notes" rows="2" placeholder="Ce que vous savez déjà de l'emplacement des plants"><?= htmlspecialchars($reponses['outils_plan_notes'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
@@ -170,10 +170,10 @@ $reponses = $reponsesService->pourParticipant($participantId);
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
       <p>Cette étape rassemble ce qu'il faut avoir sous la main avant de
-         commencer — les outils, et les personnes. Le vrai plan
-         d'implantation (quoi, où, sur la parcelle) viendra du scénario de
-         plantation, une pièce du parcours pas encore construite : ces
-         notes suffisent en attendant.</p>
+         commencer — les outils, et les personnes. Le scénario de
+         plantation (en Conception) dit quoi planter, à quelle strate et
+         pour combien de temps ; les notes sur le plan d'implantation
+         précisent où.</p>
     </div>
   </aside>
 

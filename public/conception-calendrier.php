@@ -176,10 +176,9 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Un premier calendrier, à main levée — pas encore calculé à partir
-         d'un scénario de plantation réel (cette pièce du parcours n'est
-         pas encore construite). Il donne un repère de rythme : ce qui se
-         passe à chaque saison, pour ne rien découvrir au dernier moment.</p>
+      <p>Un premier calendrier, à main levée : il donne un repère de
+         rythme — ce qui se passe à chaque saison, pour ne rien découvrir
+         au dernier moment.</p>
     </div>
   </aside>
 
