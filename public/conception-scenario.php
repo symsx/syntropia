@@ -550,6 +550,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
           <ul class="pg-liste">
             <li><a href="conception-parcelles.php?parcelle=<?= $idP ?>"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
             <li><a href="conception-scenario.php?parcelle=<?= $idP ?>" class="active" aria-current="page"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
+            <li><a href="conception-materiel-et-eau.php?parcelle=<?= $idP ?>"><span class="pg-puce">◍</span><span class="pg-libelle">Matériel et eau</span></a></li>
             <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">✎</span><span class="pg-libelle">Le suivi</span></a></li>
           </ul>
         </div>

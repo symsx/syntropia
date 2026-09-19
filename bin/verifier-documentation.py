@@ -58,6 +58,10 @@ COUVERTURE = {
         "public/conception-scenario.php", "public/conception-calendrier.php",
         "src/Web/Parcelles.php", "src/Web/Scenarios.php", "src/Scenario.php",
     ],
+    "Concevoir : le matériel et l'eau": [
+        "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php",
+        "src/Web/ReleveSol.php",
+    ],
     "Réaliser et suivre": [
         "public/realisation-preparation-parcelle.php", "public/realisation-materiel-vegetal.php",
         "public/realisation-outils-et-plans.php", "public/realisation-consignation.php",

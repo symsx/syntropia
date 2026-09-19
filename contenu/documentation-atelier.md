@@ -54,7 +54,8 @@ Le menu ☰, en haut à gauche, ouvre la navigation du site. La section
 
 **Définition** décrit le projet — qui le porte, pour quoi, avec quels
 moyens, sur quel terrain. **Conception** dessine les parcelles et le
-scénario de plantation. **Réalisation** prépare le terrain, le matériel, et
+scénario de plantation, puis compte ce qu'il faudra se procurer et l'eau
+à donner. **Réalisation** prépare le terrain, le matériel, et
 consigne ce qui a été fait. **Suivi** accompagne la vie du système une fois
 en place — arrosage, perturbation, observation.
 
@@ -122,6 +123,36 @@ pendant combien de temps. On compose une frise — le temps en largeur, les
 strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a
 pas d'axe du temps, le scénario se lit par strate. Le **calendrier** est un
 premier repère de rythme, saison par saison, écrit à main levée.
+
+# Concevoir : le matériel et l'eau
+
+Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra
+se procurer et l'eau qu'il faudra donner. Elle se lit parcelle par parcelle, ou
+pour tout le projet d'un coup.
+
+Le **matériel végétal** se déduit du scénario : chaque végétal, regroupé selon
+son origine — à acheter, à multiplier soi-même, à laisser venir par
+régénération naturelle. La quantité que vous avez saisie l'emporte ; à défaut,
+elle est estimée à partir de l'espacement et du plan de la parcelle, et la
+page le dit. Un végétal sans origine reste à préciser, car c'est elle qui
+décide de ce qu'on achète.
+
+Le besoin en **eau** se donne pour trois états du sol, du plus dégradé au plus
+structuré : le volume par an, la réserve à prévoir, le débit d'une semaine de
+pointe. Ce sont des ordres de grandeur tirés d'un maraîchage d'annuelles, pas
+une consommation attendue. Vous dites aussi d'où vient l'eau du site — réseau,
+puits ou forage, réserve, ou rien — et la page en tire ce qu'il faut prévoir
+pour la stocker ; sans eau à portée, elle rappelle que la régénération
+naturelle assistée devient la voie la plus sûre.
+
+Pour la **fréquence d'arrosage**, vous notez un test de sol sur la parcelle :
+la vitesse d'infiltration, l'état du sol (détrempé, ressuyé, sec dur) et le
+nombre de jours depuis la dernière pluie. La page en déduit combien de passages
+par semaine, de combien de millimètres, et pendant combien de temps au moins :
+un sol qui boit vite demande des passages plus courts et plus fréquents, un sol
+lent des cycles courts séparés de pauses. Ces doses sont des repères, pas des
+normes : avant chaque arrosage, la main enfoncée dans le sol reste le
+meilleur juge.
 
 # Réaliser et suivre
 

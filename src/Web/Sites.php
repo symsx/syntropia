@@ -214,6 +214,24 @@ final class Sites
     }
 
     /**
+     * La ressource en eau du site (`ressource_eau`, et son détail libre) — ce que
+     * `conception-materiel-et-eau.php` demande pour conseiller le stockage. Une
+     * ressource hors de la liste est refusée : `false`, rien n'est écrit. Vide =
+     * « pas encore dite ».
+     */
+    public function enregistrerEau(int $siteId, string $ressource, string $detail): bool
+    {
+        $ressource = trim($ressource);
+        $detail = trim($detail);
+        if (($ressource !== '' && !isset(\Syntropia\BesoinEau::RESSOURCES[$ressource])) || mb_strlen($detail) > 190) {
+            return false;
+        }
+        $this->pdo()->prepare('UPDATE site SET ressource_eau = ?, ressource_eau_detail = ? WHERE id = ?')
+            ->execute([$ressource !== '' ? $ressource : null, $detail !== '' ? $detail : null, $siteId]);
+        return true;
+    }
+
+    /**
      * Ceux qui ont accès à ce projet, le porteur d'abord, puis par ancienneté.
      * Les noms sont dans l'autre base : `Comptes::nomsParIds()` les donne.
      *
