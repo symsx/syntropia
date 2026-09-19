@@ -43,6 +43,10 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
+- `chantier-documentation-atelier.md` — le plan (4 phases) pour mettre à jour le livret
+  « L'atelier » (`contenu/documentation-atelier.md`) puis le maintenir : confié à
+  Claude par le porteur le 2026-09-19, **planifié, pas commencé** — voir § Directives
+  de travail pour la règle de maintenance.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -336,6 +340,15 @@ Sans mesure d'usage réelle, « le plus utilisé » se raisonne au départ —
   correspondent restent normaux ; ce qui change, c'est de ne plus explorer
   ou diagnostiquer un comportement directement en production quand un
   test local peut répondre à la même question.
+- **Le livret « L'atelier » se tient à jour avec le code — demandé le 2026-09-19.**
+  `contenu/documentation-atelier.md` est **à ma charge** (le porteur n'a pas le temps de
+  le faire correspondre au déployé). Toute évolution visible d'un utilisateur — une page,
+  un outil, un rôle, un libellé — met à jour le chapitre concerné **dans la même vague**
+  que le code, et **le livret ne décrit que ce qui est en production**, jamais le prévu.
+  Format du moteur : un chapitre par ligne `# `, ni liste ni `##`. Les chapitres écrits
+  par le porteur (« L'intention ») ne se réécrivent pas. Un chantier n'est « terminé »
+  qu'une fois le livret relu. Plan et garde-fou : `chantier-documentation-atelier.md`.
+  Le livret « SAF » (les principes), lui, est au porteur.
 - Définir par ce que sont les choses et taire ce qu'elles ne sont pas
 - **Construis toute page sur le gabarit « le bureau ». Aucune exception,
   aucune page publique à part.** Voir § Architecture.
@@ -1352,8 +1365,11 @@ il apparaît réellement, pour ne pas noyer le motif.
    rappel d'export (qui dépend du chantier export/import). **À réaliser plus
    tard, sans date** ; aujourd'hui, aucun utilisateur ne peut supprimer un
    projet, et la cascade du schéma en ferait un geste sans retour.
-6. **`contenu/documentation-saf.md`** — Sylvain écrit les vrais
-   chapitres à son rythme, en markdown, directement dans ce fichier.
+6. **`contenu/documentation-saf.md`** — écrit par Sylvain le 2026-09-19 (9 chapitres,
+   déployé) ; il l'enrichit à son rythme, directement dans ce fichier.
+   **`contenu/documentation-atelier.md`** — à ma charge : mise à jour puis maintenance,
+   plan dans `chantier-documentation-atelier.md` (à valider avec le porteur : niveau de
+   détail, onze chapitres, « L'intention » à finir par lui).
 7. **`autres-documentations.php`** — page publique restante, non
    commencée.
 8. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;
