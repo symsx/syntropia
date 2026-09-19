@@ -34,7 +34,7 @@ Ce site Syntropia se veut donc comme un accompagnement pour
 faciliter la conception et le suivi de projet en SAF syntropique.
 
 Pour toutes questions ou déclaration d'anomalie au sujet de
-ce site merci d'envoyer un mail à ... en décrivant précisément l'endroit et le problème rencontré.
+ce site merci d'envoyer un mail à jubile@alwaysdata.net en décrivant précisément l'endroit et le problème rencontré.
 
 # Où trouver quoi
 
