@@ -115,7 +115,7 @@ public/                racine servable du site en refonte
   definition-vision.php      étape 1 (Définition), gardée par Authentification::exige()
   definition-objectifs.php   étape 2 (Définition), gardée par Authentification::exige()
   definition-moyens.php      étape 3 (Définition), gardée par Authentification::exige()
-  definition-site.php        étape 4 (Définition) — le lieu (carte réelle) et ce qu'on observe, deux groupes
+  definition-site.php        étape 4 (Définition) — trois onglets CSS purs : le lieu (carte réelle), les observations, la conduite
   conception-etude-site.php  étape 1 (Conception) — la carte interactive du terrain, calques.js
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
   conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
@@ -1218,6 +1218,22 @@ récit.*
   avec le vrai compte — la page Préférences, le scénario d'une parcelle, l'outil
   Étiquettes, les fonds de carte (les tuiles IGN se chargent depuis le
   navigateur du visiteur, non depuis alwaysdata).
+- **`definition-site.php` en trois onglets — 2026-09-19.** Le constat préexistant
+  (la page débordait sur les écrans courts : 1280×720, 412×800) est réglé.
+  Onglets CSS purs comme `compte.php` (`:has()`, radios `name=onglet`) : **Le
+  lieu** (commune, position + carte, superficie, zone USDA), **Observations**
+  (exposition, pente, conditions climatiques), **Conduite**. Un champ d'onglet
+  caché reste dans le formulaire : « Continuer » envoie tout. Une erreur de
+  conduite rouvre son onglet ; un changement d'onglet déclenche un `resize`,
+  sans quoi la carte, dessinée à taille nulle pendant qu'elle était cachée,
+  resterait blanche. `gabarit.js lectureSeule()` exclut `[name=onglet]` — sinon un
+  lecteur ne pourrait plus changer d'onglet. L'annonce et la carte cèdent de la
+  place sur écran peu haut (`max-height:46rem`, puis `38rem`) ; le haut du bureau
+  réserve 2.2rem, car la tirette « Informations » recouvrait la 1re ligne (déjà le
+  cas sur téléphone). Le bloc « conduite » n'est plus masqué sur téléphone (il a son
+  onglet). Mesuré puis vérifié en CDP, 6 tailles × 3 onglets, sans débordement :
+  1280×720, 1024×600, 412×800, 412×915, 360×740, 320×568 ; envoi et rechargement des
+  trois onglets, carte redessinée, lecteur, flèches du clavier.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

@@ -335,7 +335,8 @@ window.Gabarit = (function(){
      écritures (Reponses, Parcelles, api-*) ; ceci ne fait que le dire, et
      éviter qu'on remplisse un formulaire pour rien. Les champs des
      formulaires de saisie sont grisés — « Continuer » reste actif, la
-     navigation continue —, et le plan de parcelle reste explorable : ce
+     navigation continue, et les onglets (`name=onglet`, du CSS pur) restent
+     cliquables —, et le plan de parcelle reste explorable : ce
      qu'on y dessine n'est enregistré que par son bouton, grisé ici.
      **Pages du parcours seulement** : « Nouveau projet » et « Inviter »
      n'écrivent pas dans le projet regardé, et un lecteur doit pouvoir
@@ -345,7 +346,7 @@ window.Gabarit = (function(){
     // En tête : sur un petit écran le titre se tronque par la fin, et un
     // repère placé là disparaîtrait.
     if (titre) titre.textContent = 'Lecture seule — ' + titre.textContent;
-    document.querySelectorAll('#bureau form input:not([type=hidden]):not([type=submit]), #bureau form textarea, #bureau form select')
+    document.querySelectorAll('#bureau form input:not([type=hidden]):not([type=submit]):not([name=onglet]), #bureau form textarea, #bureau form select')
       .forEach(function(c){ c.disabled = true; });
     var plan = el('plan-bouton');
     if (plan) plan.disabled = true;

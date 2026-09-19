@@ -76,18 +76,32 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
      aurait fait déborder — RÈGLE DU BUREAU : aucun défilement. */
   :root{ --haut-bandeaux: 3.4rem; }
 
-  .site-cadre{ width:100%; max-width:40rem; }
-  .site-annonce{ font:400 .92rem/1.5 var(--texte); color:var(--muted); margin:0 0 1.2rem; text-align:center; }
-  .site-colonnes{ display:flex; gap:2rem; align-items:flex-start; }
-  .site-colonne{ flex:1 1 0; min-width:0; }
-  /* deux groupes distincts : l'administratif (le lieu, mesurable sans
-     expertise) et l'observé (nécessite d'être sur place, ou d'y avoir
-     déjà été) — remarque du porteur, 2026-09-15. */
-  .site-groupe-titre{
-    font:600 .72rem var(--titre); text-transform:uppercase; letter-spacing:.06em;
-    color:var(--accent-titre); margin:0 0 .7rem; padding-bottom:.35rem;
-    border-bottom:1px solid var(--line);
+  .site-cadre{ width:100%; max-width:27rem; }
+  .site-annonce{ font:400 .92rem/1.5 var(--texte); color:var(--muted); margin:0 0 .9rem; text-align:center; }
+  /* trois onglets en CSS pur (un panneau à la fois) : les champs, tous
+     ensemble, dépassaient le bureau sur un écran court, et le bureau ne
+     défile jamais. Les groupes gardent leur sens — l'administratif (le
+     lieu, mesurable sans expertise), l'observé (il faut y être allé),
+     puis la conduite, qui n'est pas une observation mais un choix. Un
+     champ d'un onglet caché reste dans le formulaire : « Continuer » envoie
+     tout. */
+  .site-radio{ position:absolute; opacity:0; pointer-events:none; }
+  .site-onglets{ display:flex; gap:.3rem; margin-bottom:.8rem; border-bottom:1px solid var(--line); }
+  .site-onglet{
+    flex:1; text-align:center; padding:.4rem .3rem; cursor:pointer; border-radius:.5rem .5rem 0 0;
+    font:500 .8rem var(--titre); color:var(--muted); border:1px solid transparent; border-bottom:0;
   }
+  .site-onglet:hover{ color:var(--accent-titre); }
+  .site-cadre:has(#o-lieu:checked) label[for=o-lieu],
+  .site-cadre:has(#o-observe:checked) label[for=o-observe],
+  .site-cadre:has(#o-conduite:checked) label[for=o-conduite]{
+    color:var(--accent-titre); background:var(--accent-fond); border-color:var(--line); font-weight:600;
+  }
+  .site-cadre:has(.site-radio:focus-visible) .site-onglets{ outline:2px solid var(--accent); outline-offset:2px; }
+  .site-panneau{ display:none; }
+  .site-cadre:has(#o-lieu:checked) .site-lieu,
+  .site-cadre:has(#o-observe:checked) .site-observe,
+  .site-cadre:has(#o-conduite:checked) .site-conduite{ display:block; }
 
   .site-champ{ margin-bottom:.85rem; border:0; padding:0; }
   .site-champ label, .site-champ legend{
@@ -156,29 +170,46 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   .site-bouton:hover{ opacity:.92; }
   .site-note{ font:400 .76rem var(--texte); color:var(--muted); text-align:center; margin-top:.5rem; }
 
-  /* petit écran : deux colonnes côte à côte ne tiennent plus — empilées,
-     elles dépassent en hauteur sur un téléphone si rien d'autre ne se
-     resserre. Chaque marge, chaque champ y perd un peu, pour que la
-     somme tienne sans défilement. Remarque du porteur, 2026-09-15,
-     capture d'écran sur téléphone à l'appui. */
+  /* petit écran : chaque onglet se resserre pour que le plus haut (le lieu,
+     avec sa carte) tienne sous le bandeau sans défiler — capture d'écran
+     sur téléphone du porteur, 2026-09-15. */
   @media (max-width:30rem){
-    main#bureau{ padding:.6rem 1rem; align-items:flex-start; }
+    main#bureau{ padding:2.2rem 1rem .6rem; align-items:flex-start; }
     .site-annonce{ margin:0 0 .4rem; font-size:.78rem; line-height:1.3; }
-    .site-colonnes{ flex-direction:column; gap:0; }
-    .site-groupe-titre{ margin:.4rem 0 .3rem; }
+    .site-onglets{ margin-bottom:.5rem; }
     .site-champ{ margin-bottom:.4rem; }
     .site-champ label, .site-champ legend{ margin-bottom:.15rem; }
     .site-champ small{ margin-bottom:.1rem; }
-    /* le bloc « conduite » ne garde que son champ : titre et aide vivent
-       dans le panneau Informations — sans quoi « Continuer » sort du bureau
-       à 412×915, où la page tenait */
-    .site-groupe-conduite, #conduite-aide{ display:none; }
     .site-carte-champs{ margin-bottom:.25rem; }
-    .site-carte{ height:4.6rem; }
+    .site-carte{ height:6rem; }
     .site-choix{ gap:.3rem .5rem; }
-    .site-champ textarea{ height:3.1rem; }
+    .site-champ textarea{ height:4.5rem; }
     .site-bouton{ margin-top:0; padding:.45rem; }
     .site-note{ margin-top:.25rem; font-size:.7rem; }
+  }
+
+  /* écran peu haut (portable 1280×720, 1024×600) : le bureau perd ses
+     grandes marges, et la carte, seul élément dont la taille se règle,
+     cède ce qu'il faut. Le bureau ne défile jamais. */
+  @media (max-height:46rem){
+    main#bureau{ padding:2.2rem 1.5rem .7rem; }   /* 2.2rem : la tirette « Informations » pend du bandeau */
+    .site-annonce{ margin:0 0 .5rem; font-size:.84rem; line-height:1.35; }
+    .site-onglets{ margin-bottom:.5rem; }
+    .site-champ{ margin-bottom:.55rem; }
+    .site-carte{ height:5.6rem; }
+    .site-bouton{ margin-top:.1rem; padding:.5rem; }
+    .site-note{ margin-top:.3rem; }
+  }
+
+  /* très bas (1024×600, téléphone 320×568) : l'annonce cède sa place — le
+     panneau Informations dit la même chose — et la carte se réduit encore. */
+  @media (max-height:38rem){
+    .site-annonce{ display:none; }
+    .site-carte{ height:3.6rem; }
+    .site-champ{ margin-bottom:.4rem; }
+    .site-champ small{ font-size:.68rem; line-height:1.2; }
+    .site-champ-carte small{ display:none; }
+    .site-note{ display:none; }
   }
 </style>
 </head>
@@ -257,9 +288,22 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 <?php if ($erreurs !== []): ?>
           <p class="site-erreur"><?= htmlspecialchars(implode(' ', $erreurs), ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
-          <div class="site-colonnes">
-            <div class="site-colonne">
-              <p class="site-groupe-titre">Le lieu</p>
+<?php
+// Après une erreur, rouvrir l'onglet du champ fautif : un message dans un
+// onglet caché ne dirait rien. La conduite est le seul champ hors du lieu
+// qui peut échouer.
+$ongletOuvert = isset($erreurs['conduite']) ? 'conduite' : 'lieu';
+?>
+          <input class="site-radio" type="radio" name="onglet" id="o-lieu"<?= $ongletOuvert === 'lieu' ? ' checked' : '' ?>>
+          <input class="site-radio" type="radio" name="onglet" id="o-observe">
+          <input class="site-radio" type="radio" name="onglet" id="o-conduite"<?= $ongletOuvert === 'conduite' ? ' checked' : '' ?>>
+          <div class="site-onglets" role="tablist">
+            <label class="site-onglet" for="o-lieu">Le lieu</label>
+            <label class="site-onglet" for="o-observe">Observations</label>
+            <label class="site-onglet" for="o-conduite">Conduite</label>
+          </div>
+
+          <div class="site-panneau site-lieu">
               <div class="site-champ">
                 <label for="commune">Commune</label>
                 <input type="text" id="commune" name="commune" placeholder="Ex. Saint-André-de-Cubzac"
@@ -268,8 +312,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
               <div class="site-champ site-champ-carte">
                 <label for="latitude">Position</label>
                 <small>Cliquez sur la carte pour poser le point — ou saisissez les
-                   coordonnées, la carte suivra. Un confort : les tuiles viennent
-                   d'OpenStreetMap, un tiers, et rien ici n'en dépend.</small>
+                   coordonnées, la carte suivra.</small>
                 <div class="site-carte-champs">
                   <input type="text" id="latitude" name="latitude" placeholder="45.02000"
                          value="<?= htmlspecialchars((string) $latitudeSaisie, ENT_QUOTES, 'UTF-8') ?>">
@@ -295,6 +338,9 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
                   <button type="button" class="site-estimer" id="usda-estimer">Estimer</button>
                 </div>
               </div>
+          </div>
+
+          <div class="site-panneau site-observe">
               <fieldset class="site-champ">
                 <legend>Exposition dominante</legend>
                 <div class="site-choix">
@@ -314,17 +360,15 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
                   <label><input type="radio" class="radio" name="pente" value="forte"<?= ($reponses['site_pente'] ?? 'plate') === 'forte' ? ' checked' : '' ?>>Forte</label>
                 </div>
               </fieldset>
-            </div>
-
-            <div class="site-colonne">
-              <p class="site-groupe-titre">Ce que vous observez</p>
               <div class="site-champ">
                 <label for="climat">Conditions climatiques particulières</label>
                 <small>Gel tardif, vents forts, sécheresse estivale…</small>
                 <textarea id="climat" name="climat" rows="3" placeholder="Ce que vous observez d'inhabituel, ou dont on vous a parlé."><?= htmlspecialchars($reponses['site_climat'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
               </div>
 
-              <p class="site-groupe-titre site-groupe-conduite">Comment vous le conduirez</p>
+          </div>
+
+          <div class="site-panneau site-conduite">
 <?php
 $conduiteChoisie = Conduite::tryFrom((string) ($_POST['conduite'] ?? $site['conduite'] ?? ''));
 $aideConduite = 'Décide du vocabulaire des strates du scénario : quatre en syntropie, neuf en jardin-forêt.';
@@ -341,7 +385,6 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
 <?php endforeach; ?>
                 </select>
               </div>
-            </div>
           </div>
 
           <button type="submit" class="site-bouton">Continuer</button>
@@ -363,6 +406,8 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
          un diagnostic précis — celui-là vient en phase Conception (étude du site,
          étude du sol), fiche en main, sur place. Une estimation suffit partout où
          vous hésitez.</p>
+      <p>La carte est un confort : ses tuiles viennent d'OpenStreetMap, un tiers, et rien ici
+         n'en dépend — les deux coordonnées suffisent.</p>
       <p>La <strong>conduite</strong> dit dans quel monde vous plantez : en syntropie, on plante dense
          et on pense la succession, la taille est le moteur ; en jardin-forêt, chaque plante est posée à sa
          place définitive. Elle décide du vocabulaire des strates du scénario — quatre en syntropie, par le
@@ -391,6 +436,12 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
 <script src="assets/js/carte.js"></script>
 <script>
   Gabarit.init({ etape: 'definition-site' });
+
+  // La carte se dessine à la taille de son cadre : un onglet caché lui donne
+  // une taille nulle. Au retour sur « Le lieu », on la fait se redessiner.
+  document.querySelectorAll('.site-radio').forEach(function(r){
+    r.addEventListener('change', function(){ window.dispatchEvent(new Event('resize')); });
+  });
 
   // La conduite choisie s'explique à l'endroit où on la choisit : le texte de
   // l'option prend la place de l'aide, sans ajouter de hauteur à une page qui
