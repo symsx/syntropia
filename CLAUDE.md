@@ -1279,7 +1279,19 @@ récit.*
   tourne les chapitres par les deux boutons du bas de la page (des `label`, qui
   agissent même si les radios sont masqués). Décidé avec le porteur. Un cas
   très bas (320×568) resserre encore la page. Mesuré en CDP, 6 tailles × chaque
-  chapitre des deux livrets : aucun débordement. **Pas encore déployé.**
+  chapitre des deux livrets : aucun débordement.
+- **Déploiement des onglets de `definition-site.php`, de l'outil « Repositionner »
+  et du livret SAF — 2026-09-19 (troisième vague).** Trois commits, 8 fichiers (7
+  `public/`, 1 `src/`) plus `contenu/documentation-saf.md` : `definition-site.php`,
+  `conception-etude-site.php`, `documentation-{saf,site}.php`, `gabarit.js`,
+  `calques.js`, `livret.js`, `src/Web/Calques.php` (validation de `proprietes.centre`).
+  **Aucun changement de schéma** : `fichiers` seul, `base` non rejoué. Vérifié : `rsync -c`
+  local/distant sans écart, syntaxe PHP 8.4 distante des 5 fichiers PHP sans erreur,
+  pages du parcours 302 pour un anonyme, `api-calques.php` 405, `src/`, `contenu/` et
+  `config/base.php` 403, pages publiques et scripts 200. **Comme les fois précédentes, les
+  parcours eux-mêmes ne sont pas testés en production** (règle du 2026-09-18) : à essayer
+  avec le vrai compte — les trois onglets du site, glisser et tourner une parcelle, le
+  livret SAF sur téléphone.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
