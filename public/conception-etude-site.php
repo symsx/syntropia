@@ -200,6 +200,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   svg.calques.mode-etiquette .calque-etiquette--mobile:hover{ fill-opacity:.85; }
   svg.calques.etiquette-saisie .calque-etiquette--mobile{ cursor:grabbing; }
 
+  /* L'outil « Repositionner » : la carte reste libre, seules les parcelles posées
+     reprennent la souris. */
+  svg.calques.mode-parcelle polygon.parcelle-mobile{ pointer-events:all; cursor:grab; touch-action:none; }
+  svg.calques.mode-parcelle polygon.parcelle-mobile:hover{ fill-opacity:.3; }
+  svg.calques.parcelle-saisie polygon.parcelle-mobile{ cursor:grabbing; }
+
   .carte-reglures{
     position:absolute; left:1rem; bottom:1rem; z-index:4; max-width:calc(100% - 2rem);
     display:flex; align-items:center; flex-wrap:wrap; gap:.5rem .7rem;
@@ -373,6 +379,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       <label class="outil-bouton" for="outil-libre">✏ À main levée</label>
 
       <span class="outil-separateur"></span>
+
+      <input type="radio" name="outil" id="outil-repositionner">
+      <label class="outil-bouton" for="outil-repositionner">✥ Repositionner</label>
 
       <input type="radio" name="outil" id="outil-etiquette">
       <label class="outil-bouton" for="outil-etiquette">⇄ Étiquettes</label>
@@ -682,6 +691,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       <p><strong>Une étiquette gêne ?</strong> Choisissez l'outil <strong>Étiquettes</strong> : glissez le nom
          d'un objet où il se lit mieux — un trait pointillé le relie encore à son objet —, et
          double-cliquez-le pour le remettre à sa place. La carte reste libre de se déplacer.</p>
+      <p><strong>Une parcelle à déplacer ?</strong> Choisissez l'outil <strong>Repositionner</strong> : glissez la
+         parcelle où elle doit être — son orientation se règle ensuite au curseur du panneau Données. Sa
+         taille et ses planches ne changent pas : elles se règlent sur la page de la parcelle, où les planches
+         se voient. Un déplacement se fait par pas d'environ un mètre.</p>
       <p id="calque-aide"></p>
 <?php else: ?>
       <p>Vous êtes lecteur sur ce site : la carte se lit, rien ne s'y dessine.</p>

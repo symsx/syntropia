@@ -59,7 +59,9 @@
    * inerte tant que la Phase 6 n'a pas posé le bouton et `cfg.apiCadastre`. */
   var cadastre = { visible: false, parcelles: [], message: '', minuteur: null, encours: false };
 
-  var mode = 'deplacer';          // deplacer · point · ligne · polygone · libre · rectangle · etiquette
+  var mode = 'deplacer';          // deplacer · point · ligne · polygone · libre · rectangle · etiquette · repositionner
+  var selection = null;           // { id } — la parcelle qu'on repositionne
+  var previsu = null;             // { id, angle, points } — son orientation, avant enregistrement
   var enCours = null;             // { calque, type, points: [[lat, lon]] }
   var rect = null;                // { parcelle, centre, angle, largeur, longueur }
   var enLibre = false;
@@ -229,10 +231,14 @@
       if (!courbes.length) { etiquette(el.geometrie[1], el.libelle, teinte); }
     } else if (el.type === 'polygone') {
       var parcelle = el.calque === 'parcelles';
-      noeud('polygon', { points: chemin(el.geometrie), fill: teinte, 'fill-opacity': parcelle ? 0.12 : 0.22,
-        stroke: teinte, 'stroke-width': parcelle ? 3 : 2,
+      var pts = previsu && previsu.id === el.id ? previsu.points : el.geometrie;
+      var choisie = parcelle && selection && selection.id === el.id;
+      var poly = noeud('polygon', { points: chemin(pts), fill: teinte,
+        'fill-opacity': parcelle ? (choisie ? 0.26 : 0.12) : 0.22,
+        stroke: teinte, 'stroke-width': parcelle ? (choisie ? 4.5 : 3) : 2,
         'stroke-dasharray': parcelle ? '' : '6 4' }, g);
-      etiquette(centre(el.geometrie), el.libelle, teinte, el);
+      if (parcelle) { poly.setAttribute('class', 'parcelle-mobile'); }
+      etiquette(centre(pts), el.libelle, teinte, el);
     }
   }
 
@@ -450,7 +456,7 @@
       champs = { action: 'ajouter', calque: 'parcelles', type: 'polygone', libelle: rect.parcelle.code,
         parcelle_id: rect.parcelle.id, geometrie: JSON.stringify(coins(rect)),
         proprietes: JSON.stringify({ angle: rect.angle, largeur_m: rect.largeur, longueur_m: rect.longueur,
-          surface_m2: arrondi(rect.largeur * rect.longueur, 1) }) };
+          surface_m2: arrondi(rect.largeur * rect.longueur, 1), centre: rect.centre }) };
     } else if (enCours && enCours.points.length) {
       var props = {};
       if (!isNaN(hauteur)) { props.hauteur_m = hauteur; }
@@ -499,7 +505,7 @@
     var attendus = ((cfg.calques[calque] || {}).types) || [];
     Array.prototype.forEach.call(document.querySelectorAll('#outils-liste label[for^="outil-"]'), function (label) {
       var valeur = (label.getAttribute('for') || '').replace(/^outil-/, '');
-      if (valeur === 'deplacer' || valeur === 'etiquette' || valeur === '') { label.classList.remove('mode--autre'); label.title = ''; return; }
+      if (valeur === 'deplacer' || valeur === 'etiquette' || valeur === 'repositionner' || valeur === '') { label.classList.remove('mode--autre'); label.title = ''; return; }
       var type = valeur === 'libre' ? 'polygone' : valeur;
       var pertinent = attendus.indexOf(type) !== -1;
       label.classList.toggle('mode--autre', !pertinent);
@@ -511,6 +517,13 @@
     var sel = $('trace-intensite');
     return INTENSITES[sel && sel.value] || INTENSITES.dominant;
   }
+  function motRepositionner() {
+    var el = selectionEl();
+    if (!el) { return 'Glissez une parcelle pour la déplacer ; son orientation se règle ensuite au curseur du panneau Données.'; }
+    return orientable(el)
+      ? 'Parcelle ' + el.libelle + ' — glissez-la pour la déplacer ; son orientation se règle au curseur du panneau Données.'
+      : 'Parcelle ' + el.libelle + ' tracée à la main : elle se déplace, mais ne se tourne pas.';
+  }
   function etat() {
     var n = enCours ? enCours.points.length : 0;
     var mot;
@@ -518,7 +531,7 @@
       mot = rect.centre ? 'Parcelle ' + rect.parcelle.code + ' posée — tournez-la, puis enregistrez.'
         : 'Cliquez sur la carte à l\'endroit du centre de la parcelle ' + rect.parcelle.code + '.';
     } else if (!enCours) {
-      mot = { deplacer: 'Glissez pour déplacer, molette pour zoomer.',
+      mot = mode === 'repositionner' ? motRepositionner() : { deplacer: 'Glissez pour déplacer, molette pour zoomer.',
               etiquette: 'Glissez une étiquette pour la déplacer ; double-clic pour la remettre à sa place.',
               point: 'Cliquez : un point.',
               ligne: 'Cliquez point après point ; double-clic ou Entrée pour finir, clic droit pour défaire.',
@@ -554,7 +567,8 @@
     etat(); tout();
   }
   function annuler() {
-    enCours = null; rect = null; enLibre = false;
+    enCours = null; rect = null; enLibre = false; selection = null; previsu = null;
+    if ($('parcelle-angle')) { $('parcelle-angle').disabled = false; }
     if ($('parcelle-choix')) { $('parcelle-choix').value = ''; }
     etat(); tout();
   }
@@ -584,7 +598,7 @@
     if (enLibre) { enLibre = false; terminer(); }
   });
   svg.addEventListener('click', function (e) {
-    if (mode === 'deplacer' || mode === 'libre' || mode === 'etiquette') { return; }
+    if (mode === 'deplacer' || mode === 'libre' || mode === 'etiquette' || mode === 'repositionner') { return; }
     if (presse && Math.hypot(e.clientX - presse.x, e.clientY - presse.y) > 4) { return; }
     if (mode === 'rectangle') {
       if (!rect) { return; }
@@ -599,7 +613,7 @@
   /* LE CLIC DROIT DÉFAIT LE DERNIER POINT. Un tracé se rate d'un point,
    * pas en entier. Le menu du navigateur est écarté pendant qu'on dessine. */
   svg.addEventListener('contextmenu', function (e) {
-    if (mode === 'deplacer' || mode === 'etiquette') { return; }
+    if (mode === 'deplacer' || mode === 'etiquette' || mode === 'repositionner') { return; }
     e.preventDefault();
     if (rect && rect.centre) { rect.centre = null; etat(); tout(); return; }
     if (!enCours || !enCours.points.length) { annuler(); return; }
@@ -691,6 +705,121 @@
     }).catch(function () { message("Le serveur n'a pas répondu — l'étiquette reste où elle était."); tout(); });
   }
 
+  /* REPOSITIONNER UNE PARCELLE. On saisit la parcelle, elle suit le pointeur
+   * (le SVG entier se translate, sans rien redessiner : la capture du pointeur
+   * tient), et c'est au relâchement qu'on enregistre — une écriture par geste,
+   * comme pour les étiquettes. Le déplacement est arrondi à la grille des cinq
+   * décimales, celle du serveur : tous les sommets bougent du même pas, la forme
+   * reste exacte (au prix d'un pas d'environ un mètre). Ni les dimensions ni les
+   * planches ne changent — elles s'éditent dans conception-parcelles.php. */
+  function parcelleMobile(el) {
+    return !!el && el.calque === 'parcelles' && el.type === 'polygone' && el.geometrie.length >= 3;
+  }
+  function orientable(el) {
+    var q = el.proprietes || {};
+    return typeof q.angle === 'number' && q.largeur_m > 0 && q.longueur_m > 0;
+  }
+  function centreDe(el) {
+    var c = el.proprietes && el.proprietes.centre;
+    return c && c.length === 2 && isFinite(c[0]) && isFinite(c[1]) ? c : centre(el.geometrie);
+  }
+  function selectionEl() {
+    var trouves = selection ? elements.filter(function (e) { return e.id === selection.id; }) : [];
+    return trouves[0] || null;
+  }
+  function copie(o) {
+    var c = {};
+    Object.keys(o || {}).forEach(function (k) { c[k] = o[k]; });
+    return c;
+  }
+  /* Choisir une parcelle : elle se met en valeur, et le curseur d'orientation prend
+   * la sienne (grisé si elle a été tracée à la main : sa forme est libre). */
+  function choisir(el) {
+    selection = { id: el.id };
+    previsu = null;
+    var a = $('parcelle-angle');
+    if (a) {
+      a.disabled = !orientable(el);
+      if (orientable(el)) { a.value = el.proprietes.angle; texte('parcelle-angle-valeur', el.proprietes.angle + '°'); }
+    }
+    etat();
+  }
+  function ecrireParcelle(el, points, props, dit) {
+    envoyer({ action: 'modifier', id: el.id, geometrie: JSON.stringify(points), proprietes: JSON.stringify(props) })
+      .then(function (j) {
+        previsu = null;
+        if (!j.ok) { message(j.message); tout(); return; }
+        el.geometrie = j.element.geometrie; el.proprietes = j.element.proprietes;
+        tout(); listes(); etat(); message(dit);
+      }).catch(function () {
+        previsu = null; tout(); message("Le serveur n'a pas répondu — la parcelle reste où elle était.");
+      });
+  }
+  function deplacerParcelle(el, dLat, dLon) {
+    var points = el.geometrie.map(function (q) { return [arrondi(q[0] + dLat, 5), arrondi(q[1] + dLon, 5)]; });
+    var props = copie(el.proprietes);
+    if (orientable(el)) {
+      var c = centreDe(el);
+      props.centre = [arrondi(c[0] + dLat, 6), arrondi(c[1] + dLon, 6)];
+    }
+    var e = props.etiquette;
+    if (e && e.length === 2 && isFinite(e[0]) && isFinite(e[1])) {
+      props.etiquette = [arrondi(e[0] + dLat, 5), arrondi(e[1] + dLon, 5)];
+    }
+    ecrireParcelle(el, points, props, 'Parcelle ' + el.libelle + ' déplacée.');
+  }
+
+  var parc = null;
+  function parcelleSous(e) {
+    if (mode !== 'repositionner' || !cfg.peutEcrire) { return null; }
+    var n = e.target && e.target.closest ? e.target.closest('polygon.parcelle-mobile') : null;
+    var el = n ? objetDe(n.parentNode) : null;
+    return parcelleMobile(el) ? { noeud: n, el: el } : null;
+  }
+  /* Le geste s'écoute sur la fenêtre, pas sur la parcelle : une parcelle de huit
+   * mètres ne fait que vingt points d'écran, le pointeur la quitte au premier
+   * mouvement rapide, et la capture du pointeur ne suffit pas à le suivre
+   * (vérifié : des pas de trente points perdaient le geste). */
+  function bougerParcelle(e) {
+    if (!parc) { return; }
+    var dx = e.clientX - parc.souris[0], dy = e.clientY - parc.souris[1];
+    if (!parc.bouge && Math.hypot(dx, dy) < 3) { return; }
+    parc.bouge = true; parc.dx = dx; parc.dy = dy;
+    Array.prototype.forEach.call(svg.querySelectorAll('[data-id="' + parc.el.id + '"]'), function (n) {
+      n.setAttribute('transform', 'translate(' + dx + ' ' + dy + ')');
+    });
+  }
+  function finirParcelle() { lacherParcelle(false); }
+  function annulerParcelle() { lacherParcelle(true); }
+  function lacherParcelle(annule) {
+    if (!parc) { return; }
+    var p = parc; parc = null;
+    window.removeEventListener('pointermove', bougerParcelle);
+    window.removeEventListener('pointerup', finirParcelle);
+    window.removeEventListener('pointercancel', annulerParcelle);
+    svg.classList.remove('parcelle-saisie');
+    if (annule || !p.bouge) { tout(); return; }
+    var r = conteneur.getBoundingClientRect();
+    var x0 = p.souris[0] - r.left, y0 = p.souris[1] - r.top;
+    var a = conteneur.carte.versLatLon(x0, y0), b = conteneur.carte.versLatLon(x0 + p.dx, y0 + p.dy);
+    var pas = function (d) { return Math.round(d * 1e5) / 1e5; };
+    var dLat = pas(b[0] - a[0]), dLon = pas(b[1] - a[1]);
+    if (dLat === 0 && dLon === 0) { tout(); return; }
+    deplacerParcelle(p.el, dLat, dLon);
+  }
+  svg.addEventListener('pointerdown', function (e) {
+    var s = parcelleSous(e);
+    if (!s) { return; }
+    e.preventDefault(); e.stopPropagation();
+    // Pas de redessin ici : le nœud saisi doit exister jusqu'au relâchement.
+    choisir(s.el);
+    parc = { el: s.el, souris: [e.clientX, e.clientY], bouge: false, dx: 0, dy: 0 };
+    window.addEventListener('pointermove', bougerParcelle);
+    window.addEventListener('pointerup', finirParcelle);
+    window.addEventListener('pointercancel', annulerParcelle);
+    svg.classList.add('parcelle-saisie');
+  });
+
   svg.addEventListener('dblclick', function (e) {
     var t = etiquetteSous(e);
     if (t) {
@@ -718,11 +847,14 @@
     }
     // Déplacer et Étiquettes laissent la carte se faire glisser : seules les
     // étiquettes, en mode Étiquettes, reprennent la souris (voir le CSS de la page).
-    var carteLibre = mode === 'deplacer' || mode === 'etiquette';
+    var carteLibre = mode === 'deplacer' || mode === 'etiquette' || mode === 'repositionner';
     svg.style.pointerEvents = carteLibre ? 'none' : 'auto';
     svg.style.cursor = carteLibre ? '' : 'crosshair';
     svg.classList.toggle('mode-etiquette', mode === 'etiquette');
+    svg.classList.toggle('mode-parcelle', mode === 'repositionner');
     if (mode !== 'rectangle') { rect = null; }
+    selection = null; previsu = null;
+    if ($('parcelle-angle')) { $('parcelle-angle').disabled = false; }
     enCours = null; enLibre = false;
     nommerLesModes();
     etat(); tout();
@@ -840,6 +972,15 @@
       if (!o || !o.value) { rect = null; etat(); tout(); return; }
       var p = cfg.parcelles.filter(function (q) { return String(q.id) === o.value; })[0];
       if (!p) { return; }
+      // Déjà posée : la reposer en ferait une seconde. On la reprend plutôt.
+      var deja = elements.filter(function (e) { return e.calque === 'parcelles' && String(e.parcelle_id) === o.value; })[0];
+      if (deja && parcelleMobile(deja)) {
+        choixParcelle.value = '';
+        changerMode('repositionner');
+        choisir(deja); tout();
+        message('La parcelle ' + p.code + ' est déjà posée : glissez-la pour la déplacer.');
+        return;
+      }
       if (p.largeur_m && p.longueur_m) {
         changerMode('rectangle');
         rect = { parcelle: p, centre: null, angle: parseFloat(($('parcelle-angle') || { value: 0 }).value) || 0,
@@ -856,7 +997,23 @@
   var angle = $('parcelle-angle');
   if (angle) {
     angle.addEventListener('input', function () {
-      if (rect) { rect.angle = parseFloat(angle.value) || 0; texte('parcelle-angle-valeur', angle.value + '°'); tout(); }
+      if (rect) { rect.angle = parseFloat(angle.value) || 0; texte('parcelle-angle-valeur', angle.value + '°'); tout(); return; }
+      // Une parcelle déjà posée se tourne autour de son centre : on montre le
+      // résultat pendant qu'on glisse, on n'écrit qu'au relâchement (« change »).
+      var el = mode === 'repositionner' ? selectionEl() : null;
+      if (!el || !orientable(el)) { return; }
+      var a = parseFloat(angle.value) || 0;
+      texte('parcelle-angle-valeur', angle.value + '°');
+      previsu = { id: el.id, angle: a, points: coins({ centre: centreDe(el), angle: a,
+        largeur: el.proprietes.largeur_m, longueur: el.proprietes.longueur_m }) };
+      tout();
+    });
+    angle.addEventListener('change', function () {
+      var el = previsu ? selectionEl() : null;
+      if (!el) { return; }
+      var props = copie(el.proprietes), c = centreDe(el);
+      props.angle = previsu.angle; props.centre = [arrondi(c[0], 6), arrondi(c[1], 6)];
+      ecrireParcelle(el, previsu.points, props, 'Parcelle ' + el.libelle + ' tournée.');
     });
   }
   if ($('trace-enregistrer')) { $('trace-enregistrer').addEventListener('click', enregistrer); }

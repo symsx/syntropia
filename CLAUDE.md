@@ -1234,6 +1234,37 @@ récit.*
   onglet). Mesuré puis vérifié en CDP, 6 tailles × 3 onglets, sans débordement :
   1280×720, 1024×600, 412×800, 412×915, 360×740, 320×568 ; envoi et rechargement des
   trois onglets, carte redessinée, lecteur, flèches du clavier.
+- **Repositionner une parcelle sur la carte — outil « Repositionner »,
+  2026-09-19.** Demandé par le porteur : une parcelle posée ne se déplaçait
+  qu'en la retirant puis en la reposant. Nouvel outil du bandeau
+  (`✥ Repositionner`, avant « Étiquettes ») : on **glisse** une parcelle, une
+  écriture au relâchement (`modifier`, l'API n'a pas changé) ; son **orientation**
+  se règle au curseur du panneau Données (celui de la pose), aperçu pendant qu'on
+  glisse, écrit au relâchement. Ni redimensionnement (décidé : les dimensions se
+  règlent sur `conception-parcelles.php`) ni déplacement des planches (invisibles
+  à cette échelle, éditées sur la page de la parcelle). Le déplacement est arrondi à
+  la **grille des cinq décimales** du serveur (~1 m) : tous les sommets bougent du
+  même pas, la forme reste exacte. Une parcelle tracée à la main se déplace mais ne
+  se tourne pas (curseur grisé, message). Choisir dans « Poser une parcelle » une
+  parcelle **déjà posée** la reprend en Repositionner au lieu d'en créer une
+  seconde. **`proprietes.centre = [lat, lon]`** (nouveau, validé par
+  `Calques::valider()` comme `etiquette`) : le centre d'une parcelle posée par
+  rectangle, sans quoi des rotations répétées feraient dériver le centre avec les
+  arrondis des sommets — écrit à la pose, avec repli sur le centre des sommets pour
+  les parcelles posées avant. Son étiquette, si elle avait été déplacée, suit.
+  **Défaut trouvé en testant** : la capture du pointeur ne suffit pas — une parcelle
+  de 8 m ne fait que ~20 points d'écran, le pointeur la quitte au premier geste
+  rapide et le glisser s'arrêtait ; le geste s'écoute donc sur la **fenêtre**. Vérifié
+  en CDP avec de vrais gestes : glisser (transform en direct, pas de panoramique de
+  la carte, forme et dimensions préservées), clic sans mouvement (rien écrit), geste
+  rapide de 250 px, rotation puis cinq rotations sans dérive du centre, parcelle à
+  main levée, étiquette qui suit, doublon évité, `centre` invalide refusé (400),
+  lecteur (pas d'outil, POST forgé 403). **Constat non corrigé** : l'outil
+  « Étiquettes » (antérieur) s'appuie seulement sur la capture du pointeur, et sous
+  CDP le glisser d'un petit texte s'arrête si le pointeur le quitte — non reproduit
+  dans un vrai navigateur, à surveiller. La barre d'outils défile horizontalement
+  sous ~800 px (elle le faisait déjà sous ~650) ; le menu déroulant reste réservé
+  aux téléphones.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

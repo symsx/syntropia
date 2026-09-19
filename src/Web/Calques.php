@@ -280,6 +280,19 @@ final class Calques
                         $decode['etiquette'] = [round((float) $e[0], 5), round((float) $e[1], 5)];
                     }
                 }
+                // Le centre d'une parcelle posée par rectangle : ce qui permet de la tourner
+                // sans que les arrondis des sommets la fassent dériver. Même exigence.
+                if (array_key_exists('centre', $decode)) {
+                    $c = $decode['centre'];
+                    if ($c === null) {
+                        unset($decode['centre']);
+                    } elseif (!is_array($c) || count($c) !== 2 || !is_numeric($c[0] ?? null)
+                        || !is_numeric($c[1] ?? null) || abs((float) $c[0]) > 90 || abs((float) $c[1]) > 180) {
+                        $erreurs['proprietes'] = 'Le centre de la parcelle est illisible.';
+                    } else {
+                        $decode['centre'] = [round((float) $c[0], 6), round((float) $c[1], 6)];
+                    }
+                }
                 $proprietes = json_encode($decode, JSON_UNESCAPED_UNICODE);
             }
         }
