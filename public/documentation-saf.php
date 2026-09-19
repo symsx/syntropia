@@ -106,6 +106,14 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-saf.m
   .doc-sous-bouton:disabled{ opacity:.35; cursor:default; }
   .doc-sous-compte{ font:500 .72rem var(--texte); color:var(--muted); min-width:3rem; text-align:center; }
 
+  /* écran peu haut : la colonne des chapitres se compacte (11 chapitres pour
+     « L'atelier » : elle débordait de 8 px à 1024×600). */
+  @media (min-width:30.01rem) and (max-height:40rem){
+    .doc-chapitres{ gap:.1rem; }
+    .doc-chapitres label{ padding:.3rem .7rem; font-size:.78rem; }
+    .doc-chapitres-titre{ margin-bottom:.3rem; }
+  }
+
   /* petit écran : la colonne des chapitres (11rem fixes) ne tient plus
      à côté de la page — voir documentation-site.php, même correctif.
      Remarque du porteur, 2026-09-15, capture d'écran sur téléphone à

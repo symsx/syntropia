@@ -189,8 +189,18 @@ def _dossiers_parents():
     return resultat.returncode == 0
 
 
+def avertir_documentation():
+    """Le livret « L'atelier » suit-il le code ? Un avertissement, jamais un refus :
+    une correction de style n'a pas à toucher le livret (bin/verifier-documentation.py)."""
+    r = subprocess.run([sys.executable, str(RACINE / "bin" / "verifier-documentation.py"), "--court"],
+                       capture_output=True, text=True)
+    for ligne in r.stdout.splitlines():
+        note(ligne)
+
+
 def fichiers(dry_run):
     titre("Fichiers" + (" (simulation)" if dry_run else ""))
+    avertir_documentation()
     if not verifier_ssh():
         return False
     if not _dossiers_parents():
