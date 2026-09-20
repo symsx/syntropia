@@ -1366,8 +1366,7 @@ récit.*
   passe à 2**. Un fichier qui porte `compte_id`, `saisi_par`, un `id` ou une colonne inconnue est refusé.
   **Aller-retour vérifié identique** sur quatre projets ; 41 refus testés (somme recalculée pour atteindre la
   validation) ; un doublon vu par la seule base ne laisse rien. Livret : paragraphes ajoutés à « Comptes,
-  projets et rôles ». **Pas encore commité ni déployé — au déploiement, `bin/deployer.py base` d'abord**
-  (`atelier_version` et `site.origine`), puis `fichiers`. Détail : `chantier-export-import-projet.md`.
+  projets et rôles ». **Déployé le 2026-09-20** (sixième vague, voir plus bas). Détail : `chantier-export-import-projet.md`.
 - **Repositionner une parcelle sur la carte — outil « Repositionner »,
   2026-09-19.** Demandé par le porteur : une parcelle posée ne se déplaçait
   qu'en la retirant puis en la reposant. Nouvel outil du bandeau
@@ -1452,6 +1451,21 @@ récit.*
   `etapes.js` servi avec `pret: true`. **Comme avant, le parcours lui-même n'est pas testé
   en production** (règle du 2026-09-18) : à essayer avec le vrai compte — le matériel d'une
   parcelle, la vue « tout le projet », noter une ressource en eau et un test de sol.
+- **Déploiement de l'export, de l'import et du versionnement — 2026-09-20 (sixième vague).** Quatre
+  commits, 14 fichiers (3 `public/`, 4 `src/`, `sql/01-syntropia.sql`, `contenu/documentation-atelier.md`,
+  4 dans `bin/`). **Ordre suivi : `base` d'abord** (deux migrations additives : la table `atelier_version` et la
+  colonne `site.origine`), **puis `fichiers`**. Avant : l'état de la production lu **sans rien changer**
+  (MariaDB 11.4.13, base `jubile_syntropia` : 2 projets, 12 réponses, 1 parcelle, 3 tracés, 2 comptes, ni la
+  table ni la colonne) ; après `base` : la table et la colonne existent, **schéma 2**, **tous les comptes
+  de lignes inchangés**. Vérifié : `rsync -c` local/distant sans écart, syntaxe PHP 8.4 distante de sept
+  fichiers sans erreur, `exporter.php` et `importer.php` 302 pour un anonyme (POST compris), `src/`, `sql/`,
+  `bin/`, `contenu/` et `config/base.php` 403, `gabarit.js` servi avec les deux entrées de menu. **Vérifié
+  aussi en production, en lecture seule** : par SSH, le code et la base s'accordent (schéma 2 des deux côtés) et
+  les **deux projets réels s'exportent puis passent l'examen d'import** (`Import::examiner()` ne lit que le
+  schéma, rien n'est écrit). **Comme avant, les parcours eux-mêmes ne sont pas testés en production** (règle du
+  2026-09-18) : à essayer avec le vrai compte — exporter le projet, puis l'importer sous un autre nom. **À
+  noter** : un import de test dans la production crée un projet de plus, à supprimer à la main tant que la
+  suppression de projet (`chantier-suppression-projet.md`) n'existe pas.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
