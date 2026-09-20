@@ -133,6 +133,14 @@ strates en hauteur — en partant des productions voulues. En jardin-forêt, qui
 pas d'axe du temps, le scénario se lit par strate. Le **calendrier** est un
 premier repère de rythme, saison par saison, écrit à main levée.
 
+Une parcelle de type **potager** ne se compose pas comme un verger : son **plan de culture**
+se fait **par planche**. Les planches viennent du plan de la parcelle, et chacune porte
+plusieurs cultures — c'est le principe de l'association. La page dit, planche par planche,
+ce que l'on sait de leurs voisinages : ce qui s'entend bien, ce qu'il vaut mieux éviter de
+placer côte à côte. Ce sont des ordres de conduite, non des preuves, tirés de tables
+d'association (Christa Weinrich) : une information de conception, jamais une interdiction ;
+et une culture absente de ces tables n'est pas neutre, on ne sait simplement pas.
+
 # Concevoir : le matériel et l'eau
 
 Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra

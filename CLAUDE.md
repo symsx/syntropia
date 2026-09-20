@@ -68,10 +68,17 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   préparation et la campagne de plantation) et 2 ter (les adventices) faites le 2026-09-20**, les trois autres pas commencées ; **développement itératif
   et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
   les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
+- `chantier-plan-de-culture.md` — le plan (6 phases) du **plan de culture du potager** : composer une parcelle « potager » (aujourd'hui
+  aucune page ne l'écrit : `succession_ligne`, au schéma, reste vide), y **placer les plantes de production par planche selon les
+  associations** (Weinrich) et poser le **calendrier de plantation** du plan de culture de Lopez (Haute-Vienne). Proposé le 2026-09-20,
+  **Phase 1 faite le 2026-09-20** (composer la parcelle potager **par planche**, avec les voisinages de Weinrich) ; les Phases 3 à 6
+  (placement proposé, calendrier de Lopez, succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
 - `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
   2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
   associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
-  commencées, dont la Phase 3 (le placement) qui demande de trancher le modèle (par planche, ou par emplacement). Une source
+  commencées. **Décidé le 2026-09-20** : le placement se fait **par planche** et concerne le maraîchage et le potager ; pour un verger ou
+  un jardin-forêt, l'association, ce sont les **guildes et consortiums de Plantae** (`guilde.csv` : services rendus et besoins requis), lus par un
+  **instantané** (`contenu/guildes-plantae.json`, `src/Guildes.php` — pas encore branché à une page). Une source
   dont les réserves se disent à l'écran : des ordres de conduite, des tables non symétriques, deux plantes toxiques.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
@@ -100,6 +107,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
   Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
   SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
+  Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
@@ -111,6 +119,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Authentification.php   session, connexion, CSRF, garde-page
     Invitations.php         codes d'invitation — condition de l'inscription
     Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
+    Cultures.php             les cultures d'un potager placées par planche (`succession_ligne`) — même conduite qu'Interventions ; appelé par conception-potager.php
     Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
@@ -128,6 +137,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
+  guildes-plantae.json      instantané de `guilde.csv` de Plantae (179 plantes, 564 lignes) — écrit par bin/catalogue-plantae.py, jamais à la main ; vieillit, à réexporter
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
   documentation-saf.md      livret « L'agroforesterie syntropique » — modèle à remplacer
@@ -140,7 +150,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -148,7 +158,7 @@ bin/
   verifier-export-import.php  l'aller-retour export → import → export d'un projet — appelé par `dev.py verifier-export`, JAMAIS en direct
   compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
   deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
-  catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario)
+  catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario), et un instantané de guilde.csv vers contenu/guildes-plantae.json
   lancer-local.sh          lance dev.py et ouvre Firefox dès que le port répond — pour le lanceur de bureau, pas l'usage courant (dev.py seul suffit)
 public/                racine servable du site en refonte
   .htaccess              seul dossier accessible ; type MIME et cache des polices
@@ -162,6 +172,7 @@ public/                racine servable du site en refonte
   definition-site.php        étape 4 (Définition) — trois onglets CSS purs : le lieu (carte réelle), les observations, la conduite
   conception-etude-site.php  étape 1 (Conception) — la carte interactive du terrain, calques.js
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
+  conception-potager.php     étape 4 (Conception) pour une parcelle de type potager — le plan de culture par planche, les voisinages de Weinrich ; `conception-scenario.php` y redirige un potager
   conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
   conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
   conception-materiel-et-eau.php  étape 5 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
@@ -1546,6 +1557,19 @@ récit.*
   emplacement) est à trancher**. **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `adventices`), puis `fichiers`
   (qui envoie aussi `contenu/associations/`). Vérifié en CDP, `verifier-export` (le « projet riche » porte `adventices`),
   fichier du schéma 4 accepté. Détail : `chantier-saut-du-chat.md` § Phase 2 ter.
+- **Le plan de culture du potager, par planche — et les guildes de Plantae — 2026-09-20.** Le porteur a répondu aux deux questions du chantier
+  des associations : **le placement se fait par planche et concerne le maraîchage et le potager** ; **pour un verger ou un jardin-forêt, l'association
+  est la guilde ou le consortium — le cœur de Plantae** (la table du verger de Weinrich reste importée, non utilisée pour le placement). **Guildes** :
+  `bin/catalogue-plantae.py` exporte aussi `guilde.csv` (**instantané**, choix du porteur : l'atelier peut calculer) vers `contenu/guildes-plantae.json`
+  (179 plantes, 564 lignes, jamais reclassé ; **vieillit**, à réexporter), lu par `src/Guildes.php` (`bilan()` : besoins couverts par un autre membre,
+  restés sans réponse, plantes sans guilde connue ; la matière organique n'a que des besoins) — 21 contrôles, **pas encore branché à une page**.
+  **Potager (Phase 1 du chantier `chantier-plan-de-culture.md`, « les planches d'abord »)** : `succession_ligne.planche` (`Version::SCHEMA` passe à **6**,
+  colonne facultative), `src/Web/Cultures.php`, **`public/conception-potager.php`** — une carte par planche du plan, des cultures que l'on place et corrige,
+  et **sous chaque planche ce que les tables de Weinrich savent** (« s'entendent bien », « à éviter côte à côte », « pas de voisinage connu » sans ambiguïté ;
+  réserves dites : des ordres de conduite, non des preuves, inconnue n'est pas neutre) ; `conception-scenario.php` y **redirige un potager**. Vérifié en CDP
+  (refus en POST brut, conflit de version, cloisonnement, lecteur, `verifier-export`, fichier du schéma 5, 320×568). **Au déploiement : `bin/deployer.py base`
+  d'abord** (la colonne), puis `fichiers` (qui envoie aussi `contenu/guildes-plantae.json`). Non fait : le placement proposé, le calendrier de Lopez, la succession,
+  Matériel et eau du potager. Détail : `chantier-plan-de-culture.md` § Phase 1.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

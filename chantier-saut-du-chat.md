@@ -384,7 +384,7 @@ page), un **calendrier de plantation** tiré du plan de culture de Lopez (semis,
 Haute-Vienne), et les **associations d'une même planche** (Weinrich). *Préalable levé le 2026-09-20* : le porteur a décidé d'**importer** les trois
 tables `associations-*.csv` (fait, `contenu/associations/`) et de **proposer le placement des plantes de production selon
 les associations** — la suite est dans `chantier-associations.md`, dont la Phase 5 (la succession : préculture et postculture)
-se joint à ce chantier.
+se joint à ce chantier. **Ce chantier a maintenant son plan : `chantier-plan-de-culture.md`.**
 
 ## Phase 3 — Le stade du terrain : d'où l'on part
 

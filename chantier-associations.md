@@ -1,6 +1,9 @@
 # Les associations de plantes de production — plan
 
-> **État au 2026-09-20 — Phase 1 (importer et lire) faite ; les Phases 2 à 5 ne sont pas commencées.**
+> **État au 2026-09-20 — Phase 1 (importer et lire) faite ; Phase 2 (lire les voisinages au potager) faite dans `chantier-plan-de-culture.md` ;
+> Phases 3 à 5 pas commencées ; l'instantané des guildes de Plantae est posé (Phase 4, données et lecteur).** Deux décisions du
+> porteur, le même jour, ont recadré les phases : le placement se fait **par planche** et concerne le **maraîchage et le
+> potager** ; pour un **verger ou un jardin-forêt**, les associations sont les **guildes ou consortiums de Plantae**.
 > Demandé par le porteur le 2026-09-20, pendant le chantier « saut du chat » (`chantier-saut-du-chat.md`, décision 8).
 > Ce chantier avance **par incréments** : il s'appuie sur une source dont il faut respecter les réserves, et sur des
 > décisions de conception (le modèle de placement) qui restent à trancher.
@@ -62,51 +65,85 @@ porteur demande, et rien d'autre. Pour les végétaux du système d'accumulation
   côté lu comme connu, une paire absente rendue « inconnue »).
 - Note datée ajoutée à `connaissances/cultures-associees/README.md` : les données sont maintenant dans ce dépôt.
 
-## Phase 2 — Lire les voisinages dans le scénario *(aucun changement de schéma)*
+## Décisions du porteur, 2026-09-20
 
-Sur `conception-scenario.php`, pour **une parcelle**, un panneau « Voisinages » : pour chaque plante de production du
-scénario, ce que les tables en disent (favorables, à éviter), et **les relations connues entre les plantes déjà
-choisies** (`Associations::entre()`) — celles qui vont bien, celles à éloigner. Les plantes **toxiques** portent leur
-mention. Les réserves ci-dessus s'affichent (Informations). Rien ne se refuse : c'est une lecture.
+1. **Le placement se fait par planche, et il concerne les plantes de production maraîchères ou potagères.** Les tables de
+   Weinrich (potager, succession) servent à **placer** ces plantes dans les planches : regrouper ce qui s'entend bien,
+   séparer ce qu'il vaut mieux éviter de mettre côte à côte.
+2. **Pour un verger ou un jardin-forêt, l'association, ce sont les guildes ou consortiums — le cœur du projet Plantae.**
+   Ce n'est donc **pas** la table du verger de Weinrich qui fait l'association d'une parcelle pérenne. Cette table reste une
+   lecture de référence (que planter au pied d'un pommier, ses réserves), non le mécanisme.
 
-*À trancher avant* (question 2 ci-dessous) : comment une plante du scénario retrouve sa fiche — le nom saisi est libre
-ou pris dans le catalogue de 1271 noms botaniques, quand les tables parlent en noms communs.
+## Ce que Plantae sait déjà des guildes — un fait mesuré
 
-## Phase 3 — Proposer le placement *(le cœur de la demande ; suppose un modèle de placement)*
+Plantae (`~/Projets/plantae-corpus`, publié sous `/plantae/`) exprime une guilde par des **besoins** et des **services** :
+`exports/csv/guilde.csv`, 564 lignes, une par (plante, catégorie, relation) — **service rendu** ou **besoin requis**, avec
+une intensité facultative. Sept catégories : azote, protection contre le vent, matière organique, attraction des
+auxiliaires, attraction des pollinisateurs, limitation de la concurrence herbacée, ombrage. **Une guilde est une plante dont
+un besoin rencontre le service d'une autre** — c'est ce qu'exprime déjà, côté atelier, `Scenario::FONCTIONS` (les vingt-quatre
+choses qu'une plante fait pour le système : fixer l'azote, freiner le vent, bloquer l'herbe…), c'est-à-dire **la moitié
+« service » de la guilde**.
 
-L'atelier **propose** où placer les plantes de production pour que les favorables voisinent et que les néfastes soient
-séparés — la personne accepte, déplace, ignore. Ce qu'il faut pour cela **n'existe pas encore** : le scénario dit **où**
-une plante est posée seulement par `emplacement` (planches de culture / bordure externe / bordure interne / autre), pas
-**quelle planche**. Deux façons de modéliser, à trancher (question 1) :
-- **par planche** : un numéro de planche par plante de production (colonne facultative, `Version::SCHEMA` monte) ; le
-  voisinage est « même planche » ou « planches contiguës », ce que le plan de parcelle sait déjà dessiner ;
-- **par emplacement** : sans schéma, plus grossier — deux plantes du même emplacement sont voisines.
-Puis un **algorithme de proposition** simple et lisible (regrouper les favorables, séparer les défavorables, dire ce qui
-ne se règle pas) — jamais une boîte noire.
+**Couverture** : `guilde.csv` ne couvre que **179 des 1271 plantes** du catalogue, et **21 des 45 espèces du cadre**. Et la
+clé existe déjà : le scénario nomme ses végétaux par le **nom scientifique** du catalogue de Plantae (`contenu/
+catalogue-scenario.json`), qui est la clé de `guilde.csv`. (Au potager, c'est l'inverse : les tables de Weinrich parlent en
+noms communs français.)
 
-## Phase 4 — Les parcelles pérennes : le verger et la tortue
+## Phase 2 — Lire les voisinages au potager *(aucun changement de schéma)*
 
-`associations-verger.csv` : que planter **au pied** d'un pommier, d'un poirier… (13 porteurs et leurs compagnons), les
-distances qu'elle donne (3 m entre framboisier et fruitier, 6 m autour de l'abricotier — à croiser avec les distances des
-strates), et **la fatigue du sol** au remplacement d'une plante (voir ci-dessus). **Réserve propre à la syntropie** : la
-source ne parle ni de syntropie ni de jardin-forêt ; ce qui se transporte, ce sont les couples, jamais la conduite.
+Pour une parcelle **potager**, **par planche** : les relations connues entre les plantes qui la partagent
+(`Associations::entre()`), celles qui vont bien, celles à éviter, les plantes **toxiques** signalées, les réserves dites.
+Suppose que la parcelle potager **ait des plantes placées** : c'est le premier pas du chantier `chantier-plan-de-culture.md`
+(aujourd'hui, aucune page ne compose un potager).
+
+### Phase 2 — faite (2026-09-20)
+
+La lecture par planche est dans `public/conception-potager.php` (voir `chantier-plan-de-culture.md` § Phase 1) : les relations connues
+entre les cultures d'une même planche, les réserves dites, « pas de voisinage connu » sans ambiguïté.
+
+## Phase 3 — Proposer le placement par planche
+
+L'atelier **propose** de répartir les plantes de production sur les planches du plan (`nb_planches` est déjà calculé) :
+regrouper les favorables, séparer les défavorables, dire ce qu'il ne parvient pas à régler ; la personne accepte, déplace, ignore.
+Un **numéro de planche par plante** (colonne facultative sur `succession_ligne`, qui a déjà `demi_planche` : `Version::SCHEMA`
+monte). Un algorithme **simple et lisible**, jamais une boîte noire ; une paire sans relation connue **ne compte pas** (inconnue
+n'est pas neutre).
+
+## Phase 4 — Les parcelles pérennes : les guildes et consortiums de Plantae
+
+Pour un verger ou un jardin-forêt, **composer des consortiums** : que les besoins des plantes du scénario soient couverts par
+les services des autres (azote, vent, matière organique, auxiliaires, pollinisateurs, herbes concurrentes, ombrage), et dire
+ce qui reste **sans réponse**. Trois choses sont à définir : **comment l'atelier lit Plantae** (question ci-dessous), la couverture
+(21 espèces du cadre sur 45 : le reste se dit « pas de guilde connue »), et le lien avec **les fonctions du scénario**, qui en sont
+déjà la moitié. À rapprocher du critère du chantier « saut du chat » (des plantes de biomasse en quantité suffisante, des plantes de
+démarrage) : ce sont des guildes vues du saut du chat.
+
+**Décision du porteur (2026-09-20) : un instantané de `guilde.csv`** — l'atelier peut alors *calculer* (les besoins couverts, ce qui manque). Faite, la
+part « données » :
+- `bin/catalogue-plantae.py` exporte aussi `guilde.csv` (à côté de `plantes.csv`) vers **`contenu/guildes-plantae.json`** — 179 plantes, 564 lignes, la donnée
+  telle que Plantae la donne, **jamais reclassée ici**. Le catalogue de noms est resté identique (aucun écart). **Il vieillit** : à réexporter quand Plantae
+  change. Une dérogation assumée au principe « les critères agronomiques restent chez Plantae », dite dans le script.
+- **`src/Guildes.php`** (pur) : `deLaPlante()` (services et besoins par catégorie ; un nom en cultivar se retrouve par son binôme), `categoriesAvecService()`, et
+  **`bilan()`** — catégorie par catégorie, qui a un besoin, qui rend le service, quels besoins **un autre membre** couvre (une plante ne se rend pas service à
+  elle-même), lesquels restent sans réponse, **quelles plantes n'ont pas de guilde connue**, et les catégories où Plantae ne connaît **aucun service** (la matière
+  organique n'a que des besoins : un besoin y est « sans service connu », non « non couvert »). 21 contrôles.
+- **Pas encore branché à une page** : la lecture dans le scénario d'une parcelle pérenne (composer un consortium, dire ce qui manque) reste à construire.
+  Un point à trancher en la construisant : le rapprochement avec `Scenario::FONCTIONS` (les fonctions déclarées par la personne), sans reclasser la donnée de Plantae.
 
 ## Phase 5 — La succession du potager
 
-`associations-succession.csv` : préculture et postculture (ou engrais vert) de 30 espèces. **Elle se joint au chantier
-« potager »** (`chantier-saut-du-chat.md` § Le potager) : composer la succession d'une parcelle « potager » (`succession_ligne`,
-au schéma, aucune page ne l'écrit), avec le calendrier de plantation du plan de culture de Lopez.
+`associations-succession.csv` : préculture et postculture (ou engrais vert) de 30 espèces — ce que l'on sème quand une planche se
+libère. Se joint au chantier du potager (`chantier-plan-de-culture.md`).
 
 ## À trancher avec le porteur
 
-1. **Le placement : par planche, ou par emplacement ?** (Phase 3.) Par planche est plus juste et plus utile ; il demande une
-   colonne et une saisie de plus.
-2. **Retrouver la fiche d'une plante.** Le nom saisi dans le scénario est libre ; les tables parlent en noms communs
-   français. Par défaut : une comparaison sans accent ni casse, singulier ou pluriel (faite) ; le reste passe par le
-   **nom usuel** du référentiel `espece` quand la plante y est. Une plante sans fiche se dit « pas de voisinage connu »,
-   jamais « neutre ».
-3. **Les parcelles pérennes en syntropie** : les couples du verger s'y appliquent-ils, avec leurs réserves, ou seulement au
-   potager et au jardin-forêt ? (Phase 4.)
+1. ~~Comment l'atelier lit les guildes de Plantae.~~ **Tranché le 2026-09-20 : un instantané** (voir Phase 4). Rappel du choix : Le principe du chantier « scénario de plantation » était : *les critères
+   agronomiques restent chez Plantae, aucun classement local n'est déduit* (le catalogue n'exporte que des **noms**). Les guildes
+   sont des critères agronomiques. Trois voies : **(a)** un **instantané** de `guilde.csv` (564 lignes, 179 plantes) exporté par un
+   script comme le catalogue, dans `contenu/`, relu par l'atelier — il peut *calculer* (besoins couverts, manques) mais peut vieillir ;
+   **(b)** un **lien** vers la page de la plante chez Plantae — rien n'est copié, rien ne se calcule ici ; **(c)** les deux.
+2. **Le verger de Weinrich** : le garde-t-on comme lecture de référence (au pied d'un pommier…) ou l'écarte-t-on ? Il est importé ;
+   il ne sert pas au placement.
 
 ## Manière de procéder
 
