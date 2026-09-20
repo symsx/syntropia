@@ -38,7 +38,8 @@ transplanter. Une voie pour commencer avec peu de moyens.
 # Saut du chat
 
 Le moment où un système agroforestier, jusque-là discret, accélère nettement
-— signe que la conduite du terrain a pris. Il n'arrive pas à date fixe.
+— l'effet de la perturbation, non de la seule densité, signe que la conduite du
+terrain a pris. Il n'arrive pas à date fixe, et se reconnaît en comparant à un témoin.
 
 # Témoin
 

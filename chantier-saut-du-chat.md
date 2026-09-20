@@ -1,7 +1,7 @@
 # Le saut du chat — plan
 
-> **État au 2026-09-20 — Phase 1 (le journal des perturbations) faite, pas encore commitée ni
-> déployée** ; les Phases 2 à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
+> **État au 2026-09-20 — Phases 1 (le journal des perturbations) et 2 (le constat et le diagnostic)
+> faites et commitées, pas encore déployées** ; les Phases 3 à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
 > qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
 > essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
 > confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
@@ -85,8 +85,9 @@ Ce qui n'est **pas** repris tel quel :
   `ressource_eau`, ignorerait les tests de sol, et « interdit » là où l'atelier propose. Les règles utiles
   sont reprises comme **repères dits à l'écran, avec leur source**.
 - **« Densité extrême ⇒ saut du chat ».** Le texte actuel de `suivi-saut-du-chat.php` va dans ce sens ;
-  il est corrigé en Phase 2. Planter plus reste un conseil, mais comme **secours** (les reprises se doublent,
-  4-8 : « pas de back-up suffisants ») et avec des **alliées à biomasse**, non comme déclencheur.
+  il est corrigé en Phase 2. **Décision du porteur (2026-09-20)** : le conseil « planter davantage, selon la
+  période » reste, dans sa formulation d'origine, **sans la cause** (la formation y voit un secours — doubler les
+  reprises, 4-8 : « pas de back-up suffisants » —, non un déclencheur).
 - **La conception « lignes + inter-rang » (Livrable 2, option B).** Hors périmètre : le plan de parcelle
   est celui des planches. À rouvrir séparément si l'itinéraire « lignes » est retenu (Phase 4).
 
@@ -207,13 +208,55 @@ par les flèches d'étape de Suivi.
   6. **de quoi couper** : des alliées en quantité suffisante — plantes `perturbation`/`biomasse` du scénario
      (seuil de biomasse, ch. 15) ;
   7. au démarrage, les **annuelles placentaires** (maïs, tournesols, féveroles — ch. 14, 15).
-- **Le texte du rattrapage est corrigé** : « planter plus » y devient un **secours** (doubler les reprises) avec
-  **des alliées à biomasse**, dit comme tel. *À valider avec le porteur avant écriture* : `directives.txt`
-  demande « planter plus (quoi en fonction de la période) » ; le « quoi » détaillé attend la Phase 4.
-  En attendant, on donne la seule succession que le corpus décrit, **comme exemple d'un site** (4-8 :
-  salades, fèves et pois au printemps ; fèves taillées à ras en paillage azoté pour les courgettes ; maïs,
-  poivrons, concombres ; choux d'hiver après haricots nains).
+- **Le texte du rattrapage est corrigé** : il ne dit plus que la densité déclenche le saut du chat. **Le porteur a
+  tranché (2026-09-20) : on garde sa formulation d'origine, sans la cause** — « planter davantage peut aider, selon
+  la période ». Le « quoi » détaillé attend la Phase 4.
 - Glossaire : « Saut du chat » précisé (effet de la taille, pas de la seule densité ; se mesure par un témoin).
+
+### Phase 2 — faite (2026-09-20)
+
+`src/SautDuChat.php` (vocabulaire, comparaison au témoin, conditions — pur), `src/Web/Constats.php`,
+`Parcelles::enregistrerDatePlantation()`, `public/suivi-saut-du-chat.php` réécrite, et **la table `constat`
+(`Version::SCHEMA` passe à 3)**. Export, import, page d'export et d'import, script `verifier-export` : la table est
+partout où `intervention` l'est. Livret, glossaire (« Saut du chat »), garde-fou complétés.
+
+**Décision du porteur, 2026-09-20 (question posée avant d'écrire) : le conseil « Pas encore » garde sa
+formulation d'origine, sans la cause** — « Rien d'anormal à attendre — le saut du chat vient avec le temps. En
+attendant, planter davantage peut aider, selon la période. » L'affirmation que la densité déclenche la bascule
+est retirée ; le « quoi planter » reste pour la Phase 4.
+
+Ce qui s'écarte du plan, ou le précise :
+- **Une table, pas des lignes d'`intervention`** : une intervention n'a pas de colonne pour une pousse en
+  centimètres. `constat` : date, visible (oui / pas encore), plante, pousse (cm) sur N jours, témoin (description et
+  pousse), notes. **La perturbation qui précède n'est pas une clé étrangère** : elle se lit dans le journal par sa
+  date, ce qui évite une référence entre deux tables filles dans l'export.
+- **Une pousse sans durée est refusée, un témoin sans pousse aussi** (« sans durée, une pousse ne dit rien ;
+  sans pousse, un témoin ne compare rien ») ; rien d'autre n'est exigé. Le rapport à la pousse du témoin s'affiche
+  quand les deux sont connus. Les ordres de grandeur de l'entretien de Théry restent des repères dits à l'écran.
+- **La date de plantation se saisit ici**, dans l'onglet « La plantation » du panneau Données, et non sur la
+  consignation de la Réalisation (site entier, en réponses) : c'est là qu'elle sert. Elle s'efface en la vidant.
+- **Sept conditions, lues dans les données existantes**, chacune « en place », « à regarder » ou « rien de noté »
+  — jamais « échec » : une perturbation notée, de quoi couper (plantes de biomasse au scénario), l'état des plantes,
+  l'eau, la biomasse au sol, **toutes les plantes de biomasse coupées ensemble** (à trois jours près de la dernière
+  coupe : c'est ainsi que « toute la zone d'un coup » se lit, faute d'un champ), des plantes de démarrage (celles qui
+  ne restent pas au-delà du Placenta 3). La **dernière perturbation** du journal sert de référence ; un
+  affaiblissement n'en est pas une. « Au bon moment » est devenu « l'état des plantes est noté » : l'atelier ne sait
+  pas juger le moment, il sait s'il a été noté.
+- Un ancien fichier (schéma 2, sans constats) **se charge toujours** : `SCHEMA_IMPORTABLE_DEPUIS` reste à 1 (testé).
+- `verifier-export-import.php` : le récapitulatif compte les constats, et le « projet riche » en porte un.
+
+Vérifié en local (`bin/dev.py` + Chrome headless/CDP, compte et projet de test supprimés ensuite) : constat mesuré
+(× 2,5 affiché), bascule de la vue par défaut (conditions tant que « pas encore », constats dès qu'il est
+« oui »), refus (pousse sans durée, témoin sans pousse, date future, valeurs hors bornes, textes trop longs,
+réponse absente ou forgée, jeton faux 403, action inconnue 400), modification, **conflit de version**, retrait
+avec confirmation, **cloisonnement** entre parcelles, date de plantation (posée, future, trop ancienne, invalide en
+POST brut, effacée, sans effet sur une autre parcelle), reprise de l'ancienne note, lecteur et anonyme, conditions
+sur un journal réaliste (eau sèche, biomasse sortie, plante oubliée, végétaux non notés), `verifier-export`
+identique sur tous les projets locaux, aucun débordement de 1280×720 à 320×568. **Un défaut trouvé en mesurant** :
+à 320 px, cinq colonnes ne tenaient pas ; « Saut du chat » est devenu « Visible », les marges se resserrent, et
+sous 26 rem le nom de la plante passe sous la date.
+
+**Au déploiement : `bin/deployer.py base` d'abord** (nouvelle table `constat` et ligne `schema` = 3), puis `fichiers`.
 
 ## Phase 3 — Le stade du terrain : d'où l'on part
 

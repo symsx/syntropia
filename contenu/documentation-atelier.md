@@ -187,6 +187,19 @@ l'on arrose si la pluie ne vient pas. Le journal n'interdit rien : il dit ce que
 sources disent, et pourquoi. Affaiblir une couverture sans la couper, en la couchant
 sous la paille, s'y note aussi, mais ne compte pas comme une perturbation.
 
+Le **saut du chat** — le moment où le système accélère nettement — est l'effet de la
+perturbation, non de la seule densité : il se reconnaît en comparant. Chaque
+**constat** est daté, dit s'il est visible et, quand vous l'avez mesuré, donne la
+pousse d'une plante sur quelques jours à côté de celle d'un **témoin** conduit
+classiquement dans le même sol. La page dit aussi **ce qui le rend possible**, lu
+dans ce que vous avez déjà noté : une perturbation au journal, de quoi couper au
+scénario, l'état des plantes et l'eau à la coupe, la biomasse laissée au sol, les
+plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque condition
+est dite en place, à regarder ou pas encore notée — jamais comme un échec. La date
+de plantation de la parcelle, à noter dans le panneau Données, dit depuis quand on
+attend le saut du chat : dans la formation il vient d'ordinaire dès les premiers
+mois, un repère et non une échéance.
+
 # Le bureau
 
 Chaque page — publique ou connectée — s'ouvre sur le même espace de
@@ -222,7 +235,8 @@ sans rien modifier.
 
 Le porteur peut **exporter le projet** : un fichier daté, qui garde tout ce que
 le projet contient — la définition, le terrain, les parcelles et leur plan, les
-scénarios, les relevés, les tracés de la carte — et les réponses de tous les
+scénarios, les relevés, le journal des perturbations et les constats du saut du
+chat, les tracés de la carte — et les réponses de tous les
 participants, d'où la réserve au porteur. La page annonce ce que le fichier
 contiendra avant de le produire. Il ne porte jamais de compte ni d'accès : les
 participants n'y figurent que par leur nom. Un projet qui dépasserait un mégaoctet

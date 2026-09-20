@@ -64,8 +64,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
-  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phase 1 (le journal) faite le 2026-09-20**,
-  les quatre autres pas commencées ; **développement itératif
+  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal) et 2 (le constat et le diagnostic) faites le
+  2026-09-20**, les trois autres pas commencées ; **développement itératif
   et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
   les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
@@ -93,6 +93,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Role.php, Profil.php   énumérations — droits et profils
   FicheTerrain.php       contenu des 7 fiches de relevé de sol — voir releve-vierge.php
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
+  Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
+  SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
@@ -103,6 +105,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Authentification.php   session, connexion, CSRF, garde-page
     Invitations.php         codes d'invitation — condition de l'inscription
     Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
+    Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
+    Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
     Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
@@ -129,7 +133,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2) y a sa migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2) et la table `constat` (schéma 3) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -161,8 +165,8 @@ public/                racine servable du site en refonte
   realisation-outils-et-plans.php       étape 3 (Réalisation)
   realisation-consignation.php          étape 4 (Réalisation)
   suivi-arrosage-germination.php        étape 1 (Suivi)
-  suivi-perturbation.php                étape 2 (Suivi)
-  suivi-saut-du-chat.php                étape 3 (Suivi)
+  suivi-perturbation.php                étape 2 (Suivi) — le journal des perturbations d'une parcelle (`?parcelle=ID`)
+  suivi-saut-du-chat.php                étape 3 (Suivi) — les constats du saut du chat d'une parcelle, et ce qui le rend possible
   suivi-consignation.php                étape 4 (Suivi) — redirige vers conception-parcelles.php, fin du parcours construit
   inscription.php            inscription sur invitation — code de 8 caractères, voir Invitations.php
   documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md, pagine ses chapitres trop longs
@@ -1489,6 +1493,20 @@ récit.*
   parcelles, lecteur, `verifier-export` (26 interventions) et 320×568. **Pas encore commité ni déployé** (pas de
   changement de schéma : `fichiers` seul). Livret « L'atelier » et glossaire mis à jour dans la même vague ;
   `bin/verifier-documentation.py --relu` à passer une fois commité.
+- **Le constat du saut du chat — Phase 2 du chantier « saut du chat », 2026-09-20.** `public/suivi-saut-du-chat.php`
+  réécrite : deux vues en onglets CSS purs. **Les constats** — datés, avec, quand on l'a mesuré, la pousse d'une
+  plante sur N jours **à côté d'un témoin** (rapport affiché ; une pousse sans durée et un témoin sans pousse sont
+  refusés) — et **ce qui le rend possible** : sept conditions lues dans le journal et le scénario
+  (`src/SautDuChat.php`), dites « en place », « à regarder » ou « rien de noté », jamais « échec ». Vue par défaut :
+  les conditions tant que le saut du chat n'est pas visible. **Nouvelle table `constat` : `Version::SCHEMA` passe à 3**
+  (table facultative, `SCHEMA_IMPORTABLE_DEPUIS` reste à 1 — un ancien fichier se charge), export, import et
+  `verifier-export` la couvrent. `src/Web/Constats.php` (même conduite qu'`Interventions`, verrou de version),
+  `Parcelles::enregistrerDatePlantation()` — **la date de plantation** se saisit ici (onglet « La plantation ») et
+  situe le projet sans en faire une échéance. **Décision du porteur** : le conseil « Pas encore » garde sa
+  formulation d'origine, **sans la cause** (« planter davantage peut aider, selon la période » ; la densité ne
+  déclenche pas le saut du chat). Vérifié en CDP (conflit de version, cloisonnement, lecteur, 320×568,
+  `verifier-export` identique). **Au déploiement : `bin/deployer.py base` d'abord** (la table), puis `fichiers`.
+  Détail : `chantier-saut-du-chat.md` § Phase 2.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
