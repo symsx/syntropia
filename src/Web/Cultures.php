@@ -193,6 +193,37 @@ final class Cultures
         return [];
     }
 
+    /**
+     * Place des cultures sur des planches — ce que la personne a accepté d'une proposition. **Ne touche que les cultures
+     * encore non placées** (`planche IS NULL`) : ce qui est déjà placé ne bouge jamais, même si l'état a changé entre-temps.
+     * Bornée à la parcelle ; une planche hors du plan est ignorée.
+     *
+     * @param array<int, int> $affectations identifiant de culture → numéro de planche
+     * @return int le nombre de cultures placées
+     */
+    public function placer(int $parcelleId, int $nbPlanches, array $affectations): int
+    {
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $req = $pdo->prepare('UPDATE succession_ligne SET planche = ? WHERE id = ? AND parcelle_id = ? AND planche IS NULL');
+            $n = 0;
+            foreach ($affectations as $id => $planche) {
+                if ($planche >= 1 && $planche <= $nbPlanches) {
+                    $req->execute([$planche, $id, $parcelleId]);
+                    $n += $req->rowCount();
+                }
+            }
+            $pdo->commit();
+            return $n;
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
     public function retirer(int $id, int $parcelleId): bool
     {
         $req = $this->pdo()->prepare('DELETE FROM succession_ligne WHERE id = ? AND parcelle_id = ?');

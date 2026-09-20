@@ -22,6 +22,7 @@ require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Associations;
 use Syntropia\Configuration;
+use Syntropia\PlanDeCulture;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
@@ -105,6 +106,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
             header('Location: ' . $retour);
             exit;
         }
+    } elseif ($action === 'appliquer') {
+        // Une proposition ne s'applique que sur l'état qu'on a vu : on la recalcule, et on ne pose que ce qu'elle contient encore.
+        $etat = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche']],
+            $culturesService->dUneParcelle($idP));
+        if (!hash_equals(PlanDeCulture::empreinte($etat), (string) ($_POST['empreinte'] ?? ''))) {
+            $erreurs['proposition'] = 'Le plan a changé depuis cette proposition : recalculez-la avant de l’accepter.';
+        } else {
+            $proposee = [];
+            foreach (PlanDeCulture::proposer($etat, $nbPlanches)['placements'] as $x) {
+                $proposee[$x['id']] = $x['planche'];
+            }
+            $choisies = array_map('intval', is_array($_POST['ids'] ?? null) ? $_POST['ids'] : []);
+            $n = $culturesService->placer($idP, $nbPlanches, array_intersect_key($proposee, array_flip($choisies)));
+            $_SESSION['syntropia_flash_potager'] = ['ok', $n === 0 ? 'Aucune culture n’a été placée.' : ($n === 1 ? 'Une culture est placée.' : $n . ' cultures sont placées.')];
+            header('Location: ' . $retour);
+            exit;
+        }
     } elseif ($action === 'retirer') {
         $_SESSION['syntropia_flash_potager'] = $culturesService->retirer($editionId, $idP)
             ? ['ok', 'La culture est retirée du plan.']
@@ -132,12 +150,27 @@ if ($saisie === null && $edition === null && $peutEcrire && ($_GET['saisie'] ?? 
     $ouvre = true;
 }
 
+// La proposition de placement : un aperçu, rien n'est écrit tant que la personne n'a pas accepté.
+$etatCultures = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche']], $cultures);
+$proposition = null;
+if ($parcelle !== null && $peutEcrire && $nbPlanches >= 1 && ($_GET['proposer'] ?? '') === '1' && $saisie === null) {
+    $proposition = PlanDeCulture::proposer($etatCultures, $nbPlanches);
+    $ouvre = true;
+}
+$proposeesParPlanche = [];
+$idsProposes = [];
+foreach ($proposition['placements'] ?? [] as $x) {
+    $proposeesParPlanche[$x['planche']][] = $x;
+    $idsProposes[$x['id']] = true;
+}
+
 // Les planches du plan (et celles que des cultures occupent encore hors du plan), puis les cultures non placées.
 $parPlanche = [];
 $nonPlacees = [];
 foreach ($cultures as $c) {
     $c['planche'] === null ? $nonPlacees[] = $c : $parPlanche[(int) $c['planche']][] = $c;
 }
+$reste = array_values(array_filter($nonPlacees, static fn (array $c): bool => !isset($idsProposes[(int) $c['id']])));
 $numeros = $nbPlanches > 0 ? range(1, $nbPlanches) : [];
 $horsPlan = array_values(array_diff(array_keys($parPlanche), $numeros));
 sort($horsPlan);
@@ -152,11 +185,11 @@ foreach (array_merge($numeros, $horsPlan) as $n) {
         $citees[Associations::normaliser($r['a'])] = $citees[Associations::normaliser($r['b'])] = true;
     }
     $cartes[] = ['numero' => $n, 'libelle' => 'Planche ' . $n, 'hors_plan' => in_array($n, $horsPlan, true), 'cultures' => $liste,
-        'relations' => $relations,
+        'proposees' => $proposeesParPlanche[$n] ?? [], 'relations' => $relations,
         'sans_fiche' => array_values(array_filter(array_unique($noms), static fn (string $x): bool => Associations::fiche($x) === null && !isset($citees[Associations::normaliser($x)])))];
 }
-if ($nonPlacees !== []) {
-    $cartes[] = ['numero' => null, 'libelle' => 'Pas encore placées', 'hors_plan' => false, 'cultures' => $nonPlacees, 'relations' => [], 'sans_fiche' => []];
+if ($reste !== []) {
+    $cartes[] = ['numero' => null, 'libelle' => 'Pas encore placées', 'hors_plan' => false, 'cultures' => $reste, 'proposees' => [], 'relations' => [], 'sans_fiche' => []];
 }
 
 // Le formulaire.
@@ -224,6 +257,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-cultures a:hover{ text-decoration:underline; }
   .pt-cultures small{ color:var(--muted); font-size:.85em; }
   .pt-vide{ margin:0; font:400 .82em/1.35 var(--texte); color:var(--muted); }
+  .pt-cultures .pt-propose{ color:var(--accent-titre); font-style:italic; }
+  .pt-carte:has(.pt-propose){ border-color:var(--accent); }
   .pt-rel{ margin:.35em 0 0; padding:.3em 0 0; border-top:1px solid var(--line); font:400 .8em/1.35 var(--texte); color:var(--ink); }
   .pt-rel p{ margin:.1em 0; }
   .pt-rel .bien{ color:var(--accent-titre); }
@@ -255,6 +290,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-retrait{ margin-top:1rem; padding-top:.6rem; border-top:1px solid var(--line); }
   .pt-retrait button{ font:600 .74rem var(--titre); color:var(--alerte); background:transparent; border:1px solid var(--alerte); border-radius:.4rem; padding:.2rem .6rem; cursor:pointer; }
   .pt-lien{ font:500 .76rem var(--titre); color:var(--accent-titre); }
+  .pt-choix{ display:flex; gap:.5rem; align-items:flex-start; margin:0 0 .5rem; font:400 .82rem/1.35 var(--texte); color:var(--ink); }
+  .pt-choix small{ color:var(--muted); font-size:.9em; }
 </style>
 </head>
 <body<?= $ouvre ? ' data-ouvre="1"' : '' ?>>
@@ -346,7 +383,12 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <span class="pt-badge"><?= count($cultures) ?> culture<?= count($cultures) > 1 ? 's' : '' ?></span>
 <?php endif; ?>
 <?php if ($peutEcrire): ?>
-          <span class="pt-actions"><a class="pt-bouton pt-bouton--calme" href="<?= $h($retour) ?>&amp;saisie=1" id="pt-saisir">Ajouter une culture</a></span>
+          <span class="pt-actions">
+<?php if ($nbPlanches >= 1 && $nonPlacees !== []): ?>
+            <a class="pt-bouton" href="<?= $h($retour) ?>&amp;proposer=1" id="pt-proposer">Proposer un placement</a>
+<?php endif; ?>
+            <a class="pt-bouton pt-bouton--calme" href="<?= $h($retour) ?>&amp;saisie=1" id="pt-saisir">Ajouter une culture</a>
+          </span>
 <?php endif; ?>
         </div>
 <?php if (is_array($flash)): ?>
@@ -376,7 +418,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
                 <a href="<?= $h($retour) ?>&amp;saisie=1&amp;planche=<?= (int) $c['numero'] ?>" title="Ajouter une culture sur cette planche">+</a>
 <?php endif; ?>
               </h2>
-<?php if ($c['cultures'] === []): ?>
+<?php if ($c['cultures'] === [] && $c['proposees'] === []): ?>
               <p class="pt-vide">Rien encore sur cette planche.</p>
 <?php else: ?>
               <ul class="pt-cultures">
@@ -385,6 +427,9 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($k['strate'] !== null || $k['date_semis_repiquage'] !== null): ?>
                   <small><?= $h(implode(' · ', array_filter([$k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis_repiquage'] !== null ? 'semis ' . $dateFr((string) $k['date_semis_repiquage']) : '']))) ?></small>
 <?php endif; ?></li>
+<?php endforeach; ?>
+<?php foreach ($c['proposees'] as $x): ?>
+                <li class="pt-propose">→ <?= $h($x['espece']) ?> <small>proposée</small></li>
 <?php endforeach; ?>
               </ul>
 <?php endif; ?>
@@ -428,6 +473,34 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <div class="pt-erreurs" role="alert"><strong>Votre saisie est à reprendre.</strong>
           <ul><?php foreach ($erreurs as $e): ?><li><?= $h($e) ?></li><?php endforeach; ?></ul></div>
 <?php endif; ?>
+<?php if ($proposition !== null): ?>
+        <p class="pd-titre">Un placement proposé — <?= $h($parcelle['code']) ?></p>
+        <p class="pt-note"><b>Comment il se fait</b> : les cultures déjà placées <b>ne bougent pas</b>. Les autres se répartissent sur les planches du plan : on regroupe ce qui s'entend bien, on écarte ce qui s'entend mal, et une paire sans relation connue ne compte ni pour ni contre. Rien n'est écrit avant votre accord ; vous pouvez décocher ce que vous ne voulez pas.</p>
+<?php if ($proposition['placements'] === [] && $proposition['non_places'] === []): ?>
+        <p class="pt-note">Rien à proposer : toutes les cultures sont placées.</p>
+<?php else: ?>
+        <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
+          <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
+          <input type="hidden" name="action" value="appliquer">
+          <input type="hidden" name="parcelle" value="<?= $idP ?>">
+          <input type="hidden" name="empreinte" value="<?= $h(PlanDeCulture::empreinte($etatCultures)) ?>">
+<?php foreach ($proposition['placements'] as $x): ?>
+          <label class="pt-choix"><input type="checkbox" class="case" name="ids[]" value="<?= (int) $x['id'] ?>" checked>
+            <span><b><?= $h($x['espece']) ?></b> → planche <?= (int) $x['planche'] ?><br><small><?= $h($x['raison']) ?></small></span></label>
+<?php endforeach; ?>
+<?php if ($proposition['non_places'] !== []): ?>
+          <p class="pt-note" style="margin-top:.7rem"><b>Pas placées</b> — l'atelier ne force pas un voisinage à éviter :</p>
+<?php foreach ($proposition['non_places'] as $x): ?>
+          <p class="pt-note"><b><?= $h($x['espece']) ?></b><br><?= $h($x['raison']) ?></p>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php if ($proposition['placements'] !== []): ?>
+          <button type="submit" class="pt-bouton">Placer la sélection</button>
+<?php endif; ?>
+          <a class="pt-lien" href="<?= $h($retour) ?>" style="margin-left:.6rem">Laisser tomber</a>
+        </form>
+<?php endif; ?>
+<?php else: ?>
         <p class="pd-titre"><?= $editionId > 0 ? 'Corriger la culture' : 'Ajouter une culture' ?> — <?= $h($parcelle['code']) ?></p>
         <p class="pt-note"><b>À quoi elle sert</b> : à placer chaque culture sur une planche, pour que ce qui s'entend bien soit voisin et que l'on évite ce qui s'entend mal. Seul le nom est demandé ; la planche, la strate et les dates viennent quand on les connaît.</p>
         <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
@@ -499,6 +572,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <button type="submit">Retirer cette culture</button>
         </form>
 <?php endif; ?>
+<?php endif; ?>
       </div>
     </aside>
 <?php endif; ?>
@@ -518,6 +592,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
          Savoir ce qu'il ne faut pas associer est une <strong>information de conception, pas une interdiction</strong> : rien n'est refusé.</p>
       <p><strong>Des ordres de conduite, non des preuves.</strong> Une relation bénéfique peut ne pas se vérifier partout ; elle s'éprouve chez soi — un témoin, à côté, sert à cela. Le contexte de la source est l'Allemagne
          moyenne (Jura souabe, Hesse), et son itinéraire — un sol ameubli chaque printemps — n'est pas celui de l'atelier : ce qui se transporte, ce sont les couples, jamais la conduite.</p>
+      <p><strong>Le placement proposé.</strong> Il répartit les cultures non placées sur les planches du plan : il regroupe ce qui s'entend bien, écarte ce qui s'entend mal, et ne bouge jamais une culture déjà placée.
+         S'il ne trouve aucune planche sans voisin à éviter, il laisse la culture non placée et le dit — à vous d'ajouter une planche ou d'en décider autrement. Une proposition n'est qu'une proposition : vous l'acceptez, en tout ou en partie, ou vous la laissez.</p>
       <p><strong>Une culture absente des tables n'est pas neutre</strong> : « pas de voisinage connu » ne veut pas dire « sans effet ». Les tables ne sont pas non plus symétriques — une relation est connue dès qu'une des deux plantes la cite.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
