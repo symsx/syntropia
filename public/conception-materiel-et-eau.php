@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $portee !== []) {
     } elseif (in_array($action, ['releve', 'retirer_releve'], true) && $parcelle === null) {
         $erreurs['releve'] = 'Un test de sol se note sur une parcelle : choisissez-en une.';
     } elseif ($action === 'releve') {
-        $erreurs = $releves->ajouter($idP, $participantId, $_POST);
+        $erreurs = $releves->ajouter($idP, $compteId, $_POST);
         if ($erreurs === []) {
             $_SESSION['syntropia_flash_materiel'] = ['ok', 'Le test de sol est enregistré : le conseil d’arrosage en tient compte.'];
             header('Location: ' . $retour . '&onglet=eau');

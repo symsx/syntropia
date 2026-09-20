@@ -48,10 +48,13 @@ final class ReleveSol
      * Ajoute un relevé. Il faut au moins une infiltration ou un état d'humidité :
      * un relevé vide ne dit rien de l'arrosage.
      *
+     * `saisi_par` désigne un COMPTE (la base `comptes`), comme le dit le schéma — jamais un
+     * participant. Il a d'abord reçu l'identifiant du participant : corrigé le 2026-09-20.
+     *
      * @param array<string, mixed> $v la saisie brute
      * @return array<string, string> les erreurs, vide si le relevé est écrit
      */
-    public function ajouter(int $parcelleId, int $participantId, array $v): array
+    public function ajouter(int $parcelleId, int $compteId, array $v): array
     {
         $erreurs = [];
 
@@ -105,7 +108,7 @@ final class ReleveSol
         $this->pdo()->prepare(
             'INSERT INTO releve_sol (parcelle_id, `date`, point, temoin, etat_humidite, jours_depuis_pluie, infiltration_mm_h, saisi_par)
              VALUES (?, ?, ?, 0, ?, ?, ?, ?)')
-            ->execute([$parcelleId, $date, $point, $etat !== '' ? $etat : null, $jours, $infiltration, $participantId]);
+            ->execute([$parcelleId, $date, $point, $etat !== '' ? $etat : null, $jours, $infiltration, $compteId > 0 ? $compteId : null]);
         return [];
     }
 

@@ -188,7 +188,7 @@ try {
         $diff = ecarts($doc, $docCopie);
         $lignes = Export::inventaire($doc);
         $resume = 'participants ' . $lignes['participants'] . ', réponses ' . $lignes['reponses'] . ', parcelles ' . $lignes['parcelles']
-            . ', végétaux ' . $lignes['vegetaux'] . ', tracés ' . $lignes['traces'];
+            . ', végétaux ' . $lignes['vegetaux'] . ', tracés ' . $lignes['traces'] . ', interventions ' . $lignes['interventions'];
         if ($diff === []) {
             printf("  ✓ projet %d « %s » (%d octets) — identique. %s\n", $id, $nom, $encode['octets'], $resume);
         } else {
