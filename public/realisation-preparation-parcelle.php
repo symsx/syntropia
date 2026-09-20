@@ -69,6 +69,20 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   }
   .prep-bouton:hover{ opacity:.92; }
   .prep-note{ font:400 .78rem var(--texte); color:var(--muted); text-align:center; margin-top:.6rem; }
+
+  /* Sept choix sur deux fieldsets : sur un écran peu haut, la page se resserre au lieu de déborder. */
+  @media (max-height:46rem){
+    .prep-annonce{ margin-bottom:.7rem; }
+    .prep-champ{ margin-bottom:.6rem; }
+    .prep-choix{ gap:.1rem .9rem; }
+    .prep-choix label{ font-size:.86rem; }
+    .prep-bouton{ margin-top:0; padding:.5rem; }
+  }
+  @media (max-height:38rem){
+    .prep-annonce, .prep-note{ display:none; }
+    .prep-cadre{ padding-top:1.6rem; }
+    .prep-champ textarea{ padding:.4rem .6rem; }
+  }
 </style>
 </head>
 <body>
@@ -157,13 +171,15 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
             <div class="prep-choix">
               <label><input type="radio" class="radio" name="realisee" value="manuellement"<?= ($reponses['preparation_realisee'] ?? 'manuellement') === 'manuellement' ? ' checked' : '' ?>>Manuellement</label>
               <label><input type="radio" class="radio" name="realisee" value="animaux"<?= ($reponses['preparation_realisee'] ?? '') === 'animaux' ? ' checked' : '' ?>>Par un ou plusieurs animaux</label>
-              <label><input type="radio" class="radio" name="realisee" value="les-deux"<?= ($reponses['preparation_realisee'] ?? '') === 'les-deux' ? ' checked' : '' ?>>Les deux</label>
+              <label><input type="radio" class="radio" name="realisee" value="machine"<?= ($reponses['preparation_realisee'] ?? '') === 'machine' ? ' checked' : '' ?>>Avec une machine (motoculteur…)</label>
+              <label><input type="radio" class="radio" name="realisee" value="les-deux"<?= ($reponses['preparation_realisee'] ?? '') === 'les-deux' ? ' checked' : '' ?>>Plusieurs moyens</label>
+              <label><input type="radio" class="radio" name="realisee" value="autre"<?= ($reponses['preparation_realisee'] ?? '') === 'autre' ? ' checked' : '' ?>>Autrement</label>
             </div>
           </fieldset>
 
           <div class="prep-champ">
             <label for="precisions">Précisions</label>
-            <textarea id="precisions" name="precisions" rows="2" placeholder="Quels animaux, quelle durée, ce qui vous a décidé…"><?= htmlspecialchars($reponses['preparation_precisions'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+            <textarea id="precisions" name="precisions" rows="2" placeholder="Quelle machine ou quels animaux, quelle durée, ce qui vous a décidé…"><?= htmlspecialchars($reponses['preparation_precisions'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <button type="submit" class="prep-bouton">Continuer</button>
@@ -194,6 +210,13 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
          s'évapore — et bâcher aussi les chemins, une saison, avant d'y semer du trèfle blanc. L'idéal (Faraj) : un couvert adapté semé un
          ou deux ans avant de planter. Une fois planté, il n'y a plus de travail du sol. Et la préparation est la première chose que le
          climat empêche : prévoyez un repli manuel.</p>
+      <p><strong>Le déchaumage n'est pas que du désherbage.</strong> Il prépare le sol à recevoir la plantation, avec les moyens dont vous disposez :
+         une bâche, un motoculteur, des animaux, ou autre chose. Si des adventices reviennent ensuite, c'est le signe que la plantation n'est pas assez dense —
+         des plantes de colonisation sont encore là : on désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
+      <p><strong>Un sol exempt d'adventices.</strong> Les semis — ceux des tortues en particulier — se font sur un sol propre : Lopez pose comme règle
+         de semer dans un sol exempt d'adventices, et la régénération naturelle assistée prévoit l'élimination préalable des adventices et des faux-semis
+         (un à quatre passages) pour épuiser la banque de graines. Pour les pionniers d'une succession, leur concurrence — celle des graminées surtout, dont
+         les racines gênent fortement les arbres (Théry, ch. 3) — est un frein au saut du chat.</p>
     </div>
   </aside>
 

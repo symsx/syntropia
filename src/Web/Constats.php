@@ -111,6 +111,11 @@ final class Constats
             }
         }
 
+        $adventices = trim((string) ($v['adventices'] ?? ''));
+        if ($adventices !== '' && !isset(SautDuChat::ADVENTICES[$adventices])) {
+            $erreurs['adventices'] = 'Dites si des adventices reviennent, ou laissez vide.';
+        }
+
         // Une pousse sans durée ne dit rien ; un témoin sans pousse ne compare rien.
         if (($pousse !== null || $temoinPousse !== null) && $jours === null && !isset($erreurs['sur_jours'])) {
             $erreurs['sur_jours'] = 'Une pousse se mesure sur une durée : dites sur combien de jours.';
@@ -127,6 +132,7 @@ final class Constats
             'sur_jours' => $jours,
             'temoin_decrit' => $temoinDecrit,
             'temoin_pousse_cm' => $temoinPousse,
+            'adventices' => isset(SautDuChat::ADVENTICES[$adventices]) ? $adventices : null,
             'notes' => $notes,
         ], 'erreurs' => $erreurs];
     }

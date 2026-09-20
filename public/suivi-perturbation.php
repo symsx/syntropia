@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Perturbation — le journal d'une parcelle.
  *
- * Étape 2 de Suivi. Une ligne par geste (coupe, taille, fauche, affaiblissement), dans la
+ * Étape 2 de Suivi. Une ligne par geste (coupe, taille, fauche, affaiblissement, désherbage), dans la
  * table `intervention` : la consoude se coupe plusieurs fois par an, et une seule saisie
  * écrasée à chaque envoi n'en gardait rien. Voir `chantier-saut-du-chat.md`, Phase 1.
  *
@@ -290,6 +290,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
   .pj-conseil{ display:none; margin:.1rem 0 .6rem; padding:.45rem .6rem; border-radius:.45rem; background:var(--accent-fond); font:400 .76rem/1.4 var(--texte); color:var(--ink); }
   .pj-form:has(select[name=conditions_eau] option[value=sec]:checked) .pj-conseil--sec,
   .pj-form:has(select[name=type] option[value=affaiblissement]:checked) .pj-conseil--aff,
+  .pj-form:has(select[name=type] option[value=desherbage]:checked) .pj-conseil--desh,
   .pj-form:has(select[name=biomasse_deposee] option[value=exportee]:checked) .pj-conseil--exp{ display:block; }
   .pj-erreurs{ margin:0 0 .7rem; padding:.5rem .7rem; border:1px solid var(--alerte); border-radius:.5rem; color:var(--alerte); font:400 .8rem/1.35 var(--texte); }
   .pj-erreurs ul{ margin:.2rem 0 0 1rem; padding:0; }
@@ -502,6 +503,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
             </label>
           </div>
           <p class="pj-conseil pj-conseil--aff"><b>Affaiblir n'est pas perturber.</b> On couche une couverture qu'on veut planter sous la paille : une taille la ferait repartir « à fond la caisse » (Joala, 4-3). Ce geste se note, mais il ne compte pas comme une perturbation.</p>
+          <p class="pj-conseil pj-conseil--desh"><b>Des adventices qui reviennent disent que la plantation n'est pas assez dense.</b> Des plantes de colonisation sont encore là : désherbez à la main, et densifiez avec des plantes du système d'accumulation. Ce geste se note, mais ne compte pas comme une perturbation.</p>
 
 <?php if ($plantes !== []): ?>
           <fieldset class="pj-cases">

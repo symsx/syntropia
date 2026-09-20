@@ -30,6 +30,22 @@ final class SautDuChat
     public const ATTENTION = 'attention';
     public const VIDE = 'vide';
 
+    /**
+     * Des adventices reviennent-elles ? Si oui, c'est le signe que la plantation n'est pas assez dense : des
+     * plantes de colonisation sont encore là.
+     */
+    public const ADVENTICES = [
+        'non' => 'Non',
+        'oui' => 'Oui, des adventices reviennent',
+    ];
+
+    /**
+     * Les plantes du système d'accumulation que cite le support de formation (Joala, 2-2) : ce avec quoi l'on
+     * densifie quand des adventices reviennent. Des exemples du support, non une liste à suivre : un végétal ne
+     * se classe pas par son seul nom.
+     */
+    public const ACCUMULATION = ['saule', 'peuplier', 'bouleau', 'noisetier', 'aubépine', 'prunellier'];
+
     /** Des coupes faites à quelques jours d'écart sont une même intervention sur la zone. */
     public const FENETRE_JOURS = 3;
 
@@ -49,7 +65,9 @@ final class SautDuChat
     public const REALISEES = [
         'manuellement' => 'manuellement',
         'animaux' => 'par un ou plusieurs animaux',
-        'les-deux' => 'à la main et par des animaux',
+        'machine' => 'avec une machine',
+        'les-deux' => 'avec plusieurs moyens',
+        'autre' => 'autrement',
     ];
 
     /** Au-delà de ce repère du scénario (0 à 28), une plante n'est plus une plante de démarrage : fin de Placenta 3. */
@@ -117,10 +135,11 @@ final class SautDuChat
      * @param string|null $debut le début de la campagne de plantation (`Y-m-d`) — le point zéro
      * @param string|null $fin la fin de la campagne (`Y-m-d`)
      * @param array<string, string> $preparation ce que la Réalisation a noté : `technique`, `realisee`
+     * @param string|null $adventices la dernière réponse notée à « des adventices reviennent-elles ? » (`non`, `oui`)
      * @return list<array{cle: string, titre: string, etat: string, detail: string, source: string}>
      */
     public static function conditions(array $interventions, array $lignes, \DateTimeImmutable $aujourdhui,
-        ?string $debut = null, ?string $fin = null, array $preparation = []): array
+        ?string $debut = null, ?string $fin = null, array $preparation = [], ?string $adventices = null): array
     {
         $perturbations = array_values(array_filter($interventions, static fn (array $i): bool => Perturbation::perturbe((string) ($i['type'] ?? ''))));
         $derniere = $perturbations[0] ?? null;
@@ -134,11 +153,11 @@ final class SautDuChat
         $c[] = isset(self::PREPARATIONS[$technique])
             ? ['cle' => 'preparation', 'titre' => 'Le sol est préparé', 'etat' => self::OK,
                 'detail' => self::PREPARATIONS[$technique] . (isset(self::REALISEES[$realisee]) ? ', ' . self::REALISEES[$realisee] : '')
-                    . '. Préparer tôt, mais toujours couvrir le sol en attendant la plantation.',
-                'source' => 'Théry, ch. 14 ; annexes']
+                    . '. Préparer tôt, mais toujours couvrir le sol en attendant la plantation. Les semis se font sur un sol exempt d’adventices, dont la concurrence freine le saut du chat, surtout celui des pionniers de la succession.',
+                'source' => 'Théry, ch. 3 et 14 ; Lopez ; RNA']
             : ['cle' => 'preparation', 'titre' => 'Le sol est préparé', 'etat' => self::VIDE,
-                'detail' => 'La préparation n’est pas notée (Réalisation, étape 1). Préparation et plantation sont les deux moments les plus coûteux du projet : les brûler se paie ensuite en désherbage et en rattrapage.',
-                'source' => 'Théry, ch. 14'];
+                'detail' => 'La préparation n’est pas notée (Réalisation, étape 1). Préparation et plantation sont les deux moments les plus coûteux du projet : les brûler se paie ensuite en désherbage et en rattrapage. Les semis se font sur un sol exempt d’adventices.',
+                'source' => 'Théry, ch. 3 et 14 ; Lopez'];
 
         // 0 bis. La plantation dense se fait dans une même période, sans structurante ajoutée après coup.
         $d0 = $debut !== null && $debut !== '' ? \DateTimeImmutable::createFromFormat('!Y-m-d', $debut) : false;
@@ -164,6 +183,23 @@ final class SautDuChat
                 : ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::ATTENTION,
                     'detail' => $etendue . ' Plus d’une saison de plantation : des plants ajoutés bien après le point zéro occupent moins le sol que s’ils avaient été plantés avec le reste.',
                     'source' => $sourceCampagne];
+        }
+
+        // 0 ter. Les adventices ne reviennent pas. Le sol se prépare par déchaumage ; si elles reviennent en cours
+        // de projet, la plantation n'est pas assez dense : on désherbe à la main ET l'on densifie.
+        $titreAdv = 'Les adventices ne reviennent pas';
+        if ($adventices === 'oui') {
+            $c[] = ['cle' => 'adventices', 'titre' => $titreAdv, 'etat' => self::ATTENTION,
+                'detail' => 'Des adventices reviennent : c’est le signe que la plantation n’est pas assez dense — des plantes de colonisation sont encore là. Désherbez à la main, et densifiez avec des plantes du système d’accumulation (le support cite '
+                    . implode(', ', self::ACCUMULATION) . ').',
+                'source' => 'Repère de l’atelier ; Joala 2-2'];
+        } elseif ($adventices === 'non') {
+            $c[] = ['cle' => 'adventices', 'titre' => $titreAdv, 'etat' => self::OK,
+                'detail' => 'Aucune adventice ne revient au dernier constat qui l’a noté.', 'source' => 'Repère de l’atelier'];
+        } else {
+            $c[] = ['cle' => 'adventices', 'titre' => $titreAdv, 'etat' => self::VIDE,
+                'detail' => 'À noter au constat. Si des adventices reviennent, c’est le signe que la plantation n’est pas assez dense : on désherbe à la main et l’on densifie avec des plantes du système d’accumulation.',
+                'source' => 'Repère de l’atelier ; Joala 2-2'];
         }
 
         // 1. Une perturbation est notée.

@@ -19,18 +19,19 @@ namespace Syntropia;
  */
 final class Perturbation
 {
-    /** Le geste. Seul « affaiblir » n'est pas une perturbation : voir `PERTURBENT`. */
+    /** Le geste. Affaiblir et désherber ne sont pas des perturbations : voir `PERTURBENT`. */
     public const TYPES = [
         'coupe_vert' => 'Coupe en vert',
         'taille_hiver' => 'Taille d’hiver',
         'fauche' => 'Fauche',
         'recepage' => 'Recépage, cépée ou étêtage',
         'affaiblissement' => 'Affaiblir sans couper (coucher sous paille)',
+        'desherbage' => 'Désherbage à la main',
     ];
 
     /**
-     * Les gestes qui relancent la croissance. Affaiblir une couverture spontanée qu'on veut
-     * planter n'en fait pas partie : une taille la ferait repartir « à fond la caisse »
+     * Les gestes qui relancent la croissance. Ni affaiblir ni désherber n'en font partie. Affaiblir une couverture
+     * spontanée qu'on veut planter n'en fait pas partie : une taille la ferait repartir « à fond la caisse »
      * (Joala, 4-3), on la couche donc sous la paille. Ce geste se note, mais ne compte
      * jamais comme une perturbation — ni ici, ni dans le diagnostic du saut du chat.
      */

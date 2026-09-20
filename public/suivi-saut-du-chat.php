@@ -164,7 +164,14 @@ $aujourdhui = new DateTimeImmutable('today');
 $datePlantation = $parcelle !== null ? (string) ($parcelle['date_plantation'] ?? '') : '';
 $finPlantation = $parcelle !== null ? (string) ($parcelle['fin_plantation'] ?? '') : '';
 $preparation = $parcelle !== null ? (new Reponses())->preparationDuSite($siteId, $participantId) : [];
-$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui, $datePlantation, $finPlantation, $preparation) : [];
+$adventicesNotees = null;
+foreach ($constats as $k) {
+    if ($k['adventices'] !== null) {
+        $adventicesNotees = (string) $k['adventices'];
+        break;
+    }
+}
+$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui, $datePlantation, $finPlantation, $preparation, $adventicesNotees) : [];
 $derniere = $constats[0] ?? null;
 $visibleMaintenant = $derniere !== null && $derniere['visible'] === 'oui';
 $joursPlantee = $datePlantation !== '' ? Perturbation::joursDepuis($datePlantation, $aujourdhui) : null;
@@ -176,7 +183,7 @@ if (!in_array($vue, ['constats', 'conditions'], true)) {
 
 // Les valeurs du formulaire du constat.
 $f = ['date' => date('Y-m-d'), 'visible' => 'pas_encore', 'vegetal' => '', 'pousse_cm' => '', 'sur_jours' => '',
-    'temoin_pousse_cm' => '', 'temoin_decrit' => '', 'notes' => ''];
+    'temoin_pousse_cm' => '', 'temoin_decrit' => '', 'adventices' => '', 'notes' => ''];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($saisie[$k] ?? '');
@@ -277,7 +284,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   .sd-ancienne b{ font:600 .78rem var(--titre); color:var(--muted); }
   .sd-ancienne a{ color:var(--accent-titre); font-weight:600; }
   .sd-tableau .sous-date{ display:none; font-size:.85em; color:var(--muted); font-weight:400; }
-  @media (max-width:60rem){ .sd-tableau .c-notes{ display:none; } }
+  @media (max-width:60rem){ .sd-tableau .c-notes, .sd-tableau .c-adv{ display:none; } }
   @media (max-width:46rem){ .sd-tableau .c-temoin{ display:none; } }
   @media (max-width:40rem){ .sd-centre{ padding-top:1.8rem; } .sd-tableau th, .sd-tableau td{ padding-left:.3rem; padding-right:.3rem; } }
   @media (max-width:26rem){ .sd-tableau .c-plante{ display:none; } .sd-tableau .sous-date{ display:block; } }
@@ -286,12 +293,14 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   /* le panneau Données */
   .sd-form label.sd-champ{ display:block; font:500 .78rem var(--titre); color:var(--ink); margin:0 0 .5rem; }
   .sd-form label.sd-champ small{ font:400 .68rem var(--texte); color:var(--muted); }
-  .sd-form input[type=text], .sd-form input[type=number], .sd-form input[type=date], .sd-form textarea{
+  .sd-form input[type=text], .sd-form input[type=number], .sd-form input[type=date], .sd-form select, .sd-form textarea{
     display:block; width:100%; margin-top:.15rem; padding:.36rem .5rem; font:400 .84rem var(--texte); color:var(--ink);
     background:var(--surface); border:1px solid var(--line); border-radius:.45rem;
   }
   .sd-form textarea{ resize:vertical; min-height:3.2rem; }
-  .sd-form input:focus, .sd-form textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .sd-conseil-adv{ display:none; }
+  .sd-form:has(select[name=adventices] option[value=oui]:checked) .sd-conseil-adv{ display:block; }
+  .sd-form input:focus, .sd-form select:focus, .sd-form textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .sd-deux{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
   .sd-note{ font:400 .74rem/1.4 var(--texte); color:var(--muted); margin:.2rem 0 .6rem; }
   .sd-choix{ display:flex; flex-direction:column; gap:.2rem; margin:0 0 .6rem; padding:0; border:0; }
@@ -470,7 +479,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php else: ?>
           <div class="sd-zone" id="sd-const-zone">
             <table class="sd-tableau">
-              <thead><tr><th>Date</th><th>Visible</th><th class="c-plante">Plante</th><th>Pousse</th><th class="c-temoin">Témoin</th><th>Rapport</th><th class="c-notes">Notes</th></tr></thead>
+              <thead><tr><th>Date</th><th>Visible</th><th class="c-plante">Plante</th><th>Pousse</th><th class="c-temoin">Témoin</th><th>Rapport</th><th class="c-adv">Adventices</th><th class="c-notes">Notes</th></tr></thead>
               <tbody>
 <?php foreach ($constats as $k): $rapport = SautDuChat::rapport($k['pousse_cm'] !== null ? (float) $k['pousse_cm'] : null, $k['temoin_pousse_cm'] !== null ? (float) $k['temoin_pousse_cm'] : null); ?>
                 <tr class="sd-item-const">
@@ -480,6 +489,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
                   <td><?php if ($k['pousse_cm'] !== null): ?><?= $h($nombre((float) $k['pousse_cm'], 1)) ?> cm <span class="doux">en <?= (int) $k['sur_jours'] ?> j</span><?php endif; ?></td>
                   <td class="c-temoin" title="<?= $h($k['temoin_decrit'] ?? '') ?>"><?php if ($k['temoin_pousse_cm'] !== null): ?><?= $h($nombre((float) $k['temoin_pousse_cm'], 1)) ?> cm<?php endif; ?></td>
                   <td class="rapport"><?= $rapport !== null ? '× ' . $h($nombre($rapport, 1)) : '' ?></td>
+                  <td class="c-adv"><?= $k['adventices'] === 'oui' ? 'Oui' : ($k['adventices'] === 'non' ? 'Non' : '') ?></td>
                   <td class="c-notes notes" title="<?= $h($k['notes'] ?? '') ?>"><?= $h($k['notes'] ?? '') ?></td>
                 </tr>
 <?php endforeach; ?>
@@ -555,6 +565,15 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
               </label>
             </div>
             <p class="sd-note">Une pousse se mesure sur une durée ; un témoin ne compare que si la plante est mesurée aussi. Les ordres de grandeur de la formation — maïs jusqu'à 30 cm en 24 h, tournesols 1,50 m de plus que les mêmes plantés classiquement, pérennes jusqu'à deux fois plus vite — sont des <b>repères</b>, pas des seuils.</p>
+            <label class="sd-champ">Des adventices reviennent-elles ? <small>facultatif</small>
+              <select name="adventices">
+                <option value="">—</option>
+<?php foreach (SautDuChat::ADVENTICES as $cle => $lib): ?>
+                <option value="<?= $h($cle) ?>"<?= $f['adventices'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
+<?php endforeach; ?>
+              </select>
+            </label>
+            <p class="sd-note sd-conseil-adv">Si oui, c'est le signe que la plantation n'est pas assez dense : des plantes de colonisation sont encore là. On désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
             <label class="sd-champ">Ce que vous voyez <small>croissance, couleur, densité du feuillage…</small>
               <textarea name="notes" rows="3" maxlength="2000"><?= $h($f['notes']) ?></textarea>
             </label>
@@ -617,6 +636,9 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
       <p><strong>Ce qui le rend possible</strong> se lit dans ce que vous avez déjà noté : une perturbation dans le journal, de quoi couper au scénario, l'état des plantes et l'eau à la coupe,
          la biomasse laissée au sol, toutes les plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque ligne dit ce que l'atelier sait, ce qu'il faut regarder, ou que rien n'est encore noté —
          jamais « échec ». Ce que la formation n'a pas encore tranché — combien de biomasse suffit, quelle fréquence, quoi planter selon l'itinéraire — n'est pas chiffré ici.</p>
+      <p><strong>Les adventices.</strong> Le sol se prépare par déchaumage, avec les moyens dont vous disposez, pour recevoir la plantation — et les semis se font sur un sol exempt d'adventices.
+         Si des adventices reviennent en cours de projet, c'est le signe que la plantation n'est pas assez dense : des plantes de colonisation sont encore là. On désherbe à la main,
+         et l'on densifie avec des plantes du système d'accumulation.</p>
       <p><strong>Quand ?</strong> Dans les exemples de Théry, dès les premiers mois et dès la première année, quand les plantes de biomasse et les annuelles de démarrage sont réussies ; un mauvais démarrage des bordures vivantes le retarde,
          et le rattrapage coûte du travail. Ce n'est pas une échéance.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>

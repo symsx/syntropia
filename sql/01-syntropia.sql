@@ -642,6 +642,11 @@ CREATE TABLE IF NOT EXISTS `constat` (
   `sur_jours`        SMALLINT UNSIGNED NULL,
   `temoin_decrit`    VARCHAR(190) NULL,
   `temoin_pousse_cm` DECIMAL(7,1) NULL,
+  -- Des adventices reviennent-elles ? (schéma 5.) Le sol se prépare par déchaumage, avec les moyens du
+  -- porteur ; si des adventices reviennent en cours de projet, c'est le SIGNE que la plantation n'est pas
+  -- assez dense — des plantes de colonisation sont encore là : on désherbe à la main ET l'on densifie avec des
+  -- plantes du système d'accumulation. Une réponse à noter, non un seuil : NULL = pas noté.
+  `adventices`       ENUM('non','oui') NULL,
   `notes`            TEXT NULL,
   `saisi_par`        INT UNSIGNED NULL,            -- compte, base `comptes`
 
@@ -991,6 +996,19 @@ EXECUTE ajout_fin;
 DEALLOCATE PREPARE ajout_fin;
 
 
+-- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
+SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'constat'
+                      AND COLUMN_NAME = 'adventices');
+SET @ajout_adv = IF(@adv_existe = 0,
+                    'ALTER TABLE `constat` ADD COLUMN `adventices` ENUM(''non'',''oui'') NULL AFTER `temoin_pousse_cm`',
+                    'DO 0');
+PREPARE ajout_adv FROM @ajout_adv;
+EXECUTE ajout_adv;
+DEALLOCATE PREPARE ajout_adv;
+
+
 -- ---------------------------------------------------------------------
 -- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
 --
@@ -1010,6 +1028,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 
 -- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet) ;
 -- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas) ;
--- 4 = `parcelle.fin_plantation` (la fin de la campagne de plantation — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '4')
+-- 4 = `parcelle.fin_plantation` (la fin de la campagne de plantation — colonne facultative, idem) ;
+-- 5 = `constat.adventices` (des adventices reviennent-elles ? — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '5')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);
