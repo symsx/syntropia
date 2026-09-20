@@ -186,6 +186,14 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
          respectueux de la vie qui s'y trouve déjà. Le choix dépend du
          temps disponible, de ce qui pousse déjà là, et de ce que vous
          pouvez mobiliser : bras, outils, ou animaux.</p>
+      <p><strong>Pourquoi elle compte.</strong> La préparation du sol et la plantation sont les deux moments les plus
+         coûteux du projet, et ceux dont dépend le saut du chat : les brûler se paie ensuite en désherbage et en rattrapage
+         (Théry, ch. 14). Ce que vous notez ici se relit à l'étape « Saut du chat », parmi ce qui le rend possible.</p>
+      <p><strong>Ce que disent les sources.</strong> Préparer tôt, mais toujours couvrir le sol en attendant la plantation, sans laisser
+         les bâches plus qu'il n'en faut. Bâcher sur un sol le plus humide possible — le lendemain matin d'une pluie, avant que la rosée
+         s'évapore — et bâcher aussi les chemins, une saison, avant d'y semer du trèfle blanc. L'idéal (Faraj) : un couvert adapté semé un
+         ou deux ans avant de planter. Une fois planté, il n'y a plus de travail du sol. Et la préparation est la première chose que le
+         climat empêche : prévoyez un repli manuel.</p>
     </div>
   </aside>
 

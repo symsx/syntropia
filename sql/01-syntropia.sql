@@ -349,7 +349,13 @@ CREATE TABLE IF NOT EXISTS `parcelle` (
   `forme`       ENUM('zebre','abeille','liane','autre') NULL,
   `statut`      ENUM('conception','commande','plantee','suivi','close')
                 NOT NULL DEFAULT 'conception',
+  -- LA CAMPAGNE DE PLANTATION : `date_plantation` en est le DÉBUT — le point zéro —, `fin_plantation` la fin,
+  -- facultative. Une plantation dense se fait dans une même période, qui s'étale sur trois saisons
+  -- (fin d'automne, hiver, printemps) selon les besoins des végétaux : ce que les deux écoles ont en
+  -- commun est un point zéro unique, aucune structurante ajoutée après coup, non une date unique
+  -- (chantier-saut-du-chat.md, décision 6 ; schéma 4).
   `date_plantation` DATE NULL,
+  `fin_plantation`  DATE NULL,
 
   -- La géométrie, telle que `outils/calcul-plants.py` l'attend.
   -- LA GEOMETRIE PART DE LA TAILLE DE LA PARCELLE, non du nombre de
@@ -972,6 +978,19 @@ EXECUTE ajout_origine;
 DEALLOCATE PREPARE ajout_origine;
 
 
+-- Rattrapage d'une table `parcelle` créée avant `fin_plantation` — schéma 4. Même forme que ci-dessus.
+SET @fin_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'parcelle'
+                      AND COLUMN_NAME = 'fin_plantation');
+SET @ajout_fin = IF(@fin_existe = 0,
+                    'ALTER TABLE `parcelle` ADD COLUMN `fin_plantation` DATE NULL AFTER `date_plantation`',
+                    'DO 0');
+PREPARE ajout_fin FROM @ajout_fin;
+EXECUTE ajout_fin;
+DEALLOCATE PREPARE ajout_fin;
+
+
 -- ---------------------------------------------------------------------
 -- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
 --
@@ -990,6 +1009,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet) ;
--- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '3')
+-- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas) ;
+-- 4 = `parcelle.fin_plantation` (la fin de la campagne de plantation — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '4')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

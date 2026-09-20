@@ -98,6 +98,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
                    surface_m2, production_principale, cree_le) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
         ->execute([$siteId, 'P1', 'Verger', 'perenne', 12.5, 8, 'nord-sud', 6, $plan, "Note [\n1, 2\n] \"guillemets\" é", 100, 'Fruits', '2026-08-01 10:00:00']);
     $p1 = (int) $pdo->lastInsertId();
+    $pdo->prepare("UPDATE parcelle SET date_plantation = '2025-11-20', fin_plantation = '2026-04-15' WHERE id = ?")->execute([$p1]);
     $pdo->prepare("INSERT INTO parcelle (site_id, code, nom, type) VALUES (?, 'P2', 'Potager', 'potager')")->execute([$siteId]);
     $p2 = (int) $pdo->lastInsertId();
     $ligne = $pdo->prepare('INSERT INTO scenario_ligne (parcelle_id, ordre, strate, espece, origine, espacement_m, nb_pieds, details, couleur_plan, role)

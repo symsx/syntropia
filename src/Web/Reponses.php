@@ -46,6 +46,40 @@ final class Reponses
     }
 
     /**
+     * Ce que la Réalisation a noté de la préparation du sol — celui de la personne, à défaut celui du porteur
+     * (même règle que `Scenarios::souhaitsDuSite()`) : la préparation est un geste du projet, et un lecteur
+     * n'a rien écrit lui-même. Clés : `technique`, `realisee`.
+     *
+     * @return array<string, string>
+     */
+    public function preparationDuSite(int $siteId, int $participantId): array
+    {
+        $lire = function (string $sql, array $params): array {
+            $req = $this->pdo()->prepare($sql);
+            $req->execute($params);
+            $lignes = $req->fetchAll(PDO::FETCH_KEY_PAIR);
+            return is_array($lignes) ? $lignes : [];
+        };
+        $q = ['preparation_technique' => 'technique', 'preparation_realisee' => 'realisee'];
+        $v = $lire("SELECT question, texte FROM reponse WHERE participant_id = ? AND question IN ('preparation_technique', 'preparation_realisee')", [$participantId]);
+        if (trim((string) ($v['preparation_technique'] ?? '')) === '') {
+            $v = $lire("SELECT r.question, r.texte FROM reponse r
+                          JOIN participant p ON p.id = r.participant_id
+                          JOIN membre_site m ON m.site_id = p.site_id AND m.compte_id = p.compte_id
+                         WHERE r.site_id = ? AND m.role = 'porteur'
+                           AND r.question IN ('preparation_technique', 'preparation_realisee')
+                           AND p.id = (SELECT MIN(p2.id) FROM participant p2
+                                         JOIN membre_site m2 ON m2.site_id = p2.site_id AND m2.compte_id = p2.compte_id
+                                        WHERE p2.site_id = ? AND m2.role = 'porteur')", [$siteId, $siteId]);
+        }
+        $sortie = [];
+        foreach ($q as $question => $cle) {
+            $sortie[$cle] = trim((string) ($v[$question] ?? ''));
+        }
+        return $sortie;
+    }
+
+    /**
      * Enregistre une réponse — ou l'efface si le texte est vide.
      *
      * **Un champ vidé n'est pas la même chose qu'un champ jamais

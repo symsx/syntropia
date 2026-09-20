@@ -112,14 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
         header('Location: ' . $retour);
         exit;
     } elseif ($action === 'plantation') {
-        $erreur = $parcellesService->enregistrerDatePlantation($idP, $siteId, (string) ($_POST['date_plantation'] ?? ''));
-        if ($erreur === null) {
+        $erreurs = $parcellesService->enregistrerPlantation($idP, $siteId, (string) ($_POST['date_plantation'] ?? ''), (string) ($_POST['fin_plantation'] ?? ''));
+        if ($erreurs === []) {
             $_SESSION['syntropia_flash_saut'] = ['ok', trim((string) ($_POST['date_plantation'] ?? '')) !== ''
-                ? 'La date de plantation est enregistrée.' : 'La date de plantation est effacée.'];
+                ? 'La campagne de plantation est enregistrée.' : 'Les dates de plantation sont effacées.'];
             header('Location: ' . $retour);
             exit;
         }
-        $erreurs['date_plantation'] = $erreur;
     } else {
         http_response_code(400);
         $erreurs['action'] = 'Cette action n’est pas reconnue.';
@@ -162,10 +161,12 @@ if ($depuisNote) {
 $interventions = $parcelle !== null ? (new Interventions())->dUneParcelle($idP) : [];
 $lignes = $parcelle !== null ? $parcellesService->scenario($idP) : [];
 $aujourdhui = new DateTimeImmutable('today');
-$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui) : [];
+$datePlantation = $parcelle !== null ? (string) ($parcelle['date_plantation'] ?? '') : '';
+$finPlantation = $parcelle !== null ? (string) ($parcelle['fin_plantation'] ?? '') : '';
+$preparation = $parcelle !== null ? (new Reponses())->preparationDuSite($siteId, $participantId) : [];
+$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui, $datePlantation, $finPlantation, $preparation) : [];
 $derniere = $constats[0] ?? null;
 $visibleMaintenant = $derniere !== null && $derniere['visible'] === 'oui';
-$datePlantation = $parcelle !== null ? (string) ($parcelle['date_plantation'] ?? '') : '';
 $joursPlantee = $datePlantation !== '' ? Perturbation::joursDepuis($datePlantation, $aujourdhui) : null;
 
 $vue = (string) ($_GET['vue'] ?? '');
@@ -189,6 +190,7 @@ if ($saisie !== null) {
     $f['notes'] = $ancienne['observations'] ?? '';
 }
 $dateP = $saisie !== null && $onglet === 'plantation' ? (string) ($saisie['date_plantation'] ?? '') : $datePlantation;
+$finP = $saisie !== null && $onglet === 'plantation' ? (string) ($saisie['fin_plantation'] ?? '') : $finPlantation;
 
 $nomAffiche = $auth->nomAffiche() ?? '';
 $initiales = '';
@@ -412,14 +414,14 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
         <p class="sd-message sd-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
 <?php endif; ?>
 <?php if ($joursPlantee !== null): ?>
-        <p class="sd-temps">Planté le <?= $h($dateFr($datePlantation)) ?>, il y a <?= $joursPlantee ?> jour<?= $joursPlantee > 1 ? 's' : '' ?>.
+        <p class="sd-temps"><?= $finPlantation !== '' ? 'Planté du ' . $h($dateFr($datePlantation)) . ' au ' . $h($dateFr($finPlantation)) . ' ; point zéro il y a ' : 'Point zéro le ' . $h($dateFr($datePlantation)) . ', il y a ' ?><?= $joursPlantee ?> jour<?= $joursPlantee > 1 ? 's' : '' ?>.
           Dans la formation, le saut du chat vient d'ordinaire dès les premiers mois, dès la première année — un repère, pas une échéance.
 <?php if ($peutEcrire): ?>
-          <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">Changer la date</a>
+          <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">Changer les dates</a>
 <?php endif; ?></p>
 <?php elseif ($peutEcrire): ?>
-        <p class="sd-temps">La date de plantation situe le projet dans son film et dit depuis quand on attend le saut du chat.
-          <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">La noter →</a></p>
+        <p class="sd-temps">Les dates de plantation situent le projet dans son film et disent depuis quand on attend le saut du chat.
+          <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">Les noter →</a></p>
 <?php endif; ?>
 
         <div class="sd-onglets" role="tablist">
@@ -575,14 +577,20 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 
         <section class="sd-panneau sd-p-plantation">
           <p class="pd-titre">La plantation — <?= $h($parcelle['code']) ?></p>
-          <p class="sd-note"><b>À quoi elle sert</b> : à situer le projet dans son film — les trois premières années sont celles du stade placentaire — et à dire depuis quand on attend le saut du chat. C'est le point zéro de la parcelle. Laissée vide, elle s'efface.</p>
+          <p class="sd-note"><b>À quoi elle sert</b> : à situer le projet dans son film — les trois premières années sont celles du stade placentaire — et à dire si la plantation a été faite dans une même période. Une plantation dense s'étale sur <strong>trois saisons — fin d'automne, hiver, printemps — selon les besoins des végétaux</strong> : ce qui compte est un <strong>point zéro unique</strong>, aucune structurante ajoutée après coup. Le début est le point zéro ; la fin se note quand la plantation est terminée. Vidées, les dates s'effacent.</p>
           <form method="post" action="suivi-saut-du-chat.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="plantation">
             <input type="hidden" name="parcelle" value="<?= $idP ?>">
-            <label class="sd-champ">Date de plantation
-              <input type="date" name="date_plantation" min="2000-01-01" max="<?= date('Y-m-d') ?>" value="<?= $h($dateP) ?>">
-            </label>
+            <div class="sd-deux">
+              <label class="sd-champ">Début <small>le point zéro</small>
+                <input type="date" name="date_plantation" min="2000-01-01" max="<?= date('Y-m-d') ?>" value="<?= $h($dateP) ?>">
+              </label>
+              <label class="sd-champ">Fin <small>facultatif</small>
+                <input type="date" name="fin_plantation" min="2000-01-01" max="<?= date('Y-m-d') ?>" value="<?= $h($finP) ?>">
+              </label>
+            </div>
+            <p class="sd-note"><b>Les fenêtres, selon les végétaux</b> [Théry, ch. 11 ; Joala] : les racines nues à partir de mi-novembre ; les boutures ligneuses au repos végétatif ; les placentaires — graines de maïs, de tournesol — au printemps, selon la température du sol (6 °C pour le maïs, 5 °C pour le tournesol). La campagne s'étale ainsi sur environ six mois — un repère de lecture, non une limite. Elles se lisent avec votre terrain et votre climat.</p>
             <button type="submit" class="sd-bouton">Enregistrer</button>
           </form>
         </section>

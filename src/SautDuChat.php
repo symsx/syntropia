@@ -33,6 +33,25 @@ final class SautDuChat
     /** Des coupes faites à quelques jours d'écart sont une même intervention sur la zone. */
     public const FENETRE_JOURS = 3;
 
+    /**
+     * Une campagne de plantation qui tient dans à peu près six mois — de fin d'automne au printemps — est « dans
+     * une même période » : le repère du corpus (la campagne d'implantation s'étale sur environ six mois, contrainte
+     * par des fenêtres physiologiques qui ne coïncident pas). Un repère, non un seuil de refus.
+     */
+    public const CAMPAGNE_JOURS = 190;
+
+    /** Les préparations que l'étape « Préparation de la parcelle » de la Réalisation enregistre. */
+    public const PREPARATIONS = [
+        'dechaumage' => 'Déchaumage',
+        'bachage' => 'Couverture du sol (bâchage)',
+        'les-deux' => 'Déchaumage et couverture du sol',
+    ];
+    public const REALISEES = [
+        'manuellement' => 'manuellement',
+        'animaux' => 'par un ou plusieurs animaux',
+        'les-deux' => 'à la main et par des animaux',
+    ];
+
     /** Au-delà de ce repère du scénario (0 à 28), une plante n'est plus une plante de démarrage : fin de Placenta 3. */
     private const FIN_DEMARRAGE = 12;
 
@@ -95,15 +114,57 @@ final class SautDuChat
      *
      * @param list<array<string, mixed>> $interventions le journal, la plus récente d'abord
      * @param list<array<string, mixed>> $lignes le scénario de la parcelle
+     * @param string|null $debut le début de la campagne de plantation (`Y-m-d`) — le point zéro
+     * @param string|null $fin la fin de la campagne (`Y-m-d`)
+     * @param array<string, string> $preparation ce que la Réalisation a noté : `technique`, `realisee`
      * @return list<array{cle: string, titre: string, etat: string, detail: string, source: string}>
      */
-    public static function conditions(array $interventions, array $lignes, \DateTimeImmutable $aujourdhui): array
+    public static function conditions(array $interventions, array $lignes, \DateTimeImmutable $aujourdhui,
+        ?string $debut = null, ?string $fin = null, array $preparation = []): array
     {
         $perturbations = array_values(array_filter($interventions, static fn (array $i): bool => Perturbation::perturbe((string) ($i['type'] ?? ''))));
         $derniere = $perturbations[0] ?? null;
         $biomasse = self::plantesDeBiomasse($lignes);
         $demarrage = self::plantesDeDemarrage($lignes);
         $c = [];
+
+        // 0. Le sol est préparé — avec la plantation, l'un des deux moments les plus coûteux du projet.
+        $technique = trim((string) ($preparation['technique'] ?? ''));
+        $realisee = trim((string) ($preparation['realisee'] ?? ''));
+        $c[] = isset(self::PREPARATIONS[$technique])
+            ? ['cle' => 'preparation', 'titre' => 'Le sol est préparé', 'etat' => self::OK,
+                'detail' => self::PREPARATIONS[$technique] . (isset(self::REALISEES[$realisee]) ? ', ' . self::REALISEES[$realisee] : '')
+                    . '. Préparer tôt, mais toujours couvrir le sol en attendant la plantation.',
+                'source' => 'Théry, ch. 14 ; annexes']
+            : ['cle' => 'preparation', 'titre' => 'Le sol est préparé', 'etat' => self::VIDE,
+                'detail' => 'La préparation n’est pas notée (Réalisation, étape 1). Préparation et plantation sont les deux moments les plus coûteux du projet : les brûler se paie ensuite en désherbage et en rattrapage.',
+                'source' => 'Théry, ch. 14'];
+
+        // 0 bis. La plantation dense se fait dans une même période, sans structurante ajoutée après coup.
+        $d0 = $debut !== null && $debut !== '' ? \DateTimeImmutable::createFromFormat('!Y-m-d', $debut) : false;
+        $d1 = $fin !== null && $fin !== '' ? \DateTimeImmutable::createFromFormat('!Y-m-d', $fin) : false;
+        $titreCampagne = 'La plantation est faite dans une même période';
+        $sourceCampagne = 'Théry, ch. 11 ; Faraj ; Joala 4-1';
+        if ($d0 === false) {
+            $c[] = ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::VIDE,
+                'detail' => 'Le point zéro n’est pas noté. Une plantation dense se fait dans une même période, qui peut courir sur trois saisons — fin d’automne, hiver, printemps — selon les besoins des végétaux ; ce qui compte : aucune structurante ajoutée après coup.',
+                'source' => $sourceCampagne];
+        } elseif ($d1 === false) {
+            $c[] = ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::VIDE,
+                'detail' => 'Point zéro le ' . $d0->format('d/m/Y') . '. La fin de la campagne n’est pas notée : notez-la quand la plantation est terminée.',
+                'source' => $sourceCampagne];
+        } else {
+            $jours = (int) $d0->diff($d1)->format('%a');
+            $mois = max(1, (int) round($jours / 30.4));
+            $etendue = 'Du ' . $d0->format('d/m/Y') . ' au ' . $d1->format('d/m/Y') . ($jours > 0 ? ', environ ' . $mois . ' mois' : ', en un jour') . '.';
+            $c[] = $jours <= self::CAMPAGNE_JOURS
+                ? ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::OK,
+                    'detail' => $etendue . ' Dans une même saison de plantation. « Dense » : pas encore de repère chiffré.',
+                    'source' => $sourceCampagne]
+                : ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::ATTENTION,
+                    'detail' => $etendue . ' Plus d’une saison de plantation : des plants ajoutés bien après le point zéro occupent moins le sol que s’ils avaient été plantés avec le reste.',
+                    'source' => $sourceCampagne];
+        }
 
         // 1. Une perturbation est notée.
         if ($derniere === null) {

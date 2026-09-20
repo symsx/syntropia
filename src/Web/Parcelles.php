@@ -70,32 +70,55 @@ final class Parcelles
     }
 
     /**
-     * La date de plantation d'une parcelle — le point zéro de son film : elle situe le projet (« il y a
-     * cent jours, on est en Placenta 2 ») et permet de dire que le saut du chat vient d'ordinaire dans les
-     * premiers mois (Théry, ch. 15 et 16), sans en faire une échéance. Vide, elle s'efface.
+     * La campagne de plantation d'une parcelle : son début — le point zéro — et sa fin, facultative.
      *
-     * Ne touche que cette colonne, bornée au site : le verrou de version du plan ne s'en mêle pas.
+     * La plantation dense se fait dans une même période, qui s'étale sur trois saisons (fin d'automne,
+     * hiver, printemps) selon les besoins des végétaux : ce qui compte est un point zéro unique, aucune
+     * structurante ajoutée après coup, non un jour unique. Le début situe le projet dans son film (« il y a
+     * cent jours, on est en Placenta 2 ») ; la fin dit si la campagne s'est étalée. Une date vidée s'efface ;
+     * la fin ne s'écrit pas sans début, et ne le précède pas.
      *
-     * @return string|null le message d'erreur, `null` si la date est écrite
+     * Ne touche que ces deux colonnes, bornées au site : le verrou de version du plan ne s'en mêle pas.
+     *
+     * @return array<string, string> les erreurs, vide si la campagne est écrite
      */
-    public function enregistrerDatePlantation(int $id, int $siteId, string $date): ?string
+    public function enregistrerPlantation(int $id, int $siteId, string $debut, string $fin): array
     {
-        $date = trim($date);
-        if ($date !== '') {
-            $d = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
-            if ($d === false || $d->format('Y-m-d') !== $date) {
-                return 'La date de plantation doit être une date valide.';
+        $erreurs = [];
+        $lire = static function (string $valeur, string $cle, string $nom) use (&$erreurs): ?\DateTimeImmutable {
+            $valeur = trim($valeur);
+            if ($valeur === '') {
+                return null;
+            }
+            $d = \DateTimeImmutable::createFromFormat('!Y-m-d', $valeur);
+            if ($d === false || $d->format('Y-m-d') !== $valeur) {
+                $erreurs[$cle] = $nom . ' doit être une date valide.';
+                return null;
             }
             if ($d > new \DateTimeImmutable('today')) {
-                return 'La date de plantation ne peut pas être dans le futur : notez-la quand la parcelle est plantée.';
+                $erreurs[$cle] = $nom . ' ne peut pas être dans le futur : notez-la quand elle est passée.';
+                return null;
             }
             if ($d < new \DateTimeImmutable('2000-01-01')) {
-                return 'Cette date est trop ancienne pour être celle d’une plantation suivie ici.';
+                $erreurs[$cle] = $nom . ' est trop ancienne pour une plantation suivie ici.';
+                return null;
             }
+            return $d;
+        };
+        $d = $lire($debut, 'date_plantation', 'La date de début');
+        $f = $lire($fin, 'fin_plantation', 'La date de fin');
+        if (trim($fin) !== '' && trim($debut) === '' && !isset($erreurs['fin_plantation'])) {
+            $erreurs['fin_plantation'] = 'La fin de la campagne ne se note pas sans son début : notez d’abord le point zéro.';
         }
-        $req = $this->pdo()->prepare('UPDATE parcelle SET date_plantation = ? WHERE id = ? AND site_id = ?');
-        $req->execute([$date !== '' ? $date : null, $id, $siteId]);
-        return null;
+        if ($d !== null && $f !== null && $f < $d) {
+            $erreurs['fin_plantation'] = 'La fin de la campagne ne peut pas précéder son début.';
+        }
+        if ($erreurs !== []) {
+            return $erreurs;
+        }
+        $req = $this->pdo()->prepare('UPDATE parcelle SET date_plantation = ?, fin_plantation = ? WHERE id = ? AND site_id = ?');
+        $req->execute([$d?->format('Y-m-d'), $f?->format('Y-m-d'), $id, $siteId]);
+        return [];
     }
 
     /**
