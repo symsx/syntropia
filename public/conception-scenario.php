@@ -63,6 +63,11 @@ foreach ($parcelles as $p) {
     }
 }
 $parcelle ??= $parcelles[0] ?? null;
+// Un potager se compose par planches, non par un scénario de strates et de temps : `conception-potager.php`.
+if ($parcelle !== null && ($parcelle['type'] ?? '') === 'potager' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    header('Location: ' . Configuration::base() . 'conception-potager.php?parcelle=' . (int) $parcelle['id']);
+    exit;
+}
 
 $erreurs = [];
 $idP = 0;

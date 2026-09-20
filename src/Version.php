@@ -36,9 +36,10 @@ final class Version
      * ne se referme pas, un export du schéma 1 se recharge). 3 : la table `constat` (le constat du saut du chat :
      * table facultative, un fichier sans elle se charge, ses constats étant simplement absents). 4 :
      * `parcelle.fin_plantation`, la fin de la campagne de plantation (colonne facultative : la fenêtre ne se referme pas). 5 :
-     * `constat.adventices`, des adventices reviennent-elles ? (colonne facultative, idem).
+     * `constat.adventices`, des adventices reviennent-elles ? (colonne facultative, idem). 6 :
+     * `succession_ligne.planche`, la planche où une culture du potager est placée (colonne facultative, idem).
      */
-    public const SCHEMA = 5;
+    public const SCHEMA = 6;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

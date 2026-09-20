@@ -669,6 +669,9 @@ CREATE TABLE IF NOT EXISTS `succession_ligne` (
   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `parcelle_id`   INT UNSIGNED NOT NULL,
   `demi_planche`  VARCHAR(24) NULL,
+  -- LA PLANCHE où la culture est placée — le numéro dans le plan de la parcelle (1 à `nb_planches`). Le placement
+  -- se fait PAR PLANCHE, selon les associations (le porteur, 2026-09-20 ; schéma 6). NULL = pas encore placée.
+  `planche`       SMALLINT UNSIGNED NULL,
   `code`          VARCHAR(16) NULL,             -- 7.1 … 7.6, ch. 8
   `espece`        VARCHAR(160) NOT NULL,
   `role`          VARCHAR(120) NULL,
@@ -1009,6 +1012,19 @@ EXECUTE ajout_adv;
 DEALLOCATE PREPARE ajout_adv;
 
 
+-- Rattrapage d'une table `succession_ligne` créée avant `planche` — schéma 6. Même forme que ci-dessus.
+SET @planche_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                        WHERE TABLE_SCHEMA = DATABASE()
+                          AND TABLE_NAME = 'succession_ligne'
+                          AND COLUMN_NAME = 'planche');
+SET @ajout_planche = IF(@planche_existe = 0,
+                        'ALTER TABLE `succession_ligne` ADD COLUMN `planche` SMALLINT UNSIGNED NULL AFTER `demi_planche`',
+                        'DO 0');
+PREPARE ajout_planche FROM @ajout_planche;
+EXECUTE ajout_planche;
+DEALLOCATE PREPARE ajout_planche;
+
+
 -- ---------------------------------------------------------------------
 -- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
 --
@@ -1029,6 +1045,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet) ;
 -- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas) ;
 -- 4 = `parcelle.fin_plantation` (la fin de la campagne de plantation — colonne facultative, idem) ;
--- 5 = `constat.adventices` (des adventices reviennent-elles ? — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '5')
+-- 5 = `constat.adventices` (des adventices reviennent-elles ? — colonne facultative, idem) ;
+-- 6 = `succession_ligne.planche` (la planche où une culture du potager est placée — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '6')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

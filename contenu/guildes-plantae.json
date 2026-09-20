@@ -1,0 +1,3747 @@
+{
+ "source": "plantae-corpus — exports/csv/guilde.csv, instantané ; à réexporter quand Plantae change",
+ "plantes": {
+  "acanthus mollis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "actinidia arguta": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "actinidia chinensis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "akebia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "albizia julibrissin": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "allium ampeloprasum": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": "répulsif rongeurs"
+   }
+  ],
+  "allium cepa var. proliferatum": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "allium ursinum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "alnus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "alnus cordata": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "alnus glutinosa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "alnus incana": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "amelanchier alnifolia": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "amelanchier canadensis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "amorpha fruticosa": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "amphicarpaea bracteata": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "apios americana": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "arbutus unedo": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "aronia mitshurinii": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "artemisia absinthium": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "asimina triloba": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "aster": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "bambusa": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "berberis": [
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "berberis aquifolium": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "beta vulgaris": [
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "beta vulgaris subsp. vulgaris": [
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "betula pendula": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "betula pubescens": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "borago officinalis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "brassica oleracea 'daubenton'": [
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "bunium bulbocastanum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "buxus sempervirens": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "calendula officinalis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": "attire les auxilliaires"
+   }
+  ],
+  "calluna vulgaris": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": "hôte de quelques papillons"
+   }
+  ],
+  "campanula lactiflora": [
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "caragana arborescens": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "carpinus betulus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "castanea sativa": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "casuarina cunninghamiana": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ceanothus americanus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ceanothus thyrsiflorus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ceratonia siliqua": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cercis canadensis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cercis siliquastrum": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cercocarpus montanus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "chaenomeles": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "colutea arborescens": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "comptonia peregrina": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cormus domestica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "cornus mas": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "coronilla valentina": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "corylus avellana": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "corylus colurna": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "crambe maritima": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "crataegus germanica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "crataegus monogyna": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cydonia oblonga": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cynara cardunculus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "cyperus esculentus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "cytisus scoparius": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "dianthus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "diospyros kaki": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "diplotaxis tenuifolia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "echinacea purpurea": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "elaeagnus angustifolia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "elaeagnus multiflora": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "elaeagnus submacrophylla": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "elaeagnus umbellata": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "eriobotrya japonica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "fagopyrum cymosum": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "feijoa sellowiana": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ficus carica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "foeniculum vulgare": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "fragaria moschata": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "fragaria vesca": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "fraxinus excelsior": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ginkgo biloba": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "gleditsia triacanthos": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "glycyrrhiza glabra": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "gunnera tinctoria": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "gymnocladus dioicus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "gynostemma pentaphyllum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hedera helix": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hemerocallis fulva": [
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "hippophae rhamnoides": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hippophae salicifolia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hosta tardiana": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hovenia dulcis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "humulus lupulus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "hylotelephium spectabile": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": "attire les auxilliaires"
+   }
+  ],
+  "iberis sempervirens": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": "attire les auxilliaires"
+   }
+  ],
+  "indigofera heterantha": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "juglans regia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "koelreuteria paniculata": [
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "laurus nobilis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lespedeza bicolor": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lespedeza thunbergii": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "levisticum officinale": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "leycesteria formosa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lonicera caerulea": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lonicera kamtschatica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lupinus albus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lupinus arboreus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lycium barbarum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "lycium chinense": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "maackia amurensis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "malus domestica": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "malva moschata": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": "attire les auxilliaires"
+   }
+  ],
+  "malva sylvestris": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "matricaria chamomilla": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "medicago sativa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "melilotus officinalis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "mentha spicata": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "miscanthus longiberbis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "morus alba": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "myrica californica": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "myrica cerifera": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "myrica gale": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "myrica pensylvanica": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "myrica rubra": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "oenothera biennis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "olea europaea": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "pediomelum esculentum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "phaseolus coccineus 'orteil de prêcheur'": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "phaseolus lunatus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "pinus pinea": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "populus nigra": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus armeniaca": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus cerasus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus domestica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus lusitanica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus persica": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "prunus spinosa": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "prunus tomentosa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "pueraria montana": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "punica granatum": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "pyrus communis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "pyrus pyrifolia": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "quercus rotundifolia": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "rheum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ribes nidigrolaria": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ribes nigrum": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ribes rubrum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ribes uva-crispa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "robinia pseudoacacia": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "rosa damascena": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "rubus fruticosus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "rubus idaeus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "rubus occidentalis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "rumex patientia": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   }
+  ],
+  "salix": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "salix alba": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "salix viminalis": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "salvia officinalis": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "salvia rosmarinus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "sambucus nigra": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "sambucus racemosa": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "satureja spicigera": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "senna corymbosa": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "shepherdia canadensis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "sorbus aucuparia": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "styphnolobium japonicum": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "symphytum officinale": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "tanacetum vulgare": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "tetradium daniellii": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "thymus nitens": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "tilia cordata": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "tilia henryana": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "tussilago farfara": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "urtica dioica": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "vaccinium myrtillus": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Forte",
+    "contexte": null
+   }
+  ],
+  "viburnum tinus": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "vinca minor": [
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Faible",
+    "contexte": null
+   }
+  ],
+  "vitex agnus-castus": [
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "vitis vinifera": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Limitation de la concurrence herbacée",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "wisteria sinensis": [
+   {
+    "categorie": "Azote (N)",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "zanthoxylum simulans": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ],
+  "ziziphus jujuba": [
+   {
+    "categorie": "Attraction auxiliaires",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Azote (N)",
+    "relation": "Besoin requis",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Matière organique",
+    "relation": "Besoin requis",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Ombrage",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   },
+   {
+    "categorie": "Attraction pollinisateurs",
+    "relation": "Service rendu",
+    "intensite": "Moyenne",
+    "contexte": null
+   },
+   {
+    "categorie": "Protection vent",
+    "relation": "Service rendu",
+    "intensite": null,
+    "contexte": null
+   }
+  ]
+ }
+}
