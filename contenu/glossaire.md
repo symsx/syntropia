@@ -60,7 +60,8 @@ le travailler.
 
 Un geste qui relance la croissance plutôt qu'un accident à éviter — en
 syntropique, tailler imite ce que fait la nature elle-même, elle ne soigne
-pas l'arbre.
+pas l'arbre. Ce qu'on veut affaiblir, une couverture à planter, ne se taille
+pas : la coupe la fait repartir, on la couche sous la paille.
 
 # Décompacter
 

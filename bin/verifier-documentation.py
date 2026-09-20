@@ -68,6 +68,7 @@ COUVERTURE = {
         "public/realisation-outils-et-plans.php", "public/realisation-consignation.php",
         "public/suivi-arrosage-germination.php", "public/suivi-perturbation.php",
         "public/suivi-saut-du-chat.php", "public/suivi-consignation.php",
+        "src/Perturbation.php", "src/Web/Interventions.php",
     ],
     "Le bureau": ["public/assets/css/gabarit.css", "public/assets/js/gabarit.js"],
     "Comptes, projets et rôles": [

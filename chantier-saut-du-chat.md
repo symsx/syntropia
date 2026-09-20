@@ -1,0 +1,303 @@
+# Le saut du chat — plan
+
+> **État au 2026-09-20 — Phase 1 (le journal des perturbations) faite, pas encore commitée ni
+> déployée** ; les Phases 2 à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
+> qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
+> essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
+> confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
+> ouvertes pour le reste** : la formation Joala se poursuit et ses versements (`~/projets/input/`) en
+> fermeront d'autres. **Le chantier avance par incréments** — voir § Manière de procéder.
+
+## Pourquoi
+
+Le saut du chat est **l'effet de la perturbation** : quand on taille la biomasse, le sol est nourri et
+l'information « il faut que ça pousse » gagne les plantes alentour ; il en résulte une pousse
+extraordinaire, conjointe du sol et de l'aérien (`connaissances/livre-bienvenue-en-syntropie/
+ch11-…md`, note de corpus ; livret SAF, § La perturbation — le mécanisme hormonal y est dit « selon la
+formation », et l'atelier garde cette réserve). C'est un **effet**, pas un objectif indépendant : il se
+déclenche par la **taille**, non par la seule densité, et se mesure **par comparaison à un témoin**.
+
+Aujourd'hui l'atelier le nomme sans l'outiller :
+
+- [suivi-perturbation.php](public/suivi-perturbation.php) : trois champs libres (quand, quoi, comment),
+  **une seule saisie par participant, écrasée à chaque envoi** — impossible de garder l'historique de
+  coupes qui se répètent (la consoude se coupe jusqu'à six fois par an).
+- [suivi-saut-du-chat.php](public/suivi-saut-du-chat.php) : un oui/non et un champ libre ; sur « Pas encore »
+  un texte qui attribue le déclenchement à la densité — **ce que le corpus ne dit pas**.
+- [conception-calendrier.php](public/conception-calendrier.php) : quatre zones de texte, sans lien avec
+  le scénario.
+- Le schéma contient déjà de quoi faire mieux, **sans qu'aucune page l'écrive** : la table `intervention`
+  (stade phénologique, conditions d'eau, pluies à venir, biomasse déposée, outil, résultat constaté),
+  `parcelle.date_plantation`, `releve_sol.temoin`.
+
+## Décisions du porteur, 2026-09-20
+
+1. **L'eau à la perturbation : on ne s'interdit pas de couper, on coupe au bon moment et on arrose
+   si la pluie ne vient pas.** Ce n'est pas « pas d'eau, on ne coupe pas ». **Le moment est dicté par
+   l'état végétatif des végétaux de biomasse.** (Le corpus dit la même chose sous deux formes : Théry,
+   « jamais perturber sans apport d'eau en climat sec » ; Faraj, « s'il n'y a pas d'eau, on ne coupe pas ».
+   La lecture du porteur les concilie : l'apport d'eau, pluie ou arrosage, fait partie du geste.)
+   **Conséquence de conception : l'atelier n'interdit jamais, il dit ce que les sources disent et
+   pourquoi**, et le besoin d'arroser au moment de la perturbation se **prévoit** (ressource en eau
+   du site, fréquence d'arrosage).
+2. **La fréquence de coupe n'est pas fixée d'avance.** La première perturbation, en **juin**, est
+   évidente ; ensuite il faut **avoir de quoi couper** — la fréquence suit le développement des végétaux
+   de biomasse — et **arroser si pas de pluie**. L'observation du terrain guide ; la formation Joala
+   précisera. L'atelier aide à observer (temps écoulé depuis la dernière coupe, état de la repousse),
+   il ne décrète pas d'intervalle.
+3. **« Que planter » a déjà des réponses**, à consolider et à préciser **selon l'itinéraire technique
+   choisi** (tortues, pionniers, autres ?).
+4. **Ce point rejoint le 3** : le rattrapage (« planter plus, quoi selon la période ») dépend de
+   l'itinéraire — à définir et consolider.
+5. **Le stade du terrain se demande** : il dit d'où le porteur part, ce qu'il faut réaliser en premier
+   et comment.
+
+## Ce qui existe et se réutilise
+
+| Existant | Usage dans ce chantier |
+|---|---|
+| Table `intervention` (`sql/01-syntropia.sql`) — déjà exportée et importée (`Export`, `Import`) | Le journal des perturbations. Aucune colonne à ajouter pour la Phase 1. |
+| `Scenario::FONCTIONS` — `perturbation`, `biomasse`, `nourrice` ; `scenario_ligne.conduite_taille` | Quelles plantes sont à perturber ; le geste (basitone, cépée, trogne). |
+| `BesoinEau`, `site.ressource_eau`, `releve_sol` — l'onglet eau de `conception-materiel-et-eau.php` | Prévoir l'arrosage de perturbation ; la ressource change le conseil. |
+| `releve_sol.temoin`, glossaire « Témoin » | Le témoin de comparaison du saut du chat. |
+| `Heritage` (parcelle → site → défaut), `Conduite` | Modèle pour un réglage qui peut différer d'une parcelle à l'autre (stade du terrain, itinéraire). |
+| `parcelle.date_plantation`, `parcelle.statut` | Le point zéro : situer le projet dans son film (Placenta 1 = 90 jours…). |
+| Glossaire (`# Saut du chat`, `# Perturbation`, `# Témoin`) | À préciser, pas à réécrire de zéro. |
+
+## Ce que la confrontation a écarté ou corrigé
+
+Les deux documents d'origine sont des réponses d'IA à partir du web, non sourcées de façon vérifiable.
+Ce qui n'est **pas** repris tel quel :
+
+- **Règle L3 « eau critique ⇒ tailler en fin d'hiver / début d'automne ».** Contredite par le corpus
+  (l'automne est en réserve pour la biomasse ligneuse, `calendrier-et-taille-hivernale.md`) et par la
+  décision 1 : la réponse à un manque d'eau est l'arrosage, pas un autre calendrier.
+- **La fenêtre « mai – mi-juin » comme seule fenêtre.** Joala : mars à mi-juin en vert, taille d'hiver
+  avant le débourrement et hors gel, réserve de mi-juin à mi-novembre sur le ligneux — **fenêtres à lire
+  avec l'état réel des bourgeons**, non des dates.
+- **« La plante taillée doit être en strate supérieure ou égale à la cible ».** Absente du corpus. Ce qui
+  s'y trouve : les plantes alliées sont plantées pour être perturbées, on n'attend pas de biomasse d'un
+  arbre de production principale (ch. 12), et il y a un **seuil de biomasse** — le framboisier est écarté
+  des bordures vivantes faute de masse suffisante (ch. 15).
+- **Les plantes indicatrices du stade du terrain.** Le document classe ronces et bouleaux en colonisation ;
+  Joala met le bouleau en accumulation et la ronce à la transition accumulation → abondance. **On suit Joala.**
+- **Le moteur de recommandation à quatre variables binaires.** Il écraserait les quatre valeurs de
+  `ressource_eau`, ignorerait les tests de sol, et « interdit » là où l'atelier propose. Les règles utiles
+  sont reprises comme **repères dits à l'écran, avec leur source**.
+- **« Densité extrême ⇒ saut du chat ».** Le texte actuel de `suivi-saut-du-chat.php` va dans ce sens ;
+  il est corrigé en Phase 2. Planter plus reste un conseil, mais comme **secours** (les reprises se doublent,
+  4-8 : « pas de back-up suffisants ») et avec des **alliées à biomasse**, non comme déclencheur.
+- **La conception « lignes + inter-rang » (Livrable 2, option B).** Hors périmètre : le plan de parcelle
+  est celui des planches. À rouvrir séparément si l'itinéraire « lignes » est retenu (Phase 4).
+
+## Manière de procéder
+
+**Itérative et incrémentale**, à la demande du porteur : chaque phase tient debout avec le savoir
+d'aujourd'hui et se déploie seule ; une règle sans réponse sourcée **ne se code pas**, elle se range en
+§ Questions ouvertes. À chaque versement de la formation : comparer les empreintes de `~/projets/input/` à
+`connaissances/formation-joala/inventaire.json`, ne lire que le nouveau, rattacher au corpus par une fiche
+datée, puis voir quelles questions ouvertes il ferme et en tirer l'incrément suivant.
+
+Règles du dépôt qui s'appliquent à chaque phase : gabarit « le bureau », **aucun défilement** (une liste
+se pagine), un repère est dit à l'écran avec son pourquoi, le lecteur ne peut rien écrire (UI absente **et**
+POST refusé), le livret « L'atelier » est mis à jour **dans la même vague** et ne décrit que le déployé,
+tout changement de `sql/01-syntropia.sql` **monte `Version::SCHEMA`** dans le même commit puis on rejoue
+`python3 bin/dev.py verifier-export`. Vérification sur ce poste (`bin/dev.py` + Chrome headless/CDP) de
+1280×720 à 320×568.
+
+## Phase 1 — Le journal des perturbations
+
+*Ne dépend d'aucune question ouverte. Aucun changement de schéma attendu.*
+
+`suivi-perturbation.php` cesse d'être trois champs écrasés : c'est le **journal d'une parcelle**
+(`?parcelle=ID`, sélecteur dans le panneau gauche comme `conception-scenario.php`), une ligne par
+intervention dans `intervention`. Saisie dans le panneau Données, liste paginée dans le bureau.
+
+**Ce qu'on note** (colonnes existantes) : date ; type (coupe en vert, taille d'hiver, fauche, recépage,
+« affaiblissement » d'une couverture — voir plus bas) ; zone et végétaux touchés (à choisir parmi les lignes
+du scénario portant `perturbation`/`biomasse`, ou libre) ; **stade végétatif** (repères du corpus : pleine
+croissance, avant floraison, fleurs fanées et butineurs qui s'en désintéressent — critère de Théry et de Faraj —,
+repos d'hiver avant débourrement, après un gel ou un dégât) ; **l'eau** (`conditions_eau` : pluie avant, pluie
+après, arrosé, sec sans arrosage — un vocabulaire fermé côté PHP, dans la colonne texte existante) et
+`pluies_a_venir` ; **biomasse déposée au sol** (ou exportée — un repère : « ne jamais exporter », ch. 12 et 2-4) ;
+outil ; durée, personnes ; résultat constaté ; notes.
+
+**Ce que la page dit, sans jamais bloquer** :
+- au choix « sec sans arrosage » : « la taille est déjà un stress ; sans eau, une grosse partie du bénéfice
+  se perd (ch. 12) — prévoyez de quoi arroser, ou attendez le moment de l'eau » — décision 1 ;
+- **temps écoulé depuis la dernière coupe** de chaque zone, **sans seuil** (décision 2), avec, dans le panneau
+  Informations, les **exemples** de la formation donnés comme exemples et non comme fréquences : consoude
+  jusqu'à six coupes par an, mélisse trois ou quatre, nouvelle taille possible sous trois semaines dans un
+  potager en transition (`calendrier-et-taille-hivernale.md`, `tortues-et-succession.md`) ;
+- **couper ≠ affaiblir** : sur une couverture spontanée qu'on veut planter, la taille relance la repousse
+  (4-3) ; le type « affaiblissement » (coucher sous paille) s'enregistre à part et **ne compte pas** comme
+  perturbation pour le diagnostic de la Phase 2.
+
+**Anciennes réponses** `perturbation_quand/quoi/comment` : jamais supprimées ; affichées comme « votre note
+précédente » tant que le journal est vide, avec un geste pour en faire une intervention.
+
+**Vérifier** : plusieurs interventions par parcelle, pagination, lecteur (POST forgé refusé), `verifier-export`
+avec des lignes `intervention` (jamais exercées jusqu'ici), aucun débordement.
+
+### Phase 1 — faite (2026-09-20)
+
+`src/Perturbation.php` (le vocabulaire fermé et ce qu'on en lit — pur), `src/Web/Interventions.php` (lire,
+ajouter, modifier, retirer), `public/suivi-perturbation.php` réécrite. **Aucun changement de schéma**
+(`Version::SCHEMA` reste à 2). Livret, glossaire (« Perturbation ») et garde-fou complétés.
+
+Ce qui s'écarte du plan, ou le précise :
+- **Modifier prend un verrou de version** (hash de la ligne, comme `Scenario::version()`) : une intervention
+  changée entre-temps refuse l'écrasement. Le plan n'en parlait pas ; « compléter plus tard » (le résultat
+  constaté) suppose de pouvoir rouvrir une ligne, et deux membres peuvent le faire.
+- **`saisi_par` reçoit le compte**, comme le dit le schéma. `ReleveSol` y écrivait l'identifiant du
+  *participant* : **corrigé le 2026-09-20** (vérifié : compte 124, participant 127). Les relevés déjà écrits
+  avant cette date gardent l'ancienne valeur ; aucun n'existe en local, et `saisi_par` n'est jamais exporté.
+- **Les végétaux se lient par leur nom** (`intervention.especes`, séparés par « · », comparaison sans casse) :
+  la colonne est un texte, pas une clé. Le temps écoulé n'est montré que pour les lignes du scénario portant
+  `biomasse` ou `perturbation` ; un végétal saisi à la main est noté, sans compteur.
+- **Vocabulaire posé** (cinq gestes, cinq états végétatifs, cinq situations d'eau, deux réponses sur les
+  pluies, trois devenirs de la biomasse) : il se complète au fil de la formation, **les clés ne changent
+  jamais** (un export en porte la valeur brute).
+- **L'ancienne note** (`perturbation_quand/quoi/comment`) s'affiche tant que le journal de la parcelle est
+  vide ; « En faire une intervention » préremplit le panneau (quand → motif, quoi et comment → notes) et ne
+  supprime rien.
+- **« Toute la zone d'un coup »** n'est pas un champ : la Phase 2 devra dire comment le lire (`zone` est un
+  texte libre). Le journal ne fait que rappeler la règle.
+- `bin/verifier-export-import.php` compte maintenant les interventions dans son récapitulatif.
+
+Vérifié en local (`bin/dev.py` + Chrome headless/CDP, compte et projet de test supprimés ensuite) :
+saisie complète par le vrai formulaire ; refus du serveur (date future ou invalide, geste inconnu ou absent,
+durée, personnes, quantité sans unité, zone et notes trop longues, valeurs hors vocabulaire en POST brut,
+jeton faux 403, action inconnue 400) ; modification, **conflit de version**, retrait avec confirmation refusée
+puis acceptée, retrait d'une ligne déjà partie ; **cloisonnement** (modifier ou retirer l'identifiant d'une
+autre parcelle : refusé, la ligne intacte) ; **un affaiblissement plus récent ne remet pas le compteur à
+zéro** ; lecteur (ni panneau ni lien d'édition, POST forgé 403) et anonyme (renvoyé à la connexion) ; reprise
+de l'ancienne note ; aller-retour `verifier-export` identique avec 26 interventions ; aucun débordement de
+1280×720 à 320×568 (vingt-quatre lignes paginées). **Deux défauts trouvés en mesurant et corrigés** : la
+police du tableau était en `rem`, donc le réglage de la zone n'avait aucun effet (la page paginait tout de
+suite) ; et à 320 px la colonne « État des plantes » débordait derrière la tirette (masquée sous 40 rem).
+Le chapitre du livret, allongé, se pagine sans débordement.
+
+Non fait : les liens « Le suivi » des panneaux gauches de `conception-parcelles.php`, `conception-scenario.php`
+et `conception-materiel-et-eau.php` restent grisés (rien n'a été demandé de ce côté) ; le journal s'atteint
+par les flèches d'étape de Suivi.
+
+## Phase 2 — Constater le saut du chat, et le diagnostiquer
+
+*Dépend de la Phase 1. Une décision de schéma à prendre au début.*
+
+`suivi-saut-du-chat.php` : de « oui / pas encore » à **un constat daté, mesuré, comparé**.
+
+- **Constat** : une plante cible (ou une zone), une **pousse mesurée** sur une durée (le corpus donne des ordres
+  de grandeur — maïs jusqu'à 30 cm en 24 h, tournesols +1,50 m, pérennes jusqu'à deux fois plus vite — comme
+  repères, jamais comme seuils), **le témoin** à côté (même sol, conduit classiquement), et **la perturbation
+  qui précède** (lien vers le journal). **À trancher en ouvrant la phase** : où stocker (une nouvelle petite
+  table — donc `Version::SCHEMA` à 3, `Export`/`Import` à compléter — ou des lignes `intervention` de type
+  observation, qui n'ont pas de colonne pour une mesure). Le plus propre est probablement la table.
+- **Point zéro** : `parcelle.date_plantation` demandée (là où la plantation se consigne — à confirmer en
+  codant : `realisation-consignation.php` ou le panneau Plan). Elle situe le projet dans son film et permet de
+  dire « dès les premiers mois, dès la première année » (ch. 15, ch. 16) sans en faire une échéance.
+- **« Pas encore » → un diagnostic, pas un conseil générique.** Chaque condition se lit dans ce que l'atelier
+  sait déjà, et s'affiche **en place / à préciser / rien d'enregistré**, jamais « échec » :
+  1. une perturbation enregistrée (Phase 1, type perturbation) ;
+  2. au bon moment — le stade végétatif noté ;
+  3. l'eau : pluie ou arrosage autour de la coupe ;
+  4. la biomasse laissée au sol ;
+  5. **toute la zone coupée d'un coup** (règle centrale, ch. 12 ; consigne de 3-7) ;
+  6. **de quoi couper** : des alliées en quantité suffisante — plantes `perturbation`/`biomasse` du scénario
+     (seuil de biomasse, ch. 15) ;
+  7. au démarrage, les **annuelles placentaires** (maïs, tournesols, féveroles — ch. 14, 15).
+- **Le texte du rattrapage est corrigé** : « planter plus » y devient un **secours** (doubler les reprises) avec
+  **des alliées à biomasse**, dit comme tel. *À valider avec le porteur avant écriture* : `directives.txt`
+  demande « planter plus (quoi en fonction de la période) » ; le « quoi » détaillé attend la Phase 4.
+  En attendant, on donne la seule succession que le corpus décrit, **comme exemple d'un site** (4-8 :
+  salades, fèves et pois au printemps ; fèves taillées à ras en paillage azoté pour les courgettes ; maïs,
+  poivrons, concombres ; choux d'hiver après haricots nains).
+- Glossaire : « Saut du chat » précisé (effet de la taille, pas de la seule densité ; se mesure par un témoin).
+
+## Phase 3 — Le stade du terrain : d'où l'on part
+
+*Décidé (5), les règles qui en découlent se consolident avec la formation.*
+
+Une question de **Définition** (`definition-site.php`, onglet Observations, ou la parcelle) : **le stade
+du terrain** — dans quel système le lieu se trouve aujourd'hui. La grille enseignée est celle de Joala
+(`formation-joala/systemes-et-abondance.md`) : **colonisation**, **accumulation**, **abondance** ; le document
+d'origine n'en gardait que deux. *Question de vocabulaire à trancher* : trois stades (Joala) ou deux ?
+Par défaut, **trois**, puisque le corpus les donne.
+
+- **À l'écran** : ce qui s'observe à chaque stade (plantes repères **selon Joala** — voir § écarts), pourquoi
+  la question est posée (« elle dit d'où vous partez, ce qu'il y a à faire en premier, et comment »), et **ce
+  qu'elle change** : d'abord, seulement ce que le corpus permet d'affirmer (le rôle du stade dans la succession,
+  la protection des jeunes plants par les épineux d'accumulation, la préparation du sol, `RNA`). Ce qu'on ne
+  peut pas encore dire s'affiche comme **« pas encore de repère »**, pas comme un silence.
+- **Par parcelle ou pour le site ?** Un terrain a souvent plusieurs stades (une prairie usée, une lisière).
+  Le modèle `Heritage` (parcelle → site) le permettrait, au prix de colonnes — donc d'un `Version::SCHEMA`.
+  **À décider en ouvrant la phase** ; sinon un premier incrément possible : la saisie au niveau du site dans
+  `reponse`, promue en colonne plus tard.
+- Relie `definition-moyens.php` (moyens faibles ⇒ RNA), déjà construit.
+
+## Phase 4 — L'itinéraire technique
+
+*Décision (3) et (4). Le plus dépendant de la formation.*
+
+Un **itinéraire technique** est la manière d'engager le lieu : **tortues** (Théry), **pionniers et RNA**
+(colonisation, peu d'eau, peu de moyens), **lignes et consortiums** (Faraj, échelle agricole), **autres à
+identifier** — la liste est ouverte. À distinguer de `parcelle.conduite` (syntropie ou jardin-forêt, la
+discipline) et de `parcelle.forme` (zèbre, abeille…, la forme d'une tortue). Choix **par parcelle** (« essayer
+sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Conduite`.
+
+- **Ce qu'il change** : *quoi planter* et *quand* (le tableau « itinéraire × période → quoi planter »), et
+  *le calendrier de perturbation*. **Ce tableau se construit uniquement depuis le corpus**, chaque case avec sa
+  source ; une case sans source reste vide (« pas encore de repère ») et se remplit aux versements suivants.
+  C'est le lieu naturel du « rattrapage » de la Phase 2.
+- **Une suggestion, jamais une imposition** : l'atelier propose l'itinéraire que le stade et les moyens
+  rendent plausibles (règle du document d'origine, L2 : *non vérifiée dans le corpus lu* — à confirmer avant
+  de la coder), et la personne choisit.
+- Schéma : une colonne sur `site` et `parcelle` (`Version::SCHEMA` monte).
+
+## Phase 5 — La conception qui prépare le saut du chat
+
+*Réunit ce que les phases précédentes ont rendu possible.*
+
+- **Un panneau sur `conception-scenario.php` : « ce scénario permet-il le saut du chat ? »** Indicateurs non
+  bloquants tirés des données existantes — alliées à perturber présentes, part de biomasse (repère 70-80 %),
+  au moins deux espèces par strate, annuelles placentaires au démarrage, eau (ressource + tests de sol). L'usage
+  d'une donnée se montre (CLAUDE.md § L'esprit).
+- **Le geste de taille par ligne** : `scenario_ligne.conduite_taille`, aujourd'hui texte libre, devient un
+  choix — basitone (coupe à 3-4 cm de la souche), cépée (réserve dans les racines), trogne (le « contrat » d'une
+  taille tous les 1 à 2 ans) — d'après `connaissances/transversales/fiche-conduites-de-taille-*.md` ;
+  ce que `skills-map/nodes/deux-ecoles-et-conduites-de-taille.md` annonçait à l'étape suivi-perturbation.
+- **Le calendrier de perturbation** (`conception-calendrier.php`) : sous chaque saison, **les fenêtres du
+  corpus** comme repères, à lire avec l'état des bourgeons et le décalage local de la reprise ; **la première
+  perturbation en juin**, puis « quand il y a de quoi couper » ; par plante, les exemples de fréquence de la
+  formation. Le calendrier reste saisi par la personne ; il est **proposé**, non imposé.
+- **L'eau de la perturbation** (`conception-materiel-et-eau.php`) : une ligne qui **prévoit** de quoi arroser
+  aux dates de perturbation, selon `ressource_eau` (sans eau : le conseil RNA existe déjà) — **sans chiffre
+  inventé** : le corpus ne donne pas de dose pour la perturbation. Et la **boucle** que 4-6 décrit (plus de
+  densité et de perturbation ⇒ plus d'eau dans le système) dite dans le panneau Informations ; les repères
+  chiffrés de 4-6 (1 % de matière organique = 20 L/m², 36 L par kg de biomasse) restent des **explications**
+  d'une synthèse générée, pas des entrées de calcul.
+
+## Questions ouvertes — en attente de la formation
+
+| # | Question | Ce qui est acquis | Ce qui manque |
+|---|---|---|---|
+| 1 | Fréquence de coupe par plante | Décision 2 : suit le développement, première coupe en juin ; exemples consoude 6/an, mélisse 3-4 | Repères par espèce et par itinéraire |
+| 2 | Quoi planter, quand (rattrapage compris) | Succession de 4-8 (un site) ; annuelles placentaires (ch. 14-15) | Le tableau par itinéraire (Phase 4) |
+| 3 | Quels itinéraires ? | Tortues, pionniers/RNA, lignes ; « autres ? » | La liste complète et les critères de choix |
+| 4 | Stade du terrain → premier geste | La grille de Joala et ses exemples | Ce qu'on fait en premier à chaque stade |
+| 5 | Végétation spontanée : alliée à perturber ou couverture à affaiblir ? | Accumulation (sureau, saule, noisetier) = supports ; 4-3 : ne pas tailler ce qu'on veut planter | Où passe la limite, par stade |
+| 6 | Combien de biomasse suffit ? | Le seuil existe (framboisier écarté, ch. 15) ; le scénario dit 70-80 % | Un repère par itinéraire |
+| 7 | Trois stades ou deux ? | Joala en donne trois | Le choix du porteur |
+| 8 | Mesure du saut du chat | Ordres de grandeur de l'entretien de Théry | Protocole simple à proposer (durée, témoin) |
+
+## Documentation, à chaque phase
+
+- Livret « L'atelier » (`contenu/documentation-atelier.md`) : le chapitre concerné **dans la même vague**,
+  seulement ce qui est en production ; `bin/verifier-documentation.py` complété.
+- Glossaire : « Saut du chat » (Phase 2), « Perturbation » (Phase 1, la nuance couper/affaiblir), les stades
+  (Phase 3).
+- `skills-map/` : le nœud `deux-ecoles-et-conduites-de-taille` et `fondamentaux-syntropiques` renvoient à ce
+  chantier ; le nœud `formation-joala` à chaque nouveau versement.
+- `CLAUDE.md` : la ligne de ce chantier dans § Où sont les choses, et l'état dans § Point de reprise à chaque phase.
+- Le livret « SAF » reste au porteur.

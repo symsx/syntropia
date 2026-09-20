@@ -61,6 +61,13 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   placée avant « Documentation », puis un **sous-dossier par parcelle** qui sert de
   document de chantier pour l'implantation. Demandé et **cadré le 2026-09-19** (les six
   questions sont tranchées), **pas commencé**.
+- `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
+  système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
+  comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
+  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phase 1 (le journal) faite le 2026-09-20**,
+  les quatre autres pas commencées ; **développement itératif
+  et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
+  les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1466,6 +1473,22 @@ récit.*
   2026-09-18) : à essayer avec le vrai compte — exporter le projet, puis l'importer sous un autre nom. **À
   noter** : un import de test dans la production crée un projet de plus, à supprimer à la main tant que la
   suppression de projet (`chantier-suppression-projet.md`) n'existe pas.
+- **Le journal des perturbations — Phase 1 du chantier « saut du chat », 2026-09-20.** Demandé par le
+  porteur comme « clé de voûte du système » ; plan et décisions dans `chantier-saut-du-chat.md`.
+  `public/suivi-perturbation.php` n'est plus trois champs écrasés à chaque envoi : c'est le **journal d'une
+  parcelle** (`?parcelle=ID`), une ligne par geste dans la table `intervention` (déjà au schéma, jusque-là
+  jamais écrite) — `src/Perturbation.php` (vocabulaire fermé, pur) et `src/Web/Interventions.php`. **Aucun
+  changement de schéma.** Seuls la date et le geste sont demandés ; on note l'état végétatif des plantes,
+  l'eau, la biomasse, et l'on rouvre une ligne pour y ajouter ce qu'on constate (verrou de version). Décisions
+  du porteur inscrites : **l'atelier n'interdit jamais de couper** — le moment se lit sur l'état des plantes de
+  biomasse, la fréquence suit leur repousse (première coupe en juin, ensuite « quand il y a de quoi couper »), et
+  l'on **arrose si la pluie ne vient pas** ; la page dit ce que disent les sources, sans seuil ni refus. Au-dessus
+  du journal, le **temps écoulé** depuis la dernière coupe de chaque plante de biomasse du scénario ; **affaiblir**
+  (coucher sous la paille) se note mais ne compte pas comme une perturbation. L'ancienne note libre reste
+  affichée tant que le journal est vide. Vérifié en CDP, y compris conflit de version, cloisonnement entre
+  parcelles, lecteur, `verifier-export` (26 interventions) et 320×568. **Pas encore commité ni déployé** (pas de
+  changement de schéma : `fichiers` seul). Livret « L'atelier » et glossaire mis à jour dans la même vague ;
+  `bin/verifier-documentation.py --relu` à passer une fois commité.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

@@ -174,6 +174,19 @@ Le **suivi** commence dès que quelque chose est en terre : l'arrosage et la
 germination, la perturbation, le saut du chat. Sa consignation se répète, saison
 après saison, et se relit mieux qu'elle ne se souvient.
 
+La **perturbation** — couper, tailler, faucher les plantes de biomasse pour
+relancer la croissance — se tient dans un **journal**, parcelle par parcelle : une
+ligne par geste, avec la date, ce qui a été coupé, l'état des plantes (en pleine
+croissance, fleurs fanées, repos d'hiver…), l'eau autour de la coupe, ce que la
+biomasse est devenue et, plus tard, ce que vous constatez. Seuls la date et le
+geste sont demandés ; on peut rouvrir une ligne pour la compléter. Au-dessus du
+journal, chaque plante de biomasse de votre scénario montre le temps écoulé depuis
+sa dernière coupe, sans seuil : le bon moment se lit sur l'état des plantes, la
+première perturbation vient en juin, les suivantes quand il y a de quoi couper — et
+l'on arrose si la pluie ne vient pas. Le journal n'interdit rien : il dit ce que les
+sources disent, et pourquoi. Affaiblir une couverture sans la couper, en la couchant
+sous la paille, s'y note aussi, mais ne compte pas comme une perturbation.
+
 # Le bureau
 
 Chaque page — publique ou connectée — s'ouvre sur le même espace de
