@@ -16,6 +16,14 @@ syntropique — de la première idée jusqu'au suivi, saison après saison en se
 
 Chaque étape demande des informations précises, et explique à quoi elles servent.
 
+# Limites
+
+L'atelier permet pour l'instant de concevoir des parcelles rectangulaires ou carrées et ne prend pas en charge
+les formes ronde, triangulaires ou plus complexes.
+
+L'atelier propose des végétaux de base pour composer un projet de culture syntropique mais ne dispose pas d'une
+vaste palette végétale.
+
 # L'intention
 
 Que cela soit pour créer son jardin, cultiver sa nourriture, ou
@@ -111,7 +119,8 @@ s'importer.
 # Concevoir : les parcelles et le scénario
 
 L'étude du sol compte sept relevés, à faire sur place avec des fiches à
-imprimer : ils aident à choisir, ils ne jugent pas.
+imprimer : ils aident à définir comment et combien arroser au départ et
+aide aux choix de l'itinéraire technique de conduite du projet.
 
 Pour créer une parcelle, un code et un nom suffisent. Son plan se précise
 ensuite : dimensions, bordures externe et interne, planches, sens des planches.
@@ -191,11 +200,34 @@ Un compte peut avoir plusieurs projets : le sien, et ceux qu'il a rejoints. Un
 sélecteur, dans le panneau de navigation, change de projet. Le menu du compte, en
 haut à droite, donne accès à votre projet, aux Préférences (le récapitulatif de
 votre compte, votre nom affiché, votre mot de passe), à un nouveau projet, à
-rejoindre un projet, à inviter, et — pour le porteur — aux participants.
+rejoindre un projet, à importer un projet, à inviter, et — pour le porteur — aux
+participants et à l'export du projet.
 
 Sur un projet, on a l'un de trois rôles. Le **porteur**, qui l'a ouvert, peut
 tout. Le **contributeur** répond et dessine avec lui. Le **lecteur** regarde,
 sans rien modifier.
+
+Le porteur peut **exporter le projet** : un fichier daté, qui garde tout ce que
+le projet contient — la définition, le terrain, les parcelles et leur plan, les
+scénarios, les relevés, les tracés de la carte — et les réponses de tous les
+participants, d'où la réserve au porteur. La page annonce ce que le fichier
+contiendra avant de le produire. Il ne porte jamais de compte ni d'accès : les
+participants n'y figurent que par leur nom. Un projet qui dépasserait un mégaoctet
+n'est pas exporté, la page dit alors ce qui pèse.
+
+Le fichier dit d'où il vient — la forme du fichier, celle des données, le numéro
+de l'atelier qui l'a écrit — et porte une somme de contrôle : il ne se recharge
+pas s'il a été modifié depuis son export, même d'une lettre, ni s'il vient d'un
+atelier dont les données n'ont pas la même forme.
+
+**Importer un projet** est ouvert à tout compte. Le fichier devient toujours un
+projet neuf, dont vous êtes le porteur : il ne fusionne avec rien et n'écrase
+rien. Il est vérifié en entier avant que rien ne soit écrit, et la page dit ce qui
+ne va pas s'il est refusé. S'il est valide, elle montre ce qu'il contient, puis
+vous choisissez le nom du projet et lequel des participants du fichier vous êtes :
+le projet retrouve alors vos réponses. Les participants entrent sans compte, et
+les dates d'origine sont gardées. Si l'écriture échoue en route, rien n'est laissé
+à moitié.
 
 # Inviter et rejoindre
 

@@ -351,6 +351,12 @@ final class Sites
      * le schéma. La collision est rare (deux sites au même nom, le même
      * jour) ; la base tranche, cette méthode ne fait que réessayer.
      */
+    /** Un `code` libre pour un projet de ce nom — pour l'import, qui écrit le site lui-même, dans sa transaction. */
+    public function codePour(string $nom): string
+    {
+        return $this->codeLibre($nom);
+    }
+
     private function codeLibre(string $nom): string
     {
         $base = strtolower(trim($nom));

@@ -37,9 +37,10 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   plusieurs projets). **Les quatre phases sont faites (2026-09-18)** — voir § Point
   de reprise.
 - `chantier-export-import-projet.md` — le plan (4 phases) pour exporter et
-  importer un projet en un fichier JSON daté, demandé le 2026-09-18 ;
-  **noté, pas commencé, reporté à la fin de la première version fonctionnelle** —
-  format JSON (plutôt que XML) ; toutes les spécifications sont tranchées.
+  importer un projet en un fichier JSON daté, demandé le 2026-09-18 ; format JSON
+  (plutôt que XML) ; toutes les spécifications sont tranchées. **Phases 1 (exporter), 2
+  (importer) et 3 (aller-retour, script `bin/verifier-export-import.php`) faites le 2026-09-20** ;
+  Phase 4 (GeoJSON, facultative) pas commencée — voir § Point de reprise.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
@@ -103,6 +104,9 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Vents.php                rose des vents calculée à la demande (Open-Meteo) — jamais persistée ; appelé par conception-etude-site.php
     Altimetrie.php           altitude IGN — un point, ou une grille pour le relief ; filtre le sentinel z=-99999 ; appelé par api-altitude.php
     ZoneUsda.php             zone de rusticité USDA estimée depuis 30 ans de minima (Open-Meteo, 1991-2020) — jamais persistée seule ; appelé par api-usda.php
+    Version.php              les trois versions de l'atelier (format du fichier, schéma des données, numéro d'application) et la fenêtre de compatibilité d'un export
+    Import.php               l'import d'un fichier d'export en projet neuf — valide chaque colonne d'après le schéma réel, une transaction ; appelé par importer.php
+    Export.php               l'export d'un projet en JSON — lit chaque table en entier, retire comptes/identifiants/accès, plafond 1 Mo ; appelé par exporter.php
     ReleveSol.php            relevés de sol d'une parcelle (`releve_sol`) — infiltration, état d'humidité, jours depuis la pluie ; appelé par conception-materiel-et-eau.php
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
@@ -118,10 +122,12 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2) y a sa migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
   dev.py                  serveur de développement — voir Commandes
+  verifier-export-import.php  l'aller-retour export → import → export d'un projet — appelé par `dev.py verifier-export`, JAMAIS en direct
   compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
   deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
   catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario)
@@ -162,6 +168,8 @@ public/                racine servable du site en refonte
   rejoindre.php              rejoindre un projet avec un code — pour un compte existant ; menu du compte (gabarit.js), et lien d'invitation ouvert connecté (inscription.php)
   compte.php                 Préférences : récapitulatif du compte et de ses projets, nom affiché, mot de passe — 3 onglets ; `exige()` y renvoie un compte dont le mot de passe doit changer (?mdp=1)
   membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
+  exporter.php               exporter le projet en un fichier JSON daté — réservée au porteur ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
+  importer.php               importer un projet depuis un fichier d'export — tout compte connecté ; trois temps (vérifier, aperçu, créer) ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
   inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
@@ -207,6 +215,11 @@ décrit ci-dessous. Détail des décisions et de ce qui reste à porter dans
   exige une invitation, et la première invitation n'a personne pour
   l'ouvrir. **Ne jamais appeler `php bin/compte.php` directement** —
   voir § Point de reprise, piège vérifié deux fois cette session.
+- Vérifier l'aller-retour d'un projet : `python3 bin/dev.py verifier-export [id…]` —
+  exporte, importe sous un compte de passage, ré-exporte et compare ; **à rejouer à
+  chaque changement de schéma**. **Jamais `php bin/verifier-export-import.php` en direct**
+  (même piège que `compte.php` ; le script refuse hors de ce poste). Voir
+  `chantier-export-import-projet.md` § Phase 3.
 - Déployer vers alwaysdata : `python3 bin/deployer.py` — `etat`
   (connectivité), `fichiers` (`--dry-run` pour prévisualiser, sinon
   envoie), `config` (pousse `config/base.php` seul), `base` (rejoue le
@@ -1304,6 +1317,57 @@ récit.*
   relevé n'est pas rattaché à un « point » réel de la parcelle (texte libre) ; le
   témoin n'est pas pris en compte ; aucune conversion du besoin en durée d'arrosoir
   (le débit de l'arroseur n'est pas connu).
+- **Exporter un projet — Phase 1 du chantier « export/import », 2026-09-20.** Demandé par
+  le porteur (« commence chantier-export-import-projet.md »). `src/Web/Export.php` + `public/
+  exporter.php` (hors parcours, sur le gabarit, comme `membres.php`) + l'entrée « Exporter le
+  projet » du menu du compte, pour le porteur seul (`gabarit.js`). La page annonce ce que le
+  fichier contient et ne contient jamais (comptes, accès, invitations), puis un POST à jeton lu
+  par `fetch` télécharge `nom-du-projet_2026-09-20.syntropia.json` et affiche « Exporté le… ».
+  **Écart avec le plan : le fichier suit le schéma** — chaque table est lue en entier, seul est
+  retiré ce qui ne doit pas sortir (`id`, clés étrangères → références `p1`/`a1`, `compte_id`,
+  `saisi_par`, et `code`/`code_invitation`/`role_invitation` du site) : une colonne ajoutée plus
+  tard sort sans qu'on y touche, ce qui règle le risque de « sauvegarde qui perd des données en
+  silence ». Colonnes JSON décodées, nombres typés, listes de nombres sur une ligne (La Vadaux :
+  65 → 26 Ko, contenu identique). **Plafond de 1 Mo** appliqué : la page dit ce qui pèse et
+  grise le bouton (POST direct : 413). Vérifié en CDP sur une base locale de test (supprimée) :
+  fichier lu par `fetch`, test de fuite (aucun identifiant de compte, aucun `"id"`), lecteur et
+  contributeur refusés (403), jeton faux 403, anonyme redirigé, aucun débordement de 1280×720 à
+  320×568. Livret « L'atelier » : un paragraphe dans « Comptes, projets et rôles » ; garde-fou
+  `bin/verifier-documentation.py` complété (dont la ligne du nouveau chapitre « Limites », écrit
+  par le porteur dans Kate le 2026-09-20 — sa voix, non retouchée). **Pas encore commité ni
+  déployé.** Détail et suite (Phase 2 : importer) dans `chantier-export-import-projet.md`.
+- **Versionner l'atelier, et un fichier qui dit d'où il vient et ne se recharge pas modifié —
+  2026-09-20.** Demandé par le porteur. **Trois versions** (`src/Version.php`) : `FORMAT` (la forme
+  du fichier), `SCHEMA` (la forme des données — **écrite aussi dans la base**, table
+  `atelier_version`, ligne `schema` à la fin de `sql/01-syntropia.sql`) et `APPLICATION` (`0.9.0`, **confirmé par le porteur**, informatif). **Seul le schéma décide** : un fichier se
+  recharge si son schéma est dans `[SCHEMA_IMPORTABLE_DEPUIS, SCHEMA]` ; un ajout de colonne
+  facultative ne referme pas la fenêtre. **Règle de travail : tout changement de
+  `sql/01-syntropia.sql` monte `SCHEMA` dans le même commit** (`Version.php` et la ligne SQL), **puis rejouer
+  `python3 bin/dev.py verifier-export`**.
+  Code et base se déploient séparément : s'ils divergent, l'export refuse (`Export::
+  accordCodeEtBase()`). **Somme de contrôle** : `integrite` = SHA-256 de la structure (pas des octets :
+  un fichier réenregistré ou réécrit par un autre outil reste accepté). `Export::controler()` — la
+  porte d'entrée de l'import, sans écriture — refuse dans l'ordre : pas un export, **fichier modifié**,
+  versions incompatibles. Vérifié (17 cas : une lettre, une décimale, la date, la somme retirée ou fausse,
+  fichier tronqué, autre format, versions plus récentes ou trop anciennes). **Limite dite au porteur :
+  une somme dans le fichier n'interdit pas la falsification délibérée** (modifier *et* recalculer) ; seule
+  une signature à clé secrète (HMAC) le ferait : **le porteur a tranché le 2026-09-20 — somme seule**. **Au
+  déploiement : `deployer.py base` d'abord** (nouvelle table), puis `fichiers`.
+- **Importer un projet — Phase 2 du chantier « export/import », 2026-09-20.** `src/Web/Import.php`
+  + `public/importer.php` (hors parcours, sur le gabarit) + l'entrée « Importer un projet » du menu du
+  compte, pour **tout compte connecté**. Un fichier d'export devient **toujours un projet neuf** dont
+  l'importateur est le porteur. Trois temps : (1) le fichier est **examiné en entier** sans rien écrire
+  (`Export::controler()` : pas modifié, versions compatibles ; puis **chaque valeur contre le schéma réel**,
+  lu dans `information_schema` — type, longueur, plage, énumération, vide permis — plus six plages de sens,
+  plus le contrôle écrit des quatre colonnes de JSON) ; (2) un **aperçu** (contenu, date d'export, versions) où
+  l'on choisit le nom du projet et **qui l'on est parmi les participants** (il retrouve alors ses réponses) ;
+  (3) **une transaction** : tout ou rien. Les **dates d'origine sont gardées** (décision du porteur) ; la
+  trace de l'import est dans la nouvelle colonne `site.origine` (jamais réexportée) ; **`Version::SCHEMA`
+  passe à 2**. Un fichier qui porte `compte_id`, `saisi_par`, un `id` ou une colonne inconnue est refusé.
+  **Aller-retour vérifié identique** sur quatre projets ; 41 refus testés (somme recalculée pour atteindre la
+  validation) ; un doublon vu par la seule base ne laisse rien. Livret : paragraphes ajoutés à « Comptes,
+  projets et rôles ». **Pas encore commité ni déployé — au déploiement, `bin/deployer.py base` d'abord**
+  (`atelier_version` et `site.origine`), puis `fichiers`. Détail : `chantier-export-import-projet.md`.
 - **Repositionner une parcelle sur la carte — outil « Repositionner »,
   2026-09-19.** Demandé par le porteur : une parcelle posée ne se déplaçait
   qu'en la retirant puis en la reposant. Nouvel outil du bandeau
@@ -1432,15 +1496,11 @@ il apparaît réellement, pour ne pas noyer le motif.
    zone suppose de joindre `plantae-corpus` (une base externe, jointure
    applicative) ou de curater la rusticité des 46 espèces du cadre — à
    décider avec le porteur, pas avant.
-4. **Exporter et importer un projet** — noté le 2026-09-18, plan dans
-   `chantier-export-import-projet.md` : un fichier JSON avec sa **date
-   d'export**, sans comptes ni accès, importé en un projet neuf. **Toutes les
-   spécifications sont tranchées** (le porteur seul exporte ; date d'export
-   dans le fichier et à l'aperçu d'import ; conduite et espèces reprises telles
-   quelles ; plafond d'import 1 Mo ; trace d'origine dans une colonne facultative
-   `site.origine`). **Reporté à la fin de la première version fonctionnelle**
-   — le modèle d'information peut encore changer : ne pas construire avant, et
-   relire `sql/01-syntropia.sql` au moment de s'y mettre.
+4. **Exporter et importer un projet** — plan dans `chantier-export-import-projet.md` :
+   un fichier JSON avec sa **date d'export**, sans comptes ni accès, importé en un projet
+   neuf. **Phases 1 (exporter) et 2 (importer) faites le 2026-09-20** (voir plus haut), à
+   commiter et déployer (`base` puis `fichiers`) ; Phase 3 (aller-retour) faite, script
+   conservé (`dev.py verifier-export`) ; Phase 4 (les tracés en GeoJSON) facultative.
 5. **Archiver et supprimer un projet** — spécifié le 2026-09-18, plan dans
    `chantier-suppression-projet.md` : le porteur seul ; l'**archivage**
    réversible d'abord (colonne `archive_le`), puis la **suppression

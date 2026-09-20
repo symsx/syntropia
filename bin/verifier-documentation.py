@@ -34,6 +34,7 @@ RELU = RACINE / "bin" / "documentation-atelier.relu"
 COUVERTURE = {
     "L'Atelier Syntropia": ["public/index.php"],
     "L'intention": [],
+    "Limites": ["public/conception-parcelles.php", "src/Web/Especes.php"],
     "Où trouver quoi": [
         "public/index.php", "public/connexion.php", "public/glossaire.php",
         "public/documentation-site.php", "public/documentation-saf.php",
@@ -72,7 +73,8 @@ COUVERTURE = {
     "Comptes, projets et rôles": [
         "public/compte.php", "public/inscription.php", "public/deconnexion.php",
         "public/api-projets.php", "src/Web/Sites.php", "src/Web/Comptes.php",
-        "src/Web/Authentification.php",
+        "src/Web/Authentification.php", "public/exporter.php", "src/Web/Export.php", "src/Version.php",
+        "public/importer.php", "src/Web/Import.php",
     ],
     "Inviter et rejoindre": [
         "public/inviter.php", "public/rejoindre.php", "public/membres.php",

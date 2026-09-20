@@ -356,9 +356,14 @@ window.Gabarit = (function(){
     var sep = menu.querySelector('.compte-menu-separateur');
     var entrees = [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
                    ['rejoindre.php', '⇥', 'Rejoindre un projet'],
+                   ['importer.php', '⇧', 'Importer un projet'],
                    ['inviter.php', '✉', 'Inviter']];
-    // La liste de ceux qui ont accès au projet actif n'est pour son porteur.
-    if (estPorteur) entrees.push(['membres.php', '☰', 'Participants']);
+    // La liste de ceux qui ont accès au projet actif, et son export (le fichier porte les
+    // réponses de tous) : pour son porteur seulement.
+    if (estPorteur) {
+      entrees.push(['membres.php', '☰', 'Participants']);
+      entrees.push(['exporter.php', '⇩', 'Exporter le projet']);
+    }
     entrees.forEach(function(e){
       var a = document.createElement('a');
       a.className = 'compte-menu-item';

@@ -147,6 +147,11 @@ CREATE TABLE IF NOT EXISTS `site` (
   `code_invitation` VARCHAR(32) NULL,
   `role_invitation` ENUM('contributeur','lecteur') NOT NULL DEFAULT 'contributeur',
 
+  -- LA TRACE D'UN IMPORT. Vide pour un projet ouvert ici ; pour un projet importé, un JSON :
+  -- le nom qu'il portait, la date de son export, celle de son import, les versions du fichier.
+  -- Jamais réexportée : c'est l'import qui l'écrit, pas le projet qui la porte.
+  `origine`         TEXT NULL,
+
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_site_code` (`code`),
   UNIQUE KEY `uq_site_invitation` (`code_invitation`)
@@ -916,3 +921,40 @@ CREATE TABLE IF NOT EXISTS `reconnaissance` (
   CONSTRAINT `fk_reconnaissance_participant` FOREIGN KEY (`participant_id`)
     REFERENCES `participant` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+
+-- Rattrapage d'une table `site` créée avant `origine` — schéma 2. Même forme que
+-- `invitation.role_site` (00-comptes.sql) : `information_schema` + `PREPARE`, parce que
+-- `ADD COLUMN IF NOT EXISTS` n'existe que sur MariaDB et que ce fichier tourne aussi sur MySQL.
+SET @origine_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                        WHERE TABLE_SCHEMA = DATABASE()
+                          AND TABLE_NAME = 'site'
+                          AND COLUMN_NAME = 'origine');
+SET @ajout_origine = IF(@origine_existe = 0,
+                        'ALTER TABLE `site` ADD COLUMN `origine` TEXT NULL',
+                        'DO 0');
+PREPARE ajout_origine FROM @ajout_origine;
+EXECUTE ajout_origine;
+DEALLOCATE PREPARE ajout_origine;
+
+
+-- ---------------------------------------------------------------------
+-- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
+--
+-- Une ligne par clé. `schema` égale `Syntropia\Version::SCHEMA` : à monter dans le
+-- même commit que tout changement de schéma, ici et dans `src/Version.php`. C'est ce
+-- qui décide si un fichier d'export peut être rechargé (voir `Syntropia\Version`).
+--
+-- Cette ligne est du DML rejoué à chaque `bin/dev.py init` et `bin/deployer.py base` :
+-- la base dit donc la version du schéma **qu'elle a réellement reçu**, pas celle que le
+-- code croit déployée — et une base rejouée en retard sur le code se voit.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `atelier_version` (
+  `cle`    VARCHAR(32) NOT NULL,
+  `valeur` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`cle`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '2')
+  ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);
