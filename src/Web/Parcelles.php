@@ -70,6 +70,35 @@ final class Parcelles
     }
 
     /**
+     * La date de plantation d'une parcelle — le point zéro de son film : elle situe le projet (« il y a
+     * cent jours, on est en Placenta 2 ») et permet de dire que le saut du chat vient d'ordinaire dans les
+     * premiers mois (Théry, ch. 15 et 16), sans en faire une échéance. Vide, elle s'efface.
+     *
+     * Ne touche que cette colonne, bornée au site : le verrou de version du plan ne s'en mêle pas.
+     *
+     * @return string|null le message d'erreur, `null` si la date est écrite
+     */
+    public function enregistrerDatePlantation(int $id, int $siteId, string $date): ?string
+    {
+        $date = trim($date);
+        if ($date !== '') {
+            $d = \DateTimeImmutable::createFromFormat('!Y-m-d', $date);
+            if ($d === false || $d->format('Y-m-d') !== $date) {
+                return 'La date de plantation doit être une date valide.';
+            }
+            if ($d > new \DateTimeImmutable('today')) {
+                return 'La date de plantation ne peut pas être dans le futur : notez-la quand la parcelle est plantée.';
+            }
+            if ($d < new \DateTimeImmutable('2000-01-01')) {
+                return 'Cette date est trop ancienne pour être celle d’une plantation suivie ici.';
+            }
+        }
+        $req = $this->pdo()->prepare('UPDATE parcelle SET date_plantation = ? WHERE id = ? AND site_id = ?');
+        $req->execute([$date !== '' ? $date : null, $id, $siteId]);
+        return null;
+    }
+
+    /**
      * Les végétaux du scénario d'une parcelle, dans l'ordre de remplissage
      * (production principale, secondaire, biomasse, placentaires en dernier).
      * Le contrôle d'appartenance de la parcelle à un site se fait à l'appel :

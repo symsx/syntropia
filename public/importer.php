@@ -135,7 +135,7 @@ $libelles = [
     'participants' => ['participant', 'participants'], 'reponses' => ['réponse', 'réponses'],
     'parcelles' => ['parcelle', 'parcelles'], 'vegetaux' => ['végétal du scénario', 'végétaux des scénarios'],
     'traces' => ['tracé de la carte', 'tracés de la carte'], 'releves_sol' => ['relevé de sol', 'relevés de sol'],
-    'interventions' => ['intervention', 'interventions'], 'celebrations' => ['célébration', 'célébrations'],
+    'interventions' => ['intervention', 'interventions'], 'constats' => ['constat du saut du chat', 'constats du saut du chat'], 'celebrations' => ['célébration', 'célébrations'],
     'ressources' => ['ressource', 'ressources'], 'gisements' => ['gisement', 'gisements'],
     'commandes' => ['commande', 'commandes'], 'especes_locales' => ['espèce du projet', 'espèces du projet'],
 ];

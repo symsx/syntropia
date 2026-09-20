@@ -613,6 +613,40 @@ CREATE TABLE IF NOT EXISTS `scenario_ligne` (
 
 
 -- ---------------------------------------------------------------------
+-- LE CONSTAT DU SAUT DU CHAT — schéma 3, 2026-09-20 (chantier-saut-du-chat.md, Phase 2)
+--
+-- Le saut du chat est l'EFFET de la perturbation : il se reconnaît, il ne se décrète pas, et il
+-- se MESURE PAR COMPARAISON avec un témoin conduit classiquement dans le même sol (Théry,
+-- entretien « 11 questions sur la syntropie »). Un constat est donc daté, dit s'il est visible,
+-- et — quand on l'a mesuré — donne la pousse d'une plante sur une durée, à côté de celle du
+-- témoin. Sans durée, une pousse ne dit rien ; sans pousse, un témoin ne compare rien : la
+-- validation (`Web/Constats`) l'exige. Les ordres de grandeur du corpus (maïs jusqu'à 30 cm en
+-- 24 h…) sont des repères dits à l'écran, jamais des seuils.
+--
+-- La perturbation qui précède n'est PAS une clé étrangère : elle se lit dans le journal
+-- (`intervention`) par sa date, ce qui garde l'export sans référence entre deux tables filles.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `constat` (
+  `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parcelle_id`      INT UNSIGNED NOT NULL,
+  `date`             DATE NOT NULL,
+  `visible`          ENUM('oui','pas_encore') NOT NULL,
+  `vegetal`          VARCHAR(160) NULL,
+  `pousse_cm`        DECIMAL(7,1) NULL,
+  `sur_jours`        SMALLINT UNSIGNED NULL,
+  `temoin_decrit`    VARCHAR(190) NULL,
+  `temoin_pousse_cm` DECIMAL(7,1) NULL,
+  `notes`            TEXT NULL,
+  `saisi_par`        INT UNSIGNED NULL,            -- compte, base `comptes`
+
+  PRIMARY KEY (`id`),
+  KEY `ix_constat_parcelle` (`parcelle_id`, `date`),
+  CONSTRAINT `fk_constat_parcelle` FOREIGN KEY (`parcelle_id`)
+    REFERENCES `parcelle` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+
+-- ---------------------------------------------------------------------
 -- LA SUCCESSION DU POTAGER — `P-modele-potager/succession.csv`
 --
 -- Une saison, deux demi-planches en miroir, deux successions du ch. 8. Ce
@@ -955,6 +989,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
   PRIMARY KEY (`cle`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
--- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '2')
+-- Historique : 1 = premier versionnement ; 2 = `site.origine` (l'import d'un projet) ;
+-- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '3')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

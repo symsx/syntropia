@@ -33,9 +33,10 @@ final class Version
     /**
      * La forme des données — doit égaler la ligne `schema` de `atelier_version` (sql/01-syntropia.sql).
      * 1 : premier versionnement. 2 : `site.origine`, la trace d'un import (colonne facultative : la fenêtre
-     * ne se referme pas, un export du schéma 1 se recharge).
+     * ne se referme pas, un export du schéma 1 se recharge). 3 : la table `constat` (le constat du saut du chat :
+     * table facultative, un fichier sans elle se charge, ses constats étant simplement absents).
      */
-    public const SCHEMA = 2;
+    public const SCHEMA = 3;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;
