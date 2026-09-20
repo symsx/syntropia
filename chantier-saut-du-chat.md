@@ -469,6 +469,13 @@ sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Co
 | 13 | Associations sur une même planche | Importées le 2026-09-20 (`contenu/associations/`) ; lecture par `src/Associations.php` | Le modèle de placement — voir `chantier-associations.md` |
 | 14 | Plan de culture d'un potager | Lopez (Haute-Vienne), fiche au corpus ; `succession_ligne` au schéma | Un chantier dédié ; aucune page ne compose la succession |
 
+**Mise à jour du 2026-09-20 (versement du module 5 — `connaissances/formation-joala/potager-syntropique.md`)** — sans fermer de question, elle en documente trois : **la fréquence de coupe (n° 1)**,
+en potager : « jusqu'à cinq tailles majeures dans la saison » (un site, une saison) ; **la mesure du saut du chat (n° 8)** : tournesols « +70 cm en 8 jours » après une taille, maïs « +30 à +50 cm en une
+semaine », « +5 à 10 cm en trois jours » pour les autres plantes — des repères de plus, à côté de ceux de Théry, non des seuils ; **quoi planter et quand (n° 2)** : les successions d'été du potager, voir
+`chantier-plan-de-culture.md`. **Deux points nouveaux** : (a) le module définit le saut du chat comme *le moment où le sol bascule d'un support inerte vers une dynamique de fertilité auto-entretenue* (et
+parle d'un « saut de système »), quand le glossaire de l'atelier suit la formulation de Théry (*l'effet de la perturbation*) — les deux ne se contredisent pas ; **la définition du glossaire est au porteur** ;
+(b) **le journal et le diagnostic ne voient pas les cultures d'un potager** (ils lisent `scenario_ligne`) — voir `chantier-plan-de-culture.md` § « Ce que le module 5 apporte », point 5.
+
 ## Documentation, à chaque phase
 
 - Livret « L'atelier » (`contenu/documentation-atelier.md`) : le chapitre concerné **dans la même vague**,

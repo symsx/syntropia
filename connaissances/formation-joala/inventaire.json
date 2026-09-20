@@ -397,6 +397,166 @@
       "octets": 1698,
       "sha256": "c0f640df084fb754cdd85236d65783d9312655bc43588aa89d4e1b3f1fec9a11",
       "fiche": null
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-1-le_potager_syntropique_de_la_pepiniere_joala.txt",
+      "nature": "synthèse générée",
+      "lecture": "en entier (pas de partie brute)",
+      "octets": 5914,
+      "sha256": "8e681c3a60d7d3cb64a6d20d4b69614b9374903fb9ac6332c7e6753f0256b002",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-2-ouverture_potager_presentation_du_programme.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 5055,
+      "sha256": "b90620689203cd79e5ee537a175e3bc7fcac1902653d7c9a15921615147146d1",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-3-une_saison_au_potager.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au second séparateur)",
+      "octets": 29833,
+      "sha256": "5cc52e5e8e8f749d624355162d9942c3c6df65813a5a33dde5b7f807dc01a1e9",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-4-essai-maraichage.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "en entier, texte parlé compris",
+      "octets": 6184,
+      "sha256": "ec02e76521ad45f1836fe20033936a95deb2fd5ea9e26820bc912b633d7aa509",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-5-planche_potagere_dans_le_temps_et_dans_l_espace.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "en entier, texte parlé compris",
+      "octets": 12602,
+      "sha256": "557b81ca0676a2c37f853f5dc4b86a95d7e8d61f0905d968dda427e4c0ac489e",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-6-succession_pour_courges_et_affiliees.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 16844,
+      "sha256": "2ce6478298fee0177c51c508519d65195c7bce2384b1dff26c97adc70c2310d6",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-7-essais-courge.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 10178,
+      "sha256": "d204142fc8e14fc2ec9f52f5399fed7ac52cdf7e11c8c85087a8a8a9786aaeca",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-8-tomates_et_poivrons.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 19646,
+      "sha256": "ec13c5198eeee525be046d03059392ab350e94bb51b01ee451c046709400c171",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-9-tomates.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 10512,
+      "sha256": "1950f412f868cc045ccc4185f7311b653a52e98837bcd33ebc6a10d0eb6a29d6",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-A-courgettes.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 10323,
+      "sha256": "344f4eabeb46bea6cec7a400fe684336cf005b91dd3d349d2e79934d5f5ed11f",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-B-courgette_and_co.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 8375,
+      "sha256": "a41d62783cbbd1e1cde5289b3159860de3c805536ec14e377e2805ffe3543d78",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-C-haricots.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 18716,
+      "sha256": "0b8eaf98715c4ba59e5392baad3a9a5c5ea4a1887abe84e31fec58a34713df95",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-D-haricots_avec_son.txt",
+      "nature": "fichier vide",
+      "lecture": "rien à lire",
+      "octets": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fiche": null
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-D-point_fenouil.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 4274,
+      "sha256": "5250c89f4f81259dcc11741511e40249a02f3150dd88a5ceef34f2770aebd55f",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "5-E-les_choux.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt au mot « transcription »)",
+      "octets": 10965,
+      "sha256": "e695615a98b146359a70f680758aa00e0f682afcae2a0416dd6e08d9377c6475",
+      "fiche": "potager-syntropique.md"
+    },
+    {
+      "versement": "2026-09-20",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "trucs_et_astuces.txt",
+      "nature": "fichier vide",
+      "lecture": "rien à lire",
+      "octets": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fiche": null
     }
   ]
 }

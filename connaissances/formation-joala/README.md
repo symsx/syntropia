@@ -29,6 +29,14 @@ eux-mêmes. Deux fichiers sur l'eau (`4-6`, `4-7`) ont été versés dans
 un dossier dédié — voir
 [`joala-hydrologie-regenerative.md`](../cycles-de-l-eau/joala-hydrologie-regenerative.md).
 
+### Troisième versement — 2026-09-20
+
+Dossier source : `/home/sylvain/Bureau/Projets/input/` (le même que le second versement), qui reçoit le **module 5 — le potager** : quatorze fichiers texte non vides
+(`5-1` à `5-E`) et deux fichiers vides. Comme au second versement, ce sont des **synthèses générées** (méthode non documentée), suivies pour la plupart du texte parlé.
+**À la demande de Sylvain, seules les synthèses ont été lues** (arrêt au mot « transcription », ou au second séparateur pour `5-3`) ; deux exceptions signalées dans la
+fiche (`5-4` et `5-5`, dont le texte parlé, sans ce mot, a été lu). L'inventaire JSON porte, pour chaque fichier, ce qui a été lu (`lecture`). Le versement continue : d'autres
+modules sont attendus.
+
 ## Fiches de lecture
 
 | Fiche | Provenance | Ce qu'elle apporte |
@@ -39,6 +47,7 @@ un dossier dédié — voir
 | [Tortues et succession](tortues-et-succession.md) | `[Joala]` | Chemins, relais de production, extension, multiplication et transition potager → jardin-forêt |
 | [Perturbation et cascade trophique](perturbation-et-cascade-trophique.md) | `[Joala]` | Mécanismes de la perturbation, mégafaune, loups de Yellowstone, baleines, management holistique |
 | [Strates et lumière](strates-et-lumiere.md) | `[Joala]` | Trois mousquetaires, tableau des besoins en lumière par strate — utile à un futur scénario |
+| [Le potager syntropique](potager-syntropique.md) | `[Joala]` | La planche, ses strates, les successions (maïs, courges, courgettes, tomates, poivrons, haricots, choux, fenouil), la perturbation rapportée et les divergences à garder visibles |
 | [Autonomie — Molino](molino-autonomie.md) | `[Molino]` | Biomasse, occultation, sécheresse et organisation d'un jardin normand |
 | [Pépinière et bilan — Andru](andru-pepiniere-et-bilan.md) | `[Andru]` | Temps, eau, apports et observations d'un massif ariégeois |
 | [Production de bourgeons](production-de-bourgeons.md) | `[DS-bourgeons]` | Destination du système, plants disponibles et conflits de calendrier |

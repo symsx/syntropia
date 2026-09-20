@@ -143,10 +143,41 @@ tableau de Lopez** (aucune source ne le donne : ne se code pas). Le taux de 80 %
 
 **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `date_semis`), puis `fichiers` (qui envoie aussi `contenu/calendrier-lopez.csv`).
 
+## Ce que le module 5 de la formation apporte (versement du 2026-09-20)
+
+Fiche : `connaissances/formation-joala/potager-syntropique.md` — le module « potager » de Joala (synthèses générées ; seules les synthèses ont été lues, à la demande de
+Sylvain). C'est **le potager que l'atelier vise** : le potager syntropique, non le maraîchage d'annuelles de Lopez. Ce qu'il change, sans que rien soit encore construit :
+
+1. **Le calendrier d'été existe enfin en source.** Le tableau de Lopez ne couvre que dix-sept cultures d'automne et d'hiver ; le module donne les **dates de la succession
+   d'été** (Dordogne, en mots) : maïs semé fin mars-mi-avril, pommes de terre sous paille fin mars-début avril, courges, courgettes et poivrons repiqués mi-mai après les saints
+   de glace, haricots de mi-mai à juillet, choux d'hiver repiqués vers la mi-juillet, mâche après les tomates mi-septembre, fèves en novembre ou février, blette semée fin mars.
+   *Candidat* : un second tableau de repères (`contenu/calendrier-joala.csv`), lu comme celui de Lopez — dates en mots, donc indicatives, **Dordogne** (« sud de la Loire »),
+   synthèses générées, un site. **À décider** : l'ajoute-t-on comme seconde source de repères, et laquelle prime quand les deux parlent d'une même culture ?
+2. **Une succession a trois temps sur une planche** : *pré-culture* (avril-mi-mai : radis, salades, betteraves primeurs, épinards), *culture principale*, *post-culture*
+   (choux d'hiver, racines d'hiver, mâche). Le calendrier de l'atelier montre déjà l'occupation d'une planche dans l'année ; la **Phase 5** (succession) peut s'appuyer sur ces trois
+   temps et sur `associations-succession.csv`. **Une convergence à noter** : le module déconseille de faire précéder les haricots par fèves ou pois (même famille), et Weinrich donne
+   le petit pois défavorable au haricot.
+3. **Le placement peut lire les strates.** Le potager a quatre strates (émergente : maïs, tournesol ; haute : tomate, aubergine ; moyenne : haricot nain, courgette ; basse : radis,
+   carotte, salade), **ajustées au climat** (plus chaud : on descend). La proposition de placement ne les lit pas encore ; les cultures portent déjà `strate`.
+4. **Une ligne centrale de biomasse.** La planche du module a une **tranchée centrale** semée de maïs population (biomasse et structure), que l'on taille ; les cultures de production
+   sont de part et d'autre. L'atelier n'a pas cette notion : le plan de parcelle dessine des planches, non l'axe de biomasse qui les organise.
+5. **Un manque dans le code, constaté en relisant.** Pour une parcelle « potager », **ni le journal des perturbations ni le diagnostic du saut du chat ne voient les cultures** :
+   l'un et l'autre lisent `scenario_ligne` (les fonctions « biomasse » et « perturbation » du scénario pérenne), alors que les cultures d'un potager sont dans `succession_ligne`,
+   qui n'a pas de fonction. Un potager affiche donc « aucune plante de biomasse », alors que le maïs et le tournesol du module **sont** ses plantes de biomasse. **À corriger** :
+   marquer une culture comme *plante de biomasse* (la colonne `succession_ligne.role` existe, non utilisée) et faire lire les deux pages des deux tables.
+6. **Deux divergences à garder visibles, sans les trancher** : le module associe le **fenouil** aux tomates, courgettes et concombres, quand Weinrich le donne défavorable à la
+   tomate (et au haricot) ; et il parle de **maïs population** quand la table dit « maïs doux » (`Associations::fiche('maïs')` ne retrouve donc rien). Voir les questions ci-dessous.
+7. **Une réserve de méthode que la source formule elle-même** : « ne jamais généraliser une expérience unique » — tester une association sur une petite bande avant de la déployer.
+   C'est l'usage du **témoin** (constat du saut du chat) ; il vaut aussi pour une association de cultures.
+
 ## À trancher
 
 1. ~~Par où commencer~~ — **tranché le 2026-09-20 : les planches d'abord**, la chaîne du besoin alimentaire ensuite.
 2. **Une planche, plusieurs cultures** : c'est le principe même de l'association ; une planche porte donc plusieurs cultures, à des strates différentes.
+3. **Le calendrier d'été** : ajouter les repères du module 5 (Dordogne, dates en mots) comme seconde source, à côté de Lopez ? Sinon, aucun repère pour tomate, courgette, haricot, maïs.
+4. **Le maïs** : les tables parlent de « maïs doux », le module de « maïs population » (biomasse, grain). Le rapprocher par un alias serait une hypothèse ; ne pas le faire laisse « maïs » sans fiche.
+5. **Le fenouil avec la tomate** (et ce genre de cas) : afficher, à côté de la relation de Weinrich, que la formation associe ces deux plantes (une observation d'un site) — ou ne rien afficher.
+6. **Les cultures de biomasse d'un potager** : comment les marquer (un rôle « biomasse » sur la culture ?) pour que le journal et le diagnostic les voient.
 
 ## Manière de procéder
 
