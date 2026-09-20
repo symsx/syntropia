@@ -148,6 +148,14 @@ il laisse la culture non placée et le dit, plutôt que de forcer un voisinage n
 proposition s'affiche d'abord en aperçu, et rien n'est écrit tant que vous n'avez pas accepté,
 en tout ou en partie.
 
+Chaque culture porte deux dates : le **semis à l'abri** (en pépinière, en godets) et la
+**mise en place** — le semis en place, ou le repiquage —, puis la récolte. Un onglet
+**calendrier** les dispose sur l'année, mois par mois, planche par planche. Pour dix-sept
+cultures d'automne et d'hiver (choux, rutabaga, navet, épinard, mesclun…), la page rappelle
+les dates de Yann Lopez, maraîcher en Haute-Vienne, et propose de les reprendre : ce sont des
+dates en mots (« fin avril »), donc indicatives, un point de départ à remplacer par vos
+propres mesures. Pour toute autre culture, il n'y a pas de repère : la date est à vous.
+
 # Concevoir : le matériel et l'eau
 
 Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra

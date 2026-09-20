@@ -71,8 +71,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-plan-de-culture.md` — le plan (6 phases) du **plan de culture du potager** : composer une parcelle « potager » (aujourd'hui
   aucune page ne l'écrit : `succession_ligne`, au schéma, reste vide), y **placer les plantes de production par planche selon les
   associations** (Weinrich) et poser le **calendrier de plantation** du plan de culture de Lopez (Haute-Vienne). Proposé le 2026-09-20,
-  **Phases 1 à 3 faites le 2026-09-20** (composer la parcelle potager **par planche**, les voisinages de Weinrich, le **placement proposé**) ;
-  les Phases 4 à 6 (calendrier de Lopez, succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
+  **Phases 1 à 4 faites le 2026-09-20** (composer la parcelle potager **par planche**, les voisinages de Weinrich, le **placement proposé**, le
+  **calendrier** avec les repères de Lopez) ; les Phases 5 et 6 (succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
 - `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
   2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
   associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
@@ -107,6 +107,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
   Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
   SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
+  CalendrierLopez.php     lit les repères de semis et de repiquage de Lopez (`contenu/calendrier-lopez.csv` : dix-sept cultures d'automne et d'hiver, en dates de mots) et en tire des dates INDICATIVES (le milieu de la fenêtre) ; pur
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
@@ -138,6 +139,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
+  calendrier-lopez.csv      le tableau « des semis et repiquages » de Lopez (17 cultures d'automne et d'hiver), recopié de connaissances/maraichage-naturel/lopez-plan-de-culture.md ; deux cellules « à vérifier » vides et marquées
   guildes-plantae.json      instantané de `guilde.csv` de Plantae (179 plantes, 564 lignes) — écrit par bin/catalogue-plantae.py, jamais à la main ; vieillit, à réexporter
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -151,7 +153,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1581,6 +1583,14 @@ récit.*
   le plafond valait 1 pour trois cultures sur trois planches, ce qui interdisait toute association ; jamais moins de deux. Vérifié en CDP (aperçu sans écriture, acceptation
   partielle, proposition périmée, empreinte fausse, identifiants forgés d'une autre parcelle ou d'une culture déjà placée, lecteur, 320×568). **Aucun changement de schéma.**
   Non fait : le calendrier de Lopez, la succession, Matériel et eau du potager, les guildes de Plantae dans un scénario pérenne.
+- **Le calendrier de plantation, avec les repères de Lopez — Phase 4 du chantier « plan de culture », 2026-09-20.** Ce que le tableau de Lopez donne réellement est plus
+  étroit : **dix-sept cultures d'automne et d'hiver**, en dates de mots (« fin avril », « mi à fin juillet »), deux cellules « à vérifier » ; **rien pour la tomate ou la
+  courgette**. Lu tel quel : `contenu/calendrier-lopez.csv` et `src/CalendrierLopez.php` (28 contrôles ; `datesIndicatives()` propose le **milieu de la fenêtre**, à la prochaine
+  occurrence ; une culture hors tableau n'a **pas de repère**, la date est à la personne). **`succession_ligne.date_semis` : `Version::SCHEMA` passe à 7** (colonne facultative) — le
+  semis à l'abri, distinct de la mise en place (`date_semis_repiquage`, semis en place ou repiquage). `conception-potager.php` a deux onglets : **Les planches** et **Le calendrier**
+  (une frise S/P/R sur l'année, mois par mois, planche par planche) ; à l'édition d'une culture, le repère de Lopez et un bouton « Reprendre ces dates ». Vérifié en CDP (refus de
+  dates incohérentes, lecteur, `verifier-export`, fichier du schéma 6, 320×568). **Au déploiement : `bin/deployer.py base` d'abord** (la colonne), puis `fichiers`. Non fait : le
+  nombre de graines et de plants (la chaîne de Lopez), la succession, Matériel et eau du potager.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

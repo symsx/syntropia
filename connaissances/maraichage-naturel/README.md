@@ -58,3 +58,15 @@ Ce dossier comble ce manque, avec une source qui traite **exactement** de cela :
 ⚠ **Et une divergence porte sur les apports azotés** : `[Lopez]` range **l'urine et le thé de compost avec les ammonitrates**, quand `[de Looze]` et `[Marval]` en font des leviers. **Le désaccord porte sur le moment, non sur le geste** — un système à relancer contre un système en croisière. Voir `lopez-le-sol.md` § 3.1.
 
 Voir `referentiels/articulation-maraichage-naturel.md`, et `referentiels/annotations-lopez.md` pour les notes manuscrites du porteur en marge de l'exemplaire.
+
+---
+
+## Note — 2026-09-20 : le tableau des semis et repiquages est extrait dans `contenu/`
+
+*Note ajoutée sans réécriture du texte ci-dessus, conformément à la règle du dépôt.*
+
+Le tableau « des semis et repiquages » de `lopez-plan-de-culture.md` (§ 3 — dix-sept cultures d'automne et d'hiver) est recopié tel quel dans
+`contenu/calendrier-lopez.csv` (déployé, refusé au web), lu par `src/CalendrierLopez.php`. Les deux cellules que la source signale « à vérifier »
+(le repiquage du chou rouge, la surface de la chicorée) y restent **vides et marquées** (`a_verifier`). Usage et réserves : `chantier-plan-de-culture.md`
+§ Phase 4 — des dates en mots, donc des repères indicatifs, pour dix-sept cultures seulement.
+

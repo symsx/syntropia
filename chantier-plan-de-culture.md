@@ -1,7 +1,7 @@
 # Le plan de culture du potager — plan
 
-> **État au 2026-09-20 — Phases 1 (composer la parcelle potager, par planche), 2 (les voisinages par planche) et 3 (le placement
-> proposé) faites ; les Phases 4 à 6 ne sont pas commencées.** Né de deux ajouts du porteur, le même jour, pendant le chantier
+> **État au 2026-09-20 — Phases 1 (composer la parcelle potager, par planche), 2 (les voisinages par planche), 3 (le placement
+> proposé) et 4 (le calendrier) faites ; les Phases 5 et 6 ne sont pas commencées.** Né de deux ajouts du porteur, le même jour, pendant le chantier
 > « saut du chat » (`chantier-saut-du-chat.md`, décision 8) et le chantier des associations (`chantier-associations.md`).
 > Avance **par incréments** ; une règle sans réponse sourcée ne se code pas.
 
@@ -112,6 +112,36 @@ seule planche (le conflit est dit) ; lecteur (ni bouton, ni aperçu, ni panneau,
 **Non fait** : le calendrier de Lopez (Phase 4), la succession (Phase 5), Matériel et eau du potager (Phase 6 :
 `Materiel` et `BesoinEau` ne lisent encore que le scénario pérenne — un potager y apparaît sans matériel). La page n'est pas encore décrite dans le
 livret « L'atelier » comme un parcours complet : seul le principe l'est.
+
+## Phase 4 — faite (2026-09-20) : le calendrier
+
+**Ce que Lopez donne réellement** — plus étroit que « le calendrier de plantation » : son tableau ne couvre que **dix-sept cultures d'automne et d'hiver**
+(choux, rutabaga, radis noir, fenouil, blette d'hiver, chicorée, navet, chou chinois, persil, mesclun, épinard, salade d'hiver), en **dates de mots** — « fin
+avril », « mi-juin », « mi à fin juillet » —, avec deux cellules qu'il signale lui-même « à vérifier ». **Rien pour la tomate, la courgette ou la carotte.** Il est lu
+comme il est : des repères, dits tels, pour ces dix-sept cultures ; pour les autres, pas de repère, et la date est à la personne.
+
+- **`contenu/calendrier-lopez.csv`** (le tableau recopié tel quel, les deux cellules « à vérifier » vides et marquées) et **`src/CalendrierLopez.php`** (pur, 28
+  contrôles) : `periode()` lit « fin avril » comme une fenêtre de jours (début 1-10, mi 11-20, fin 21-fin de mois), `pour()` retrouve la culture (sans accent
+  ni casse, singulier ou pluriel — « choux » —, quelques alias sûrs : kale, chou vert), **`datesIndicatives()`** propose le **milieu de la fenêtre**, à la prochaine
+  occurrence, le repiquage jamais avant le semis. Une salade ou une blette « seules » n'ont **pas** de repère : Lopez parle de la salade d'hiver et de la blette d'hiver.
+- **`succession_ligne.date_semis`** (colonne facultative — `Version::SCHEMA` passe à **7**, la fenêtre d'import ne se referme pas ; un fichier du schéma 6 se charge,
+  testé). Lopez distingue le **semis** (à l'abri) du **repiquage** ; la colonne existante `date_semis_repiquage` devient, dans l'interface, la **mise en place** — le
+  semis en place, ou le repiquage : quand la culture occupe la planche. La mise en place ne précède pas le semis à l'abri ; la récolte ne précède ni l'un ni l'autre.
+- **Sur `conception-potager.php`**, deux onglets : **Les planches** et **Le calendrier** — une frise sur une année, mois par mois, planche par planche : **S** (semis à
+  l'abri), **P** (mise en place), **R** (récolte), la culture occupant la planche de sa mise en place à sa récolte. Année par défaut : celle de la première date ;
+  navigation d'une année à l'autre ; « N cultures datées hors de cette année », « N sans date ». Les lignes se paginent : aucun défilement.
+- **À l'édition d'une culture** : le **repère de Lopez** (semis, repiquage, en mots), la mise en garde (des dates en mots, indicatives — « un point de départ à remplacer
+  par sa propre mesure »), et un bouton **« Reprendre ces dates »** qui remplit les deux champs ; pour une culture sans repère, la note dit qu'il n'y en a pas et que rien
+  n'est proposé. Les dix-sept noms s'ajoutent aux suggestions de saisie.
+- Vérifié en local (compte et projet de test supprimés ensuite) : repère et bouton (chou de Bruxelles : semis fin avril → 25/04/2027, repiquage mi-juin → 15/06/2027),
+  enregistrement, tomate sans repère, frise (S, P, occupation, R aux bons mois), navigation d'année, refus (mise en place avant le semis à l'abri, récolte avant la mise en place,
+  récolte avant le semis), lecteur (frise lisible, ni panneau ni bouton), `verifier-export` identique (le « projet riche » porte un semis à l'abri), fichier du schéma 6 accepté,
+  aucun débordement de 1280×720 à 320×568 (vingt-deux lignes paginées).
+
+**Ce qui n'est pas fait** : le **nombre de graines et de plants** (la chaîne de Lopez : marge de semis, taux de réussite — Phase 6), et un calendrier **par culture hors du
+tableau de Lopez** (aucune source ne le donne : ne se code pas). Le taux de 80 % du tableau est **une convention de planification, non une mesure** (la source le dit).
+
+**Au déploiement : `bin/deployer.py base` d'abord** (la colonne `date_semis`), puis `fichiers` (qui envoie aussi `contenu/calendrier-lopez.csv`).
 
 ## À trancher
 
