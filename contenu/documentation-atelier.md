@@ -192,13 +192,17 @@ perturbation, non de la seule densité : il se reconnaît en comparant. Chaque
 **constat** est daté, dit s'il est visible et, quand vous l'avez mesuré, donne la
 pousse d'une plante sur quelques jours à côté de celle d'un **témoin** conduit
 classiquement dans le même sol. La page dit aussi **ce qui le rend possible**, lu
-dans ce que vous avez déjà noté : une perturbation au journal, de quoi couper au
-scénario, l'état des plantes et l'eau à la coupe, la biomasse laissée au sol, les
-plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque condition
-est dite en place, à regarder ou pas encore notée — jamais comme un échec. La date
-de plantation de la parcelle, à noter dans le panneau Données, dit depuis quand on
-attend le saut du chat : dans la formation il vient d'ordinaire dès les premiers
-mois, un repère et non une échéance.
+dans ce que vous avez déjà noté : le sol préparé et la plantation faite dans une
+même période — les deux moments les plus coûteux du projet —, une perturbation au
+journal, de quoi couper au scénario, l'état des plantes et l'eau à la coupe, la
+biomasse laissée au sol, les plantes de biomasse coupées ensemble, des plantes de
+démarrage. Chaque condition est dite en place, à regarder ou pas encore notée —
+jamais comme un échec. La **campagne de plantation** se note dans le panneau
+Données : un début, qui est le point zéro, et une fin. Une plantation dense
+s'étale sur trois saisons — fin d'automne, hiver, printemps — selon les besoins des
+végétaux ; ce qui compte est qu'aucune structurante ne soit ajoutée après coup. Le
+point zéro dit aussi depuis quand on attend le saut du chat : dans la formation il
+vient d'ordinaire dès les premiers mois, un repère et non une échéance.
 
 # Le bureau
 

@@ -1,7 +1,8 @@
 # Le saut du chat — plan
 
-> **État au 2026-09-20 — Phases 1 (le journal des perturbations) et 2 (le constat et le diagnostic)
-> faites et commitées, pas encore déployées** ; les Phases 3 à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
+> **État au 2026-09-20 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic) et
+> 2 bis (la préparation et la campagne de plantation) faites, pas encore déployées** ; les Phases 3 à 5 ne
+> sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
 > qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
 > essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
 > confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
@@ -51,6 +52,16 @@ Aujourd'hui l'atelier le nomme sans l'outiller :
    l'itinéraire — à définir et consolider.
 5. **Le stade du terrain se demande** : il dit d'où le porteur part, ce qu'il faut réaliser en premier
    et comment.
+6. **La préparation est primordiale, avec la plantation dense dans une même période** (ajout du porteur, le
+   2026-09-20, après la Phase 2). La « même période » n'est pas un jour : elle **s'étale sur trois saisons —
+   fin d'automne, hiver, printemps — selon les besoins des végétaux**. Le corpus dit la même chose : la campagne
+   d'implantation s'étale sur environ six mois, contrainte par des fenêtres physiologiques qui ne coïncident pas
+   (racines nues à partir de mi-novembre, boutures ligneuses au repos végétatif, placentaires au printemps selon la
+   température du sol — 6 °C pour le maïs, 5 °C pour le tournesol) ; **ce que les deux écoles ont en commun, c'est un
+   point zéro unique — aucune espèce structurante ajoutée après coup — non une date unique** (fiche transversale des
+   deux écoles, note de corpus du 2026-08-27 ; ch. 11, « tout est planté dans la même saison »). Ce qu'on paie à
+   planter après : dans la formation, des plants ajoutés l'hiver suivant ont un très beau départ, « mais s'ils avaient
+   été plantés en même temps que le reste, leur occupation du sol aurait été bien plus importante » (Joala, 4-1).
 
 ## Ce qui existe et se réutilise
 
@@ -258,6 +269,53 @@ sous 26 rem le nom de la plante passe sous la date.
 
 **Au déploiement : `bin/deployer.py base` d'abord** (nouvelle table `constat` et ligne `schema` = 3), puis `fichiers`.
 
+## Phase 2 bis — La préparation et la campagne de plantation — faite (2026-09-20)
+
+Ajoutée après la Phase 2, d'après la décision 6 : la condition manquait à ses sept. **Décisions du porteur, le
+2026-09-20 (deux questions posées avant d'écrire) : « la préparation » couvre la plantation dense dans la période
+ET la préparation du sol ; la campagne se note par deux dates, début et fin.**
+
+Ce qui est construit :
+- **`parcelle.fin_plantation`** (colonne facultative — `Version::SCHEMA` passe à **4**, la fenêtre d'import ne se
+  referme pas ; un fichier du schéma 3 se charge, testé). `date_plantation` en est le début, le point zéro.
+  Migration additive `information_schema` + `PREPARE`, rejouée sans erreur.
+- **`Parcelles::enregistrerPlantation()`** remplace `enregistrerDatePlantation()` : la fin ne se note pas sans début
+  et ne le précède pas ; ni l'une ni l'autre dans le futur, ni avant 2000 ; vidées, les dates s'effacent.
+  L'onglet « La plantation » du panneau Données a les deux dates, et dit les fenêtres du corpus (racines nues à
+  partir de mi-novembre ; boutures ligneuses au repos végétatif ; placentaires au printemps selon la température du
+  sol — 6 °C pour le maïs, 5 °C pour le tournesol).
+- **Deux conditions de plus dans `SautDuChat::conditions()`**, en tête, donc **neuf** : « Le sol est préparé » et
+  « La plantation est faite dans une même période ».
+  - *Le sol est préparé* lit ce que la Réalisation a noté (`preparation_technique`, `preparation_realisee`) —
+    celui de la personne, à défaut celui du porteur (`Reponses::preparationDuSite()`, même règle que les souhaits du
+    scénario : un lecteur n'écrit rien lui-même). Ce que le corpus dit de la préparation s'affiche : préparer tôt mais
+    toujours couvrir le sol en attendant la plantation ; ne pas brûler cette étape (Théry, ch. 14).
+  - *La plantation dans une même période* : *en place* si la campagne tient dans environ six mois (190 jours, le
+    repère du corpus — un repère, non un seuil de refus), *à regarder* au-delà (des plants ajoutés bien après le
+    point zéro occupent moins le sol — Joala, 4-1), *rien de noté* sans les deux dates. **« Dense » n'est pas
+    chiffré** : le corpus donne des principes, pas un seuil, et la condition le dit.
+- **La page « Préparation de la parcelle »** (Réalisation) dit désormais à quoi sert ce qu'elle demande — se relire
+  parmi ce qui rend le saut du chat possible — et ce que disent les sources : bâcher sur sol le plus humide possible, le
+  lendemain matin d'une pluie ; bâcher aussi les chemins, une saison, avant d'y semer du trèfle blanc ; l'idéal, un
+  couvert semé un ou deux ans avant (Faraj) ; plus de travail du sol après la plantation ; la préparation est la première
+  chose que le climat empêche, prévoir un repli manuel.
+
+**Ce qui n'est pas fait, et pourquoi** : le « ce qui compte » de la préparation du sol n'a pas été détaillé par le
+porteur (il a choisi « plus la préparation du sol » sans le décrire) ; **l'atelier ne lit que ce qu'il enregistre déjà**
+— la technique et qui l'a réalisée — et donne les repères du corpus. Détecter une structurante *ajoutée après coup*
+suppose une date de plantation par végétal : la campagne à deux dates en est l'approximation, et une saison par végétal
+resterait une piste si le besoin se fait sentir. La préparation n'a pas de date propre (« préparé tôt, couvert en
+attendant » ne se lit pas).
+
+Vérifié en local (`bin/dev.py` + Chrome headless/CDP, compte et projet de test supprimés ensuite) : campagne de
+5 mois (en place), de 8 mois (à regarder), début seul et rien (rien de noté), fin avant début, fin sans début, fin
+future, début trop ancien, date invalide en POST brut, dates effacées ; préparation non notée, bâchage manuel,
+déchaumage et animaux, **repli sur le porteur pour un lecteur** ; `verifier-export` identique sur tous les projets
+locaux (le « projet riche » porte les deux dates) ; fichier du schéma 3 sans `fin_plantation` accepté ; aucun
+débordement de 1280×720 à 320×568 (neuf conditions paginées), panneau de saisie lisible à 320 px.
+
+**Au déploiement : `bin/deployer.py base` d'abord** (la colonne `fin_plantation` et la ligne `schema` = 4), puis `fichiers`.
+
 ## Phase 3 — Le stade du terrain : d'où l'on part
 
 *Décidé (5), les règles qui en découlent se consolident avec la formation.*
@@ -333,6 +391,9 @@ sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Co
 | 6 | Combien de biomasse suffit ? | Le seuil existe (framboisier écarté, ch. 15) ; le scénario dit 70-80 % | Un repère par itinéraire |
 | 7 | Trois stades ou deux ? | Joala en donne trois | Le choix du porteur |
 | 8 | Mesure du saut du chat | Ordres de grandeur de l'entretien de Théry | Protocole simple à proposer (durée, témoin) |
+| 9 | Ce qui compte dans la préparation du sol | Décision 6 : la préparation couvre le sol et la plantation dense dans la période ; repères du corpus affichés | Ce que le porteur juge déterminant, à lire dans ce qu'il note |
+| 10 | À partir de quelle densité une plantation est-elle « dense » ? | Principes : « plante deux fois plus » ; 10 cm² de vide = un désert | Un repère chiffré, par itinéraire |
+| 11 | Étalement acceptable de la campagne | Environ six mois, de fin d'automne au printemps (corpus) ; point zéro unique | Le repère exact selon les végétaux et le climat |
 
 ## Documentation, à chaque phase
 

@@ -64,8 +64,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
-  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal) et 2 (le constat et le diagnostic) faites le
-  2026-09-20**, les trois autres pas commencées ; **développement itératif
+  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal), 2 (le constat et le diagnostic) et 2 bis (la
+  préparation et la campagne de plantation) faites le 2026-09-20**, les trois autres pas commencées ; **développement itératif
   et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
   les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
@@ -133,7 +133,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2) et la table `constat` (schéma 3) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3) et `parcelle.fin_plantation` (schéma 4) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1507,6 +1507,20 @@ récit.*
   déclenche pas le saut du chat). Vérifié en CDP (conflit de version, cloisonnement, lecteur, 320×568,
   `verifier-export` identique). **Au déploiement : `bin/deployer.py base` d'abord** (la table), puis `fichiers`.
   Détail : `chantier-saut-du-chat.md` § Phase 2.
+- **La préparation et la campagne de plantation — Phase 2 bis du chantier « saut du chat », 2026-09-20.**
+  Ajoutée à la demande du porteur : dans les conditions de réussite du saut du chat, **la préparation est primordiale, avec
+  la plantation dense dans une même période, qui s'étale sur trois saisons** (fin d'automne, hiver, printemps) selon les
+  besoins des végétaux — ce que dit aussi le corpus : l'acquis commun aux deux écoles est un **point zéro unique, aucune
+  structurante ajoutée après coup**, non une date unique. Le porteur a tranché (deux questions posées) : la préparation
+  couvre la plantation ET la préparation du sol ; la campagne se note par **deux dates, début et fin**. **`parcelle.
+  fin_plantation` : `Version::SCHEMA` passe à 4** (colonne facultative, la fenêtre d'import ne se referme pas),
+  `Parcelles::enregistrerPlantation()` (remplace `enregistrerDatePlantation()`), onglet « La plantation » à deux dates.
+  **Neuf conditions** désormais : « Le sol est préparé » (lit ce que la Réalisation a noté, celui de la personne à défaut
+  celui du porteur — `Reponses::preparationDuSite()`) et « La plantation est faite dans une même période » (en place jusqu'à
+  environ six mois, un repère du corpus ; « dense » n'est pas chiffré, le corpus n'en donne pas le seuil). La page
+  « Préparation de la parcelle » dit à quoi sert sa donnée et ce que disent les sources. Vérifié en CDP, `verifier-export`
+  (le « projet riche » porte les dates), fichier du schéma 3 accepté. **Au déploiement : `bin/deployer.py base` d'abord**,
+  puis `fichiers`. Détail : `chantier-saut-du-chat.md` § Phase 2 bis.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
