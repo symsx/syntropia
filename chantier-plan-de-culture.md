@@ -1,7 +1,7 @@
 # Le plan de culture du potager — plan
 
-> **État au 2026-09-20 — Phase 1 (composer la parcelle potager, par planche) faite, avec la lecture des voisinages par
-> planche (la Phase 2, sans le placement proposé) ; les Phases 3 à 6 ne sont pas commencées.** Né de deux ajouts du porteur, le même jour, pendant le chantier
+> **État au 2026-09-20 — Phases 1 (composer la parcelle potager, par planche), 2 (les voisinages par planche) et 3 (le placement
+> proposé) faites ; les Phases 4 à 6 ne sont pas commencées.** Né de deux ajouts du porteur, le même jour, pendant le chantier
 > « saut du chat » (`chantier-saut-du-chat.md`, décision 8) et le chantier des associations (`chantier-associations.md`).
 > Avance **par incréments** ; une règle sans réponse sourcée ne se code pas.
 
@@ -78,9 +78,38 @@ le placement **par planche** concerne les plantes de production du maraîchage e
   confirmation refusée puis acceptée, lecteur, anonyme, redirections dans les deux sens, `verifier-export` identique (le « projet riche » porte
   une planche), fichier du schéma 5 accepté, **aucun débordement** de 1280×720 à 320×568 (douze planches, trente-trois cultures).
 
+## Phase 3 — faite (2026-09-20) : proposer le placement
+
+`src/PlanDeCulture.php` (pur, 20 contrôles) et, sur `conception-potager.php`, un bouton **« Proposer un placement »** (visible s'il y a des cultures
+non placées et des planches au plan).
+
+**L'algorithme, simple et relisible** :
+1. **Une culture déjà placée ne bouge jamais** : seules les non placées sont concernées.
+2. On traite d'abord les **plus contraintes** (le plus de relations connues avec les autres cultures), puis par nom : le résultat est le même à
+   chaque fois, quel que soit l'ordre d'entrée (testé).
+3. Une planche est **écartée** si elle porte un voisin à éviter (défavorable, ou contradictoire). Si toutes le sont, la culture **reste non placée** et la
+   **raison est dite** (« chaque planche a un voisin à éviter (ail) : ajoutez une planche, ou décidez vous-même ») — l'atelier ne force pas un voisinage néfaste.
+4. Parmi les planches restantes : celle où **le plus de voisins s'entendent bien** ; à égalité, la moins chargée, puis la première. Une paire **sans relation
+   connue ne compte ni pour ni contre**.
+5. Les cultures se **répartissent** : jamais plus de `max(2, ceil(total / planches))` par planche (ni moins de deux : une association, c'est plusieurs cultures
+   sur une planche), ni moins que ce qu'une planche porte déjà. **Un équilibre, non un plafond agronomique** — le corpus ne dit pas combien de cultures une planche
+   peut porter. *Défaut trouvé en testant* : le plafond valait 1 pour trois cultures sur trois planches, ce qui interdisait toute association.
+
+**L'interface** : la proposition s'affiche d'abord **en aperçu** dans les cartes (« → ail proposée »), avec dans le panneau Données, culture par culture, la planche
+et **la raison** (« s'entend bien avec tomate », ou « aucun voisin connu : placée là où il y a de la place »), une case à cocher chacune, et les cultures que l'atelier
+n'a pas su placer. **Rien n'est écrit avant l'accord.** « Placer la sélection » recalcule la proposition **sur l'état actuel** : l'empreinte des placements doit
+correspondre à celle que la personne a vue (sinon « le plan a changé, recalculez »), et n'est posé que ce que la proposition contient encore. `Cultures::placer()` ne
+touche que les cultures **encore non placées**, bornées à la parcelle.
+
+Vérifié en local (compte et projet de test supprimés ensuite) : l'aperçu n'écrit rien ; acceptation partielle (une culture décochée reste non placée) ; **proposition
+périmée** refusée ; empreinte fausse refusée ; **identifiants d'une autre parcelle** sans effet ; **une culture déjà placée forgée dans la requête ne bouge pas** ; une
+seule planche (le conflit est dit) ; lecteur (ni bouton, ni aperçu, ni panneau, POST forgé 403) ; aucun débordement de 1280×720 à 320×568, avec et sans proposition.
+
+**Au déploiement** : aucun changement de schéma pour cette phase.
+
 **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `planche`), puis `fichiers`.
 
-**Non fait** : proposer le placement (Phase 3), le calendrier de Lopez (Phase 4), la succession (Phase 5), Matériel et eau du potager (Phase 6 :
+**Non fait** : le calendrier de Lopez (Phase 4), la succession (Phase 5), Matériel et eau du potager (Phase 6 :
 `Materiel` et `BesoinEau` ne lisent encore que le scénario pérenne — un potager y apparaît sans matériel). La page n'est pas encore décrite dans le
 livret « L'atelier » comme un parcours complet : seul le principe l'est.
 

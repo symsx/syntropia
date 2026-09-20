@@ -141,6 +141,13 @@ placer côte à côte. Ce sont des ordres de conduite, non des preuves, tirés d
 d'association (Christa Weinrich) : une information de conception, jamais une interdiction ;
 et une culture absente de ces tables n'est pas neutre, on ne sait simplement pas.
 
+L'atelier peut aussi **proposer un placement** : il répartit sur les planches les cultures
+qui n'en ont pas encore, en regroupant ce qui s'entend bien et en écartant ce qui s'entend
+mal ; une culture déjà placée ne bouge jamais. Si aucune planche n'est sans voisin à éviter,
+il laisse la culture non placée et le dit, plutôt que de forcer un voisinage néfaste. La
+proposition s'affiche d'abord en aperçu, et rien n'est écrit tant que vous n'avez pas accepté,
+en tout ou en partie.
+
 # Concevoir : le matériel et l'eau
 
 Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra

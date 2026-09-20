@@ -1,7 +1,7 @@
 # Les associations de plantes de production — plan
 
 > **État au 2026-09-20 — Phase 1 (importer et lire) faite ; Phase 2 (lire les voisinages au potager) faite dans `chantier-plan-de-culture.md` ;
-> Phases 3 à 5 pas commencées ; l'instantané des guildes de Plantae est posé (Phase 4, données et lecteur).** Deux décisions du
+> Phase 3 (proposer le placement) faite dans `chantier-plan-de-culture.md` ; Phases 4 et 5 pas commencées ; l'instantané des guildes de Plantae est posé (Phase 4, données et lecteur).** Deux décisions du
 > porteur, le même jour, ont recadré les phases : le placement se fait **par planche** et concerne le **maraîchage et le
 > potager** ; pour un **verger ou un jardin-forêt**, les associations sont les **guildes ou consortiums de Plantae**.
 > Demandé par le porteur le 2026-09-20, pendant le chantier « saut du chat » (`chantier-saut-du-chat.md`, décision 8).
@@ -100,6 +100,11 @@ Suppose que la parcelle potager **ait des plantes placées** : c'est le premier 
 
 La lecture par planche est dans `public/conception-potager.php` (voir `chantier-plan-de-culture.md` § Phase 1) : les relations connues
 entre les cultures d'une même planche, les réserves dites, « pas de voisinage connu » sans ambiguïté.
+
+### Phase 3 — faite (2026-09-20)
+
+Voir `chantier-plan-de-culture.md` § Phase 3 : `src/PlanDeCulture.php` propose, l'aperçu ne s'écrit qu'après l'accord de la personne. **Le modèle par planche a été
+retenu** (décision du porteur), avec la colonne `succession_ligne.planche`.
 
 ## Phase 3 — Proposer le placement par planche
 

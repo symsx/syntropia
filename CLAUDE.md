@@ -71,8 +71,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-plan-de-culture.md` — le plan (6 phases) du **plan de culture du potager** : composer une parcelle « potager » (aujourd'hui
   aucune page ne l'écrit : `succession_ligne`, au schéma, reste vide), y **placer les plantes de production par planche selon les
   associations** (Weinrich) et poser le **calendrier de plantation** du plan de culture de Lopez (Haute-Vienne). Proposé le 2026-09-20,
-  **Phase 1 faite le 2026-09-20** (composer la parcelle potager **par planche**, avec les voisinages de Weinrich) ; les Phases 3 à 6
-  (placement proposé, calendrier de Lopez, succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
+  **Phases 1 à 3 faites le 2026-09-20** (composer la parcelle potager **par planche**, les voisinages de Weinrich, le **placement proposé**) ;
+  les Phases 4 à 6 (calendrier de Lopez, succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
 - `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
   2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
   associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
@@ -107,6 +107,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
   Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
   SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
+  PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
@@ -1570,6 +1571,16 @@ récit.*
   (refus en POST brut, conflit de version, cloisonnement, lecteur, `verifier-export`, fichier du schéma 5, 320×568). **Au déploiement : `bin/deployer.py base`
   d'abord** (la colonne), puis `fichiers` (qui envoie aussi `contenu/guildes-plantae.json`). Non fait : le placement proposé, le calendrier de Lopez, la succession,
   Matériel et eau du potager. Détail : `chantier-plan-de-culture.md` § Phase 1.
+- **Le placement proposé, par planche — Phase 3 du chantier « plan de culture », 2026-09-20.** `src/PlanDeCulture.php` (pur, 20 contrôles) : l'atelier **propose** de
+  répartir les cultures non placées d'un potager sur les planches du plan — **une culture déjà placée ne bouge jamais** ; on écarte une planche qui porte un voisin
+  à éviter (si toutes le font, la culture **reste non placée et la raison est dite**, l'atelier ne force pas un voisinage néfaste) ; on préfère la planche où le plus de
+  voisins s'entendent bien ; une paire sans relation connue ne compte ni pour ni contre ; les cultures se répartissent (`max(2, ceil(total / planches))` par planche —
+  un équilibre, non un plafond agronomique). Sur `conception-potager.php`, un bouton « Proposer un placement » ouvre un **aperçu** dans les cartes et, dans le panneau
+  Données, la planche et la raison de chaque culture avec une case à cocher ; **rien n'est écrit avant l'accord**, et « Placer la sélection » recalcule sur l'état actuel
+  (empreinte des placements : « le plan a changé, recalculez » sinon) — `Cultures::placer()` ne touche que les cultures encore non placées. **Un défaut trouvé en testant** :
+  le plafond valait 1 pour trois cultures sur trois planches, ce qui interdisait toute association ; jamais moins de deux. Vérifié en CDP (aperçu sans écriture, acceptation
+  partielle, proposition périmée, empreinte fausse, identifiants forgés d'une autre parcelle ou d'une culture déjà placée, lecteur, 320×568). **Aucun changement de schéma.**
+  Non fait : le calendrier de Lopez, la succession, Matériel et eau du potager, les guildes de Plantae dans un scénario pérenne.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
