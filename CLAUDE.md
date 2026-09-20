@@ -64,10 +64,15 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
-  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal), 2 (le constat et le diagnostic) et 2 bis (la
-  préparation et la campagne de plantation) faites le 2026-09-20**, les trois autres pas commencées ; **développement itératif
+  conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal), 2 (le constat et le diagnostic), 2 bis (la
+  préparation et la campagne de plantation) et 2 ter (les adventices) faites le 2026-09-20**, les trois autres pas commencées ; **développement itératif
   et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
   les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
+- `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
+  2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
+  associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
+  commencées, dont la Phase 3 (le placement) qui demande de trancher le modèle (par planche, ou par emplacement). Une source
+  dont les réserves se disent à l'écran : des ordres de conduite, des tables non symétriques, deux plantes toxiques.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -95,6 +100,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Relief.php              pente, exposition, courbes de niveau (marching squares) — classe plate, sans iso() (vue 3D)
   Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
   SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
+  Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
@@ -122,6 +128,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
 contenu/
   .htaccess              refuse tout accès web
+  associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
   documentation-saf.md      livret « L'agroforesterie syntropique » — modèle à remplacer
   glossaire.md              un mot technique = un chapitre, une phrase — alimente glossaire.php ET la bulle des `.terme` ailleurs sur le site
@@ -133,7 +140,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3) et `parcelle.fin_plantation` (schéma 4) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1521,6 +1528,24 @@ récit.*
   « Préparation de la parcelle » dit à quoi sert sa donnée et ce que disent les sources. Vérifié en CDP, `verifier-export`
   (le « projet riche » porte les dates), fichier du schéma 3 accepté. **Au déploiement : `bin/deployer.py base` d'abord**,
   puis `fichiers`. Détail : `chantier-saut-du-chat.md` § Phase 2 bis.
+- **Les adventices, et l'import des associations — 2026-09-20.** **Adventices (Phase 2 ter du chantier « saut du chat »)** :
+  la règle du porteur — le sol se prépare par **déchaumage**, avec les moyens dont on dispose (bâche, motoculteur, animaux,
+  ou autre) ; **si des adventices reviennent en cours de projet, c'est le signe que la plantation n'est pas assez dense** :
+  on désherbe à la main **et** l'on densifie avec des plantes du système d'accumulation. `constat.adventices` (`Version::
+  SCHEMA` passe à **5**, colonne facultative), une **dixième condition** « Les adventices ne reviennent pas » (à regarder sur
+  « oui », avec l'action ; le support cite saule, peuplier, bouleau, noisetier, aubépine, prunellier), un geste « Désherbage à
+  la main » dans le journal (ne compte pas comme perturbation), et la préparation offre aussi **machine** et **autrement**
+  (la page, resserrée pour les écrans peu hauts : deux choix de plus la faisaient déborder de 102 px à 320×568).
+  **Associations (`chantier-associations.md`, Phase 1)** : le porteur a décidé d'**importer** les trois tables de Weinrich
+  (`contenu/associations/`, copiées telles quelles, `diff` identique) et de **proposer le placement des plantes de production
+  selon les associations ou leur dissociation**. `src/Associations.php` les lit (28 contrôles) : une relation est **connue si
+  l'une des deux plantes la cite** (les tables ne sont pas symétriques : 82 relations du potager sans retour), la digitale et
+  l'aconit se **signalent** (deux plantes toxiques données comme favorables). **Mesuré : 11 des 45 espèces du cadre ont une
+  fiche, 6 sont citées, aucun ligneux de biomasse** — les tables parlent des plantes de production. Les Phases 2 à 5 (voisinages
+  dans le scénario, placement, verger, succession) ne sont pas commencées ; **le modèle de placement (par planche, ou par
+  emplacement) est à trancher**. **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `adventices`), puis `fichiers`
+  (qui envoie aussi `contenu/associations/`). Vérifié en CDP, `verifier-export` (le « projet riche » porte `adventices`),
+  fichier du schéma 4 accepté. Détail : `chantier-saut-du-chat.md` § Phase 2 ter.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

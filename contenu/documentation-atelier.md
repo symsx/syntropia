@@ -170,6 +170,9 @@ sol), choisit le matériel végétal (bouturage, semis, division, ou ce qui est
 déjà là), rassemble les outils et les personnes, puis consigne ce qui a été
 fait, avec la date et les conditions.
 
+Le sol se prépare avant de semer : les semis, ceux des tortues en particulier, se
+font sur un sol exempt d'adventices, dont la concurrence freine le saut du chat.
+
 Le **suivi** commence dès que quelque chose est en terre : l'arrosage et la
 germination, la perturbation, le saut du chat. Sa consignation se répète, saison
 après saison, et se relit mieux qu'elle ne se souvient.
@@ -185,7 +188,8 @@ sa dernière coupe, sans seuil : le bon moment se lit sur l'état des plantes, l
 première perturbation vient en juin, les suivantes quand il y a de quoi couper — et
 l'on arrose si la pluie ne vient pas. Le journal n'interdit rien : il dit ce que les
 sources disent, et pourquoi. Affaiblir une couverture sans la couper, en la couchant
-sous la paille, s'y note aussi, mais ne compte pas comme une perturbation.
+sous la paille, ou désherber à la main, s'y note aussi, mais ne compte pas comme une
+perturbation.
 
 Le **saut du chat** — le moment où le système accélère nettement — est l'effet de la
 perturbation, non de la seule densité : il se reconnaît en comparant. Chaque
@@ -203,6 +207,11 @@ s'étale sur trois saisons — fin d'automne, hiver, printemps — selon les bes
 végétaux ; ce qui compte est qu'aucune structurante ne soit ajoutée après coup. Le
 point zéro dit aussi depuis quand on attend le saut du chat : dans la formation il
 vient d'ordinaire dès les premiers mois, un repère et non une échéance.
+
+Le constat demande aussi si des adventices reviennent. Le sol se prépare par déchaumage,
+avec les moyens dont on dispose ; si elles reviennent en cours de projet, c'est le signe
+que la plantation n'est pas assez dense — des plantes de colonisation sont encore là :
+on désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.
 
 # Le bureau
 

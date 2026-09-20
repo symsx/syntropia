@@ -33,3 +33,18 @@ Ce dossier comble ce manque, avec une source qui ne traite que de cela.
 **Ni syntropie, ni jardin-forêt.** L'itinéraire suppose un sol ameubli chaque printemps, ce que le cadre écarte. **Ce qui se transporte, ce sont les mécanismes et les couples, jamais la conduite.**
 
 Voir `referentiels/articulation-cultures-associees.md`.
+
+---
+
+## Note — 2026-09-20 : les trois tables sont importées dans ce dépôt
+
+*Note ajoutée sans réécriture du texte ci-dessus, conformément à la règle du dépôt.*
+
+Les trois tables citées plus haut (`associations-potager.csv`, `associations-verger.csv`, `associations-succession.csv`)
+n'existaient que dans le projet `syntropie`, `referentiels/`. Elles sont maintenant **copiées telles quelles** dans
+`contenu/associations/` (déployé, refusé au web — `connaissances/` ne l'est pas, et l'atelier les lit). Le nœud
+`skills-map/nodes/cultures-associees.md` n'a donc plus de renvoi pendant pour elles. Lecture par `src/Associations.php` ;
+usage et réserves dans `chantier-associations.md`. La note d'articulation `referentiels/articulation-cultures-associees.md`
+reste dans `syntropie` : ses réserves (des ordres de conduite, la table du verger non symétrique, deux plantes toxiques,
+l'itinéraire qui ne se transporte pas) sont reprises dans le chantier.
+

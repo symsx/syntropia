@@ -1,8 +1,8 @@
 # Le saut du chat — plan
 
-> **État au 2026-09-20 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic) et
-> 2 bis (la préparation et la campagne de plantation) faites, pas encore déployées** ; les Phases 3 à 5 ne
-> sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
+> **État au 2026-09-20 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic), 2 bis (la
+> préparation et la campagne de plantation) et 2 ter (les adventices) faites, pas encore déployées** ; les Phases 3
+> à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
 > qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
 > essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
 > confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
@@ -62,6 +62,26 @@ Aujourd'hui l'atelier le nomme sans l'outiller :
    deux écoles, note de corpus du 2026-08-27 ; ch. 11, « tout est planté dans la même saison »). Ce qu'on paie à
    planter après : dans la formation, des plants ajoutés l'hiver suivant ont un très beau départ, « mais s'ils avaient
    été plantés en même temps que le reste, leur occupation du sol aurait été bien plus importante » (Joala, 4-1).
+7. **Les adventices** (ajout du porteur, le 2026-09-20). La préparation du sol est importante pour les tortues :
+   **les semis se font sur un sol exempt d'adventices**. Pour la plantation de **pionniers** (mettre en place un
+   système de succession), **la concurrence des adventices est un frein au saut du chat**. Le corpus va dans le même
+   sens : Lopez pose comme règle de semer dans un sol exempt d'adventices ; la régénération naturelle assistée prévoit
+   l'élimination préalable des adventices et des faux-semis (un à quatre passages) pour épuiser la banque de graines ;
+   Théry (ch. 3) note que les racines de graminées concurrencent fortement les arbres, d'où l'on arrache les graminées
+   et l'on coupe le reste au pied. **Inscrit** dans la condition « Le sol est préparé » et dans l'aide de la page
+   « Préparation de la parcelle ». **Pas encore mesuré** : rien n'enregistre aujourd'hui si les adventices concurrencent
+   — voir Phase 2 ter, où le porteur a ensuite précisé la règle : les adventices qui reviennent sont le signe d'une
+   plantation pas assez dense.
+8. **Potager et maraîchage** (ajout du porteur, le 2026-09-20). Pour le **calendrier de plantation**, le **plan de
+   culture de Lopez** peut aider (`connaissances/maraichage-naturel/lopez-plan-de-culture.md` : maraîcher en
+   Haute-Vienne, la première source du dépôt à la bonne latitude — ses dates se transposent). Pour **l'association sur
+   une même planche**, on s'appuie sur le nœud `cultures-associees` de la carte des compétences (Weinrich : des ordres de
+   conduite, non des preuves ; contexte Jura souabe et Hesse). **Deux constats de dépôt** : (a) les tables
+   d'associations (`associations-potager|verger|succession.csv`, 77 lignes en tout) n'étaient que dans le projet `syntropie` ;
+   **le porteur a décidé de les importer** et de proposer le placement des plantes de production selon les associations
+   (ou leur dissociation) — **fait pour l'import**, la suite est dans `chantier-associations.md` ; (b) une parcelle de type « potager » peut se créer,
+   mais **aucune page ne compose sa succession** (`succession_ligne` est au schéma, jamais écrite) : elle reçoit
+   aujourd'hui le même scénario qu'une parcelle pérenne. C'est un chantier à part entière — voir § Le potager.
 
 ## Ce qui existe et se réutilise
 
@@ -316,6 +336,56 @@ débordement de 1280×720 à 320×568 (neuf conditions paginées), panneau de sa
 
 **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `fin_plantation` et la ligne `schema` = 4), puis `fichiers`.
 
+## Phase 2 ter — Les adventices — faite (2026-09-20)
+
+**La règle du porteur, qui remplace ma première proposition** (mesurer la concurrence des herbes) : **les adventices
+se traitent à la préparation de la parcelle par déchaumage — ce n'est pas que du désherbage —, avec les ressources dont
+la personne dispose (bâche, motoculteur, animaux, ou autre). Si des adventices reviennent en cours de projet, c'est le
+signe que la plantation n'est pas assez dense** : on désherbe à la main, **et** l'on densifie avec des plantes du système
+d'accumulation, car cela veut dire qu'une partie des plantes de colonisation sont encore là.
+
+Ce qui est construit :
+- **`constat.adventices`** (`non` / `oui`, facultative — `Version::SCHEMA` passe à **5** ; un fichier du schéma 4 se
+  charge, testé). Une question au constat : « des adventices reviennent-elles ? », avec, sur « oui », la lecture du
+  porteur dite à l'écran.
+- **Une dixième condition** : « Les adventices ne reviennent pas ». *Rien de noté* sans réponse ; *en place* si la
+  dernière réponse notée est « non » ; **à regarder** si elle est « oui », avec l'**action** : désherber à la main et
+  densifier avec des plantes d'accumulation — **le support de formation cite** saule, peuplier, bouleau, noisetier,
+  aubépine, prunellier (Joala, 2-2) : des exemples, non une liste à suivre. La condition lit la **dernière réponse
+  notée**, pas forcément celle du dernier constat.
+- **Un geste « Désherbage à la main »** dans le journal des perturbations : il se note, et **ne compte pas comme une
+  perturbation** (comme « affaiblir » : le temps écoulé depuis la dernière coupe ne bouge pas). Son conseil s'affiche au
+  choix du geste.
+- **La préparation dit ses moyens** : la Réalisation offrait manuellement, animaux, ou les deux ; elle offre maintenant
+  aussi **une machine (motoculteur…)** et **autrement** (« les deux » devient « plusieurs moyens », même valeur). La page
+  dit que le déchaumage n'est pas que du désherbage, et à quoi sert sa donnée. Elle a été **resserrée pour les écrans peu
+  hauts** : ses deux nouveaux choix la faisaient déborder de 102 px à 320×568 (mesuré, corrigé).
+- Le corpus dit la même chose sur le fond : Lopez (semer dans un sol exempt d'adventices), RNA (élimination préalable,
+  faux-semis), Théry ch. 3 (les racines de graminées concurrencent les arbres).
+
+**Ce qui ne se code pas** : la fréquence du désherbage. Les sources divergent — Théry : il disparaît presque une fois le
+système en place ; Faraj : une tâche récurrente, critique les trois à quatre premières années ; Crawford : une tournée
+toutes les trois à quatre semaines, puis un désherbage sélectif qui s'éteint. Question ouverte n° 12.
+
+Vérifié en local (`bin/dev.py` + Chrome headless/CDP, compte et projet de test supprimés ensuite) : la condition dans ses
+trois états, la dernière réponse qui prime, conseil au choix « oui », valeur forgée refusée, édition qui relit la
+réponse, geste de désherbage sans effet sur le temps écoulé ni sur la condition « perturbation », les cinq moyens de
+préparation lus par la condition, `verifier-export` identique, fichier du schéma 4 accepté, dix conditions paginées sans
+débordement de 1280×720 à 320×568, page de préparation sans débordement.
+
+**Au déploiement : `bin/deployer.py base` d'abord** (la colonne `adventices` et la ligne `schema` = 5), puis `fichiers`.
+
+## Le potager — un chantier à part, à ouvrir
+
+D'après la décision 8. Hors du saut du chat proprement dit (qui se joue sur les ligneux et les bordures vivantes), mais
+il en est un cas : le potager « recrée sa biomasse chaque année par des annuelles » (schéma, `succession_ligne`). Ce que
+demanderait un `chantier-plan-de-culture.md` : **composer la succession d'une parcelle « potager »** (aujourd'hui sans
+page), un **calendrier de plantation** tiré du plan de culture de Lopez (semis, repiquage, dates transposables en
+Haute-Vienne), et les **associations d'une même planche** (Weinrich). *Préalable levé le 2026-09-20* : le porteur a décidé d'**importer** les trois
+tables `associations-*.csv` (fait, `contenu/associations/`) et de **proposer le placement des plantes de production selon
+les associations** — la suite est dans `chantier-associations.md`, dont la Phase 5 (la succession : préculture et postculture)
+se joint à ce chantier.
+
 ## Phase 3 — Le stade du terrain : d'où l'on part
 
 *Décidé (5), les règles qui en découlent se consolident avec la formation.*
@@ -371,7 +441,8 @@ sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Co
 - **Le calendrier de perturbation** (`conception-calendrier.php`) : sous chaque saison, **les fenêtres du
   corpus** comme repères, à lire avec l'état des bourgeons et le décalage local de la reprise ; **la première
   perturbation en juin**, puis « quand il y a de quoi couper » ; par plante, les exemples de fréquence de la
-  formation. Le calendrier reste saisi par la personne ; il est **proposé**, non imposé.
+  formation. Le calendrier reste saisi par la personne ; il est **proposé**, non imposé. Pour un **potager**, le calendrier
+  de plantation viendra du plan de culture de Lopez (décision 8), dans le chantier dédié.
 - **L'eau de la perturbation** (`conception-materiel-et-eau.php`) : une ligne qui **prévoit** de quoi arroser
   aux dates de perturbation, selon `ressource_eau` (sans eau : le conseil RNA existe déjà) — **sans chiffre
   inventé** : le corpus ne donne pas de dose pour la perturbation. Et la **boucle** que 4-6 décrit (plus de
@@ -394,6 +465,9 @@ sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Co
 | 9 | Ce qui compte dans la préparation du sol | Décision 6 : la préparation couvre le sol et la plantation dense dans la période ; repères du corpus affichés | Ce que le porteur juge déterminant, à lire dans ce qu'il note |
 | 10 | À partir de quelle densité une plantation est-elle « dense » ? | Principes : « plante deux fois plus » ; 10 cm² de vide = un désert | Un repère chiffré, par itinéraire |
 | 11 | Étalement acceptable de la campagne | Environ six mois, de fin d'automne au printemps (corpus) ; point zéro unique | Le repère exact selon les végétaux et le climat |
+| 12 | Fréquence du désherbage | Sources divergentes : Théry (disparaît presque), Faraj (critique 3-4 ans), Crawford (tournée toutes les 3-4 semaines, puis sélectif) | Un repère par itinéraire |
+| 13 | Associations sur une même planche | Importées le 2026-09-20 (`contenu/associations/`) ; lecture par `src/Associations.php` | Le modèle de placement — voir `chantier-associations.md` |
+| 14 | Plan de culture d'un potager | Lopez (Haute-Vienne), fiche au corpus ; `succession_ligne` au schéma | Un chantier dédié ; aucune page ne compose la succession |
 
 ## Documentation, à chaque phase
 
