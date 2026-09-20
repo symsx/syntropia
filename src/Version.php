@@ -37,9 +37,10 @@ final class Version
      * table facultative, un fichier sans elle se charge, ses constats étant simplement absents). 4 :
      * `parcelle.fin_plantation`, la fin de la campagne de plantation (colonne facultative : la fenêtre ne se referme pas). 5 :
      * `constat.adventices`, des adventices reviennent-elles ? (colonne facultative, idem). 6 :
-     * `succession_ligne.planche`, la planche où une culture du potager est placée (colonne facultative, idem).
+     * `succession_ligne.planche`, la planche où une culture du potager est placée (colonne facultative, idem). 7 :
+     * `succession_ligne.date_semis`, le semis à l'abri avant le repiquage (colonne facultative, idem).
      */
-    public const SCHEMA = 6;
+    public const SCHEMA = 7;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

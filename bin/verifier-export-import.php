@@ -110,7 +110,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
     $ligne->execute([$p1, 2, 'haute', 'Noyer', 'multiplication', 8, 4, json_encode(['emplacement' => 'centre', 'fonctions' => [],
         'categorie' => 'production', 'couleur' => 'rouge', 'debut' => 4, 'fin' => 20, 'retrait' => 12,
         'production' => ['texte' => 'Noix', 'priorite' => 'principale']], JSON_UNESCAPED_UNICODE), 'rouge', 'production_principale']);
-    $pdo->prepare("INSERT INTO succession_ligne (parcelle_id, espece, planche, strate, date_semis_repiquage) VALUES (?, 'Carotte', 2, 'basse', '2026-04-01')")->execute([$p2]);
+    $pdo->prepare("INSERT INTO succession_ligne (parcelle_id, espece, planche, strate, date_semis, date_semis_repiquage) VALUES (?, 'Carotte', 2, 'basse', '2026-03-10', '2026-04-01')")->execute([$p2]);
     $pdo->prepare("INSERT INTO releve_sol (parcelle_id, `date`, point, temoin, infiltration_mm_h, etat_humidite, jours_depuis_pluie, saisi_par)
                    VALUES (?, '2026-09-10', 'Point 1', 0, 15.5, 'ressuyé', 3, ?)")->execute([$p1, $porteur]);
     $pdo->prepare("INSERT INTO intervention (parcelle_id, `date`, type, duree_h, premiere_fois, saisi_par) VALUES (?, '2026-09-11', 'taille', 2.5, 1, ?)")

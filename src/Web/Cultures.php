@@ -121,10 +121,16 @@ final class Cultures
             }
             return $valeur;
         };
-        $semis = $date('date_semis_repiquage', 'La date de semis ou de repiquage');
+        $semisAbri = $date('date_semis', 'La date de semis à l’abri');
+        $semis = $date('date_semis_repiquage', 'La date de mise en place');
         $recolte = $date('date_recolte', 'La date de récolte');
-        if ($semis !== null && $recolte !== null && $recolte < $semis) {
-            $erreurs['date_recolte'] = 'La récolte ne peut pas précéder le semis.';
+        if ($semisAbri !== null && $semis !== null && $semis < $semisAbri) {
+            $erreurs['date_semis_repiquage'] = 'La mise en place ne peut pas précéder le semis à l’abri.';
+        }
+        // La récolte ne précède ni la mise en place, ni — à défaut — le semis.
+        $depart = $semis ?? $semisAbri;
+        if ($depart !== null && $recolte !== null && $recolte < $depart) {
+            $erreurs['date_recolte'] = 'La récolte ne peut pas précéder le semis ni la mise en place.';
         }
 
         $notes = trim((string) ($v['notes'] ?? ''));
@@ -137,6 +143,7 @@ final class Cultures
             'planche' => $planche,
             'strate' => $strate !== '' && isset(self::STRATES[$strate]) ? $strate : null,
             'espacement_m' => $espacement,
+            'date_semis' => $semisAbri,
             'date_semis_repiquage' => $semis,
             'date_recolte' => $recolte,
             'notes' => $notes !== '' ? $notes : null,

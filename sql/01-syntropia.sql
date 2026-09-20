@@ -682,6 +682,10 @@ CREATE TABLE IF NOT EXISTS `succession_ligne` (
   `strate`        ENUM('emergente','haute','moyenne','basse') NULL,
   `emplacement`   VARCHAR(120) NULL,
   `espacement_m`  DECIMAL(5,2) NULL,
+  -- Lopez distingue le SEMIS (en pépinière, en godets, à l'abri) du REPIQUAGE : « semis fin avril, repiquage mi-juin ».
+  -- `date_semis` est le premier, quand la culture est repiquée ; `date_semis_repiquage` est la MISE EN PLACE — le semis
+  -- en place, ou le repiquage : le moment où la culture occupe la planche (schéma 7).
+  `date_semis`    DATE NULL,
   `date_semis_repiquage` DATE NULL,
   `date_perturbation`    DATE NULL,
   `date_recolte`         DATE NULL,
@@ -1025,6 +1029,19 @@ EXECUTE ajout_planche;
 DEALLOCATE PREPARE ajout_planche;
 
 
+-- Rattrapage d'une table `succession_ligne` créée avant `date_semis` — schéma 7. Même forme que ci-dessus.
+SET @semis_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = DATABASE()
+                        AND TABLE_NAME = 'succession_ligne'
+                        AND COLUMN_NAME = 'date_semis');
+SET @ajout_semis = IF(@semis_existe = 0,
+                      'ALTER TABLE `succession_ligne` ADD COLUMN `date_semis` DATE NULL AFTER `espacement_m`',
+                      'DO 0');
+PREPARE ajout_semis FROM @ajout_semis;
+EXECUTE ajout_semis;
+DEALLOCATE PREPARE ajout_semis;
+
+
 -- ---------------------------------------------------------------------
 -- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
 --
@@ -1046,6 +1063,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 3 = la table `constat` (le constat du saut du chat — table facultative, la fenêtre d'import ne se referme pas) ;
 -- 4 = `parcelle.fin_plantation` (la fin de la campagne de plantation — colonne facultative, idem) ;
 -- 5 = `constat.adventices` (des adventices reviennent-elles ? — colonne facultative, idem) ;
--- 6 = `succession_ligne.planche` (la planche où une culture du potager est placée — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '6')
+-- 6 = `succession_ligne.planche` (la planche où une culture du potager est placée — colonne facultative, idem) ;
+-- 7 = `succession_ligne.date_semis` (le semis à l'abri, avant le repiquage — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '7')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

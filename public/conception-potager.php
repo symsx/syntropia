@@ -21,6 +21,7 @@ require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Associations;
+use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
 use Syntropia\PlanDeCulture;
 use Syntropia\Role;
@@ -193,7 +194,7 @@ if ($reste !== []) {
 }
 
 // Le formulaire.
-$f = ['espece' => '', 'planche' => '', 'strate' => '', 'espacement_m' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
+$f = ['espece' => '', 'planche' => '', 'strate' => '', 'espacement_m' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($saisie[$k] ?? '');
@@ -207,6 +208,59 @@ if ($saisie !== null) {
 }
 $ficheEditee = $f['espece'] !== '' ? Associations::fiche($f['espece']) : null;
 $connues = array_map(static fn (array $l): string => (string) $l['nom'], array_values(Associations::table('potager')));
+// Les repères de Lopez : dix-sept cultures d'automne et d'hiver, en édition seulement (le nom est alors enregistré).
+foreach (CalendrierLopez::table() as $l) {
+    $connues[] = $l['culture'];
+}
+$connues = array_values(array_unique($connues));
+$repere = $f['espece'] !== '' && $editionId > 0 ? CalendrierLopez::pour($f['espece']) : null;
+$indicatives = $repere !== null ? CalendrierLopez::datesIndicatives($repere, new DateTimeImmutable('today')) : null;
+
+// Le calendrier : une année, des mois, et pour chaque culture datée ce qui s'y passe (S semis à l'abri, P mise en place, R récolte).
+$vue = ($_GET['vue'] ?? '') === 'calendrier' ? 'calendrier' : 'planches';
+$datees = array_values(array_filter($cultures, static fn (array $c): bool => $c['date_semis'] !== null || $c['date_semis_repiquage'] !== null || $c['date_recolte'] !== null));
+$annee = isset($_GET['annee']) && ctype_digit((string) $_GET['annee']) && (int) $_GET['annee'] >= 2000 && (int) $_GET['annee'] <= 2100 ? (int) $_GET['annee'] : null;
+if ($annee === null) {
+    $toutes = [];
+    foreach ($datees as $c) {
+        foreach (['date_semis', 'date_semis_repiquage', 'date_recolte'] as $k) {
+            if ($c[$k] !== null) {
+                $toutes[] = (string) $c[$k];
+            }
+        }
+    }
+    $annee = $toutes !== [] ? (int) substr(min($toutes), 0, 4) : (int) date('Y');
+}
+$lignesCal = [];
+$horsAnnee = 0;
+foreach ($datees as $c) {
+    $S = $c['date_semis'] !== null ? (string) $c['date_semis'] : null;
+    $P = $c['date_semis_repiquage'] !== null ? (string) $c['date_semis_repiquage'] : null;
+    $R = $c['date_recolte'] !== null ? (string) $c['date_recolte'] : null;
+    $departs = array_filter([$S, $P]);
+    $debut = $departs !== [] ? min($departs) : $R;
+    $fin = $R ?? max($departs);
+    if ((int) substr($fin, 0, 4) < $annee || (int) substr($debut, 0, 4) > $annee) {
+        $horsAnnee++;
+        continue;
+    }
+    $mise = $P ?? $S;                       // là où la culture commence d'occuper la planche
+    $moisDeb = $mise !== null ? substr($mise, 0, 7) : null;
+    $moisFin = $R !== null ? substr($R, 0, 7) : $moisDeb;
+    $mois = [];
+    for ($m = 1; $m <= 12; $m++) {
+        $ym = sprintf('%04d-%02d', $annee, $m);
+        $mois[$m] = ['S' => $S !== null && substr($S, 0, 7) === $ym, 'P' => $P !== null && substr($P, 0, 7) === $ym,
+            'R' => $R !== null && substr($R, 0, 7) === $ym,
+            'occ' => $moisDeb !== null && $ym >= $moisDeb && $ym <= $moisFin];
+    }
+    $lignesCal[] = ['espece' => (string) $c['espece'], 'planche' => $c['planche'], 'debut' => $debut, 'mois' => $mois,
+        'titre' => implode(' · ', array_filter([$S !== null ? 'semis ' . $dateFr($S) : '', $P !== null ? 'en place ' . $dateFr($P) : '', $R !== null ? 'récolte ' . $dateFr($R) : '']))];
+}
+usort($lignesCal, static fn (array $a, array $b): int => [$a['planche'] ?? PHP_INT_MAX, $a['debut'], mb_strtolower($a['espece'])] <=> [$b['planche'] ?? PHP_INT_MAX, $b['debut'], mb_strtolower($b['espece'])]);
+$sansDate = count($cultures) - count($datees);
+$lienCal = static fn (int $a): string => $retour . '&vue=calendrier&annee=' . $a;
+$initiales12 = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
 $nomAffiche = $auth->nomAffiche() ?? '';
 $initiales = '';
@@ -256,6 +310,27 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-cultures a{ color:var(--ink); text-decoration:none; font-weight:600; }
   .pt-cultures a:hover{ text-decoration:underline; }
   .pt-cultures small{ color:var(--muted); font-size:.85em; }
+  .pt-onglets{ display:flex; gap:.3rem; border-bottom:1px solid var(--line); }
+  .pt-onglet{ padding:.3rem 1rem; border-radius:.5rem .5rem 0 0; font:500 .84rem var(--titre); color:var(--muted); text-decoration:none; border:1px solid transparent; border-bottom:0; }
+  .pt-onglet.actif{ color:var(--accent-titre); background:var(--accent-fond); border-color:var(--line); font-weight:600; }
+  .pt-vue{ display:flex; flex-direction:column; gap:.5rem; min-height:0; }
+  .pt-vue[hidden]{ display:none; }
+  .pt-annees{ display:flex; align-items:baseline; gap:.5rem; flex-wrap:wrap; font:500 .9rem var(--titre); color:var(--ink); }
+  .pt-annees a{ color:var(--accent-titre); text-decoration:none; font-weight:600; padding:0 .3rem; }
+  .pt-legende{ margin-left:auto; font:400 .74rem var(--texte); color:var(--muted); }
+  .pt-note-cal{ margin:0; font:400 .74rem/1.4 var(--texte); color:var(--muted); }
+  .pt-cal{ width:100%; border-collapse:collapse; font:400 .84em var(--texte); color:var(--ink); table-layout:fixed; }
+  .pt-cal th{ font:600 .78em var(--titre); color:var(--muted); padding:.2em .1em; text-align:center; border-bottom:1px solid var(--line); }
+  .pt-cal th:first-child{ text-align:left; width:30%; }
+  .pt-cal td{ text-align:center; padding:.22em .05em; border-bottom:1px solid var(--line); font:600 .78em var(--titre); color:var(--bouton-encre); }
+  .pt-cal td.occ{ background:var(--accent); }
+  .pt-cal td.nom{ text-align:left; background:transparent; color:var(--ink); font:400 1em var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:.2em; }
+  .pt-cal td.nom small{ color:var(--muted); font-size:.8em; }
+  @media (max-width:40rem){ .pt-legende{ display:none; } .pt-cal th:first-child{ width:34%; } }
+  @media (max-height:38rem){ .pt-note-cal{ display:none; } }
+  .pt-repere{ margin:.2rem 0 .7rem; padding:.45rem .6rem; border-radius:.45rem; border:1px dashed var(--line); font:400 .78rem/1.4 var(--texte); color:var(--ink); }
+  .pt-repere small{ color:var(--muted); }
+  .pt-repere button{ margin-top:.3rem; }
   .pt-vide{ margin:0; font:400 .82em/1.35 var(--texte); color:var(--muted); }
   .pt-cultures .pt-propose{ color:var(--accent-titre); font-style:italic; }
   .pt-carte:has(.pt-propose){ border-color:var(--accent); }
@@ -403,6 +478,11 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <p class="pt-annonce">Une planche porte plusieurs cultures : c'est le principe de l'association. Chaque planche dit ce que l'on sait de ses voisinages — des ordres de conduite, non des preuves.</p>
 <?php endif; ?>
 
+        <div class="pt-onglets" role="tablist">
+          <a class="pt-onglet<?= $vue === 'planches' ? ' actif' : '' ?>" href="<?= $h($retour) ?>" role="tab">Les planches</a>
+          <a class="pt-onglet<?= $vue === 'calendrier' ? ' actif' : '' ?>" href="<?= $h($lienCal($annee)) ?>" role="tab">Le calendrier</a>
+        </div>
+        <section class="pt-vue"<?= $vue === 'planches' ? '' : ' hidden' ?>>
 <?php if ($cartes === []): ?>
         <p class="pt-vide-page">Aucune culture n'est encore placée sur cette parcelle.
 <?php if ($peutEcrire): ?>
@@ -424,8 +504,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <ul class="pt-cultures">
 <?php foreach ($c['cultures'] as $k): ?>
                 <li><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>&amp;culture=<?= (int) $k['id'] ?>" title="Ouvrir pour corriger"><?= $h($k['espece']) ?></a><?php else: ?><b><?= $h($k['espece']) ?></b><?php endif; ?>
-<?php if ($k['strate'] !== null || $k['date_semis_repiquage'] !== null): ?>
-                  <small><?= $h(implode(' · ', array_filter([$k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis_repiquage'] !== null ? 'semis ' . $dateFr((string) $k['date_semis_repiquage']) : '']))) ?></small>
+<?php if ($k['strate'] !== null || $k['date_semis'] !== null || $k['date_semis_repiquage'] !== null): ?>
+                  <small><?= $h(implode(' · ', array_filter([$k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis'] !== null ? 'semis ' . $dateFr((string) $k['date_semis']) : '', $k['date_semis_repiquage'] !== null ? 'en place ' . $dateFr((string) $k['date_semis_repiquage']) : '']))) ?></small>
 <?php endif; ?></li>
 <?php endforeach; ?>
 <?php foreach ($c['proposees'] as $x): ?>
@@ -453,10 +533,42 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php endforeach; ?>
           </div>
         </div>
-        <div class="pt-page-nav" id="pt-nav">
-          <button type="button" id="pt-prec">← Précédentes</button><span id="pt-page"></span><button type="button" id="pt-suiv">Suivantes →</button>
+        <div class="pt-page-nav" id="pt-nav-planches">
+          <button type="button" id="pt-prec-planches">← Précédentes</button><span id="pt-page-planches"></span><button type="button" id="pt-suiv-planches">Suivantes →</button>
         </div>
 <?php endif; ?>
+        </section>
+
+        <section class="pt-vue"<?= $vue === 'calendrier' ? '' : ' hidden' ?>>
+          <div class="pt-annees">
+            <a href="<?= $h($lienCal($annee - 1)) ?>" aria-label="Année précédente">←</a> <b><?= $annee ?></b> <a href="<?= $h($lienCal($annee + 1)) ?>" aria-label="Année suivante">→</a>
+            <span class="pt-legende"><b>S</b> semis à l'abri · <b>P</b> mise en place (semis en place ou repiquage) · <b>R</b> récolte</span>
+          </div>
+<?php if ($lignesCal === []): ?>
+          <p class="pt-vide-page"><?= $datees === [] ? 'Aucune culture n’est encore datée. Notez un semis, une mise en place ou une récolte pour la voir ici.' : 'Aucune culture n’a de date en ' . $annee . '.' ?></p>
+<?php else: ?>
+          <div class="pt-zone" id="pt-cal-zone">
+            <table class="pt-cal">
+              <thead><tr><th>Culture</th><?php foreach ($initiales12 as $i => $lettre): ?><th title="<?= $h(['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][$i]) ?>"><?= $lettre ?></th><?php endforeach; ?></tr></thead>
+              <tbody>
+<?php foreach ($lignesCal as $l): ?>
+                <tr class="pt-ligne" title="<?= $h($l['titre']) ?>">
+                  <td class="nom"><?= $l['planche'] !== null ? '<small>P' . (int) $l['planche'] . '</small> ' : '' ?><?= $h($l['espece']) ?></td>
+<?php foreach ($l['mois'] as $c): $lettres = ($c['S'] ? 'S' : '') . ($c['P'] ? 'P' : '') . ($c['R'] ? 'R' : ''); ?>
+                  <td class="<?= $c['occ'] || $lettres !== '' ? 'occ' : '' ?>"><?= $h($lettres) ?></td>
+<?php endforeach; ?>
+                </tr>
+<?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+          <div class="pt-page-nav" id="pt-nav-cal">
+            <button type="button" id="pt-prec-cal">← Précédentes</button><span id="pt-page-cal"></span><button type="button" id="pt-suiv-cal">Suivantes →</button>
+          </div>
+<?php endif; ?>
+          <p class="pt-note-cal"><?= $horsAnnee > 0 ? $horsAnnee . ' culture' . ($horsAnnee > 1 ? 's' : '') . ' datée' . ($horsAnnee > 1 ? 's' : '') . ' hors de ' . $annee . '. ' : '' ?><?= $sansDate > 0 ? $sansDate . ' sans date.' : '' ?>
+            Les repères de Lopez (Haute-Vienne) se lisent en ouvrant une culture ; son tableau ne couvre que dix-sept cultures d'automne et d'hiver.</p>
+        </section>
       </div>
 <?php endif; ?>
     </main>
@@ -526,6 +638,17 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
           <p class="pt-note">Cette culture n'est pas dans les tables : <b>pas de voisinage connu</b> — ce qui ne veut pas dire neutre.</p>
 <?php endif; ?>
+<?php if ($repere !== null): ?>
+          <div class="pt-repere"><b>Repère de Lopez</b> <small>[maraîcher en Haute-Vienne — dates lues sans transposition]</small><br>
+            <?= $h($repere['culture']) ?> : semis <b><?= $h($repere['semis'] !== '' ? $repere['semis'] : '—') ?></b> · repiquage <b><?= $h($repere['repiquage'] !== '' ? $repere['repiquage'] : '—') ?></b><?= $repere['a_verifier'] === 'repiquage' ? ' <small>(la source signale ce repiquage « à vérifier » : rien n’est proposé)</small>' : '' ?><br>
+            <small>Des dates en mots, donc indicatives — le milieu de la fenêtre. « Un point de départ à remplacer par sa propre mesure », dit le livre.</small><br>
+<?php if ($indicatives['semis'] !== null || $indicatives['repiquage'] !== null): ?>
+            <button type="button" class="pt-bouton pt-bouton--calme" id="pt-reprendre" data-semis="<?= $h($indicatives['semis'] ?? '') ?>" data-repiquage="<?= $h($indicatives['repiquage'] ?? '') ?>">Reprendre ces dates<?= $indicatives['semis'] !== null ? ' (' . $h($dateFr($indicatives['semis'])) . ($indicatives['repiquage'] !== null ? ' → ' . $h($dateFr($indicatives['repiquage'])) : '') . ')' : '' ?></button>
+<?php endif; ?>
+          </div>
+<?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
+          <p class="pt-note">Pas de repère de Lopez pour cette culture : son tableau ne couvre que dix-sept cultures d'automne et d'hiver. Rien n'est proposé — la date est à vous.</p>
+<?php endif; ?>
           <div class="pt-deux">
             <label class="pt-champ">La planche
               <select name="planche">
@@ -545,13 +668,16 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             </label>
           </div>
           <div class="pt-deux">
-            <label class="pt-champ">Semis ou repiquage <small>prévu ou fait</small>
+            <label class="pt-champ">Semis à l'abri <small>pépinière, godets — prévu ou fait</small>
+              <input type="date" name="date_semis" value="<?= $h($f['date_semis']) ?>">
+            </label>
+            <label class="pt-champ">Mise en place <small>semis en place, ou repiquage</small>
               <input type="date" name="date_semis_repiquage" value="<?= $h($f['date_semis_repiquage']) ?>">
             </label>
-            <label class="pt-champ">Récolte <small>prévue</small>
-              <input type="date" name="date_recolte" value="<?= $h($f['date_recolte']) ?>">
-            </label>
           </div>
+          <label class="pt-champ">Récolte <small>prévue</small>
+            <input type="date" name="date_recolte" value="<?= $h($f['date_recolte']) ?>">
+          </label>
           <label class="pt-champ">Espacement <small>mètres, facultatif</small>
             <input type="number" name="espacement_m" min="0.01" max="20" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_m']) ?>">
           </label>
@@ -592,6 +718,9 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
          Savoir ce qu'il ne faut pas associer est une <strong>information de conception, pas une interdiction</strong> : rien n'est refusé.</p>
       <p><strong>Des ordres de conduite, non des preuves.</strong> Une relation bénéfique peut ne pas se vérifier partout ; elle s'éprouve chez soi — un témoin, à côté, sert à cela. Le contexte de la source est l'Allemagne
          moyenne (Jura souabe, Hesse), et son itinéraire — un sol ameubli chaque printemps — n'est pas celui de l'atelier : ce qui se transporte, ce sont les couples, jamais la conduite.</p>
+      <p><strong>Le calendrier.</strong> Deux dates disent la vie d'une culture : le <strong>semis à l'abri</strong> (en pépinière, en godets) et la <strong>mise en place</strong> — le semis en place, ou le repiquage —, puis la récolte.
+         Les repères viennent de Yann Lopez, maraîcher en Haute-Vienne : ses dates se lisent sans transposition, mais son tableau ne couvre que <strong>dix-sept cultures d'automne et d'hiver</strong> (choux, rutabaga, navet, épinard, mesclun…),
+         en dates de la forme « fin avril », « mi à fin juillet ». Ce sont donc des dates <strong>indicatives</strong> — le milieu de la fenêtre —, « un point de départ à remplacer par sa propre mesure ». Une culture qui n'y figure pas n'a pas de repère : la date est à vous.</p>
       <p><strong>Le placement proposé.</strong> Il répartit les cultures non placées sur les planches du plan : il regroupe ce qui s'entend bien, écarte ce qui s'entend mal, et ne bouge jamais une culture déjà placée.
          S'il ne trouve aucune planche sans voisin à éviter, il laisse la culture non placée et le dit — à vous d'ajouter une planche ou d'en décider autrement. Une proposition n'est qu'une proposition : vous l'acceptez, en tout ou en partie, ou vous la laissez.</p>
       <p><strong>Une culture absente des tables n'est pas neutre</strong> : « pas de voisinage connu » ne veut pas dire « sans effet ». Les tables ne sont pas non plus symétriques — une relation est connue dès qu'une des deux plantes la cite.</p>
@@ -623,40 +752,53 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
       if (a && tirette) a.addEventListener('click', function(ev){ ev.preventDefault(); tirette.click(); });
     });
 
-    /* Le bureau ne défile jamais : les cartes se réduisent, puis se paginent en montrant autant de planches que la place le permet. */
+    var reprendre = document.getElementById('pt-reprendre');
+    if (reprendre) reprendre.addEventListener('click', function(){
+      var f = reprendre.closest('form') || document.querySelector('.pt-form form');
+      if (reprendre.dataset.semis) f.querySelector('[name=date_semis]').value = reprendre.dataset.semis;
+      if (reprendre.dataset.repiquage) f.querySelector('[name=date_semis_repiquage]').value = reprendre.dataset.repiquage;
+    });
+
+    /* Le bureau ne défile jamais : chaque vue se réduit, puis se pagine en montrant autant d'éléments que la place le permet. */
     var centre = document.querySelector('.pt-centre');
-    var cartes = Array.prototype.slice.call(document.querySelectorAll('.pt-item'));
-    var page = 0, parPage = cartes.length;
     function deborde(){ return centre.scrollHeight > centre.clientHeight + 1; }
-    function afficher(){
-      cartes.forEach(function(l, i){ l.style.display = (i >= page * parPage && i < (page + 1) * parPage) ? '' : 'none'; });
-      var nav = document.getElementById('pt-nav');
-      if (!nav) return;
-      var pages = Math.max(1, Math.ceil(cartes.length / parPage));
-      nav.classList.toggle('actif', pages > 1);
-      document.getElementById('pt-page').textContent = 'Page ' + (page + 1) + ' sur ' + pages;
-      document.getElementById('pt-prec').disabled = page === 0;
-      document.getElementById('pt-suiv').disabled = page >= pages - 1;
-    }
-    function ajuster(){
-      var zone = document.getElementById('pt-zone');
-      if (!zone || !centre || !zone.offsetParent || cartes.length === 0) return;
-      var t = 15;
-      zone.style.fontSize = t + 'px';
-      page = 0; parPage = cartes.length; afficher();
-      while (deborde() && t > 12) { t -= 0.5; zone.style.fontSize = t + 'px'; }
-      if (deborde()) {
-        var n = cartes.length;
-        while (n > 1) { n--; parPage = n; afficher(); if (!deborde()) break; }
+    function pagineur(zoneId, itemsSel, suffixe){
+      var items = Array.prototype.slice.call(document.querySelectorAll(itemsSel));
+      var page = 0, parPage = items.length;
+      function afficher(){
+        items.forEach(function(l, i){ l.style.display = (i >= page * parPage && i < (page + 1) * parPage) ? '' : 'none'; });
+        var nav = document.getElementById('pt-nav-' + suffixe);
+        if (!nav) return;
+        var pages = Math.max(1, Math.ceil(items.length / parPage));
+        nav.classList.toggle('actif', pages > 1);
+        document.getElementById('pt-page-' + suffixe).textContent = 'Page ' + (page + 1) + ' sur ' + pages;
+        document.getElementById('pt-prec-' + suffixe).disabled = page === 0;
+        document.getElementById('pt-suiv-' + suffixe).disabled = page >= pages - 1;
       }
+      function ajuster(){
+        var zone = document.getElementById(zoneId);
+        if (!zone || !centre || !zone.offsetParent || items.length === 0) return;
+        var t = 15;
+        zone.style.fontSize = t + 'px';
+        page = 0; parPage = items.length; afficher();
+        while (deborde() && t > 12) { t -= 0.5; zone.style.fontSize = t + 'px'; }
+        if (deborde()) {
+          var n = items.length;
+          while (n > 1) { n--; parPage = n; afficher(); if (!deborde()) break; }
+        }
+      }
+      var prec = document.getElementById('pt-prec-' + suffixe), suiv = document.getElementById('pt-suiv-' + suffixe);
+      if (prec) prec.addEventListener('click', function(){ page = Math.max(0, page - 1); afficher(); });
+      if (suiv) suiv.addEventListener('click', function(){ page++; afficher(); });
+      return ajuster;
     }
-    var prec = document.getElementById('pt-prec'), suiv = document.getElementById('pt-suiv');
-    if (prec) prec.addEventListener('click', function(){ page = Math.max(0, page - 1); afficher(); });
-    if (suiv) suiv.addEventListener('click', function(){ page++; afficher(); });
+    var aPlanches = pagineur('pt-zone', '.pt-item', 'planches');
+    var aCal = pagineur('pt-cal-zone', '.pt-ligne', 'cal');
+    function tout(){ aPlanches(); aCal(); }
     if (centre) {
-      ajuster();
-      window.addEventListener('resize', ajuster);
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+      tout();
+      window.addEventListener('resize', tout);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(tout);
     }
   })();
 </script>
