@@ -15,6 +15,8 @@ la portabilité MariaDB, peupler des simulations.
     python3 bin/dev.py serve      sert seulement
     python3 bin/dev.py etat       diagnostic
     python3 bin/dev.py compte     créer ou modifier un compte — voir bin/compte.php
+    python3 bin/dev.py verifier-export [id…]
+                                  l'aller-retour export → import → export — voir bin/verifier-export-import.php
 
 Aucune dépendance : le client `mysql` est appelé en sous-processus,
 comme le serait `php`. La configuration vient de `config/local.env`,
@@ -235,6 +237,17 @@ def compte(cfg, arguments):
     return True
 
 
+def verifier_export(cfg, arguments):
+    """L'aller-retour d'un projet — à rejouer à chaque changement de schéma. Passe par ici, jamais par
+    `php bin/verifier-export-import.php` : un appel direct retomberait sur `config/base.php`, donc la
+    production (le script refuse de tourner hors de ce poste, mais ne comptez pas sur ce seul garde-fou)."""
+    if not verifier_php() or not verifier_base(cfg):
+        return False
+    resultat = subprocess.run(["php", str(RACINE / "bin" / "verifier-export-import.php"), *arguments],
+                              env=env_php(cfg))
+    return resultat.returncode == 0
+
+
 # ------------------------------------------------------------------ main
 
 def main():
@@ -249,6 +262,8 @@ def main():
         return 0 if serve(cfg) else 1
     if action == "compte":
         return 0 if compte(cfg, sys.argv[2:]) else 1
+    if action == "verifier-export":
+        return 0 if verifier_export(cfg, sys.argv[2:]) else 1
     if action == "tout":
         if not verifier_php():
             return 1
