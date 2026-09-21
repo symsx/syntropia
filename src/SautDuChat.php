@@ -26,6 +26,9 @@ final class SautDuChat
     ];
 
     /** Les trois états d'une condition. */
+    /** Le `role` d'une culture de potager qui porte la biomasse — celle qu'on taille (`succession_ligne.role`). */
+    public const ROLE_BIOMASSE = 'biomasse';
+
     public const OK = 'ok';
     public const ATTENTION = 'attention';
     public const VIDE = 'vide';
@@ -83,10 +86,11 @@ final class SautDuChat
     }
 
     /**
-     * Les noms des plantes de biomasse d'un scénario : celles qui portent la fonction « biomasse » ou
-     * « relancer par la perturbation ».
+     * Les noms des plantes de biomasse : celles d'un scénario qui portent la fonction « biomasse » ou
+     * « relancer par la perturbation », et celles d'un potager qu'on a marquées telles (`role` = `biomasse`,
+     * sur une culture de `succession_ligne` : le maïs, le tournesol d'une tranchée centrale).
      *
-     * @param list<array<string, mixed>> $lignes les lignes de `scenario_ligne`
+     * @param list<array<string, mixed>> $lignes les lignes de `scenario_ligne`, et/ou de `succession_ligne`
      * @return array<string, string> nom en minuscules → nom
      */
     public static function plantesDeBiomasse(array $lignes): array
@@ -94,7 +98,8 @@ final class SautDuChat
         $plantes = [];
         foreach ($lignes as $ligne) {
             $fonctions = Scenario::details($ligne)['fonctions'] ?? [];
-            if (is_array($fonctions) && (in_array('perturbation', $fonctions, true) || in_array('biomasse', $fonctions, true))) {
+            if (($ligne['role'] ?? null) === self::ROLE_BIOMASSE
+                || (is_array($fonctions) && (in_array('perturbation', $fonctions, true) || in_array('biomasse', $fonctions, true)))) {
                 $nom = trim((string) ($ligne['espece'] ?? ''));
                 if ($nom !== '') {
                     $plantes[mb_strtolower($nom)] = $nom;
@@ -136,14 +141,17 @@ final class SautDuChat
      * @param string|null $fin la fin de la campagne (`Y-m-d`)
      * @param array<string, string> $preparation ce que la Réalisation a noté : `technique`, `realisee`
      * @param string|null $adventices la dernière réponse notée à « des adventices reviennent-elles ? » (`non`, `oui`)
+     * @param list<array<string, mixed>> $cultures les cultures d'un potager (`succession_ligne`) — leurs plantes de biomasse comptent
+     * @param bool $potager la parcelle est un potager : le message dit où marquer une plante de biomasse
      * @return list<array{cle: string, titre: string, etat: string, detail: string, source: string}>
      */
     public static function conditions(array $interventions, array $lignes, \DateTimeImmutable $aujourdhui,
-        ?string $debut = null, ?string $fin = null, array $preparation = [], ?string $adventices = null): array
+        ?string $debut = null, ?string $fin = null, array $preparation = [], ?string $adventices = null,
+        array $cultures = [], bool $potager = false): array
     {
         $perturbations = array_values(array_filter($interventions, static fn (array $i): bool => Perturbation::perturbe((string) ($i['type'] ?? ''))));
         $derniere = $perturbations[0] ?? null;
-        $biomasse = self::plantesDeBiomasse($lignes);
+        $biomasse = self::plantesDeBiomasse($lignes) + self::plantesDeBiomasse($cultures);
         $demarrage = self::plantesDeDemarrage($lignes);
         $c = [];
 
@@ -218,10 +226,12 @@ final class SautDuChat
         // 2. De quoi couper : des plantes de biomasse au scénario.
         $c[] = $biomasse === []
             ? ['cle' => 'de_quoi_couper', 'titre' => 'De quoi couper', 'etat' => self::VIDE,
-                'detail' => 'Aucune plante de biomasse dans le scénario de cette parcelle. Sans masse suffisante à tailler, pas de perturbation efficace : le framboisier en bordure vivante est écarté pour cette raison.',
+                'detail' => ($potager
+                    ? 'Aucune culture de ce potager n’est marquée « plante de biomasse » (le maïs ou le tournesol d’une tranchée centrale, par exemple : on les ouvre dans le plan de culture pour les marquer).'
+                    : 'Aucune plante de biomasse dans le scénario de cette parcelle.') . ' Sans masse suffisante à tailler, pas de perturbation efficace : le framboisier en bordure vivante est écarté pour cette raison.',
                 'source' => 'Théry, ch. 15']
             : ['cle' => 'de_quoi_couper', 'titre' => 'De quoi couper', 'etat' => self::OK,
-                'detail' => count($biomasse) . ' plante' . (count($biomasse) > 1 ? 's' : '') . ' de biomasse au scénario : ' . implode(', ', array_slice(array_values($biomasse), 0, 4)) . (count($biomasse) > 4 ? '…' : '') . '. Combien de masse suffit : pas encore de repère.',
+                'detail' => count($biomasse) . ' plante' . (count($biomasse) > 1 ? 's' : '') . ' de biomasse ' . ($potager ? 'au potager' : 'au scénario') . ' : ' . implode(', ', array_slice(array_values($biomasse), 0, 4)) . (count($biomasse) > 4 ? '…' : '') . '. Combien de masse suffit : pas encore de repère.',
                 'source' => 'Théry, ch. 12 et 15'];
 
         // 3. L'état des plantes à la coupe — c'est lui qui dicte le moment.

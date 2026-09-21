@@ -133,6 +133,9 @@ final class Cultures
             $erreurs['date_recolte'] = 'La récolte ne peut pas précéder le semis ni la mise en place.';
         }
 
+        // Une plante de biomasse : celle qu'on taille (le maïs, le tournesol de la tranchée centrale). Une case, un seul rôle.
+        $biomasse = in_array((string) ($v['biomasse'] ?? ''), ['1', 'on'], true);
+
         $notes = trim((string) ($v['notes'] ?? ''));
         if (mb_strlen($notes) > 2000) {
             $erreurs['notes'] = 'Les notes : 2000 caractères au plus.';
@@ -141,6 +144,7 @@ final class Cultures
         return ['valeurs' => [
             'espece' => $espece,
             'planche' => $planche,
+            'role' => $biomasse ? \Syntropia\SautDuChat::ROLE_BIOMASSE : null,
             'strate' => $strate !== '' && isset(self::STRATES[$strate]) ? $strate : null,
             'espacement_m' => $espacement,
             'date_semis' => $semisAbri,

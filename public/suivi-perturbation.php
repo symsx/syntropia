@@ -23,8 +23,9 @@ use Syntropia\Configuration;
 use Syntropia\Documentation;
 use Syntropia\Perturbation;
 use Syntropia\Role;
-use Syntropia\Scenario;
+use Syntropia\SautDuChat;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Cultures;
 use Syntropia\Web\Interventions;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Reponses;
@@ -138,17 +139,13 @@ if ($depuisNote) {
     $ouvre = true;
 }
 
-// Les plantes qu'on coupe : celles du scénario qui portent la biomasse ou la perturbation.
+// Les plantes qu'on coupe : celles du scénario qui portent la biomasse ou la perturbation, et — pour un potager —
+// les cultures marquées « plante de biomasse » dans le plan de culture.
 $plantes = [];
 if ($parcelle !== null) {
-    foreach ($parcellesService->scenario($idP) as $ligne) {
-        $fonctions = Scenario::details($ligne)['fonctions'] ?? [];
-        if (is_array($fonctions) && (in_array('perturbation', $fonctions, true) || in_array('biomasse', $fonctions, true))) {
-            $nom = trim((string) $ligne['espece']);
-            if ($nom !== '') {
-                $plantes[mb_strtolower($nom)] = $nom;
-            }
-        }
+    $plantes = SautDuChat::plantesDeBiomasse($parcellesService->scenario($idP));
+    if (($parcelle['type'] ?? '') === 'potager') {
+        $plantes += SautDuChat::plantesDeBiomasse((new Cultures())->dUneParcelle($idP));
     }
 }
 $dernieres = Perturbation::derniereParVegetal($interventions);
@@ -418,7 +415,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
         <p class="pj-note-plantes">Le temps écoulé depuis la dernière perturbation, sans seuil : la prochaine se fait quand il y a de quoi couper — et de quoi arroser si la pluie ne vient pas.</p>
 <?php elseif ($interventions === []): ?>
         <p class="pj-annonce">Perturber, ici, n'est pas un accident : c'est un geste qui relance la croissance. Notez chaque coupe — la première, en juin, puis chacune de celles qui suivent.
-          Les plantes de biomasse du scénario apparaîtront ici avec le temps écoulé depuis leur dernière coupe.</p>
+          Les plantes de biomasse (celles du scénario, ou marquées telles dans le plan de culture d'un potager) apparaîtront ici avec le temps écoulé depuis leur dernière coupe.</p>
 <?php endif; ?>
 
 <?php if ($ancienne !== []): ?>
@@ -507,7 +504,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
 
 <?php if ($plantes !== []): ?>
           <fieldset class="pj-cases">
-            <legend>Ce qui est coupé <small>les plantes de biomasse du scénario</small></legend>
+            <legend>Ce qui est coupé <small>les plantes de biomasse</small></legend>
 <?php foreach ($plantes as $nom): ?>
             <label class="pj-case"><input type="checkbox" class="case" name="especes[]" value="<?= $h($nom) ?>"<?= in_array($nom, $f['vegetaux'], true) ? ' checked' : '' ?>><?= $h($nom) ?></label>
 <?php endforeach; ?>

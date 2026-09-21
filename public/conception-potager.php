@@ -25,6 +25,7 @@ use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
 use Syntropia\PlanDeCulture;
 use Syntropia\Role;
+use Syntropia\SautDuChat;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Parcelles;
@@ -194,7 +195,7 @@ if ($reste !== []) {
 }
 
 // Le formulaire.
-$f = ['espece' => '', 'planche' => '', 'strate' => '', 'espacement_m' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
+$f = ['espece' => '', 'planche' => '', 'biomasse' => '', 'strate' => '', 'espacement_m' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($saisie[$k] ?? '');
@@ -203,6 +204,7 @@ if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($edition[$k] ?? '');
     }
+    $f['biomasse'] = ($edition['role'] ?? null) === SautDuChat::ROLE_BIOMASSE ? '1' : '';
 } elseif (isset($_GET['planche']) && ctype_digit((string) $_GET['planche'])) {
     $f['planche'] = (string) $_GET['planche'];
 }
@@ -504,8 +506,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <ul class="pt-cultures">
 <?php foreach ($c['cultures'] as $k): ?>
                 <li><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>&amp;culture=<?= (int) $k['id'] ?>" title="Ouvrir pour corriger"><?= $h($k['espece']) ?></a><?php else: ?><b><?= $h($k['espece']) ?></b><?php endif; ?>
-<?php if ($k['strate'] !== null || $k['date_semis'] !== null || $k['date_semis_repiquage'] !== null): ?>
-                  <small><?= $h(implode(' · ', array_filter([$k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis'] !== null ? 'semis ' . $dateFr((string) $k['date_semis']) : '', $k['date_semis_repiquage'] !== null ? 'en place ' . $dateFr((string) $k['date_semis_repiquage']) : '']))) ?></small>
+<?php if ($k['strate'] !== null || $k['date_semis'] !== null || $k['date_semis_repiquage'] !== null || ($k['role'] ?? null) === SautDuChat::ROLE_BIOMASSE): ?>
+                  <small><?= $h(implode(' · ', array_filter([($k['role'] ?? null) === SautDuChat::ROLE_BIOMASSE ? 'biomasse' : '', $k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis'] !== null ? 'semis ' . $dateFr((string) $k['date_semis']) : '', $k['date_semis_repiquage'] !== null ? 'en place ' . $dateFr((string) $k['date_semis_repiquage']) : '']))) ?></small>
 <?php endif; ?></li>
 <?php endforeach; ?>
 <?php foreach ($c['proposees'] as $x): ?>
@@ -667,6 +669,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               </select>
             </label>
           </div>
+          <label class="pt-choix"><input type="checkbox" class="case" name="biomasse" value="1"<?= $f['biomasse'] === '1' ? ' checked' : '' ?>>
+            <span>Plante de biomasse <small>celle qu'on taille (maïs, tournesol d'une tranchée centrale…) : le journal des perturbations et le saut du chat la comptent</small></span></label>
           <div class="pt-deux">
             <label class="pt-champ">Semis à l'abri <small>pépinière, godets — prévu ou fait</small>
               <input type="date" name="date_semis" value="<?= $h($f['date_semis']) ?>">

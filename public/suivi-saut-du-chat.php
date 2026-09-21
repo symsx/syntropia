@@ -29,6 +29,7 @@ use Syntropia\Role;
 use Syntropia\SautDuChat;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Constats;
+use Syntropia\Web\Cultures;
 use Syntropia\Web\Interventions;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Reponses;
@@ -160,6 +161,8 @@ if ($depuisNote) {
 // Ce que l'atelier sait déjà de cette parcelle.
 $interventions = $parcelle !== null ? (new Interventions())->dUneParcelle($idP) : [];
 $lignes = $parcelle !== null ? $parcellesService->scenario($idP) : [];
+$potager = $parcelle !== null && ($parcelle['type'] ?? '') === 'potager';
+$cultures = $potager ? (new Cultures())->dUneParcelle($idP) : [];
 $aujourdhui = new DateTimeImmutable('today');
 $datePlantation = $parcelle !== null ? (string) ($parcelle['date_plantation'] ?? '') : '';
 $finPlantation = $parcelle !== null ? (string) ($parcelle['fin_plantation'] ?? '') : '';
@@ -171,7 +174,7 @@ foreach ($constats as $k) {
         break;
     }
 }
-$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui, $datePlantation, $finPlantation, $preparation, $adventicesNotees) : [];
+$conditions = $parcelle !== null ? SautDuChat::conditions($interventions, $lignes, $aujourdhui, $datePlantation, $finPlantation, $preparation, $adventicesNotees, $cultures, $potager) : [];
 $derniere = $constats[0] ?? null;
 $visibleMaintenant = $derniere !== null && $derniere['visible'] === 'oui';
 $joursPlantee = $datePlantation !== '' ? Perturbation::joursDepuis($datePlantation, $aujourdhui) : null;

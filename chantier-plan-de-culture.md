@@ -163,8 +163,9 @@ Sylvain). C'est **le potager que l'atelier vise** : le potager syntropique, non 
    sont de part et d'autre. L'atelier n'a pas cette notion : le plan de parcelle dessine des planches, non l'axe de biomasse qui les organise.
 5. **Un manque dans le code, constaté en relisant.** Pour une parcelle « potager », **ni le journal des perturbations ni le diagnostic du saut du chat ne voient les cultures** :
    l'un et l'autre lisent `scenario_ligne` (les fonctions « biomasse » et « perturbation » du scénario pérenne), alors que les cultures d'un potager sont dans `succession_ligne`,
-   qui n'a pas de fonction. Un potager affiche donc « aucune plante de biomasse », alors que le maïs et le tournesol du module **sont** ses plantes de biomasse. **À corriger** :
-   marquer une culture comme *plante de biomasse* (la colonne `succession_ligne.role` existe, non utilisée) et faire lire les deux pages des deux tables.
+   qui n'a pas de fonction. Un potager affiche donc « aucune plante de biomasse », alors que le maïs et le tournesol du module **sont** ses plantes de biomasse. **Corrigé le
+   2026-09-21** : une case « plante de biomasse » sur la culture (`succession_ligne.role` = `biomasse`, aucun changement de schéma), lue par `SautDuChat::plantesDeBiomasse()` ; le journal et le diagnostic
+   du saut du chat la comptent, et disent où marquer quand aucune ne l'est. Reste : une culture n'a qu'un rôle, aucune « fonction » (perturbation, nourrice…) comme au scénario.
 6. **Deux divergences à garder visibles, sans les trancher** : le module associe le **fenouil** aux tomates, courgettes et concombres, quand Weinrich le donne défavorable à la
    tomate (et au haricot) ; et il parle de **maïs population** quand la table dit « maïs doux » (`Associations::fiche('maïs')` ne retrouve donc rien). Voir les questions ci-dessous.
 7. **Une réserve de méthode que la source formule elle-même** : « ne jamais généraliser une expérience unique » — tester une association sur une petite bande avant de la déployer.
