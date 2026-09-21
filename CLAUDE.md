@@ -1652,6 +1652,19 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
+0. **État au 2026-09-21 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
+   il rejoue les schémas 2 à 9 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
+   saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
+   « plante de biomasse » d'une culture de potager ; module 5 de la formation versé au corpus. **Ce qui attend, dans l'ordre où la reprise peut s'en saisir** :
+   a. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
+      et **ce qu'on réalise en premier à chaque stade** (question n° 4 : le stade dit aujourd'hui « pas encore de repère »). Ne pas la coder sans cela.
+   b. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;
+      un **alias « maïs »** / « maïs doux » ; afficher la **divergence Joala/Weinrich** (fenouil–tomate) ; une **règle de famille** (fèves ou pois avant haricots) — sans source de familles au dépôt ; la **définition du glossaire**
+      du saut du chat (Théry : l'effet de la perturbation ; Joala 5-1 : le sol bascule vers une fertilité auto-entretenue).
+   c. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
+      scénario pérenne (`Guildes.php` n'est branché à aucune page), les exemples de fréquence de coupe par plante.
+   d. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
+      du porteur), puis rattacher au corpus et voir quelles questions ouvertes il ferme. `dossier-qualification.md` et `qualif_syntropia.py` restent **non commités** (ils ne sont pas à moi).
 1. **Chantier « inscription par parrainage »** — plan dans
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
    « Participants » ; **déployé le 2026-09-18**.
