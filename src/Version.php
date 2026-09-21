@@ -39,9 +39,10 @@ final class Version
      * `constat.adventices`, des adventices reviennent-elles ? (colonne facultative, idem). 6 :
      * `succession_ligne.planche`, la planche où une culture du potager est placée (colonne facultative, idem). 7 :
      * `succession_ligne.date_semis`, le semis à l'abri avant le repiquage (colonne facultative, idem). 8 :
-     * `succession_ligne.nb_plants`, combien de plants une culture du potager demande (colonne facultative, idem).
+     * `succession_ligne.nb_plants`, combien de plants une culture du potager demande (colonne facultative, idem). 9 :
+     * `parcelle.stade`, le stade du terrain (colonne facultative, idem).
      */
-    public const SCHEMA = 8;
+    public const SCHEMA = 9;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

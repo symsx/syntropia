@@ -57,6 +57,17 @@ avant de préparer une parcelle.
 Couvrir le sol d'une bâche opaque pour étouffer la végétation en place, sans
 le travailler.
 
+# Colonisation
+
+Le premier stade d'un terrain, dans la grille de la formation Joala : une installation dans des
+conditions difficiles, faibles ressources, organismes peu exigeants — un sol jeune, sans champignons.
+
+# Accumulation
+
+Le stade d'un terrain où la croissance est rapide et la biomasse s'accumule — saules, peupliers,
+bouleaux, noisetiers, aubépines, prunelliers : la friche qui évolue vers le boisement. Ses plantes
+fournissent supports et matière pour installer des productions plus exigeantes.
+
 # Basitone
 
 Un ligneux qui se ramifie naturellement depuis la base, comme le sureau ou le noisetier : on

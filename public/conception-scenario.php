@@ -28,6 +28,7 @@ use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\SautDuChat;
 use Syntropia\Scenario;
+use Syntropia\Stade;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
@@ -89,7 +90,7 @@ if ($parcelle !== null) {
     $aUnePrincipale = array_filter($selection, static fn (array $s): bool => $s['priorite'] === 'principale') !== [];
     $peutAjouter = $peutEcrire && $conduiteDefinie && $aUnePrincipale;
     $souhaitsDuSite = $scenarios->souhaitsDuSite($siteId, $participantId);
-    $prepareSaut = SautDuChat::conception($lignes, $conduite->scenarioADesTemps(), (string) ($site['ressource_eau'] ?? ''), $conduite->strates());
+    $prepareSaut = SautDuChat::conception($lignes, $conduite->scenarioADesTemps(), (string) ($site['ressource_eau'] ?? ''), $conduite->strates(), Stade::depuis($parcelle['stade'] ?? null));
 
     $editId = (int) ($_GET['vegetal'] ?? 0);
     if ($editId > 0 && !isset($parId[$editId])) {

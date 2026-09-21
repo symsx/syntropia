@@ -112,6 +112,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
+  Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
@@ -154,7 +155,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) et `parcelle.stade` (schéma 9) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1606,6 +1607,11 @@ récit.*
   perturber, part de biomasse (repère de 70 %, en végétaux du scénario), deux espèces par strate, plantes de démarrage, geste de taille noté, eau — jamais un refus ; **le geste de taille devient un choix** (`Scenario::GESTES`, basitone / cépée /
   trogne, en tête de `conduite_taille`, 13 contrôles) ; les **quatre moments de la taille** dans les Informations de `conception-calendrier.php` (avec ce qui est à recaler) ; **l'eau de la perturbation** dans `conception-materiel-et-eau.php` — sans
   volume, la boucle dite sans en faire un calcul. Vérifié en local (projet de test supprimé). Livret, glossaire (Basitone, Cépée, Trogne) à jour.
+- **Le stade du terrain — Phase 3 du chantier « saut du chat », 2026-09-21.** Le porteur a tranché : **deux stades** (colonisation, accumulation) et **par parcelle**. **`parcelle.stade` : `Version::SCHEMA` passe à 9**
+  (colonne facultative), `src/Stade.php` (pur), un choix dans le panneau Données de `conception-parcelles.php` (enregistré avec le plan, sous le même verrou), et une ligne dans le panneau « Ce scénario prépare-t-il le saut du chat ? ».
+  **Ce que le stade change est mince, et l'écran le dit** : ce qu'il faut réaliser en premier à chaque stade n'est pas au corpus — « pas encore de repère ». Vérifié en local (POST valide, forgé refusé, absent sans effet, vidé,
+  `verifier-export` identique, fichier du schéma 8 accepté par construction — colonne facultative). **Au déploiement : `bin/deployer.py base` d'abord** (schémas 2 à 9 en attente), puis `fichiers`. La Phase 4 attend toujours la liste des
+  itinéraires et le tableau « itinéraire × période ».
 - **Matériel et eau du potager — Phase 6, dernière, du chantier « plan de culture », 2026-09-21. Le chantier est terminé, six phases.** `conception-materiel-et-eau.php` lisait le scénario pérenne
   seul : un potager y apparaissait sans matériel. Pour une parcelle de type potager, la liste se déduit du **plan de culture** : `Materiel::quantiteCulture()` — le nombre de **plants** saisi
   (**`succession_ligne.nb_plants` : `Version::SCHEMA` passe à 8**, colonne facultative, la fenêtre d'import ne se referme pas ; champ « Plants » du formulaire de culture), à défaut **une ligne de

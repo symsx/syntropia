@@ -2,7 +2,7 @@
 
 > **État au 2026-09-21 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic), 2 bis (la
 > préparation et la campagne de plantation), 2 ter (les adventices) et 5 (la conception qui prépare le saut du chat) faites, pas encore déployées** ; les Phases 3
-> (le stade du terrain) et 4 (l'itinéraire technique) **attendent des décisions du porteur et de nouveaux versements** — voir § « Phase 5 — faite … ». Chantier demandé par le porteur le 2026-09-20,
+> (le stade du terrain, **premier incrément fait le 2026-09-21** : deux stades, par parcelle) et 4 (l'itinéraire technique) **attendent des décisions du porteur et de nouveaux versements** — voir § « Phase 5 — faite … ». Chantier demandé par le porteur le 2026-09-20,
 > qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
 > essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
 > confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
@@ -388,6 +388,15 @@ se joint à ce chantier. **Ce chantier a maintenant son plan : `chantier-plan-de
 
 ## Phase 3 — Le stade du terrain : d'où l'on part
 
+> **Faite le 2026-09-21, premier incrément** — **deux stades, par parcelle** (décision du porteur, 2026-09-21 : la **colonisation** et l'**accumulation**, comme le document d'origine ; l'abondance, système des milieux
+> mûrs, reste l'horizon de la grille, non un point de départ). **`parcelle.stade`** (`Version::SCHEMA` passe à **9**, colonne facultative), `src/Stade.php` (pur : explication, ce qui s'observe, ce que le corpus permet d'affirmer),
+> un choix « Le stade du terrain » dans le panneau Données de `conception-parcelles.php` (enregistré avec le plan, sous le même verrou de version ; vide = pas dit ; une valeur forgée est refusée), et **une ligne du panneau
+> « Ce scénario prépare-t-il le saut du chat ? »** : le stade dit, avec ce que la formation en dit, ou une invitation à le dire. **Ce que le stade change aujourd'hui est mince, et l'écran le dit** : *ce qu'il faut réaliser en premier à
+> chaque stade* n'est pas au corpus (question n° 4) — « pas encore de repère ». Plantes repères **selon Joala** (saule, peuplier, bouleau, noisetier, aubépine, prunellier en accumulation ; mousses, lichens en colonisation ; la ronce à la
+> transition vers l'abondance). Ce qu'il reste : la règle « premier geste par stade » et son usage dans l'itinéraire (Phase 4), aux versements de la formation.
+
+*Texte d'origine du plan, gardé pour mémoire :*
+
 *Décidé (5), les règles qui en découlent se consolident avec la formation.*
 
 Une question de **Définition** (`definition-site.php`, onglet Observations, ou la parcelle) : **le stade
@@ -482,7 +491,7 @@ case) et la règle « l'atelier propose l'itinéraire que le stade et les moyens
 | 4 | Stade du terrain → premier geste | La grille de Joala et ses exemples | Ce qu'on fait en premier à chaque stade |
 | 5 | Végétation spontanée : alliée à perturber ou couverture à affaiblir ? | Accumulation (sureau, saule, noisetier) = supports ; 4-3 : ne pas tailler ce qu'on veut planter | Où passe la limite, par stade |
 | 6 | Combien de biomasse suffit ? | Le seuil existe (framboisier écarté, ch. 15) ; le scénario dit 70-80 % | Un repère par itinéraire |
-| 7 | Trois stades ou deux ? | Joala en donne trois | Le choix du porteur |
+| 7 | ~~Trois stades ou deux ?~~ | **Tranché le 2026-09-21 : deux, par parcelle** (colonisation, accumulation) | — |
 | 8 | Mesure du saut du chat | Ordres de grandeur de l'entretien de Théry | Protocole simple à proposer (durée, témoin) |
 | 9 | Ce qui compte dans la préparation du sol | Décision 6 : la préparation couvre le sol et la plantation dense dans la période ; repères du corpus affichés | Ce que le porteur juge déterminant, à lire dans ce qu'il note |
 | 10 | À partir de quelle densité une plantation est-elle « dense » ? | Principes : « plante deux fois plus » ; 10 cm² de vide = un désert | Un repère chiffré, par itinéraire |

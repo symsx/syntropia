@@ -9,6 +9,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Role;
+use Syntropia\Stade;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\Parcelles;
@@ -69,6 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'bordures'          => $_POST['bordures'] ?? [],
             'bordures_interne'  => $_POST['bordures_interne'] ?? [],
             'conduite'          => $_POST['conduite'] ?? null,
+            'stade'             => $_POST['stade'] ?? null,
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -205,6 +207,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
   }
   #in-conduite:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  #in-stade{
+    grid-column:1 / -1; width:100%; padding:.4rem .5rem; font:400 .86rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
+  }
+  #in-stade:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
@@ -464,6 +471,18 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           </select>
         </div>
         <p class="pd-note" id="conduite-resume"><?= htmlspecialchars($resume($conduiteResolue['conduite']) . ($conduiteResolue['conduite']->reserve() !== null ? ' ' . $conduiteResolue['conduite']->reserve() : ''), ENT_QUOTES, 'UTF-8') ?> Le vocabulaire des strates du scénario en dépend.</p>
+
+        <p class="pd-titre">Le stade du terrain</p>
+        <div class="pd-ligne">
+          <select id="in-stade" aria-label="Stade du terrain de la parcelle">
+            <option value=""<?= trim((string) ($parcelleActive['stade'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Deux stades, par parcelle.">Pas encore dit</option>
+<?php foreach (Stade::tous() as $st): ?>
+            <option value="<?= $st->value ?>"<?= trim((string) ($parcelleActive['stade'] ?? '')) === $st->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($st->explication() . ' ' . $st->observe() . ' ' . Stade::premierGeste(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+          </select>
+        </div>
+<?php $stadeActif = Stade::depuis($parcelleActive['stade'] ?? null); ?>
+        <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . Stade::premierGeste() : 'Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Deux stades, par parcelle.', ENT_QUOTES, 'UTF-8') ?></p>
 
         <p class="pd-titre">La parcelle <span class="pd-unite">(m)</span></p>
         <div class="pd-ligne">

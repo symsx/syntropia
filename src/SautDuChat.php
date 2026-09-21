@@ -329,14 +329,26 @@ final class SautDuChat
      * @param bool $aDesTemps la conduite a un axe du temps (la syntropie ; le jardin-forêt n'en a pas)
      * @param string|null $ressourceEau `site.ressource_eau` (`reseau`, `puits_forage`, `reserve`, `aucune`), vide si non dite
      * @param array<string, string> $libellesStrates clé de strate → libellé, pour la dire en toutes lettres
+     * @param Stade|null $stade le stade du terrain de la parcelle, s'il est dit (Phase 3)
      * @return list<array{cle: string, titre: string, etat: string, detail: string, source: string}>
      */
-    public static function conception(array $lignes, bool $aDesTemps, ?string $ressourceEau, array $libellesStrates = []): array
+    public static function conception(array $lignes, bool $aDesTemps, ?string $ressourceEau, array $libellesStrates = [], ?Stade $stade = null): array
     {
-        if ($lignes === []) {
-            return [];
-        }
         $c = [];
+        // Le stade du terrain : d'où l'on part. Dit, on rappelle ce que la formation en dit et — sans détour — qu'elle ne
+        // donne pas encore quoi faire en premier ; pas dit, on le demande. Sans scénario, c'est la seule ligne.
+        if ($stade !== null) {
+            $c[] = ['cle' => 'stade', 'titre' => 'Le stade du terrain : ' . mb_strtolower($stade->libelle()), 'etat' => self::OK,
+                'detail' => $stade->explication() . ' ' . $stade->usage() . ' ' . Stade::premierGeste(),
+                'source' => 'Joala 2-1 et 2-2'];
+        } elseif ($lignes !== []) {
+            $c[] = ['cle' => 'stade', 'titre' => 'Le stade du terrain est dit', 'etat' => self::VIDE,
+                'detail' => 'Il dit d’où vous partez (plan de la parcelle, panneau Données : colonisation ou accumulation). La formation ne donne pas encore ce qu’il faut réaliser en premier à chaque stade.',
+                'source' => 'Joala 2-1 et 2-2'];
+        }
+        if ($lignes === []) {
+            return $c;
+        }
         $total = count($lignes);
         $biomasseLignes = array_values(array_filter($lignes, static function (array $l): bool {
             $f = Scenario::details($l)['fonctions'] ?? [];

@@ -356,6 +356,10 @@ CREATE TABLE IF NOT EXISTS `parcelle` (
   -- (chantier-saut-du-chat.md, décision 6 ; schéma 4).
   `date_plantation` DATE NULL,
   `fin_plantation`  DATE NULL,
+  -- LE STADE DU TERRAIN : d'où l'on part — `colonisation` (conditions difficiles, faibles ressources) ou `accumulation`
+  -- (croissance rapide, biomasse ; la friche qui évolue vers le boisement). Deux stades, par parcelle : décision du
+  -- porteur, 2026-09-21. NULL = pas dit. La grille de Joala en compte un troisième, l'abondance (schéma 9).
+  `stade`           ENUM('colonisation','accumulation') NULL,
 
   -- La géométrie, telle que `outils/calcul-plants.py` l'attend.
   -- LA GEOMETRIE PART DE LA TAILLE DE LA PARCELLE, non du nombre de
@@ -1006,6 +1010,19 @@ EXECUTE ajout_fin;
 DEALLOCATE PREPARE ajout_fin;
 
 
+-- Rattrapage d'une table `parcelle` créée avant `stade` — schéma 9. Même forme que ci-dessus.
+SET @stade_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = DATABASE()
+                        AND TABLE_NAME = 'parcelle'
+                        AND COLUMN_NAME = 'stade');
+SET @ajout_stade = IF(@stade_existe = 0,
+                      'ALTER TABLE `parcelle` ADD COLUMN `stade` ENUM(''colonisation'',''accumulation'') NULL AFTER `fin_plantation`',
+                      'DO 0');
+PREPARE ajout_stade FROM @ajout_stade;
+EXECUTE ajout_stade;
+DEALLOCATE PREPARE ajout_stade;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1081,6 +1098,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 5 = `constat.adventices` (des adventices reviennent-elles ? — colonne facultative, idem) ;
 -- 6 = `succession_ligne.planche` (la planche où une culture du potager est placée — colonne facultative, idem) ;
 -- 7 = `succession_ligne.date_semis` (le semis à l'abri, avant le repiquage — colonne facultative, idem) ;
--- 8 = `succession_ligne.nb_plants` (combien de plants une culture du potager demande — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '8')
+-- 8 = `succession_ligne.nb_plants` (combien de plants une culture du potager demande — colonne facultative, idem) ;
+-- 9 = `parcelle.stade` (le stade du terrain : colonisation ou accumulation — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '9')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

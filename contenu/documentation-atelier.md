@@ -127,6 +127,12 @@ ensuite : dimensions, bordures externe et interne, planches, sens des planches.
 Le nombre de planches se calcule tout seul. Une parcelle peut être conduite
 autrement que le site.
 
+Vous dites aussi, pour chaque parcelle, le **stade du terrain** — d'où vous partez : la
+**colonisation** (des conditions difficiles, faibles ressources) ou l'**accumulation** (une
+croissance rapide de biomasse, la friche qui évolue vers le boisement). Le scénario le rappelle
+avec ce que la formation en dit. Ce qu'il faut réaliser en premier à chaque stade, elle ne le
+donne pas encore : la page le dit plutôt que de l'inventer.
+
 Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les
 strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a

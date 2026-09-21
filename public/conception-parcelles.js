@@ -304,6 +304,7 @@
       corps.set('parcelle_id', document.getElementById('plan-parcelle-id').value);
       corps.set('version_plan', champVersionPlan.value);
       corps.set('conduite', document.getElementById('in-conduite').value);
+      corps.set('stade', document.getElementById('in-stade').value);
       corps.set('longueur_m', champLongueur.value);
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
@@ -362,6 +363,13 @@
     choixConduite.addEventListener('change', function(){
       document.getElementById('conduite-resume').textContent =
         choixConduite.options[choixConduite.selectedIndex].dataset.resume + ' Le vocabulaire des strates du scénario en dépend.';
+    });
+  }
+
+  var choixStade = document.getElementById('in-stade');
+  if (choixStade){
+    choixStade.addEventListener('change', function(){
+      document.getElementById('stade-resume').textContent = choixStade.options[choixStade.selectedIndex].dataset.resume;
     });
   }
 
