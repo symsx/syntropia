@@ -57,6 +57,21 @@ avant de préparer une parcelle.
 Couvrir le sol d'une bâche opaque pour étouffer la végétation en place, sans
 le travailler.
 
+# Basitone
+
+Un ligneux qui se ramifie naturellement depuis la base, comme le sureau ou le noisetier : on
+coupe la tige entière à 3-4 cm de la souche, à chaque perturbation.
+
+# Cépée
+
+Un arbre recépé tout près du sol, dont les repousses font leurs propres racines : la fréquence
+est libre, tous les X ans, à la grosseur voulue.
+
+# Trogne
+
+Un arbre taillé toujours au même endroit, tous les 1 à 2 ans, pour garder la biomasse à portée
+d'outils — un engagement fort : mal suivie, la conduite dégrade l'arbre.
+
 # Perturbation
 
 Un geste qui relance la croissance plutôt qu'un accident à éviter — en

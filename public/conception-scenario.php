@@ -26,6 +26,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Role;
+use Syntropia\SautDuChat;
 use Syntropia\Scenario;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Especes;
@@ -88,6 +89,7 @@ if ($parcelle !== null) {
     $aUnePrincipale = array_filter($selection, static fn (array $s): bool => $s['priorite'] === 'principale') !== [];
     $peutAjouter = $peutEcrire && $conduiteDefinie && $aUnePrincipale;
     $souhaitsDuSite = $scenarios->souhaitsDuSite($siteId, $participantId);
+    $prepareSaut = SautDuChat::conception($lignes, $conduite->scenarioADesTemps(), (string) ($site['ressource_eau'] ?? ''), $conduite->strates());
 
     $editId = (int) ($_GET['vegetal'] ?? 0);
     if ($editId > 0 && !isset($parId[$editId])) {
@@ -441,6 +443,12 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
   .sc-legende{ display:flex; gap:.9rem; flex-wrap:wrap; font:400 .74rem var(--texte); color:var(--muted); align-items:center; }
   .sc-legende i{ display:inline-block; width:.8rem; height:.8rem; border-radius:.2rem; margin-right:.3rem; vertical-align:-.1rem; border:1px solid color-mix(in srgb, var(--ink) 35%, transparent); }
   .sc-legende .hachure{ background:repeating-linear-gradient(45deg, transparent 0 2px, color-mix(in srgb, var(--ink) 30%, transparent) 2px 4px); }
+  .pi-saut{ list-style:none; margin:0 0 .9rem; padding:0; font:400 .84rem/1.45 var(--texte); }
+  .pi-saut li{ margin:0 0 .35rem; padding-left:1.3rem; position:relative; }
+  .pi-saut .pi-saut-signe{ position:absolute; left:0; }
+  .pi-saut li.ok .pi-saut-signe{ color:var(--accent-titre); }
+  .pi-saut li.attention{ color:var(--alerte); }
+  .pi-saut small{ color:var(--muted); }
   .sc-vide-page{ margin:auto; max-width:24rem; text-align:center; font:400 .92rem/1.5 var(--texte); color:var(--muted); }
   .sc-vide-page a{ color:var(--accent-titre); font-weight:600; }
 
@@ -739,7 +747,15 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
                 <label class="sc-champ">Repère sur la parcelle
                   <input type="text" name="repere" maxlength="160" value="<?= $val($form, 'repere') ?>" placeholder="Ex. planche 2, ligne centrale">
                 </label>
-<?php foreach (['plantation' => ['Plantation ou présence existante', 160], 'recolte' => ['Période de récolte', 160], 'conduite_taille' => ['Tailles et interventions', 120], 'type_plant' => ['Type de plant ou de semis', 60], 'source_valeur' => ['Source ou observation', 120]] as $k => [$libelle, $max]): ?>
+                <label class="sc-champ">Geste de taille <small>où l'arbre stocke ses sucres — facultatif</small>
+                  <select name="geste_taille">
+                    <option value="">Pas de geste noté</option>
+<?php foreach (Scenario::GESTES as $cle => [$nomGeste, $sens]): ?>
+                    <option value="<?= $h($cle) ?>"<?= ($form['geste_taille'] ?? '') === $cle ? ' selected' : '' ?>><?= $h($nomGeste) ?> — <?= $h($sens) ?></option>
+<?php endforeach; ?>
+                  </select>
+                </label>
+<?php foreach (['plantation' => ['Plantation ou présence existante', 160], 'recolte' => ['Période de récolte', 160], 'conduite_taille' => ['Précisions sur les tailles et interventions', 120], 'type_plant' => ['Type de plant ou de semis', 60], 'source_valeur' => ['Source ou observation', 120]] as $k => [$libelle, $max]): ?>
                 <label class="sc-champ"><?= $h($libelle) ?>
                   <input type="text" name="<?= $k ?>" maxlength="<?= $max ?>" value="<?= $val($form, $k) ?>">
                 </label>
@@ -833,6 +849,14 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
+<?php if (($prepareSaut ?? []) !== []): ?>
+      <p><strong>Ce scénario prépare-t-il le saut du chat ?</strong> Le saut du chat est l'effet de la perturbation. Des repères, non des refus : l'atelier dit ce que les sources demandent, vous décidez.</p>
+      <ul class="pi-saut">
+<?php foreach ($prepareSaut as $x): ?>
+        <li class="<?= $h($x['etat']) ?>"><span class="pi-saut-signe"><?= ['ok' => '✓', 'attention' => '⚠', 'vide' => '○'][$x['etat']] ?? '·' ?></span> <strong><?= $h($x['titre']) ?></strong> — <?= $h($x['detail']) ?> <small>[<?= $h($x['source']) ?>]</small></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
       <p>Vous composez ici <strong>un film</strong> : ce qui grandira sur cette parcelle, à quelle strate, et pendant combien de temps.
          Le tableau se lit de gauche à droite (le temps) et de haut en bas (de la strate la plus haute à la plus basse).</p>
       <p><strong>Un chemin pour le remplir</strong> — à suivre librement :</p>

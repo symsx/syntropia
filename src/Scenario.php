@@ -72,6 +72,37 @@ final class Scenario
         'autre' => 'Autre emplacement / végétal existant',
     ];
 
+    /**
+     * Le geste de taille d'un ligneux — le critère est **où l'arbre stocke ses sucres** (`connaissances/transversales/
+     * fiche-conduites-de-taille-basitone-cepee-trogne-lien_avec_ch12.md`, d'après Théry ch. 12 et ses annexes).
+     * Écrit en tête de `scenario_ligne.conduite_taille`, suivi d'une précision libre : « trogne — tous les deux ans ».
+     */
+    public const GESTES = [
+        'basitone' => ['Basitone', 'tige entière à 3-4 cm de la souche, à chaque perturbation — engagement faible'],
+        'cépée' => ['Cépée', 'à la base, tout près du sol, à la fréquence de votre choix — engagement faible'],
+        'trogne' => ['Trogne', 'toujours au même endroit, tous les 1 à 2 ans, sinon la conduite se dégrade — engagement fort'],
+    ];
+
+    /**
+     * Sépare ce que `conduite_taille` porte : le geste (basitone, cépée, trogne) s'il ouvre le texte, et la précision.
+     * Un texte libre d'avant reste entier dans la précision.
+     *
+     * @return array{geste: string, precision: string}
+     */
+    public static function separerGeste(string $texte): array
+    {
+        $texte = trim($texte);
+        foreach (array_keys(self::GESTES) as $g) {
+            if (mb_strtolower($texte) === $g) {
+                return ['geste' => $g, 'precision' => ''];
+            }
+            if (str_starts_with(mb_strtolower($texte), $g . ' — ')) {
+                return ['geste' => $g, 'precision' => trim(mb_substr($texte, mb_strlen($g) + 3))];
+            }
+        }
+        return ['geste' => '', 'precision' => $texte];
+    }
+
     /** Le dernier repère temporel : « le climax, horizon ouvert ». */
     public const POSITION_MAX = 28;
 
@@ -205,7 +236,8 @@ final class Scenario
             'couleur' => (string) ($d['couleur'] ?? 'auto'),
             'nb_pieds' => (string) ($ligne['nb_pieds'] ?? ''),
             'espacement_m' => (string) ($ligne['espacement_m'] ?? ''),
-            'conduite_taille' => (string) ($ligne['conduite_taille'] ?? ''),
+            'conduite_taille' => self::separerGeste((string) ($ligne['conduite_taille'] ?? ''))['precision'],
+            'geste_taille' => self::separerGeste((string) ($ligne['conduite_taille'] ?? ''))['geste'],
             'type_plant' => (string) ($ligne['type_plant'] ?? ''),
             'origine' => (string) ($ligne['origine'] ?? ''),
             'source_valeur' => (string) ($ligne['source_valeur'] ?? ''),
@@ -234,6 +266,17 @@ final class Scenario
         }
         if ($textes['espece'] === '') {
             $erreurs[] = 'Choisissez ou nommez un végétal.';
+        }
+        // Le geste de taille s'écrit en tête de la conduite de taille, suivi de la précision.
+        $geste = self::texte($data, 'geste_taille');
+        if ($geste !== '' && !isset(self::GESTES[$geste])) {
+            $erreurs[] = 'Choisissez un geste de taille proposé, ou laissez vide.';
+            $geste = '';
+        }
+        $conduiteTaille = $geste === '' ? $textes['conduite_taille']
+            : ($textes['conduite_taille'] === '' ? $geste : $geste . ' — ' . $textes['conduite_taille']);
+        if (mb_strlen($conduiteTaille) > 120 && mb_strlen($textes['conduite_taille']) <= 120) {
+            $erreurs[] = 'La conduite de taille, geste compris, tient en 120 caractères : raccourcissez la précision.';
         }
 
         $strate = self::texte($data, 'strate');
@@ -336,7 +379,7 @@ final class Scenario
             'type_plant' => $textes['type_plant'] ?: null, 'origine' => $origine ?: null,
             'entree' => $phases[intdiv($debut, 4)], 'sortie' => $phases[intdiv($fin - 1, 4)],
             'espacement_m' => $esp === '' ? null : round((float) $esp, 2), 'nb_pieds' => $quantite,
-            'conduite_taille' => $textes['conduite_taille'] ?: null, 'source_valeur' => $textes['source_valeur'] ?: null,
+            'conduite_taille' => $conduiteTaille ?: null, 'source_valeur' => $textes['source_valeur'] ?: null,
             'notes' => $textes['notes'] ?: null,
             'details' => json_encode($d, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
         ];

@@ -558,6 +558,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php else: ?>
               <p><span class="mv-cle"><?= $h(BesoinEau::RESSOURCES[$ressource]) ?></span><?= $ressourceDetail !== '' ? ' — ' . $h($ressourceDetail) : '' ?></p>
               <p><?= $h(BesoinEau::CONSEIL_RESSOURCE[$ressource]) ?></p>
+              <p class="doux"><b>À la taille de perturbation</b> : on coupe au moment que disent les plantes, avant ou après une pluie — la première en juin —, et l'on arrose si elle ne vient pas. <?= $ressource === 'aucune' ? 'Sans eau à portée, la taille se cale sur la pluie.' : 'Prévoyez de pouvoir arroser à ces dates, pas seulement pour les plants.' ?> Le corpus ne donne pas de dose pour une perturbation : aucun volume n'est calculé ici.</p>
 <?php if ($ressource !== 'reseau' && isset($besoins['intermediaire']) && $besoins['intermediaire']['m3_an'] !== null): ?>
               <p class="doux">Réserve à prévoir : de <?= $nombre($besoins['intermediaire']['reserve_m3'], 0) ?> m³ en sol intermédiaire à <?= $nombre($besoins['degrade']['reserve_m3'], 0) ?> m³ en sol dégradé.</p>
 <?php endif; ?>
@@ -744,6 +745,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
          Le sol structuré demande moins, l'ouvrage ne le chiffre pas. <strong>Ce sont des ordres de grandeur de dimensionnement, pas des normes</strong> — et ils
          viennent d'un maraîchage d'annuelles en Haute-Vienne : pour une ligne pérenne, rien n'est chiffré, et les trois premières années restent celles qui comptent.
          Un sol jamais travaillé et toujours couvert économise l'eau, mais pas dès les premières années : il faudra arroser.</p>
+      <p><strong>L'eau et la perturbation</strong> [Théry, ch. 12] : la taille est déjà un stress ; sans eau, une bonne part de son bénéfice se perd et la reprise ralentit. On la cale donc sur la pluie, et l'on arrose si elle ne vient pas.
+         Une boucle en découle, que la formation Joala décrit : plus de densité et de perturbation, c'est plus de biomasse déposée, donc un sol plus riche en matière organique — et un sol qui retient mieux l'eau
+         (une synthèse rapporte 20 L de stockage en plus par m² pour 1 % de matière organique supplémentaire : un ordre de grandeur non recoupé, pas une entrée de calcul). Les premières années, c'est pourtant l'arrosage qui paie.</p>
       <p><strong>Les ouvrages de stockage</strong> [Lopez, pour environ 300 m³] : un puits ou forage, environ 5 000 € pompe comprise ; une mare, 400 m³ creusés pour en stocker 300
          (environ 1 500 € de pelle mécanique en terre argileuse, plus environ 1 000 € de pompe) ; une cuve, très variable, les cuves enterrées bien plus chères ; une piscine convertie,
          alimentée par un puits et la récupération de pluie, que l'auteur juge la meilleure solution. Un mètre carré de toiture recueille environ un mètre cube de pluie par an [de Looze].</p>

@@ -179,6 +179,15 @@ $reponses = $reponsesService->pourParticipant($participantId);
       <p>Un premier calendrier, à main levée : il donne un repère de
          rythme — ce qui se passe à chaque saison, pour ne rien découvrir
          au dernier moment.</p>
+      <p><strong>Les quatre moments de la taille de perturbation</strong> [Théry, ch. 12] — des repères à lire avec l'état des bourgeons de votre lieu, non des dates :</p>
+      <ul>
+        <li><em>Avant le début du printemps</em>, idéalement avant le gonflement des bourgeons : ramener au sol les branchages de l'hiver et faire de la place aux productions.</li>
+        <li><em>Au printemps et au début de l'été</em> : tailler quand les plantes de biomasse gênent une production, sinon observer la maturation — au plus tard quand les fleurs se fanent. La première perturbation vient en <strong>juin</strong> ; les suivantes, <strong>quand il y a de quoi couper</strong>, et l'on arrose si la pluie ne vient pas. En été, laisser assez de feuillage pour protéger les plants de la canicule et de la grêle.</li>
+        <li><em>L'arrière-saison</em>, quand les premières pluies reviennent : elle ouvre la canopée aux conditions plus douces. Attention à l'aoûtage du bois.</li>
+        <li><em>L'hiver</em> : les grosses tailles de certains ligneux, hors gel.</li>
+      </ul>
+      <p><strong>Trois moments où l'on ne taille pas les ligneux</strong> : à la chute des feuilles, au débourrement, juste avant et pendant le gel. Le noisetier et le <em>Lonicera fragantissima</em> se taillent <strong>avant janvier</strong> : leur floraison démarre tôt.</p>
+      <p><strong>À recaler chez vous</strong> : « la majorité des tailles en vert se termine fin juin » et « les tailles de ligneux, de mi-novembre à fin février » sont des traductions locales du rythme de végétation. Les trois moments à éviter sont phénologiques, non calendaires, et le nombre de tailles dans l'année suit la longueur de votre saison de végétation. Ce calendrier reste à vous : l'atelier n'impose ni date ni intervalle.</p>
     </div>
   </aside>
 

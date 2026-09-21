@@ -65,7 +65,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
   conception qui le prépare. Demandé et planifié le 2026-09-20, **Phases 1 (le journal), 2 (le constat et le diagnostic), 2 bis (la
-  préparation et la campagne de plantation) et 2 ter (les adventices) faites le 2026-09-20**, les trois autres pas commencées ; **développement itératif
+  préparation et la campagne de plantation) et 2 ter (les adventices) faites le 2026-09-20, la Phase 5 (la conception) le 2026-09-21**, les Phases 3 et 4 en attente du porteur et de la formation ; **développement itératif
   et incrémental** — la formation Joala se poursuit et ses versements (`~/projets/input/`) ferment peu à peu
   les questions ouvertes listées dans le chantier ; une règle sans réponse sourcée ne se code pas.
 - `chantier-plan-de-culture.md` — le plan (6 phases) du **plan de culture du potager** : composer une parcelle « potager » (aujourd'hui
@@ -1600,6 +1600,12 @@ récit.*
   `conception-potager.php` : sous chaque planche, ses enchaînements et « libérée le … par X — la table cite pour suite … » ; à l'édition d'une culture, ce que la table dit de ce qui la précède et la
   suit. **Ce qui n'est pas codé** : une règle de famille botanique (fèves ou pois avant haricots — Joala 5-C) — la table de Weinrich n'a pas de familles, et rien d'autre ne la source ; une culture
   hors table (le maïs, dit « maïs doux » par Weinrich) n'a pas de repère. Vérifié en local (projet de test supprimé) et aucun débordement de 1280×720 à 320×568.
+- **La conception qui prépare le saut du chat — Phase 5 du chantier « saut du chat », 2026-09-21.** Demandée avec les Phases 3 et 4 « si tu as tout ce qu'il faut » : la Phase 5 seule repose sur des repères déjà au corpus ; les Phases 3 (stade du
+  terrain) et 4 (itinéraire technique) attendent le porteur (trois stades ou deux ? par parcelle ou par site ? la liste et les critères des itinéraires) et de nouveaux versements (que faire en premier à chaque stade ; le tableau itinéraire × période) —
+  détail dans `chantier-saut-du-chat.md`. **Fait, sans changement de schéma** : `SautDuChat::conception()` (pur, 13 contrôles) et son panneau « Ce scénario prépare-t-il le saut du chat ? » dans les Informations de `conception-scenario.php` — alliées à
+  perturber, part de biomasse (repère de 70 %, en végétaux du scénario), deux espèces par strate, plantes de démarrage, geste de taille noté, eau — jamais un refus ; **le geste de taille devient un choix** (`Scenario::GESTES`, basitone / cépée /
+  trogne, en tête de `conduite_taille`, 13 contrôles) ; les **quatre moments de la taille** dans les Informations de `conception-calendrier.php` (avec ce qui est à recaler) ; **l'eau de la perturbation** dans `conception-materiel-et-eau.php` — sans
+  volume, la boucle dite sans en faire un calcul. Vérifié en local (projet de test supprimé). Livret, glossaire (Basitone, Cépée, Trogne) à jour.
 - **Matériel et eau du potager — Phase 6, dernière, du chantier « plan de culture », 2026-09-21. Le chantier est terminé, six phases.** `conception-materiel-et-eau.php` lisait le scénario pérenne
   seul : un potager y apparaissait sans matériel. Pour une parcelle de type potager, la liste se déduit du **plan de culture** : `Materiel::quantiteCulture()` — le nombre de **plants** saisi
   (**`succession_ligne.nb_plants` : `Version::SCHEMA` passe à 8**, colonne facultative, la fenêtre d'import ne se referme pas ; champ « Plants » du formulaire de culture), à défaut **une ligne de

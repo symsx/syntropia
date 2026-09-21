@@ -313,4 +313,115 @@ final class SautDuChat
 
         return $c;
     }
+
+    /** Le repère de Théry (ch. 11) : 70 à 80 % des plantes d'une plantation servent la biomasse et la perturbation. */
+    public const PART_BIOMASSE_MIN = 0.7;
+
+    /**
+     * Ce que le **scénario** d'une parcelle prépare du saut du chat — la lecture de la conception, avant la plantation
+     * (`conditions()` lit, elle, ce qui s'est passé). Des indicateurs **non bloquants**, dits « en place », « à regarder » ou
+     * « rien de noté », jamais un refus : l'atelier montre ce que les sources demandent et laisse la personne décider.
+     *
+     * Ce que ce code ne sait pas : si 70 % est le bon seuil pour ce lieu (c'est un repère, non une règle), ni combien de
+     * plants couvrent une ligne — la part se compte en **végétaux du scénario**, non en nombre de plants.
+     *
+     * @param list<array<string, mixed>> $lignes le scénario de la parcelle
+     * @param bool $aDesTemps la conduite a un axe du temps (la syntropie ; le jardin-forêt n'en a pas)
+     * @param string|null $ressourceEau `site.ressource_eau` (`reseau`, `puits_forage`, `reserve`, `aucune`), vide si non dite
+     * @param array<string, string> $libellesStrates clé de strate → libellé, pour la dire en toutes lettres
+     * @return list<array{cle: string, titre: string, etat: string, detail: string, source: string}>
+     */
+    public static function conception(array $lignes, bool $aDesTemps, ?string $ressourceEau, array $libellesStrates = []): array
+    {
+        if ($lignes === []) {
+            return [];
+        }
+        $c = [];
+        $total = count($lignes);
+        $biomasseLignes = array_values(array_filter($lignes, static function (array $l): bool {
+            $f = Scenario::details($l)['fonctions'] ?? [];
+            return is_array($f) && (in_array('perturbation', $f, true) || in_array('biomasse', $f, true));
+        }));
+        $noms = self::plantesDeBiomasse($lignes);
+
+        // 1. Des alliées à perturber.
+        $c[] = $noms === []
+            ? ['cle' => 'allies', 'titre' => 'Des alliées à perturber', 'etat' => self::VIDE,
+                'detail' => 'Aucun végétal ne porte « fournir de la biomasse » ni « relancer par la perturbation ». Le saut du chat est l’effet de la perturbation : il lui faut des plantes à tailler.',
+                'source' => 'Théry, ch. 12']
+            : ['cle' => 'allies', 'titre' => 'Des alliées à perturber', 'etat' => self::OK,
+                'detail' => count($noms) . ' plante' . (count($noms) > 1 ? 's' : '') . ' : ' . implode(', ', array_slice(array_values($noms), 0, 4)) . (count($noms) > 4 ? '…' : '') . '.',
+                'source' => 'Théry, ch. 12']
+        ;
+
+        // 2. La part de biomasse.
+        $part = count($biomasseLignes) / $total;
+        $pct = (int) round($part * 100);
+        $c[] = $part >= self::PART_BIOMASSE_MIN
+            ? ['cle' => 'part', 'titre' => 'Une large part de biomasse', 'etat' => self::OK,
+                'detail' => count($biomasseLignes) . ' végétaux sur ' . $total . ' (' . $pct . ' %) servent la biomasse ou la perturbation. Le repère : 70 à 80 %.',
+                'source' => 'Théry, ch. 11']
+            : ['cle' => 'part', 'titre' => 'Une large part de biomasse', 'etat' => self::ATTENTION,
+                'detail' => count($biomasseLignes) . ' végétaux sur ' . $total . ' (' . $pct . ' %) servent la biomasse ou la perturbation ; le repère est de 70 à 80 %. Un repère, non un seuil : compté en végétaux du scénario, non en nombre de plants.',
+                'source' => 'Théry, ch. 11'];
+
+        // 3. Au moins deux espèces par strate.
+        $parStrate = [];
+        foreach ($lignes as $l) {
+            $strate = (string) ($l['strate'] ?? '');
+            $nom = mb_strtolower(trim((string) ($l['espece'] ?? '')));
+            if ($strate !== '' && $nom !== '') {
+                $parStrate[$strate][$nom] = true;
+            }
+        }
+        $seules = array_keys(array_filter($parStrate, static fn (array $e): bool => count($e) < 2));
+        $c[] = $parStrate === []
+            ? ['cle' => 'strates', 'titre' => 'Au moins deux espèces par strate', 'etat' => self::VIDE,
+                'detail' => 'Aucune strate n’est attribuée aux végétaux.', 'source' => 'Théry, ch. 11']
+            : ($seules === []
+                ? ['cle' => 'strates', 'titre' => 'Au moins deux espèces par strate', 'etat' => self::OK,
+                    'detail' => 'Chaque strate occupée compte au moins deux espèces : la réussite d’un plant n’est jamais automatique.', 'source' => 'Théry, ch. 11']
+                : ['cle' => 'strates', 'titre' => 'Au moins deux espèces par strate', 'etat' => self::ATTENTION,
+                    'detail' => 'Une seule espèce en strate ' . implode(', ', array_map(static fn (string $k): string => mb_strtolower($libellesStrates[$k] ?? $k), $seules)) . ' : la réussite d’un plant n’est jamais automatique.', 'source' => 'Théry, ch. 11']);
+
+        // 4. Des plantes de démarrage — seulement là où le temps existe.
+        if ($aDesTemps) {
+            $demarrage = self::plantesDeDemarrage($lignes);
+            $c[] = $demarrage === []
+                ? ['cle' => 'demarrage', 'titre' => 'Des plantes de démarrage', 'etat' => self::VIDE,
+                    'detail' => 'Aucune annuelle placentaire (qui ne reste pas au-delà du Placenta 3). Maïs, tournesols et féveroles sont indispensables au départ, pour le saut du chat et pour créer les strates en attendant les pérennes.',
+                    'source' => 'Théry, ch. 14']
+                : ['cle' => 'demarrage', 'titre' => 'Des plantes de démarrage', 'etat' => self::OK,
+                    'detail' => implode(', ', array_slice($demarrage, 0, 4)) . (count($demarrage) > 4 ? '…' : '') . '.', 'source' => 'Théry, ch. 14 et 15'];
+        }
+
+        // 5. Un geste de taille noté pour les plantes de biomasse.
+        if ($biomasseLignes !== []) {
+            $notes = count(array_filter($biomasseLignes, static fn (array $l): bool => trim((string) ($l['conduite_taille'] ?? '')) !== ''));
+            $c[] = $notes === count($biomasseLignes)
+                ? ['cle' => 'geste', 'titre' => 'Le geste de taille est noté', 'etat' => self::OK,
+                    'detail' => 'Chaque plante de biomasse a sa conduite de taille.', 'source' => 'Théry, ch. 12']
+                : ['cle' => 'geste', 'titre' => 'Le geste de taille est noté', 'etat' => self::VIDE,
+                    'detail' => 'Conduite de taille notée pour ' . $notes . ' des ' . count($biomasseLignes) . ' végétaux de biomasse (basitone, cépée, trogne). C’est elle qui règle la hauteur de coupe et la fréquence.',
+                    'source' => 'Théry, ch. 12 ; fiche des conduites de taille'];
+        }
+
+        // 6. De quoi arroser si la pluie ne vient pas — le porteur (2026-09-20) : couper au bon moment, et arroser si besoin.
+        $ressource = trim((string) $ressourceEau);
+        if ($ressource === '') {
+            $c[] = ['cle' => 'eau', 'titre' => 'De quoi arroser à la taille', 'etat' => self::VIDE,
+                'detail' => 'La ressource en eau du site n’est pas dite (étape Matériel et eau). La taille est un stress : on la cale sur la pluie, et l’on arrose si elle ne vient pas.',
+                'source' => 'Théry, ch. 12'];
+        } elseif ($ressource === 'aucune') {
+            $c[] = ['cle' => 'eau', 'titre' => 'De quoi arroser à la taille', 'etat' => self::ATTENTION,
+                'detail' => 'Le site n’a pas d’eau à portée. Sans eau, une bonne part du bénéfice de la taille se perd et la reprise ralentit : on la cale sur la pluie, et l’on garde la régénération naturelle assistée en tête.',
+                'source' => 'Théry, ch. 12'];
+        } else {
+            $c[] = ['cle' => 'eau', 'titre' => 'De quoi arroser à la taille', 'etat' => self::OK,
+                'detail' => 'Une ressource en eau est notée pour le site. On coupe au moment que disent les plantes, avant ou après une pluie, et l’on arrose si elle ne vient pas.',
+                'source' => 'Théry, ch. 12'];
+        }
+
+        return $c;
+    }
 }

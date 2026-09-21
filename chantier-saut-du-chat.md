@@ -1,8 +1,8 @@
 # Le saut du chat — plan
 
-> **État au 2026-09-20 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic), 2 bis (la
-> préparation et la campagne de plantation) et 2 ter (les adventices) faites, pas encore déployées** ; les Phases 3
-> à 5 ne sont pas commencées. Chantier demandé par le porteur le 2026-09-20,
+> **État au 2026-09-21 — Phases 1 (le journal des perturbations), 2 (le constat et le diagnostic), 2 bis (la
+> préparation et la campagne de plantation), 2 ter (les adventices) et 5 (la conception qui prépare le saut du chat) faites, pas encore déployées** ; les Phases 3
+> (le stade du terrain) et 4 (l'itinéraire technique) **attendent des décisions du porteur et de nouveaux versements** — voir § « Phase 5 — faite … ». Chantier demandé par le porteur le 2026-09-20,
 > qui le tient pour **la clé de voûte du système** : « le saut du chat est un objectif intermédiaire
 > essentiel pour les porteurs de projet ». Nées d'une étude (deux documents d'IA, `~/Documents/la_perturbation/`)
 > confrontée au code et au corpus, les spécifications ci-dessous sont **tranchées pour ce qui est établi,
@@ -449,6 +449,28 @@ sur UNE parcelle avant d'engager le reste »), avec héritage du site, comme `Co
   densité et de perturbation ⇒ plus d'eau dans le système) dite dans le panneau Informations ; les repères
   chiffrés de 4-6 (1 % de matière organique = 20 L/m², 36 L par kg de biomasse) restent des **explications**
   d'une synthèse générée, pas des entrées de calcul.
+
+### Phase 5 — faite (2026-09-21), et ce qui empêche de faire les Phases 3 et 4
+
+**Pourquoi la Phase 5 seule.** Le porteur a demandé de commencer les Phases 3 à 5 « si j'ai tout ce qu'il faut ». La Phase 5 n'a besoin que de repères déjà au corpus ; les Phases 3 et 4 demandent ce qui manque encore
+(§ Questions ouvertes n° 3, 4, 7) — elles ne se codent pas sans le porteur ou un nouveau versement.
+
+- **Le panneau « Ce scénario prépare-t-il le saut du chat ? »** (panneau Informations de `conception-scenario.php`, lisible par un lecteur) : `SautDuChat::conception()` (pur, 13 contrôles) — des alliées à perturber, la **part de
+  biomasse** (`PART_BIOMASSE_MIN` = 70 %, le bas du repère de Théry ch. 11 « 70 à 80 % » ; comptée en **végétaux du scénario**, non en plants — dit à l'écran), au moins deux espèces par strate occupée, des plantes de démarrage
+  (seulement en syntropie : le jardin-forêt n'a pas de temps), un geste de taille noté pour les plantes de biomasse, de quoi arroser (`site.ressource_eau`). « En place », « à regarder » ou « rien de noté », jamais un refus.
+- **Le geste de taille devient un choix** : `Scenario::GESTES` (basitone, cépée, trogne — la fiche des conduites de taille, Théry ch. 12), écrit en tête de `scenario_ligne.conduite_taille` (« cépée — tous les 3 ans ») ; **aucun changement
+  de schéma**, un texte libre d'avant reste entier dans la précision (`Scenario::separerGeste()`). Glossaire : Basitone, Cépée, Trogne.
+- **Le calendrier de perturbation** (`conception-calendrier.php`, saisie libre inchangée) : son panneau Informations rappelle les **quatre moments de la taille** (ch. 12), les **trois périodes où l'on ne taille pas les ligneux**, le
+  noisetier avant janvier, « la première en juin, ensuite quand il y a de quoi couper », et **ce qui est à recaler** (fin juin et mi-novembre à fin février sont des traductions locales ; les trois périodes à éviter sont phénologiques).
+  **Pas fait** : les exemples de fréquence **par plante** — la question n° 1 n'est pas fermée, un repère par espèce ne se code pas.
+- **L'eau de la perturbation** (`conception-materiel-et-eau.php`) : une ligne sous la ressource — on coupe avant ou après une pluie et l'on arrose si elle ne vient pas ; **aucun volume**, le corpus n'en donne pas. La **boucle** (densité et perturbation
+  ⇒ biomasse ⇒ matière organique ⇒ sol plus éponge) est dite dans le panneau Informations, avec « 1 % de matière organique = 20 L/m² » présenté comme **un ordre de grandeur non recoupé, pas une entrée de calcul** ; le « 36 L par kg de
+  biomasse » n'est **pas repris** : il ne recoupe pas la fiche ISI (`connaissances/cycles-de-l-eau/joala-hydrologie-regenerative.md`).
+
+**Ce qui manque pour la Phase 3 (le stade du terrain)** : la grille (colonisation, accumulation, abondance) est au corpus, mais **ce qu'on fait en premier à chaque stade** (question n° 4) ne l'est pas : une question de Définition dont
+rien ne dépendrait violerait la règle « une donnée demandée sert une étape plus loin ». À trancher avec le porteur : **trois stades ou deux** (n° 7) ; **par parcelle ou pour le site**.
+**Ce qui manque pour la Phase 4 (l'itinéraire technique)** : la **liste** des itinéraires et **les critères de choix** (n° 3), le **tableau « itinéraire × période → quoi planter »** (n° 2 : construit uniquement depuis le corpus, case par
+case) et la règle « l'atelier propose l'itinéraire que le stade et les moyens rendent plausibles », **non vérifiée dans le corpus lu**. Ce sont des versements de la formation, ou des décisions du porteur.
 
 ## Questions ouvertes — en attente de la formation
 

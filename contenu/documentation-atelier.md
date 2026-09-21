@@ -131,7 +131,17 @@ Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les
 strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a
 pas d'axe du temps, le scénario se lit par strate. Le **calendrier** est un
-premier repère de rythme, saison par saison, écrit à main levée.
+premier repère de rythme, saison par saison, écrit à main levée ; son panneau
+Informations rappelle les quatre moments de la taille de perturbation et les trois où l'on
+ne taille pas les ligneux, à recaler sur l'état des bourgeons de votre lieu.
+
+Le panneau Informations du scénario dit aussi **si le scénario prépare le saut du chat** :
+des plantes à perturber, une large part de biomasse (le repère de Théry est de 70 à 80 %),
+au moins deux espèces par strate, des plantes de démarrage, un geste de taille noté, de quoi
+arroser à la taille. Ce sont des repères, jamais des refus : chaque ligne dit « en place »,
+« à regarder » ou « rien de noté », avec sa source. Pour un ligneux, on note le **geste de
+taille** — basitone, cépée ou trogne, selon l'endroit où l'arbre stocke ses sucres — en plus
+d'une précision libre.
 
 Une parcelle de type **potager** ne se compose pas comme un verger : son **plan de culture**
 se fait **par planche**. Les planches viennent du plan de la parcelle, et chacune porte
@@ -195,6 +205,9 @@ une consommation attendue. Vous dites aussi d'où vient l'eau du site — résea
 puits ou forage, réserve, ou rien — et la page en tire ce qu'il faut prévoir
 pour la stocker ; sans eau à portée, elle rappelle que la régénération
 naturelle assistée devient la voie la plus sûre.
+À la taille de perturbation, la page rappelle qu'on coupe avant ou après une pluie et
+qu'on arrose si elle ne vient pas ; elle ne calcule aucun volume pour cela, le corpus
+n'en donnant pas.
 
 Pour la **fréquence d'arrosage**, vous notez un test de sol sur la parcelle :
 la vitesse d'infiltration, l'état du sol (détrempé, ressuyé, sec dur) et le
