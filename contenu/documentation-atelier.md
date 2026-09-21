@@ -143,6 +143,7 @@ et une culture absente de ces tables n'est pas neutre, on ne sait simplement pas
 Une culture que l'on taille — le maïs ou le tournesol d'une tranchée centrale, par exemple —
 se marque **plante de biomasse** : le journal des perturbations et le saut du chat la
 comptent alors, comme ils comptent celles du scénario d'un verger.
+Une culture peut aussi porter le nombre de **plants** que vous voulez : l'étape « Matériel et eau » en tire ce qu'il faut se procurer.
 
 L'atelier peut aussi **proposer un placement** : il répartit sur les planches les cultures
 qui n'en ont pas encore, en regroupant ce qui s'entend bien et en écartant ce qui s'entend
@@ -178,6 +179,14 @@ régénération naturelle. La quantité que vous avez saisie l'emporte ; à déf
 elle est estimée à partir de l'espacement et du plan de la parcelle, et la
 page le dit. Un végétal sans origine reste à préciser, car c'est elle qui
 décide de ce qu'on achète.
+
+Pour un **potager**, la liste se déduit du plan de culture : chaque culture, avec le nombre de
+plants que vous y avez noté. Sans ce nombre, la page estime une ligne de plants sur la planche,
+à l'espacement de la culture, et le dit. Pour une culture semée à l'abri, elle ajoute les
+**graines à démarrer** : le nombre de plants divisé par un taux de réussite de 80 %, la
+convention de planification de Yann Lopez — dans son livre, de 91 % pour un poireau à 50 % pour
+une aubergine, un point de départ à remplacer par vos propres levées. Une culture semée en place
+n'a pas de graines chiffrées.
 
 Le besoin en **eau** se donne pour trois états du sol, du plus dégradé au plus
 structuré : le volume par an, la réserve à prévoir, le débit d'une semaine de

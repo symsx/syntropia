@@ -72,7 +72,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   aucune page ne l'écrit : `succession_ligne`, au schéma, reste vide), y **placer les plantes de production par planche selon les
   associations** (Weinrich) et poser le **calendrier de plantation** du plan de culture de Lopez (Haute-Vienne). Proposé le 2026-09-20,
   **Phases 1 à 4 faites le 2026-09-20** (composer la parcelle potager **par planche**, les voisinages de Weinrich, le **placement proposé**, le
-  **calendrier** avec les repères de Lopez) ; **la Phase 5 (succession) faite le 2026-09-21** ; la Phase 6 (matériel et eau) pas commencée ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
+  **calendrier** avec les repères de Lopez) ; **les Phases 5 (succession) et 6 (matériel et eau) faites le 2026-09-21** — le chantier est terminé ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
 - `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
   2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
   associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
@@ -112,7 +112,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
-  Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pur
+  Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
   Geojson.php             lit un GeoJSON externe (ContourBuddy, QGIS, Géoportail…), un tracé par morceau — inversion [lon,lat]→[lat,lon]
@@ -154,7 +154,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1600,6 +1600,16 @@ récit.*
   `conception-potager.php` : sous chaque planche, ses enchaînements et « libérée le … par X — la table cite pour suite … » ; à l'édition d'une culture, ce que la table dit de ce qui la précède et la
   suit. **Ce qui n'est pas codé** : une règle de famille botanique (fèves ou pois avant haricots — Joala 5-C) — la table de Weinrich n'a pas de familles, et rien d'autre ne la source ; une culture
   hors table (le maïs, dit « maïs doux » par Weinrich) n'a pas de repère. Vérifié en local (projet de test supprimé) et aucun débordement de 1280×720 à 320×568.
+- **Matériel et eau du potager — Phase 6, dernière, du chantier « plan de culture », 2026-09-21. Le chantier est terminé, six phases.** `conception-materiel-et-eau.php` lisait le scénario pérenne
+  seul : un potager y apparaissait sans matériel. Pour une parcelle de type potager, la liste se déduit du **plan de culture** : `Materiel::quantiteCulture()` — le nombre de **plants** saisi
+  (**`succession_ligne.nb_plants` : `Version::SCHEMA` passe à 8**, colonne facultative, la fenêtre d'import ne se referme pas ; champ « Plants » du formulaire de culture), à défaut **une ligne de
+  plants sur la planche** à l'espacement de la culture (ou du référentiel), dite « estimé » ; pour une culture **semée à l'abri** (`date_semis` notée), les **graines à démarrer** = plants / 0,8
+  — `Materiel::TAUX_SEMIS`, **la convention de planification de Lopez** (médiane exacte de son tableau, non une mesure : 91 % pour un poireau, 50 % pour une aubergine dans son livre) ; une culture semée
+  en place n'a **pas de graines chiffrées**. Une nouvelle origine « Cultures du potager » dans le récapitulatif, sans nouvelle vue. **L'eau n'avait rien à changer** : elle se calcule sur la surface
+  de la parcelle, et les nombres de Lopez sont ceux d'un potager d'annuelles — la page le dit pour un potager. **Pas fait** : la chaîne complète de Lopez (besoin alimentaire → quantités → surfaces), un
+  taux de réussite propre à chaque culture (le livre en fait le protocole de mesure : semé, levé, repiqué), la marge de pertes de récolte. Vérifié en local (14 contrôles purs, projet de test supprimé,
+  refus d'un nombre de plants invalide, `verifier-export` identique, fichier du schéma 7 accepté, aucun débordement de 1280×720 à 320×568). **Au déploiement : `bin/deployer.py base` d'abord**
+  (la colonne, schémas 2 à 8 en attente), puis `fichiers`.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

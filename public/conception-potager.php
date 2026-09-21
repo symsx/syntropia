@@ -196,7 +196,7 @@ if ($reste !== []) {
 }
 
 // Le formulaire.
-$f = ['espece' => '', 'planche' => '', 'biomasse' => '', 'strate' => '', 'espacement_m' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
+$f = ['espece' => '', 'planche' => '', 'biomasse' => '', 'strate' => '', 'espacement_m' => '', 'nb_plants' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($saisie[$k] ?? '');
@@ -717,9 +717,15 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <label class="pt-champ">Récolte <small>prévue</small>
             <input type="date" name="date_recolte" value="<?= $h($f['date_recolte']) ?>">
           </label>
-          <label class="pt-champ">Espacement <small>mètres, facultatif</small>
-            <input type="number" name="espacement_m" min="0.01" max="20" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_m']) ?>">
-          </label>
+          <div class="pt-deux">
+            <label class="pt-champ">Plants <small>combien, facultatif</small>
+              <input type="number" name="nb_plants" min="1" max="100000" step="1" inputmode="numeric" value="<?= $h($f['nb_plants']) ?>">
+            </label>
+            <label class="pt-champ">Espacement <small>mètres, facultatif</small>
+              <input type="number" name="espacement_m" min="0.01" max="20" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_m']) ?>">
+            </label>
+          </div>
+          <p class="pt-note">Le nombre de plants sert à l'étape suivante, <b>Matériel et eau</b> : il en tire les graines à démarrer, à la marge de semis près. Sans lui, la page estime une ligne de plants sur la planche, d'après l'espacement.</p>
           <label class="pt-champ">Notes <small>facultatif</small>
             <textarea name="notes" rows="2" maxlength="2000"><?= $h($f['notes']) ?></textarea>
           </label>

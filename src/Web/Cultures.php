@@ -108,6 +108,17 @@ final class Cultures
             }
         }
 
+        $nbPlants = null;
+        $brut = trim((string) ($v['nb_plants'] ?? ''));
+        if ($brut !== '') {
+            $n = filter_var($brut, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
+            if ($n === false) {
+                $erreurs['nb_plants'] = 'Le nombre de plants est un entier, de 1 à 100 000.';
+            } else {
+                $nbPlants = $n;
+            }
+        }
+
         // Des dates PLANIFIÉES : un plan de culture se prépare avant de semer, elles peuvent être à venir.
         $date = static function (string $cle, string $nom) use ($v, &$erreurs): ?string {
             $valeur = trim((string) ($v[$cle] ?? ''));
@@ -147,6 +158,7 @@ final class Cultures
             'role' => $biomasse ? \Syntropia\SautDuChat::ROLE_BIOMASSE : null,
             'strate' => $strate !== '' && isset(self::STRATES[$strate]) ? $strate : null,
             'espacement_m' => $espacement,
+            'nb_plants' => $nbPlants,
             'date_semis' => $semisAbri,
             'date_semis_repiquage' => $semis,
             'date_recolte' => $recolte,

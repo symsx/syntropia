@@ -10,7 +10,7 @@ declare(strict_types=1);
  * les pluies ne sont pas suffisantes. Prévision de stockage ou d'accès à l'eau »).
  *
  * Deux vues, en onglets CSS purs, que le bureau ne fait jamais défiler :
- * - **Matériel végétal** — ce que le scénario de la parcelle demande, regroupé
+ * - **Matériel végétal** — ce que le scénario de la parcelle demande (pour un potager, son plan de culture : plants et graines), regroupé
  *   par origine (à acheter, à multiplier, à laisser venir). Une quantité saisie
  *   prime ; sinon elle est estimée depuis l'espacement et le plan, et dite telle.
  * - **Eau** — le besoin annuel en trois scénarios de sol (Lopez), la ressource
@@ -32,6 +32,7 @@ use Syntropia\Materiel;
 use Syntropia\Role;
 use Syntropia\Scenario;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\ReleveSol;
@@ -140,8 +141,22 @@ foreach ((new Especes())->toutes($siteId) as $e) {
 
 $entrees = [];
 $sansScenario = [];
+$sansCulture = [];
+$culturesService = new Cultures();
 foreach ($portee as $p) {
     $bandes = Materiel::bandes($p);
+    // Un potager n'a pas de scénario de strates et de temps : ses cultures sont son plan de culture.
+    if (($p['type'] ?? '') === 'potager') {
+        $cultures = $culturesService->dUneParcelle((int) $p['id']);
+        if ($cultures === []) {
+            $sansCulture[] = (string) $p['code'];
+        }
+        foreach ($cultures as $c) {
+            $entrees[] = ['ligne' => ['espece' => $c['espece'], 'origine' => 'potager'], 'parcelle' => (string) $p['code'],
+                'qte' => Materiel::quantiteCulture($c, $bandes, $espacements[mb_strtolower(trim((string) $c['espece']))] ?? null)];
+        }
+        continue;
+    }
     $lignes = $parcellesService->scenario((int) $p['id']);
     if ($lignes === []) {
         $sansScenario[] = (string) $p['code'];
@@ -155,6 +170,8 @@ $recap = Materiel::regrouper($entrees);
 $synthese = Materiel::synthese($recap);
 $aPrecise = count(array_filter($recap, static fn (array $r): bool => $r['origine'] === ''));
 $estimes = count(array_filter($recap, static fn (array $r): bool => $r['estime']));
+$aPotager = isset($synthese['potager']);
+$tousPotagers = $portee !== [] && count(array_filter($portee, static fn (array $p): bool => ($p['type'] ?? '') === 'potager')) === count($portee);
 
 /* ------------------------------------------------------------------ l'eau */
 
@@ -436,8 +453,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
         <!-- ============ le matériel ============ -->
         <section class="mv-vue mv-vue-mat" id="mv-mat">
 <?php if ($recap === []): ?>
-          <p class="mv-message">Aucun végétal n'est encore placé <?= $tout ? 'sur les parcelles' : 'sur cette parcelle' ?> : la liste se déduit du scénario.
-            <?php if ($parcelle !== null): ?><a href="conception-scenario.php?parcelle=<?= $idP ?>">Composer le scénario →</a><?php endif; ?></p>
+          <p class="mv-message">Aucun végétal n'est encore placé <?= $tout ? 'sur les parcelles' : 'sur cette parcelle' ?> : la liste se déduit <?= $parcelle !== null && ($parcelle['type'] ?? '') === 'potager' ? 'du plan de culture' : 'du scénario' ?>.
+            <?php if ($parcelle !== null): ?><a href="conception-<?= ($parcelle['type'] ?? '') === 'potager' ? 'potager' : 'scenario' ?>.php?parcelle=<?= $idP ?>"><?= ($parcelle['type'] ?? '') === 'potager' ? 'Composer le plan de culture' : 'Composer le scénario' ?> →</a><?php endif; ?></p>
 <?php else: ?>
           <div class="mv-synthese">
 <?php foreach (Materiel::ORIGINES as $cle => $titre): if (!isset($synthese[$cle])) { continue; } $s = $synthese[$cle]; ?>
@@ -453,7 +470,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
                 <tr class="mv-ligne">
                   <td><?= $h($r['espece']) ?></td>
                   <td class="ori"><?= $h(Materiel::ORIGINES[$r['origine']] ?? '') ?></td>
-                  <td class="q"><?php if ($r['n'] !== null): ?><?= $r['estime'] ? '≈ ' : '' ?><?= $nombre((float) $r['n']) ?><?= $r['estime'] ? ' <small>estimé</small>' : '' ?>
+                  <td class="q"><?php if ($r['n'] !== null): ?><?= $r['estime'] ? '≈ ' : '' ?><?= $nombre((float) $r['n']) ?><?= $r['estime'] ? ' <small>estimé</small>' : '' ?><?= $r['graines'] > 0 ? ' <small>· ≈ ' . $nombre((float) $r['graines']) . ' graines</small>' : '' ?>
                     <?php elseif ($r['connu'] > 0): ?>≥ <?= $nombre((float) $r['connu']) ?> <small>et des quantités à préciser</small>
                     <?php else: ?><small>à déterminer</small><?php endif; ?></td>
 <?php if ($tout): ?>
@@ -469,15 +486,21 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
           </div>
           <p class="mv-pied-note">
 <?php if ($estimes > 0): ?>
-            « Estimé » : une ligne de plants par planche ou par bande de bordure, à l'espacement du scénario — une estimation haute quand plusieurs végétaux se partagent une ligne. Une quantité saisie dans le scénario la remplace.
+            « Estimé » : une ligne de plants par planche ou par bande de bordure, à l'espacement du scénario — une estimation haute quand plusieurs végétaux se partagent une ligne. Une quantité saisie dans le scénario ou le plan de culture la remplace.
 <?php else: ?>
             Les quantités sont celles du scénario. Sans quantité ni espacement, elles restent « à déterminer ».
+<?php endif; ?>
+<?php if ($aPotager): ?>
+            Cultures du potager : la quantité est le nombre de <b>plants</b> saisi dans le plan de culture ; sans lui, une ligne de plants sur la planche, à l'espacement de la culture. Pour une culture semée à l'abri, les <b>graines</b> ajoutent la marge de semis — un taux de réussite de 80 %, la convention de planification de Lopez (91 % pour un poireau, 50 % pour une aubergine dans son livre) : à remplacer par vos propres levées. Une culture semée en place n'a pas de graines chiffrées.
 <?php endif; ?>
 <?php if ($aPrecise > 0): ?>
             <?= $aPrecise ?> <?= $vegetaux($aPrecise) ?> sans origine : dites-la dans le scénario, elle décide de ce qu'on achète.
 <?php endif; ?>
 <?php if ($sansScenario !== []): ?>
             Sans scénario : <?= $h(implode(', ', $sansScenario)) ?>.
+<?php endif; ?>
+<?php if ($sansCulture !== []): ?>
+            Sans culture au plan : <?= $h(implode(', ', $sansCulture)) ?>.
 <?php endif; ?>
           </p>
 <?php endif; ?>
@@ -518,7 +541,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php if ($pointe !== null): ?>
               <p>En pointe d'été : <span class="mv-cle"><?= $nombre($pointe['m3_jour'], 2) ?> m³ par jour</span>, soit <?= $nombre($pointe['m3_semaine'], 1) ?> m³ dans la semaine (5 mm/jour).</p>
 <?php endif; ?>
-              <p class="doux">La réserve à prévoir égale le besoin annuel ; une mare se creuse un tiers plus grande, l'évaporation en prend le quart. Ordres de grandeur, tirés de Lopez (maraîchage d'annuelles) — pas une consommation attendue. On arrose tout, passe-pieds compris. Une pérenne demande surtout l'arrosage de ses trois premières années.</p>
+              <p class="doux">La réserve à prévoir égale le besoin annuel ; une mare se creuse un tiers plus grande, l'évaporation en prend le quart. Ordres de grandeur, tirés de Lopez (maraîchage d'annuelles) — pas une consommation attendue. On arrose tout, passe-pieds compris. <?= $tousPotagers ? 'Un potager d’annuelles est le cas que décrit Lopez : ces nombres s’y appliquent sans transposition de plante, non de climat.' : 'Une pérenne demande surtout l’arrosage de ses trois premières années.' ?></p>
 <?php if ($sansDimensions !== []): ?>
               <p class="doux mv-alerte">Sans dimensions, non comptées : <?= $h(implode(', ', $sansDimensions)) ?>.</p>
 <?php endif; ?>

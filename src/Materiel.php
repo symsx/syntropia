@@ -25,6 +25,7 @@ final class Materiel
         'mixte' => 'Acheté et multiplié',
         'multiplication' => 'À multiplier soi-même',
         'rna' => 'À laisser venir (RNA)',
+        'potager' => 'Cultures du potager',
         '' => 'Origine à préciser',
     ];
 
@@ -94,6 +95,14 @@ final class Materiel
         ];
     }
 
+    /**
+     * Le taux de réussite d'un semis, tel que Lopez en fait une convention de planification : environ 80 % — la
+     * médiane exacte de son tableau, sept cultures sur dix-sept pile dessus. **Ce n'est pas une mesure** : le
+     * rapport va du simple au double selon l'espèce (91 % pour le poireau, 50 % pour l'aubergine), et le livre dit
+     * qu'elle est « à adapter à vos propres taux de réussite ». Un point de départ à remplacer.
+     */
+    public const TAUX_SEMIS = 0.8;
+
     /** Combien de plants sur une bande de cette longueur, à cet espacement. */
     private static function surBande(float $longueur, float $espacement): int
     {
@@ -130,13 +139,45 @@ final class Materiel
     }
 
     /**
+     * La quantité d'une culture de potager (`succession_ligne`).
+     *
+     * **Une quantité saisie prime toujours.** Sans saisie, une ligne de plants sur la planche, à l'espacement de la
+     * culture (à défaut celui du référentiel) : un ordre de grandeur, à corriger. **Des graines** — `plants / 0,8` —
+     * seulement pour une culture semée à l'abri (`date_semis` notée) : celle qui se sème en place n'a pas de
+     * « plants » à démarrer, et l'atelier ne devine pas combien de graines elle demande.
+     *
+     * @param array<string, mixed> $culture une ligne de `succession_ligne`
+     * @param array<string, mixed>|null $bandes `bandes()` de sa parcelle
+     * @return array{n: ?int, mode: ?string, espacement: ?float, graines: ?int}
+     */
+    public static function quantiteCulture(array $culture, ?array $bandes, ?float $espacementReferentiel = null): array
+    {
+        $esp = ($culture['espacement_m'] ?? '') !== '' && $culture['espacement_m'] !== null ? (float) $culture['espacement_m'] : null;
+        if ($esp === null && $espacementReferentiel !== null && $espacementReferentiel > 0) {
+            $esp = $espacementReferentiel;
+        }
+        $n = null;
+        $mode = null;
+        if (($culture['nb_plants'] ?? '') !== '' && $culture['nb_plants'] !== null) {
+            $n = (int) $culture['nb_plants'];
+            $mode = 'saisi';
+        } elseif ($bandes !== null && $esp !== null && $esp > 0 && $bandes['centre']['longueur'] > 0) {
+            $n = self::surBande($bandes['centre']['longueur'], $esp);
+            $mode = 'estime';
+        }
+        $graines = $n !== null && $n > 0 && ($culture['date_semis'] ?? '') !== '' && $culture['date_semis'] !== null
+            ? (int) ceil($n / self::TAUX_SEMIS - 1e-9) : null;
+        return ['n' => $n, 'mode' => $mode, 'espacement' => $esp, 'graines' => $graines];
+    }
+
+    /**
      * Le récapitulatif : une ligne par végétal et origine — plusieurs implantations
      * d'un même végétal (ou de plusieurs parcelles, en vue « tout le projet ») se
      * cumulent. `n` est `null` dès qu'une des implantations n'a pas de quantité :
      * on n'additionne pas des quantités qu'on ne connaît pas, on le dit.
      *
-     * @param list<array{ligne: array<string, mixed>, parcelle: string, qte: array{n: ?int, mode: ?string, espacement: ?float}}> $entrees
-     * @return list<array{espece: string, origine: string, parcelles: list<string>, n: ?int, connu: int, inconnu: int, estime: bool}>
+     * @param list<array{ligne: array<string, mixed>, parcelle: string, qte: array{n: ?int, mode: ?string, espacement: ?float, graines?: ?int}}> $entrees
+     * @return list<array{espece: string, origine: string, parcelles: list<string>, n: ?int, connu: int, inconnu: int, estime: bool, graines: int}>
      */
     public static function regrouper(array $entrees): array
     {
@@ -146,7 +187,7 @@ final class Materiel
             $espece = trim((string) $e['ligne']['espece']);
             $cle = $origine . '|' . mb_strtolower($espece);
             $groupes[$cle] ??= ['espece' => $espece, 'origine' => $origine, 'parcelles' => [], 'n' => 0,
-                'connu' => 0, 'inconnu' => 0, 'estime' => false];
+                'connu' => 0, 'inconnu' => 0, 'estime' => false, 'graines' => 0];
             $g = &$groupes[$cle];
             if (!in_array($e['parcelle'], $g['parcelles'], true)) {
                 $g['parcelles'][] = $e['parcelle'];
@@ -156,6 +197,7 @@ final class Materiel
             } else {
                 $g['connu'] += $e['qte']['n'];
                 $g['estime'] = $g['estime'] || $e['qte']['mode'] === 'estime';
+                $g['graines'] += (int) ($e['qte']['graines'] ?? 0);
             }
             unset($g);
         }

@@ -1,7 +1,8 @@
 # Le plan de culture du potager — plan
 
-> **État au 2026-09-20 — Phases 1 (composer la parcelle potager, par planche), 2 (les voisinages par planche), 3 (le placement
-> proposé) et 4 (le calendrier) faites ; les Phases 5 et 6 ne sont pas commencées.** Né de deux ajouts du porteur, le même jour, pendant le chantier
+> **État au 2026-09-21 — les six phases sont faites : 1 (composer la parcelle potager, par planche), 2 (les voisinages par planche), 3 (le placement
+> proposé), 4 (le calendrier), 5 (la succession) et 6 (matériel et eau). Chantier terminé, pas déployé** (schéma 8) ; reste, à la demande du porteur,
+> ce que le module 5 de la formation ouvre (§ « À trancher »). Né de deux ajouts du porteur, le même jour, pendant le chantier
 > « saut du chat » (`chantier-saut-du-chat.md`, décision 8) et le chantier des associations (`chantier-associations.md`).
 > Avance **par incréments** ; une règle sans réponse sourcée ne se code pas.
 
@@ -159,6 +160,25 @@ moyenne, non des preuves ; non symétrique (un enchaînement est lu dès que l'u
 - **Ce qui n'est pas codé, dit tel quel** : la règle de famille (fèves ou pois avant haricots : à éviter, Joala 5-C) — la table de Weinrich n'a pas de familles, et aucune source du dépôt ne les donne ; la culture hors table
   (le maïs, « maïs doux » chez Weinrich) n'a pas de repère ; le **demi-planche en miroir** du ch. 8 de Théry (`demi_planche`) n'est pas repris.
 - Vérifié en local (projet de test supprimé) : enchaînements conseillé / exclu / sans repère, chevauchement sans suite, culture sans date, planche libérée, culture inconnue, aucun débordement de 1280×720 à 320×568.
+
+## Phase 6 — faite (2026-09-21) : matériel et eau du potager
+
+**Ce qui manquait** : `conception-materiel-et-eau.php` ne lisait que `scenario_ligne` ; un potager y apparaissait sans matériel. **L'eau n'avait rien à changer** : elle se calcule sur la surface
+(longueur × largeur) de la parcelle, et les volumes de Lopez sont ceux d'un potager d'annuelles — pour un potager, la page le dit au lieu de rappeler que l'ouvrage ne chiffre rien pour une pérenne.
+
+- **`succession_ligne.nb_plants`** (`Version::SCHEMA` passe à **8**, colonne facultative) : le nombre de plants que la culture demande — l'entrée de la chaîne de Lopez (« plants souhaités », puis « nombre à semer »).
+  Champ « Plants » du formulaire de culture, entier de 1 à 100 000.
+- **`Materiel::quantiteCulture()`** (pur, 14 contrôles avec `regrouper`) : une quantité saisie prime ; sinon une ligne de plants sur la planche (`Materiel::bandes()`), à l'espacement de la culture ou du référentiel,
+  dite « estimé » ; sans espacement ni dimensions, « à déterminer ». **Graines** = plants / 0,8, arrondi en haut, **seulement pour une culture semée à l'abri** (`date_semis` notée) : celle que l'on sème en place n'a pas de
+  « plants » à démarrer, et l'atelier ne devine pas ses graines. **`Materiel::TAUX_SEMIS = 0,8`** est la **convention de planification** de Lopez, non une mesure (médiane exacte de son tableau ; 91 % pour le poireau,
+  50 % pour l'aubergine) — la page le dit et renvoie à ses propres levées.
+- **Une origine de plus**, « Cultures du potager », dans le récapitulatif : pas de nouvelle vue. Un potager sans culture, ou sans plants : « à déterminer », jamais de somme inventée.
+- **Ce qui n'est pas fait** : la chaîne complète de Lopez (besoin alimentaire → quantités → surfaces) ; **un taux de réussite propre à chaque culture** (le livre en fait le protocole de mesure — semé, levé, repiqué —, à
+  concevoir avec le retour des levées réelles) ; la marge de pertes de récolte (30 % au début, dit le livre) ; le besoin en eau par culture.
+- Vérifié en local (projet de test supprimé) : tomate 24 plants → 30 graines, aubergine 10 → 13, carotte estimée 120 (6 m à 5 cm), radis « à déterminer », `nb_plants` invalide refusé, `verifier-export` identique, fichier du
+  schéma 7 (sans `nb_plants`) accepté, valeur négative refusée, aucun débordement de 1280×720 à 320×568.
+
+**Au déploiement : `bin/deployer.py base` d'abord** (la colonne), puis `fichiers`.
 
 ## Ce que le module 5 de la formation apporte (versement du 2026-09-20)
 
