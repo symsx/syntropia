@@ -159,6 +159,13 @@ les dates de Yann Lopez, maraîcher en Haute-Vienne, et propose de les reprendre
 dates en mots (« fin avril »), donc indicatives, un point de départ à remplacer par vos
 propres mesures. Pour toute autre culture, il n'y a pas de repère : la date est à vous.
 
+Sur une planche, les cultures se côtoient, mais elles **se suivent** aussi : quand deux cultures
+ont leurs dates, la page dit si la table de succession de Weinrich cite leur enchaînement, l'exclut
+(l'épinard ne suit ni la bette ni la betterave rouge), ou n'en dit rien — ce qui ne veut pas dire
+que tout va bien. Sous chaque planche, elle rappelle ce que la table cite pour suite de la
+culture qui la libère en dernier : quoi semer quand la planche se libère. Ce sont des ordres de
+conduite d'Allemagne moyenne, non des preuves ; une culture absente de la table n'a pas de repère.
+
 # Concevoir : le matériel et l'eau
 
 Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra

@@ -72,7 +72,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   aucune page ne l'écrit : `succession_ligne`, au schéma, reste vide), y **placer les plantes de production par planche selon les
   associations** (Weinrich) et poser le **calendrier de plantation** du plan de culture de Lopez (Haute-Vienne). Proposé le 2026-09-20,
   **Phases 1 à 4 faites le 2026-09-20** (composer la parcelle potager **par planche**, les voisinages de Weinrich, le **placement proposé**, le
-  **calendrier** avec les repères de Lopez) ; les Phases 5 et 6 (succession, matériel et eau) pas commencées ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
+  **calendrier** avec les repères de Lopez) ; **la Phase 5 (succession) faite le 2026-09-21** ; la Phase 6 (matériel et eau) pas commencée ; né de `chantier-saut-du-chat.md` (décision 8) et de `chantier-associations.md`.
 - `chantier-associations.md` — le plan (5 phases) des **associations de plantes de production**, demandé par le porteur le
   2026-09-20 : importer les tables de Weinrich (fait), puis **proposer le placement des plantes de production selon les
   associations — ou leur dissociation : éviter certains voisinages**. Phase 1 (importer et lire) faite ; les autres pas
@@ -108,6 +108,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Perturbation.php        le vocabulaire du journal des perturbations (gestes, état des plantes, eau, biomasse) et le temps écoulé depuis la dernière coupe ; pur
   SautDuChat.php          le vocabulaire d'un constat, la comparaison au témoin, et les conditions qui rendent le saut du chat possible (lues dans le journal et le scénario) ; pur
   CalendrierLopez.php     lit les repères de semis et de repiquage de Lopez (`contenu/calendrier-lopez.csv` : dix-sept cultures d'automne et d'hiver, en dates de mots) et en tire des dates INDICATIVES (le milieu de la fenêtre) ; pur
+  Succession.php          lit la table de succession de Weinrich (`contenu/associations/associations-succession.csv`) : ce qui précède une plante, ce qui la suit, l'enchaînement de deux cultures d'une planche (conseillé / exclu / sans repère) lu dans leurs dates ; pur
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
@@ -1591,6 +1592,14 @@ récit.*
   (une frise S/P/R sur l'année, mois par mois, planche par planche) ; à l'édition d'une culture, le repère de Lopez et un bouton « Reprendre ces dates ». Vérifié en CDP (refus de
   dates incohérentes, lecteur, `verifier-export`, fichier du schéma 6, 320×568). **Au déploiement : `bin/deployer.py base` d'abord** (la colonne), puis `fichiers`. Non fait : le
   nombre de graines et de plants (la chaîne de Lopez), la succession, Matériel et eau du potager.
+- **La succession sur une planche — Phase 5 du chantier « plan de culture », 2026-09-21.** Une planche porte des cultures qui se côtoient (Phase 2) et qui **se suivent**. `src/Succession.php`
+  (pur, 28 contrôles) lit la table de succession de Weinrich (30 plantes) : `enchainement($avant, $apres)` rend **conseillé** (la table le cite, d'un côté ou de l'autre — les tables ne sont pas
+  symétriques), **exclu** (« presque toutes sauf bette et betterave rouge » : l'épinard) ou **sans repère** (ce qui n'est pas neutre) ; `chaine()` ordonne les cultures **datées** d'une planche
+  (mise en place, récolte) : une culture en suit une autre quand celle-ci est récoltée au plus tard le jour où elle est mise en place, sinon elles se côtoient ; `apres()`/`avant()` disent ce que
+  la table cite comme suite ou précédent. **Aucun changement de schéma** : les trois temps du module 5 (pré-culture, principale, post-culture) se lisent dans les dates, non dans une colonne. Sur
+  `conception-potager.php` : sous chaque planche, ses enchaînements et « libérée le … par X — la table cite pour suite … » ; à l'édition d'une culture, ce que la table dit de ce qui la précède et la
+  suit. **Ce qui n'est pas codé** : une règle de famille botanique (fèves ou pois avant haricots — Joala 5-C) — la table de Weinrich n'a pas de familles, et rien d'autre ne la source ; une culture
+  hors table (le maïs, dit « maïs doux » par Weinrich) n'a pas de repère. Vérifié en local (projet de test supprimé) et aucun débordement de 1280×720 à 320×568.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

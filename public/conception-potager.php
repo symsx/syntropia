@@ -26,6 +26,7 @@ use Syntropia\Configuration;
 use Syntropia\PlanDeCulture;
 use Syntropia\Role;
 use Syntropia\SautDuChat;
+use Syntropia\Succession;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Parcelles;
@@ -187,11 +188,11 @@ foreach (array_merge($numeros, $horsPlan) as $n) {
         $citees[Associations::normaliser($r['a'])] = $citees[Associations::normaliser($r['b'])] = true;
     }
     $cartes[] = ['numero' => $n, 'libelle' => 'Planche ' . $n, 'hors_plan' => in_array($n, $horsPlan, true), 'cultures' => $liste,
-        'proposees' => $proposeesParPlanche[$n] ?? [], 'relations' => $relations,
+        'proposees' => $proposeesParPlanche[$n] ?? [], 'relations' => $relations, 'chaine' => Succession::chaine($liste),
         'sans_fiche' => array_values(array_filter(array_unique($noms), static fn (string $x): bool => Associations::fiche($x) === null && !isset($citees[Associations::normaliser($x)])))];
 }
 if ($reste !== []) {
-    $cartes[] = ['numero' => null, 'libelle' => 'Pas encore placées', 'hors_plan' => false, 'cultures' => $reste, 'proposees' => [], 'relations' => [], 'sans_fiche' => []];
+    $cartes[] = ['numero' => null, 'libelle' => 'Pas encore placées', 'hors_plan' => false, 'cultures' => $reste, 'proposees' => [], 'relations' => [], 'sans_fiche' => [], 'chaine' => null];
 }
 
 // Le formulaire.
@@ -209,6 +210,8 @@ if ($saisie !== null) {
     $f['planche'] = (string) $_GET['planche'];
 }
 $ficheEditee = $f['espece'] !== '' ? Associations::fiche($f['espece']) : null;
+$suiteEditee = $f['espece'] !== '' && Succession::connue($f['espece'])
+    ? ['avant' => Succession::avant($f['espece']), 'apres' => Succession::apres($f['espece'])] : null;
 $connues = array_map(static fn (array $l): string => (string) $l['nom'], array_values(Associations::table('potager')));
 // Les repères de Lopez : dix-sept cultures d'automne et d'hiver, en édition seulement (le nom est alors enregistré).
 foreach (CalendrierLopez::table() as $l) {
@@ -360,6 +363,11 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-form input:focus, .pt-form select:focus, .pt-form textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .pt-deux{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
   .pt-note{ font:400 .74rem/1.4 var(--texte); color:var(--muted); margin:.2rem 0 .6rem; }
+  .pt-suite{ margin:.35em 0 0; padding:.3em 0 0; border-top:1px solid var(--line); font:400 .8em/1.35 var(--texte); color:var(--ink); }
+  .pt-suite p{ margin:.1em 0; }
+  .pt-suite .bien{ color:var(--accent-titre); }
+  .pt-suite .eviter{ color:var(--alerte); }
+  .pt-suite small{ color:var(--muted); }
   .pt-fiche{ margin:.2rem 0 .7rem; padding:.45rem .6rem; border-radius:.45rem; background:var(--accent-fond); font:400 .78rem/1.4 var(--texte); color:var(--ink); }
   .pt-fiche .eviter{ color:var(--alerte); }
   .pt-erreurs{ margin:0 0 .7rem; padding:.5rem .7rem; border:1px solid var(--alerte); border-radius:.5rem; color:var(--alerte); font:400 .8rem/1.35 var(--texte); }
@@ -531,6 +539,25 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php endif; ?>
               </div>
 <?php endif; ?>
+<?php $ch = $c['chaine'] ?? null; if ($ch !== null && ($ch['suites'] !== [] || $ch['libere'] !== null)): ?>
+              <div class="pt-suite">
+<?php foreach (array_slice($ch['suites'], 0, 3) as $s): ?>
+<?php if ($s['verdict'] === Succession::CONSEILLE): ?>
+                <p class="bien">✓ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table de succession le cite</p>
+<?php elseif ($s['verdict'] === Succession::DECONSEILLE): ?>
+                <p class="eviter">⚠ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table l'exclut</p>
+<?php else: ?>
+                <p><small><?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table n'en dit rien</small></p>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php if (count($ch['suites']) > 3): ?>
+                <p><small>et <?= count($ch['suites']) - 3 ?> autre<?= count($ch['suites']) - 3 > 1 ? 's' : '' ?> enchaînement<?= count($ch['suites']) - 3 > 1 ? 's' : '' ?></small></p>
+<?php endif; ?>
+<?php if ($ch['libere'] !== null): $apres = Succession::apres($ch['libere']['espece']); ?>
+                <p><small>Libérée le <?= $h($dateFr($ch['libere']['date'])) ?> par <?= $h($ch['libere']['espece']) ?> — <?= $apres !== [] ? 'la table cite pour suite : ' . $h(implode(', ', array_slice($apres, 0, 5))) . (count($apres) > 5 ? '…' : '') : 'la table ne cite pas de suite pour elle' ?></small></p>
+<?php endif; ?>
+              </div>
+<?php endif; ?>
             </section>
 <?php endforeach; ?>
           </div>
@@ -639,6 +666,14 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             <span class="eviter">À éviter à côté : <?= $ficheEditee['defavorables'] !== [] ? $h($listeNoms($ficheEditee['defavorables'])) : '<i>rien de noté</i>' ?></span></div>
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
           <p class="pt-note">Cette culture n'est pas dans les tables : <b>pas de voisinage connu</b> — ce qui ne veut pas dire neutre.</p>
+<?php endif; ?>
+<?php if ($suiteEditee !== null): ?>
+          <div class="pt-fiche"><b>La succession, selon la table de « <?= $h($f['espece']) ?> »</b> [Weinrich p.115]<br>
+            Avant : <?= $suiteEditee['avant'] !== [] ? $h(implode(', ', $suiteEditee['avant'])) : '<i>rien de noté</i>' ?><br>
+            Après : <?= $suiteEditee['apres'] !== [] ? $h(implode(', ', $suiteEditee['apres'])) : '<i>rien de noté</i>' ?><br>
+            <small>Des ordres de conduite d'Allemagne moyenne, non des preuves ; ce que la table ne dit pas n'est pas pour autant neutre.</small></div>
+<?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
+          <p class="pt-note">Cette culture n'est pas dans la table de succession : rien n'est connu de ce qui la précède ou la suit.</p>
 <?php endif; ?>
 <?php if ($repere !== null): ?>
           <div class="pt-repere"><b>Repère de Lopez</b> <small>[maraîcher en Haute-Vienne — dates lues sans transposition]</small><br>

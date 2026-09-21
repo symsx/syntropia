@@ -143,6 +143,23 @@ tableau de Lopez** (aucune source ne le donne : ne se code pas). Le taux de 80 %
 
 **Au déploiement : `bin/deployer.py base` d'abord** (la colonne `date_semis`), puis `fichiers` (qui envoie aussi `contenu/calendrier-lopez.csv`).
 
+## Phase 5 — faite (2026-09-21) : la succession
+
+**Ce que la table dit** : `associations-succession.csv` (Weinrich, 30 plantes) — pour chaque plante, ce qui peut la précéder et ce qui peut la suivre ou l'engrais vert. Des ordres de conduite d'Allemagne
+moyenne, non des preuves ; non symétrique (un enchaînement est lu dès que l'une des deux plantes le cite) ; deux mots recouvrent plusieurs plantes (« légumineuses », « salade »), une ligne
+(l'épinard) dit « presque toutes sauf bette et betterave rouge ».
+
+- **`src/Succession.php`** (pur, 28 contrôles). `enchainement($avant, $apres)` : **conseillé**, **exclu** ou **sans repère** — jamais un quatrième verdict, et « sans repère » n'est ni bon ni mauvais.
+  `chaine()` : les cultures **datées** d'une planche (mise en place, à défaut semis ; récolte) sont ordonnées ; une culture en suit une autre quand celle-ci est récoltée au plus tard le jour où elle est mise
+  en place, et la devancière est la dernière récoltée ; deux cultures qui se chevauchent se côtoient (les voisinages, Phase 2). `apres()`/`avant()` : ce que la table cite comme suite (sa postculture, et les plantes
+  qui la citent en préculture) ou comme précédent. Les noms se comparent sans accent, au singulier ou au pluriel, sans qualificatif (« carotte primeur » est une carotte) ; « chou » et « chou-rave » restent deux plantes.
+- **Aucun changement de schéma.** Les trois temps du module 5 (pré-culture, culture principale, post-culture) se lisent dans les dates de la planche : une colonne « temps » ne dirait rien de plus.
+- **Sur `conception-potager.php`** : sous chaque planche, ses enchaînements (« Radis puis Chou : la table le cite », « ⚠ … la table l'exclut », « … n'en dit rien ») et « Libérée le … par X — la table cite pour suite : … » ;
+  à l'édition d'une culture, ce que la table dit de ce qui la précède et la suit.
+- **Ce qui n'est pas codé, dit tel quel** : la règle de famille (fèves ou pois avant haricots : à éviter, Joala 5-C) — la table de Weinrich n'a pas de familles, et aucune source du dépôt ne les donne ; la culture hors table
+  (le maïs, « maïs doux » chez Weinrich) n'a pas de repère ; le **demi-planche en miroir** du ch. 8 de Théry (`demi_planche`) n'est pas repris.
+- Vérifié en local (projet de test supprimé) : enchaînements conseillé / exclu / sans repère, chevauchement sans suite, culture sans date, planche libérée, culture inconnue, aucun débordement de 1280×720 à 320×568.
+
 ## Ce que le module 5 de la formation apporte (versement du 2026-09-20)
 
 Fiche : `connaissances/formation-joala/potager-syntropique.md` — le module « potager » de Joala (synthèses générées ; seules les synthèses ont été lues, à la demande de
