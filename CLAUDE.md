@@ -80,6 +80,14 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   un jardin-forêt, l'association, ce sont les **guildes et consortiums de Plantae** (`guilde.csv` : services rendus et besoins requis), lus par un
   **instantané** (`contenu/guildes-plantae.json`, `src/Guildes.php` — pas encore branché à une page). Une source
   dont les réserves se disent à l'écran : des ordres de conduite, des tables non symétriques, deux plantes toxiques.
+- `chantier-caracteristiques-vegetaux.md` — le plan (3 phases) pour que l'atelier connaisse les **caractéristiques des
+  végétaux** (dates de semis/plantation/récolte, rôles de service) qui nourrissent le calendrier de plantation d'un
+  potager — par le référentiel `espece` (à étendre) et un import du porteur (à construire). Proposé le 2026-09-22,
+  **pas commencé**. Quatre décisions tranchées : le potager d'abord, pas le scénario pérenne ; le référentiel `espece`
+  plutôt qu'une table séparée ; le vocabulaire des rôles de `Scenario::FONCTIONS`, repris pour le potager. Un premier
+  fichier fourni par le porteur (`base_semences_planification_maraichage.csv`, une banque de semences personnelle) a
+  été **nettoyé hors de ce dépôt** (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé
+  ni changé) — il servira de premier essai réel une fois l'import construit (Phase 2).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
