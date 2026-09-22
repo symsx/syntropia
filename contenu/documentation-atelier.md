@@ -141,6 +141,14 @@ premier repère de rythme, saison par saison, écrit à main levée ; son pannea
 Informations rappelle les quatre moments de la taille de perturbation et les trois où l'on
 ne taille pas les ligneux, à recaler sur l'état des bourgeons de votre lieu.
 
+Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos propres espèces. Une
+surcharge locale prime sur le cadre pour la même espèce, sans le changer pour les autres ; la
+retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
+de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
+d'une espèce — ce qui nourrira, plus tard, les suggestions du plan de culture d'un potager. Un
+fichier CSV peut aussi importer plusieurs espèces d'un coup : il est vérifié en entier avant
+d'écrire quoi que ce soit, et s'il y a une erreur, rien n'est écrit.
+
 Le panneau Informations du scénario dit aussi **si le scénario prépare le saut du chat** :
 des plantes à perturber, une large part de biomasse (le repère de Théry est de 70 à 80 %),
 au moins deux espèces par strate, des plantes de démarrage, un geste de taille noté, de quoi

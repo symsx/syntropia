@@ -1,6 +1,7 @@
 # Les caractéristiques des végétaux pour le calendrier de plantation — plan
 
-> **État au 2026-09-22 — Phase 1 (étendre `espece`) faite, pas déployée ; Phases 2 et 3 pas commencées.**
+> **État au 2026-09-22 — Phases 1 (étendre `espece`) et 2 (la page qui manque) faites, pas déployées ; Phase 3
+> (brancher au potager) pas commencée.**
 > Demandé par le porteur : pour composer un calendrier de plantation, l'atelier doit connaître les
 > caractéristiques des plantes que la personne veut cultiver — de production, ou de service (biomasse,
 > bloque-herbe, tuteur pour grimpantes…). Deux sources possibles : ce que l'atelier connaît déjà en interne,
@@ -75,9 +76,46 @@ complètent :
    compte **en production** (`config/base.php` l'emporte silencieusement, piège déjà documenté). Trouvé
    immédiatement, confirmé par une lecture ciblée puis supprimé sur autorisation du porteur (compte + accès,
    vérifié : aucun autre compte touché, aucun rattachement à un site n'avait eu lieu côté production).
-2. **La page qui manque.** Une page pour voir et corriger les espèces d'un site (cadre + surcharges), avec
-   édition manuelle **et** import d'un fichier — en trois temps comme l'import de projet : examiner (tolérant
-   aux champs vides, aux dates en mots), aperçu, écrire. Le fichier fourni sert de premier essai réel.
+2. **La page qui manque — faite (2026-09-22).** `public/especes.php`, hors parcours (comme `membres.php`/
+   `inviter.php`), mais avec un vrai bureau (la liste, paginée sans défilement) plutôt que le simple cadre
+   centré des autres pages hors parcours — le panneau Données porte deux onglets, « Une espèce » (édition
+   manuelle : ajouter une espèce inconnue du cadre, ou en corriger une — même geste) et « Importer » (un CSV,
+   en trois temps comme l'import de projet : `verifier` examine et stage en session sans écrire, `confirmer_
+   import` réexamine puis écrit **tout ou rien** dans une transaction — `Especes::enregistrerLot()`). Ajoutée
+   au menu du compte (`gabarit.js`), entre « Importer un projet » et « Inviter ».
+   **Validation centralisée** : `Especes::valider()` (nouvelle, pure-ish — statique, sans PDO), utilisée à la
+   fois par le formulaire et par l'import, remplace la validation partielle qu'`enregistrer()` faisait seule
+   (elle ne vérifiait avant que le nom, la variété et `systeme` — un espacement, une date, une énumération
+   pouvaient s'écrire sans aucun contrôle). Chaque colonne a sa règle : les trois périodes de calendrier
+   doivent **parser** via `CalendrierLopez::periode()` (réutilisée telle quelle) ou sont refusées avec
+   l'exemple de forme attendue ; `strates_possibles` contre `Conduite::toutesLesStrates()` ; `entree_scenario`/
+   `sortie_scenario` contre `Scenario::PERIODES` ; les espacements et `plants_par_ml` en plage numérique ;
+   `biomasse`/`origine`/`systeme` en énumération ; le reste en longueur. **`role` n'est toujours pas contraint**
+   à `Scenario::FONCTIONS` (voir Phase 1) : un champ libre, avec les clés connues proposées en suggestion
+   (`<datalist>`), pas en obligation.
+   **Le fichier fourni** (`base_semences_planification_maraichage_nettoyee.csv`) **n'a pas servi de premier
+   essai réel** : ses en-têtes (français, libres — « nom_variete », « periode_semis » en texte très divers
+   comme « février-mars sous abri; avril-juin plein champ; mai-juin possible ») ne correspondent pas au format
+   d'import (les noms de colonnes de `espece`, des dates en un seul segment « fin avril »-« mi à fin juillet »)
+   — les traduire est un geste délibéré, propre à chaque colonne, qu'une conversion automatique aurait dû
+   deviner sans source : **non fait, faute d'une règle de correspondance donnée par le porteur.** L'import a
+   été vérifié avec des fichiers construits pour l'occasion (valide ; en-tête avec une colonne inconnue ;
+   une ligne sans nom scientifique et une date non parseable — le fichier entier refusé, rien écrit).
+   **Deux bogues trouvés en testant, corrigés avant tout commit** : (1) une pagination serveur mort-née
+   (`$_GET['page']`) coexistait avec la pagination JS de `conception-potager.php` que j'ai copiée — sans lien
+   qui fasse jamais avancer `?page=`, seules les 12 premières espèces (sur 46) auraient jamais été visibles ;
+   supprimée, tout est rendu et c'est le script qui pagine, comme ailleurs. (2) Le bureau ne se resserrait
+   jamais : `.bureau` centre un contenu court par défaut (`align-items:center`, `gabarit.css`) — les pages à
+   vraie liste le corrigent par un `#bureau{ align-items:stretch }` plus spécifique (déjà fait dans
+   `conception-potager.php`/`conception-scenario.php`/`conception-materiel-et-eau.php`), oublié ici au premier
+   jet ; sans lui, `.es-centre` grandit librement et rien ne déborde jamais aux yeux du script — la page
+   plafonnait la liste à 46 lignes sans jamais mesurer un vrai débordement, un `overflow:hidden` de trop sur un
+   conteneur intermédiaire (`.es-zone`) absorbant tout signe, exactement le piège que le CLAUDE.md documente
+   déjà pour `scrollWidth`/`scrollHeight` — trouvé seulement en mesurant la boîte de chaque conteneur en CDP,
+   pas en lisant le CSS. Vérifié en local (projet et comptes de test supprimés ensuite) : ajout, édition,
+   retrait d'une surcharge, import valide/refusé (colonne inconnue, ligne invalide), lecteur (panneau absent,
+   POST forgé 403), `verifier-export` identique (aucun changement de schéma), captures d'écran à 1280×720,
+   1024×600 et 320×568 sans débordement, pagination réelle (22/16/9 lignes visibles selon la taille).
 3. **Brancher au potager.** À l'ajout d'une culture dans `conception-potager.php`, si l'espèce est connue du
    référentiel (cadre ou surcharge du site), proposer ses repères de calendrier et ses rôles de service — même
    mécanique que le repère de Lopez aujourd'hui, généralisée à toute espèce connue.

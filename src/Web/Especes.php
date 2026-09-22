@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Syntropia\Web;
 
 use PDO;
+use Syntropia\CalendrierLopez;
+use Syntropia\Conduite;
 use Syntropia\Database;
+use Syntropia\Scenario;
 
 /**
  * Le référentiel de végétaux — un cadre partagé, des surcharges par site.
@@ -107,10 +110,12 @@ final class Especes
     /**
      * Whitelist des colonnes qu'un site peut renseigner sur sa propre
      * surcharge — tout sauf `id`/`site_id`, qui ne se saisissent pas.
+     * Publique : la page (formulaire, en-tête attendu d'un import CSV)
+     * s'en sert pour ne pas dupliquer la liste.
      *
      * @var list<string>
      */
-    private const COLONNES = [
+    public const COLONNES = [
         'nom_usuel', 'role', 'strates_possibles', 'systeme',
         'entree_scenario', 'sortie_scenario',
         'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
@@ -119,6 +124,134 @@ final class Especes
         'type_plant', 'origine', 'serre_necessaire', 'bloque_herbe',
         'orientation_bordure', 'deplacable', 'source', 'statut_local', 'notes',
     ];
+
+    /**
+     * Valide une saisie (ou une ligne d'import) contre la forme réelle des colonnes — types, longueurs, énumérations,
+     * plages de sens. **Seules les clés présentes dans `$v` sont vérifiées et retournées** : une case absente n'écrase
+     * rien (édition manuelle, un champ à la fois) ; une case présente mais vide efface la colonne (`null`). Chantier
+     * `chantier-caracteristiques-vegetaux.md`, Phase 2 — utilisée aussi bien par le formulaire que par l'import CSV,
+     * pour qu'un même repère (une date en mots, un espacement) subisse le même contrôle des deux côtés.
+     *
+     * @param array<string, mixed> $v la saisie brute — seules les clés de `COLONNES` qui y figurent sont traitées
+     * @return array{valeurs: array<string, mixed>, erreurs: array<string, string>}
+     */
+    public static function valider(array $v): array
+    {
+        $erreurs = [];
+        $valeurs = [];
+        $texte = static function (string $cle, int $max) use ($v, &$erreurs, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $t = trim((string) $v[$cle]);
+            if (mb_strlen($t) > $max) {
+                $erreurs[$cle] = "$max caractères au plus.";
+                return;
+            }
+            $valeurs[$cle] = $t !== '' ? $t : null;
+        };
+        $enum = static function (string $cle, array $options, string $motif) use ($v, &$erreurs, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $t = trim((string) $v[$cle]);
+            if ($t !== '' && !in_array($t, $options, true)) {
+                $erreurs[$cle] = $motif;
+                return;
+            }
+            $valeurs[$cle] = $t !== '' ? $t : null;
+        };
+        // Tolère deux formes : un texte `|` (l'import CSV, comme espece.role) ou un tableau (les cases à cocher
+        // d'un formulaire, `nom[]`) — la même valeur multiple, écrite différemment selon qui la fournit.
+        $liste = static function (string $cle, array $connus, string $motif) use ($v, &$erreurs, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $brut = $v[$cle];
+            if (is_array($brut)) {
+                $items = array_values(array_filter(array_map(static fn ($x): string => trim((string) $x), $brut), static fn (string $x): bool => $x !== ''));
+            } else {
+                $t = trim((string) $brut);
+                $items = $t === '' ? [] : array_values(array_filter(array_map('trim', explode('|', $t)), static fn (string $x): bool => $x !== ''));
+            }
+            if ($items === []) {
+                $valeurs[$cle] = null;
+                return;
+            }
+            if (array_diff($items, $connus) !== []) {
+                $erreurs[$cle] = $motif;
+                return;
+            }
+            $valeurs[$cle] = implode('|', $items);
+        };
+        $nombre = static function (string $cle, float $min, float $max) use ($v, &$erreurs, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $brut = str_replace(',', '.', trim((string) $v[$cle]));
+            if ($brut === '') {
+                $valeurs[$cle] = null;
+                return;
+            }
+            if (!is_numeric($brut) || (float) $brut < $min || (float) $brut > $max) {
+                $erreurs[$cle] = "Un nombre de $min à $max.";
+                return;
+            }
+            $valeurs[$cle] = round((float) $brut, 2);
+        };
+        $bool = static function (string $cle) use ($v, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $valeurs[$cle] = in_array((string) $v[$cle], ['1', 'on'], true) ? 1 : null;
+        };
+        $periode = static function (string $cle, string $nom) use ($v, &$erreurs, &$valeurs): void {
+            if (!array_key_exists($cle, $v)) {
+                return;
+            }
+            $t = trim((string) $v[$cle]);
+            if ($t === '') {
+                $valeurs[$cle] = null;
+                return;
+            }
+            if (mb_strlen($t) > 60 || CalendrierLopez::periode($t) === null) {
+                $erreurs[$cle] = "$nom se dit en mots, comme « fin avril » ou « mi à fin juillet ».";
+                return;
+            }
+            $valeurs[$cle] = $t;
+        };
+
+        $texte('nom_usuel', 160);
+        // Le rôle reste un champ libre, séparé par `|` (voir chantier-caracteristiques-vegetaux.md, Phase 1 : le seed
+        // curé y porte déjà « production », hors du vocabulaire de Scenario::FONCTIONS) — aucune contrainte au-delà
+        // de sa longueur ; c'est `Scenario::fonctionsDe()` qui en tire, à la lecture, ce qui est une vraie fonction.
+        $texte('role', 120);
+        $liste('strates_possibles', Conduite::toutesLesStrates(), 'Une strate proposée par la conduite syntropique ou jardin-forêt.');
+        $enum('systeme', ['colonisation', 'accumulation', 'abondance'], 'Colonisation, accumulation ou abondance.');
+        $enum('entree_scenario', array_keys(Scenario::PERIODES), 'Une période du scénario (placenta1…climax).');
+        $enum('sortie_scenario', array_keys(Scenario::PERIODES), 'Une période du scénario (placenta1…climax).');
+        $nombre('espacement_monoculture_m', 0.01, 50);
+        $nombre('espacement_retenu_m', 0.01, 50);
+        $nombre('plants_par_ml', 0.01, 1000);
+        $periode('periode_semis', 'Le semis');
+        $periode('periode_repiquage', 'Le repiquage');
+        $periode('periode_recolte', 'La récolte');
+        $enum('biomasse', ['+', '++', '+++'], 'Notée +, ++ ou +++.');
+        $texte('rapport_cn', 24);
+        $texte('conduite_taille', 120);
+        $texte('periode_taille', 120);
+        $texte('type_plant', 60);
+        $enum('origine', ['achat', 'multiplication', 'rna', 'mixte'], 'Achat, multiplication, RNA ou mixte.');
+        $bool('serre_necessaire');
+        $bool('bloque_herbe');
+        $texte('orientation_bordure', 60);
+        $bool('deplacable');
+        $texte('source', 120);
+        $texte('statut_local', 60);
+        $texte('notes', 2000);
+
+        return ['valeurs' => $valeurs, 'erreurs' => $erreurs];
+    }
 
     /**
      * Crée ou met à jour la surcharge locale de ce site pour une espèce
@@ -150,22 +283,13 @@ final class Especes
         if ($siteId <= 0) {
             $erreurs['site_id'] = 'Une surcharge se pose toujours sur un site précis, jamais sur le cadre.';
         }
-        $systeme = isset($valeurs['systeme']) ? trim((string) $valeurs['systeme']) : '';
-        if ($systeme !== '' && !in_array($systeme, ['colonisation', 'accumulation', 'abondance'], true)) {
-            $erreurs['systeme'] = 'Le système doit être colonisation, accumulation ou abondance.';
-        }
+        ['valeurs' => $propres, 'erreurs' => $erreursColonnes] = self::valider($valeurs);
+        $erreurs += $erreursColonnes;
         if ($erreurs !== []) {
             return ['id' => null, 'erreurs' => $erreurs];
         }
 
-        $propres = ['nom_scientifique' => $nom, 'variete' => $variete, 'site_id' => $siteId];
-        foreach (self::COLONNES as $colonne) {
-            if (array_key_exists($colonne, $valeurs)) {
-                $brut = $valeurs[$colonne];
-                $propres[$colonne] = $brut === '' || $brut === null ? null : $brut;
-            }
-        }
-
+        $propres = ['nom_scientifique' => $nom, 'variete' => $variete, 'site_id' => $siteId] + $propres;
         $colonnesSql = array_keys($propres);
         $placeholders = implode(', ', array_fill(0, count($colonnesSql), '?'));
         $affectations = implode(', ', array_map(
@@ -184,6 +308,38 @@ final class Especes
             $id = $req->fetchColumn();
         }
         return ['id' => (int) $id, 'erreurs' => []];
+    }
+
+    /**
+     * Écrit plusieurs espèces d'un coup — l'import CSV (Phase 2). Une transaction : si l'une des lignes échoue à la
+     * validation (revalidée ici, comme l'import d'un projet revalide à la confirmation), **rien n'est écrit** ; la
+     * page l'a déjà annoncé à l'aperçu, mais un entre-temps (une autre plume sur le même site) reste possible.
+     *
+     * @param list<array<string, mixed>> $lignes chacune avec `nom_scientifique`, `variete` et les colonnes de COLONNES
+     * @return array{ok: bool, ecrites: int, ligne: ?int, erreurs: array<string, string>}
+     */
+    public function enregistrerLot(int $siteId, array $lignes): array
+    {
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $n = 0;
+            foreach ($lignes as $i => $ligne) {
+                $res = $this->enregistrer($siteId, (string) ($ligne['nom_scientifique'] ?? ''), (string) ($ligne['variete'] ?? ''), $ligne);
+                if ($res['erreurs'] !== []) {
+                    $pdo->rollBack();
+                    return ['ok' => false, 'ecrites' => 0, 'ligne' => (int) $i + 1, 'erreurs' => $res['erreurs']];
+                }
+                $n++;
+            }
+            $pdo->commit();
+            return ['ok' => true, 'ecrites' => $n, 'ligne' => null, 'erreurs' => []];
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $e;
+        }
     }
 
     /**

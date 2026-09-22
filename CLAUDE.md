@@ -83,7 +83,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-caracteristiques-vegetaux.md` — le plan (3 phases) pour que l'atelier connaisse les **caractéristiques des
   végétaux** (dates de semis/plantation/récolte, rôles de service) qui nourrissent le calendrier de plantation d'un
   potager — par le référentiel `espece` (à étendre) et un import du porteur (à construire). Proposé le 2026-09-22,
-  **Phase 1 faite le 2026-09-22, pas déployée** ; Phases 2 et 3 pas commencées. Quatre décisions tranchées : le potager
+  **Phases 1 (étendre `espece`) et 2 (`public/especes.php`) faites le 2026-09-22, pas déployées** ; Phase 3 (brancher au
+  potager) pas commencée. Quatre décisions tranchées : le potager
   d'abord, pas le scénario pérenne ; le référentiel `espece` plutôt qu'une table séparée ; le vocabulaire des rôles de
   `Scenario::FONCTIONS`, repris pour **`succession_ligne.role`** (pas pour `espece.role`, qui garde son vocabulaire
   propre — écart trouvé en codant, voir § Point de reprise). Un premier fichier fourni par le porteur
@@ -214,6 +215,7 @@ public/                racine servable du site en refonte
   membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
   exporter.php               exporter le projet en un fichier JSON daté — réservée au porteur ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
   importer.php               importer un projet depuis un fichier d'export — tout compte connecté ; trois temps (vérifier, aperçu, créer) ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
+  especes.php                 le référentiel de végétaux d'un site : voir/éditer une surcharge, importer un CSV (tout ou rien) — hors parcours, menu du compte
   inviter.php                ouvrir/lister/retirer des codes de parrainage — hors parcours, sur le gabarit ; appelée par le menu du compte (gabarit.js)
   api-projets.php            GET les projets du compte + le projet actif ; POST change le projet actif — appelée par gabarit.js sur toute page connectée
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
@@ -1649,6 +1651,23 @@ récit.*
   autre compte n'a été touché et qu'aucun rattachement à un site n'avait eu lieu côté production. Vérifié en local (plusieurs
   fonctions sur une culture, refus d'une clé inconnue, lecteur, `verifier-export` identique, fichier du schéma 9 accepté,
   aucun débordement de 1280×720 à 320×568). **Pas déployé.** Détail : `chantier-caracteristiques-vegetaux.md` § Phase 1.
+- **La page « Espèces » — Phase 2 du chantier « caractéristiques des végétaux », 2026-09-22.** `public/especes.php`, hors
+  parcours, ajoutée au menu du compte entre « Importer un projet » et « Inviter » : voir/éditer le référentiel (cadre +
+  surcharge, même geste pour les deux), importer un CSV (tout ou rien, comme l'import de projet — `Especes::
+  enregistrerLot()`, une transaction). **`Especes::valider()`** (nouvelle, statique) centralise ce qu'`enregistrer()`
+  ne vérifiait qu'à moitié jusque-là (espacements, dates, énumérations, `strates_possibles` contre `Conduite::
+  toutesLesStrates()`, `entree_scenario`/`sortie_scenario` contre `Scenario::PERIODES`) ; `role` reste libre. **Aucun
+  changement de schéma.** Le fichier de semences fourni en Phase 1 **n'a pas servi de premier essai** : ses colonnes
+  libres ne correspondent pas au format d'import, et traduire l'un vers l'autre est une décision propre à chaque
+  colonne, non prise sans le porteur. **Deux bogues trouvés en testant, corrigés avant le commit** : une pagination
+  serveur jamais reliée à un lien (les espèces au-delà de la douzième restaient invisibles) — supprimée au profit de la
+  seule pagination JS ; et `#bureau{ align-items:stretch }` oublié (présent dans les pages voisines) — sans lui le
+  bureau ne se resserre jamais et un `overflow:hidden` de trop sur un conteneur intermédiaire cachait le débordement à
+  la mesure JS elle-même, plafonnant silencieusement la liste à ses 46 premières lignes — trouvé en mesurant la boîte
+  de chaque conteneur en CDP, pas en lisant le CSS. Vérifié en local (comptes et site de test supprimés ensuite) :
+  ajout, édition, retrait, import valide et refusé (colonne inconnue, ligne invalide, rien écrit), lecteur (panneau
+  absent, POST forgé 403), `verifier-export` identique, trois tailles d'écran sans débordement. **Pas déployé.**
+  Détail : `chantier-caracteristiques-vegetaux.md` § Phase 2.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1682,14 +1701,16 @@ il apparaît réellement, pour ne pas noyer le motif.
 0. **État au 2026-09-22 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
    il rejoue les schémas 2 à 10 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
    saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
-   module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **Phase 1** (le calendrier d'une espèce ;
-   les fonctions de service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse »).
+   module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **Phases 1 et 2** (le calendrier d'une espèce ; les fonctions de
+   service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse » ; la page `especes.php`, voir/éditer/importer).
    **Avant de lancer un `php -r`, un script ponctuel ou tout ce qui touche `Database::*` sur ce dépôt : exporter `config/local.env`
    dans le shell d'abord** — troisième fois que l'oubli fait atterrir l'écriture en production (voir [[config-base-php-precedence-footgun]]
    dans la mémoire ; l'incident du 2026-09-22, un compte de test créé puis supprimé en production, est détaillé § Point de reprise).
    **Ce qui attend, dans l'ordre où la reprise peut s'en saisir** :
-   a. **Caractéristiques des végétaux, Phases 2 et 3** — la page qui manque (voir/éditer/importer les espèces d'un site), puis la
-      brancher à `conception-potager.php` comme le repère de Lopez aujourd'hui. Voir `chantier-caracteristiques-vegetaux.md`.
+   a. **Caractéristiques des végétaux, Phase 3** — brancher `especes.php` à `conception-potager.php` : si l'espèce saisie est connue du
+      référentiel, proposer ses repères de calendrier et ses rôles de service, comme le fait déjà le repère de Lopez. Voir
+      `chantier-caracteristiques-vegetaux.md`. Le fichier de semences du porteur reste à traduire vers le format d'import — pas de règle de
+      correspondance donnée, donc pas codée.
    b. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
       et **ce qu'on réalise en premier à chaque stade** (question n° 4 : le stade dit aujourd'hui « pas encore de repère »). Ne pas la coder sans cela.
    c. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;

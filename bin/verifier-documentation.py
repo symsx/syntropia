@@ -59,6 +59,7 @@ COUVERTURE = {
         "public/conception-scenario.php", "public/conception-calendrier.php",
         "src/Web/Parcelles.php", "src/Web/Scenarios.php", "src/Scenario.php",
         "public/conception-potager.php", "src/Web/Cultures.php", "src/Associations.php", "src/PlanDeCulture.php", "src/CalendrierLopez.php", "src/Succession.php", "src/Stade.php",
+        "public/especes.php", "src/Web/Especes.php", "public/assets/js/gabarit.js",
     ],
     "Concevoir : le matériel et l'eau": [
         "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php",
