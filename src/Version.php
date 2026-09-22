@@ -40,9 +40,11 @@ final class Version
      * `succession_ligne.planche`, la planche où une culture du potager est placée (colonne facultative, idem). 7 :
      * `succession_ligne.date_semis`, le semis à l'abri avant le repiquage (colonne facultative, idem). 8 :
      * `succession_ligne.nb_plants`, combien de plants une culture du potager demande (colonne facultative, idem). 9 :
-     * `parcelle.stade`, le stade du terrain (colonne facultative, idem).
+     * `parcelle.stade`, le stade du terrain (colonne facultative, idem). 10 :
+     * `espece.periode_semis`/`periode_repiquage`/`periode_recolte`, le calendrier d'une espèce, en mots comme
+     * Lopez (trois colonnes facultatives, idem).
      */
-    public const SCHEMA = 9;
+    public const SCHEMA = 10;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

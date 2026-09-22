@@ -6,6 +6,7 @@ namespace Syntropia\Web;
 
 use PDO;
 use Syntropia\Database;
+use Syntropia\Scenario;
 
 /**
  * Les cultures d'une parcelle de type « potager » (`succession_ligne`) : ce qui est semé ou repiqué, sur quelle
@@ -17,8 +18,11 @@ use Syntropia\Database;
  *
  * Même conduite que `Interventions` et `Constats` : le garde-fou d'appartenance d'une parcelle à un site se fait à
  * l'appel, chaque requête est bornée à la parcelle, la modification se fait sous verrou de version. Ne touche que les
- * colonnes qu'il écrit ; les autres de `succession_ligne` (code, rôle, couleur, emplacement, perturbation…) attendent
- * les phases suivantes.
+ * colonnes qu'il écrit ; les autres de `succession_ligne` (code, couleur, emplacement, perturbation…) attendent
+ * les phases suivantes. `role` porte les **fonctions de service** de la culture — biomasse, bloque-herbe, tuteur
+ * pour une grimpante… — le même vocabulaire que le scénario pérenne (`Scenario::FONCTIONS`), multivalué par `|`
+ * comme `espece.role` (chantier-caracteristiques-vegetaux.md, Phase 1 — remplace la case unique « plante de
+ * biomasse » du 2026-09-21).
  */
 final class Cultures
 {
@@ -60,6 +64,18 @@ final class Cultures
     public static function version(array $ligne): string
     {
         return hash('sha256', json_encode($ligne, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * Les fonctions de service d'une culture — `succession_ligne.role`. Tolère une valeur antérieure au
+     * 2026-09-22 (`role = 'biomasse'` seul, sans séparateur) : c'est la même forme, à un seul élément.
+     *
+     * @param array<string, mixed> $ligne une ligne de `succession_ligne`
+     * @return list<string>
+     */
+    public static function fonctions(array $ligne): array
+    {
+        return Scenario::fonctionsDe((string) ($ligne['role'] ?? ''));
     }
 
     /**
@@ -144,8 +160,16 @@ final class Cultures
             $erreurs['date_recolte'] = 'La récolte ne peut pas précéder le semis ni la mise en place.';
         }
 
-        // Une plante de biomasse : celle qu'on taille (le maïs, le tournesol de la tranchée centrale). Une case, un seul rôle.
-        $biomasse = in_array((string) ($v['biomasse'] ?? ''), ['1', 'on'], true);
+        // Les fonctions de service — biomasse (celle qu'on taille : le maïs, le tournesol de la tranchée centrale),
+        // bloque-herbe, tuteur pour une grimpante… Mêmes clés que Scenario::FONCTIONS, cumulables, écrites `|` comme
+        // espece.role. Une clé inconnue est refusée plutôt que silencieusement ignorée.
+        $fonctions = $v['fonctions'] ?? [];
+        if (!is_array($fonctions) || count($fonctions) > count(Scenario::FONCTIONS)
+            || array_filter($fonctions, static fn ($f): bool => !is_string($f) || !isset(Scenario::FONCTIONS[$f])) !== []) {
+            $erreurs['fonctions'] = 'Les fonctions choisies ne sont pas reconnues.';
+            $fonctions = [];
+        }
+        $fonctions = array_values(array_unique($fonctions));
 
         $notes = trim((string) ($v['notes'] ?? ''));
         if (mb_strlen($notes) > 2000) {
@@ -155,7 +179,7 @@ final class Cultures
         return ['valeurs' => [
             'espece' => $espece,
             'planche' => $planche,
-            'role' => $biomasse ? \Syntropia\SautDuChat::ROLE_BIOMASSE : null,
+            'role' => $fonctions !== [] ? implode('|', $fonctions) : null,
             'strate' => $strate !== '' && isset(self::STRATES[$strate]) ? $strate : null,
             'espacement_m' => $espacement,
             'nb_plants' => $nbPlants,

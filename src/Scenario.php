@@ -123,6 +123,22 @@ final class Scenario
     }
 
     /**
+     * Les fonctions valides d'un texte multivalué par `|` — comme `succession_ligne.role`, `espece.role`
+     * (chantier-caracteristiques-vegetaux.md, Phase 1). Une valeur qui n'est pas une clé de FONCTIONS est
+     * simplement ignorée : une donnée ancienne ou étrangère ne fait pas échouer la lecture.
+     *
+     * @return list<string>
+     */
+    public static function fonctionsDe(?string $texte): array
+    {
+        $texte = trim((string) $texte);
+        if ($texte === '') {
+            return [];
+        }
+        return array_values(array_filter(array_map('trim', explode('|', $texte)), static fn (string $f): bool => isset(self::FONCTIONS[$f])));
+    }
+
+    /**
      * Segmentation prudente d'un texte libre en souhaits : un par ligne ou
      * séparé par `;` ou `,`, sans puce, sans doublon à la casse près.
      * **Aucun rapprochement botanique automatique** — « tomates » reste

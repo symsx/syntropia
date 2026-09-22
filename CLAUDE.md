@@ -83,11 +83,13 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-caracteristiques-vegetaux.md` — le plan (3 phases) pour que l'atelier connaisse les **caractéristiques des
   végétaux** (dates de semis/plantation/récolte, rôles de service) qui nourrissent le calendrier de plantation d'un
   potager — par le référentiel `espece` (à étendre) et un import du porteur (à construire). Proposé le 2026-09-22,
-  **pas commencé**. Quatre décisions tranchées : le potager d'abord, pas le scénario pérenne ; le référentiel `espece`
-  plutôt qu'une table séparée ; le vocabulaire des rôles de `Scenario::FONCTIONS`, repris pour le potager. Un premier
-  fichier fourni par le porteur (`base_semences_planification_maraichage.csv`, une banque de semences personnelle) a
-  été **nettoyé hors de ce dépôt** (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé
-  ni changé) — il servira de premier essai réel une fois l'import construit (Phase 2).
+  **Phase 1 faite le 2026-09-22, pas déployée** ; Phases 2 et 3 pas commencées. Quatre décisions tranchées : le potager
+  d'abord, pas le scénario pérenne ; le référentiel `espece` plutôt qu'une table séparée ; le vocabulaire des rôles de
+  `Scenario::FONCTIONS`, repris pour **`succession_ligne.role`** (pas pour `espece.role`, qui garde son vocabulaire
+  propre — écart trouvé en codant, voir § Point de reprise). Un premier fichier fourni par le porteur
+  (`base_semences_planification_maraichage.csv`, une banque de semences personnelle) a été **nettoyé hors de ce dépôt**
+  (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé ni changé) — il servira de premier
+  essai réel une fois l'import construit (Phase 2).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -131,7 +133,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Authentification.php   session, connexion, CSRF, garde-page
     Invitations.php         codes d'invitation — condition de l'inscription
     Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
-    Cultures.php             les cultures d'un potager placées par planche (`succession_ligne`) — même conduite qu'Interventions ; appelé par conception-potager.php
+    Cultures.php             les cultures d'un potager placées par planche (`succession_ligne`), dont leurs fonctions de service (`role`, multivalué comme espece.role) — même conduite qu'Interventions ; appelé par conception-potager.php
     Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
@@ -146,7 +148,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Import.php               l'import d'un fichier d'export en projet neuf — valide chaque colonne d'après le schéma réel, une transaction ; appelé par importer.php
     Export.php               l'export d'un projet en JSON — lit chaque table en entier, retire comptes/identifiants/accès, plafond 1 Mo ; appelé par exporter.php
     ReleveSol.php            relevés de sol d'une parcelle (`releve_sol`) — infiltration, état d'humidité, jours depuis la pluie ; appelé par conception-materiel-et-eau.php
-    Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete)
+    Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete), avec un calendrier par espèce (semis/repiquage/récolte, en mots comme Lopez)
 contenu/
   .htaccess              refuse tout accès web
   calendrier-lopez.csv      le tableau « des semis et repiquages » de Lopez (17 cultures d'automne et d'hiver), recopié de connaissances/maraichage-naturel/lopez-plan-de-culture.md ; deux cellules « à vérifier » vides et marquées
@@ -163,7 +165,7 @@ sql/
   .htaccess              refuse tout accès web
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
-  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) et `parcelle.stade` (schéma 9) y ont leur migration additive
+  01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) et `parcelle.stade` (schéma 9) et `espece.periode_semis`/`periode_repiquage`/`periode_recolte` (schéma 10) y ont leur migration additive
   02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
@@ -1630,6 +1632,23 @@ récit.*
   taux de réussite propre à chaque culture (le livre en fait le protocole de mesure : semé, levé, repiqué), la marge de pertes de récolte. Vérifié en local (14 contrôles purs, projet de test supprimé,
   refus d'un nombre de plants invalide, `verifier-export` identique, fichier du schéma 7 accepté, aucun débordement de 1280×720 à 320×568). **Au déploiement : `bin/deployer.py base` d'abord**
   (la colonne, schémas 2 à 8 en attente), puis `fichiers`.
+- **Le calendrier des espèces, et les fonctions de service d'une culture de potager — Phase 1 du chantier « caractéristiques des
+  végétaux », 2026-09-22.** Demandé par le porteur avec un exemple de sa propre banque de semences (`base_semences_
+  planification_maraichage.csv`, **nettoyée hors de ce dépôt** — une anomalie structurelle répétée dix fois, corrigée, rien
+  d'agronomique inventé — pas encore importée, elle attend la Phase 2). **`espece.periode_semis`/`periode_repiquage`/
+  `periode_recolte` : `Version::SCHEMA` passe à 10** (trois colonnes facultatives, en mots comme Lopez, lues par la même
+  `CalendrierLopez::periode()`). **Écart avec le plan, trouvé en codant** : je n'ai pas contraint `espece.role` au vocabulaire de
+  `Scenario::FONCTIONS` — le seed curé (46 espèces) y porte déjà `production`, hors de ce vocabulaire, et la décision du porteur
+  ne parlait que des cultures de potager. `succession_ligne.role` devient donc seul multivalué par `\|` (`Scenario::fonctionsDe()`,
+  nouvelle méthode pure) : une culture peut porter plusieurs fonctions de service (biomasse, bloque-herbe, tuteur…), remplaçant
+  la case unique « plante de biomasse » du 2026-09-21 — `SautDuChat::plantesDeBiomasse()` et `conception-potager.php` (un
+  `<details>` de cases, même modèle que le scénario pérenne) mis à jour. **Incident en testant, corrigé sur autorisation du
+  porteur** : un `php -r` direct pour créer un compte lecteur de test a été lancé sans exporter `config/local.env` — troisième
+  fois que ce piège se referme (voir la note de mémoire dédiée) — et a créé ce compte **en production**. Trouvé immédiatement,
+  confirmé par une lecture ciblée du compte seul, puis supprimé (compte + accès) avec l'accord du porteur ; vérifié qu'aucun
+  autre compte n'a été touché et qu'aucun rattachement à un site n'avait eu lieu côté production. Vérifié en local (plusieurs
+  fonctions sur une culture, refus d'une clé inconnue, lecteur, `verifier-export` identique, fichier du schéma 9 accepté,
+  aucun débordement de 1280×720 à 320×568). **Pas déployé.** Détail : `chantier-caracteristiques-vegetaux.md` § Phase 1.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1660,18 +1679,25 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **État au 2026-09-21 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
-   il rejoue les schémas 2 à 9 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
+0. **État au 2026-09-22 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
+   il rejoue les schémas 2 à 10 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
    saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
-   « plante de biomasse » d'une culture de potager ; module 5 de la formation versé au corpus. **Ce qui attend, dans l'ordre où la reprise peut s'en saisir** :
-   a. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
+   module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **Phase 1** (le calendrier d'une espèce ;
+   les fonctions de service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse »).
+   **Avant de lancer un `php -r`, un script ponctuel ou tout ce qui touche `Database::*` sur ce dépôt : exporter `config/local.env`
+   dans le shell d'abord** — troisième fois que l'oubli fait atterrir l'écriture en production (voir [[config-base-php-precedence-footgun]]
+   dans la mémoire ; l'incident du 2026-09-22, un compte de test créé puis supprimé en production, est détaillé § Point de reprise).
+   **Ce qui attend, dans l'ordre où la reprise peut s'en saisir** :
+   a. **Caractéristiques des végétaux, Phases 2 et 3** — la page qui manque (voir/éditer/importer les espèces d'un site), puis la
+      brancher à `conception-potager.php` comme le repère de Lopez aujourd'hui. Voir `chantier-caracteristiques-vegetaux.md`.
+   b. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
       et **ce qu'on réalise en premier à chaque stade** (question n° 4 : le stade dit aujourd'hui « pas encore de repère »). Ne pas la coder sans cela.
-   b. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;
+   c. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;
       un **alias « maïs »** / « maïs doux » ; afficher la **divergence Joala/Weinrich** (fenouil–tomate) ; une **règle de famille** (fèves ou pois avant haricots) — sans source de familles au dépôt ; la **définition du glossaire**
       du saut du chat (Théry : l'effet de la perturbation ; Joala 5-1 : le sol bascule vers une fertilité auto-entretenue).
-   c. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
+   d. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
       scénario pérenne (`Guildes.php` n'est branché à aucune page), les exemples de fréquence de coupe par plante.
-   d. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
+   e. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
       du porteur), puis rattacher au corpus et voir quelles questions ouvertes il ferme. `dossier-qualification.md` et `qualif_syntropia.py` restent **non commités** (ils ne sont pas à moi).
 1. **Chantier « inscription par parrainage »** — plan dans
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus

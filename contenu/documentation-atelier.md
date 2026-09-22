@@ -156,9 +156,10 @@ ce que l'on sait de leurs voisinages : ce qui s'entend bien, ce qu'il vaut mieux
 placer côte à côte. Ce sont des ordres de conduite, non des preuves, tirés de tables
 d'association (Christa Weinrich) : une information de conception, jamais une interdiction ;
 et une culture absente de ces tables n'est pas neutre, on ne sait simplement pas.
-Une culture que l'on taille — le maïs ou le tournesol d'une tranchée centrale, par exemple —
-se marque **plante de biomasse** : le journal des perturbations et le saut du chat la
-comptent alors, comme ils comptent celles du scénario d'un verger.
+Une culture peut aussi porter une ou plusieurs **fonctions de service** — biomasse (celle
+qu'on taille : le maïs ou le tournesol d'une tranchée centrale), bloque-herbe, tuteur pour
+une grimpante… le même vocabulaire que le scénario pérenne. Une culture marquée biomasse est
+comptée par le journal des perturbations et par le saut du chat, comme celles d'un verger.
 Une culture peut aussi porter le nombre de **plants** que vous voulez : l'étape « Matériel et eau » en tire ce qu'il faut se procurer.
 
 L'atelier peut aussi **proposer un placement** : il répartit sur les planches les cultures
@@ -244,7 +245,7 @@ ligne par geste, avec la date, ce qui a été coupé, l'état des plantes (en pl
 croissance, fleurs fanées, repos d'hiver…), l'eau autour de la coupe, ce que la
 biomasse est devenue et, plus tard, ce que vous constatez. Seuls la date et le
 geste sont demandés ; on peut rouvrir une ligne pour la compléter. Au-dessus du
-journal, chaque plante de biomasse de votre scénario (ou, pour un potager, chaque culture marquée plante de biomasse) montre le temps écoulé depuis
+journal, chaque plante de biomasse de votre scénario (ou, pour un potager, chaque culture marquée d'une fonction de service biomasse) montre le temps écoulé depuis
 sa dernière coupe, sans seuil : le bon moment se lit sur l'état des plantes, la
 première perturbation vient en juin, les suivantes quand il y a de quoi couper — et
 l'on arrose si la pluie ne vient pas. Le journal n'interdit rien : il dit ce que les

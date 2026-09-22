@@ -25,10 +25,14 @@ final class SautDuChat
         'pas_encore' => 'Pas encore',
     ];
 
-    /** Les trois états d'une condition. */
-    /** Le `role` d'une culture de potager qui porte la biomasse — celle qu'on taille (`succession_ligne.role`). */
+    /**
+     * Une des fonctions de service (`Scenario::FONCTIONS`) qu'une culture de potager peut porter dans
+     * `succession_ligne.role` : celle qui porte la biomasse — qu'on taille (`Scenario::fonctionsDe()` lit le
+     * `role`, multivalué depuis le 2026-09-22).
+     */
     public const ROLE_BIOMASSE = 'biomasse';
 
+    /** Les trois états d'une condition. */
     public const OK = 'ok';
     public const ATTENTION = 'attention';
     public const VIDE = 'vide';
@@ -98,7 +102,7 @@ final class SautDuChat
         $plantes = [];
         foreach ($lignes as $ligne) {
             $fonctions = Scenario::details($ligne)['fonctions'] ?? [];
-            if (($ligne['role'] ?? null) === self::ROLE_BIOMASSE
+            if (in_array(self::ROLE_BIOMASSE, Scenario::fonctionsDe((string) ($ligne['role'] ?? '')), true)
                 || (is_array($fonctions) && (in_array('perturbation', $fonctions, true) || in_array('biomasse', $fonctions, true)))) {
                 $nom = trim((string) ($ligne['espece'] ?? ''));
                 if ($nom !== '') {

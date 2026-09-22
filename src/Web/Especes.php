@@ -114,6 +114,7 @@ final class Especes
         'nom_usuel', 'role', 'strates_possibles', 'systeme',
         'entree_scenario', 'sortie_scenario',
         'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
+        'periode_semis', 'periode_repiquage', 'periode_recolte',
         'biomasse', 'rapport_cn', 'conduite_taille', 'periode_taille',
         'type_plant', 'origine', 'serre_necessaire', 'bloque_herbe',
         'orientation_bordure', 'deplacable', 'source', 'statut_local', 'notes',

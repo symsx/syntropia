@@ -495,6 +495,15 @@ CREATE TABLE IF NOT EXISTS `espece` (
   `espacement_retenu_m`      DECIMAL(5,2) NULL,
   `plants_par_ml`            DECIMAL(6,2) NULL,
 
+  -- LE CALENDRIER, en mots comme le tableau de Lopez (« fin avril », « mi à fin juillet ») — lu par
+  -- CalendrierLopez::periode(), qui ne dépend pas de sa source. `periode_semis` : à l'abri (pépinière,
+  -- godets) ; `periode_repiquage` : la mise en place, semis en place ou repiquage — c'est la même
+  -- distinction que `succession_ligne.date_semis`/`date_semis_repiquage`. Nourrit le calendrier d'un
+  -- potager au-delà des dix-sept cultures de Lopez (chantier-caracteristiques-vegetaux.md, Phase 1).
+  `periode_semis`      VARCHAR(60) NULL,
+  `periode_repiquage`  VARCHAR(60) NULL,
+  `periode_recolte`    VARCHAR(60) NULL,
+
   `biomasse`         VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
   `conduite_taille`  VARCHAR(120) NULL,
@@ -1023,6 +1032,42 @@ EXECUTE ajout_stade;
 DEALLOCATE PREPARE ajout_stade;
 
 
+-- Rattrapage d'une table `espece` créée avant `periode_semis`/`periode_repiquage`/`periode_recolte` —
+-- schéma 10. Trois colonnes, même forme que ci-dessus, une bascule par colonne.
+SET @sem_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'espece'
+                      AND COLUMN_NAME = 'periode_semis');
+SET @ajout_sem = IF(@sem_existe = 0,
+                    'ALTER TABLE `espece` ADD COLUMN `periode_semis` VARCHAR(60) NULL AFTER `plants_par_ml`',
+                    'DO 0');
+PREPARE ajout_sem FROM @ajout_sem;
+EXECUTE ajout_sem;
+DEALLOCATE PREPARE ajout_sem;
+
+SET @rep_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'espece'
+                      AND COLUMN_NAME = 'periode_repiquage');
+SET @ajout_rep = IF(@rep_existe = 0,
+                    'ALTER TABLE `espece` ADD COLUMN `periode_repiquage` VARCHAR(60) NULL AFTER `periode_semis`',
+                    'DO 0');
+PREPARE ajout_rep FROM @ajout_rep;
+EXECUTE ajout_rep;
+DEALLOCATE PREPARE ajout_rep;
+
+SET @rec_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                    WHERE TABLE_SCHEMA = DATABASE()
+                      AND TABLE_NAME = 'espece'
+                      AND COLUMN_NAME = 'periode_recolte');
+SET @ajout_rec = IF(@rec_existe = 0,
+                    'ALTER TABLE `espece` ADD COLUMN `periode_recolte` VARCHAR(60) NULL AFTER `periode_repiquage`',
+                    'DO 0');
+PREPARE ajout_rec FROM @ajout_rec;
+EXECUTE ajout_rec;
+DEALLOCATE PREPARE ajout_rec;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1099,6 +1144,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 6 = `succession_ligne.planche` (la planche où une culture du potager est placée — colonne facultative, idem) ;
 -- 7 = `succession_ligne.date_semis` (le semis à l'abri, avant le repiquage — colonne facultative, idem) ;
 -- 8 = `succession_ligne.nb_plants` (combien de plants une culture du potager demande — colonne facultative, idem) ;
--- 9 = `parcelle.stade` (le stade du terrain : colonisation ou accumulation — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '9')
+-- 9 = `parcelle.stade` (le stade du terrain : colonisation ou accumulation — colonne facultative, idem) ;
+-- 10 = `espece.periode_semis`/`periode_repiquage`/`periode_recolte` (le calendrier d'une espèce, en mots
+-- comme Lopez — trois colonnes facultatives, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '10')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

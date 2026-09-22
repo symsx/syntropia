@@ -1,10 +1,11 @@
 # Les caractéristiques des végétaux pour le calendrier de plantation — plan
 
-> **État au 2026-09-22 — proposé, pas commencé.** Demandé par le porteur : pour composer un calendrier de
-> plantation, l'atelier doit connaître les caractéristiques des plantes que la personne veut cultiver — de
-> production, ou de service (biomasse, bloque-herbe, tuteur pour grimpantes…). Deux sources possibles : ce
-> que l'atelier connaît déjà en interne, ou ce que le porteur de projet importe. Quatre décisions du porteur
-> cadrent ce chantier (2026-09-22) — voir § Décisions.
+> **État au 2026-09-22 — Phase 1 (étendre `espece`) faite, pas déployée ; Phases 2 et 3 pas commencées.**
+> Demandé par le porteur : pour composer un calendrier de plantation, l'atelier doit connaître les
+> caractéristiques des plantes que la personne veut cultiver — de production, ou de service (biomasse,
+> bloque-herbe, tuteur pour grimpantes…). Deux sources possibles : ce que l'atelier connaît déjà en interne,
+> ou ce que le porteur de projet importe. Quatre décisions du porteur cadrent ce chantier (2026-09-22) — voir
+> § Décisions.
 
 ## Ce que le porteur demande
 
@@ -37,11 +38,10 @@ complètent :
    réel une fois prête.
 4. **Le vocabulaire des rôles de service : celui du scénario pérenne.** Une culture de potager qui sert de
    biomasse, de bloque-herbe ou de tuteur pour une grimpante reprend `Scenario::FONCTIONS` (déjà écrit pour
-   `scenario_ligne`), plutôt qu'un vocabulaire propre au potager. **Conséquence à trancher en ouvrant la
-   Phase 1** : `succession_ligne.role` porte aujourd'hui une seule valeur (`biomasse`, posé le 2026-09-21 pour
-   le saut du chat) ; un vocabulaire multivalué (plusieurs fonctions à la fois, comme `espece.role` ou
-   `scenario_ligne.details.fonctions`) demande de revoir cet encodage — sans casser ce qui lit déjà
-   `role = 'biomasse'` (`SautDuChat::plantesDeBiomasse()`).
+   `scenario_ligne`), plutôt qu'un vocabulaire propre au potager. **Fait en Phase 1** (voir § Phases) :
+   `succession_ligne.role` — une seule valeur (`biomasse`) depuis le 2026-09-21 pour le saut du chat — devient
+   multivalué par `|`, comme `espece.role`. **N'a, en revanche, pas touché `espece.role`** : ce champ garde
+   son vocabulaire propre, plus large (voir l'écart noté en Phase 1).
 
 ## Ce qui existe déjà, à réutiliser
 
@@ -56,10 +56,25 @@ complètent :
 
 ## Phases
 
-1. **Étendre `espece`.** Des colonnes de calendrier (semis, plantation/repiquage, récolte — en texte libre,
-   lues comme `CalendrierLopez::periode()`), et l'adoption de `Scenario::FONCTIONS` pour `espece.role` (déjà
-   multivalué) — **trancher l'encodage de `succession_ligne.role` en même temps** (décision 4). `Version::
-   SCHEMA` monte.
+1. **Étendre `espece` — faite (2026-09-22).** `espece.periode_semis`/`periode_repiquage`/`periode_recolte`
+   (texte libre, lues comme `CalendrierLopez::periode()` — la même fonction, réutilisée telle quelle) ;
+   `Version::SCHEMA` passe à **10** (trois colonnes facultatives, la fenêtre d'import ne se referme pas).
+   **Écart avec le plan, trouvé en codant** : je n'ai **pas** touché à `espece.role` — le seed curé de 46
+   espèces y porte déjà `production`, une valeur hors de `Scenario::FONCTIONS` (`sql/02-especes-seed.sql` :
+   « biomasse\|production »), et la contraindre à ce vocabulaire aurait invalidé des données existantes,
+   sourcées, sans que la décision 4 le demande — elle parle des cultures de potager, pas du référentiel. La
+   décision 4 porte donc **uniquement sur `succession_ligne.role`** : il devient multivalué par `\|`, comme
+   `espece.role`, avec les clés de `Scenario::FONCTIONS` (`Scenario::fonctionsDe()`, nouvelle méthode pure,
+   partagée) — remplace la case unique « plante de biomasse » du 2026-09-21, sans changement de schéma pour
+   cette partie (`role` restait déjà une colonne texte). `SautDuChat::plantesDeBiomasse()` et
+   `conception-potager.php` (case à case devient un `<details>` de fonctions, même modèle que le scénario
+   pérenne) mis à jour en conséquence. Vérifié en local : plusieurs fonctions sur une culture, lecture après
+   modification, refus d'une clé inconnue, lecteur (case absente, POST forgé 403), `verifier-export`
+   identique, aller-retour d'un fichier du schéma 9 accepté. **Incident en testant, corrigé** : un `php -r`
+   direct pour créer un compte lecteur de test a été lancé sans exporter `config/local.env` — il a créé ce
+   compte **en production** (`config/base.php` l'emporte silencieusement, piège déjà documenté). Trouvé
+   immédiatement, confirmé par une lecture ciblée puis supprimé sur autorisation du porteur (compte + accès,
+   vérifié : aucun autre compte touché, aucun rattachement à un site n'avait eu lieu côté production).
 2. **La page qui manque.** Une page pour voir et corriger les espèces d'un site (cadre + surcharges), avec
    édition manuelle **et** import d'un fichier — en trois temps comme l'import de projet : examiner (tolérant
    aux champs vides, aux dates en mots), aperçu, écrire. Le fichier fourni sert de premier essai réel.
