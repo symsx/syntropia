@@ -1858,3 +1858,15 @@ il apparaît réellement, pour ne pas noyer le motif.
    produits.
 12. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
+13. **Installer Plantae sur alwaysdata, à `/plantae/` — cadré le 2026-09-24, pas commencé.**
+   Le chantier vit dans l'autre dépôt : `~/projets/bdd_vg2/chantier-installation-alwaysdata.md`
+   (écrit d'ici, **pas encore commité**), à reprendre dans une session ouverte sur `bdd_vg2`.
+   Six décisions du porteur l'attendent, d'abord : alwaysdata remplace-t-il PlanetHoster
+   (`tout-emoi.go.yo.fr/plantae/`, en ligne depuis le 17 août) ou les deux coexistent-ils ?
+   Pour Syntropia : rien ne change, il lit Plantae par instantanés CSV
+   (`bin/catalogue-plantae.py`) ; une lecture directe de la base est une question ouverte.
+   Au déploiement de Plantae, ne rien toucher à `~/www/syntropia/`, et vérifier ensuite que
+   `/syntropia/` répond toujours.
+14. **`../syntropia-depot` (`~/projets/syntropia-depot`) est périmé** (14-15 septembre,
+   64 fichiers) : c'est la sortie de `deployer.py preparer`, jamais relue, recréée de zéro à
+   chaque appel. Supprimable sans risque — le porteur n'a pas encore dit s'il le supprime.
