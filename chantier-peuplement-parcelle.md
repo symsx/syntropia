@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2 et 3 faites le 2026-09-23**, commitées, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2, 3 et 4 faites le 2026-09-23**, commitées, pas déployées.*
 
 ## L'intention
 
@@ -233,6 +233,18 @@ lien ni proposition) ; 1280×720 et 320×568.
 
 Le nombre de lignes par planche (1 à 12, 3 par défaut) dans `parcelle.plan`, et la ligne centrale
 repérée ; le plan dessine les lignes. Port du modèle de `Plan.php` de la référence.
+
+**Fait le 2026-09-23.** `src/Planches.php` (pur) : la disposition des planches portée de `planchesLayout()` (le script
+et le serveur doivent rester identiques), le nombre de lignes de chaque planche lu dans `parcelle.plan` (`lignes`,
+numéro → nombre, 3 par défaut, de 1 à 12), la ligne centrale (celle du milieu, ou la plus proche, `centrale()`), et les
+coordonnées de chaque ligne — ce dont la Phase 6 aura besoin. `Parcelles::enregistrerPlan()` reçoit `lignes` (absent :
+on garde ceux du plan enregistré ; une planche qui disparaît perd son nombre), `Import::plan()` accepte et contrôle la
+clé. Sur « Le plan », « Lignes par planche » : une case par planche (sa largeur à côté), les lignes dessinées en
+pointillé, la centrale en trait plein. **Aucun changement de schéma** (le plan est du JSON). Vérifié en local (projet et
+comptes supprimés) : 6 planches × 3 lignes par défaut, 5 lignes sur la planche 2 enregistrées et relues, gardées quand
+on enregistre autre chose, 20 refusé avec son message, fichiers d'import aux lignes mal formées refusés,
+`verifier-export` identique (la fixture porte des lignes), 1280×720 et 320×568, lecteur refusé. **Rappel** : les
+« bordures vivantes » d'une planche (ch. 11) sont ici des lignes de service comme les autres (le porteur).
 
 ### Phase 5 — Des pérennes sur les planches
 
