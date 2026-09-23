@@ -171,6 +171,16 @@ final class Cultures
         }
         $fonctions = array_values(array_unique($fonctions));
 
+        // La bande d'une planche de tortue abeille (`demi_planche`) : pérenne ou annuelle — chantier « peuplement de la
+        // parcelle », Phase 5. Seulement quand le formulaire la porte : une autre tortue n'y touche pas.
+        $bande = null;
+        if (array_key_exists('demi_planche', $v)) {
+            $bande = trim((string) $v['demi_planche']);
+            if ($bande !== '' && !isset(\Syntropia\Planches::NATURES[$bande])) {
+                $erreurs['demi_planche'] = 'La bande est pérenne ou annuelle.';
+            }
+        }
+
         $notes = trim((string) ($v['notes'] ?? ''));
         if (mb_strlen($notes) > 2000) {
             $erreurs['notes'] = 'Les notes : 2000 caractères au plus.';
@@ -187,7 +197,8 @@ final class Cultures
             'date_semis_repiquage' => $semis,
             'date_recolte' => $recolte,
             'notes' => $notes !== '' ? $notes : null,
-        ], 'erreurs' => $erreurs];
+        ] + ($bande !== null ? ['demi_planche' => $bande !== '' && isset(\Syntropia\Planches::NATURES[$bande]) ? $bande : null] : []),
+            'erreurs' => $erreurs];
     }
 
     /** @return array<string, string> les erreurs, vide si la culture est écrite */
@@ -246,18 +257,20 @@ final class Cultures
      * Bornée à la parcelle ; une planche hors du plan est ignorée.
      *
      * @param array<int, int> $affectations identifiant de culture → numéro de planche
+     * @param array<int, string> $bandes identifiant de culture → bande (`perenne`/`annuelle`), pour une tortue abeille
      * @return int le nombre de cultures placées
      */
-    public function placer(int $parcelleId, int $nbPlanches, array $affectations): int
+    public function placer(int $parcelleId, int $nbPlanches, array $affectations, array $bandes = []): int
     {
         $pdo = $this->pdo();
         $pdo->beginTransaction();
         try {
-            $req = $pdo->prepare('UPDATE succession_ligne SET planche = ? WHERE id = ? AND parcelle_id = ? AND planche IS NULL');
+            $req = $pdo->prepare('UPDATE succession_ligne SET planche = ?, demi_planche = COALESCE(?, demi_planche) WHERE id = ? AND parcelle_id = ? AND planche IS NULL');
             $n = 0;
             foreach ($affectations as $id => $planche) {
                 if ($planche >= 1 && $planche <= $nbPlanches) {
-                    $req->execute([$planche, $id, $parcelleId]);
+                    $bande = $bandes[$id] ?? null;
+                    $req->execute([$planche, isset(\Syntropia\Planches::NATURES[$bande]) ? $bande : null, $id, $parcelleId]);
                     $n += $req->rowCount();
                 }
             }

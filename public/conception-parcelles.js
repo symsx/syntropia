@@ -24,13 +24,37 @@
     var n = parseInt(lignesSaisies[numero], 10);
     return (n >= LIGNES_MIN && n <= LIGNES_MAX) ? n : LIGNES_DEFAUT;
   }
+  // La nature des planches (tortues zèbre et abeille — Phase 5) : la première planche ou bande, puis l'alternance ;
+  // en zèbre, une planche peut être changée. Même règle que Planches::natures() côté serveur.
+  var naturesSaisies = {};
+  Object.keys(cfgPlan.natures || {}).forEach(function(k){ naturesSaisies[k] = cfgPlan.natures[k]; });
+  var choixPremiere = document.getElementById('in-premiere-nature');
+  function tortue(){ var t = document.getElementById('in-tortue'); return t ? t.value : ''; }
+  function premiere(){ return choixPremiere ? choixPremiere.value : 'perenne'; }
+  function autreNature(n){ return n === 'perenne' ? 'annuelle' : 'perenne'; }
+  function natureParDefaut(numero){ return numero % 2 === 1 ? premiere() : autreNature(premiere()); }
+  function natureDe(numero){
+    var v = naturesSaisies[numero];
+    return (v === 'perenne' || v === 'annuelle') ? v : natureParDefaut(numero);
+  }
   // La ligne centrale : celle du milieu, ou la plus proche — même règle que Planches::centrale().
   function centrale(n){ return Math.floor((n - 1) / 2); }
   var signatureListe = '';
+  function blocNatures(sens){
+    var bloc = document.getElementById('natures-bloc');
+    if (!bloc) return;
+    var t = tortue();
+    bloc.hidden = t !== 'zebre' && t !== 'abeille';
+    var ou = sens === 'nord-sud' ? 'à l’ouest' : 'au nord';
+    document.getElementById('premiere-libelle').textContent = t === 'abeille' ? 'La première bande (' + ou + ')' : 'La première planche (' + ou + ')';
+    document.getElementById('natures-note').textContent = t === 'abeille'
+      ? 'Tortue abeille : chaque planche porte une bande pérenne et une bande potagère ; choisissez la première, les bandes alternent ensuite. La bande pérenne est teintée sur le plan.'
+      : 'Tortue zèbre : des planches pérennes alternent avec des planches annuelles ; choisissez la première, les autres alternent — chacune se change ensuite ci-dessus. Les planches pérennes sont teintées sur le plan.';
+  }
   function listeLignes(largeurs){
     var zone = document.getElementById('lignes-planches');
     if (!zone) return;
-    var signature = largeurs.map(function(w){ return w.toFixed(2); }).join('|');
+    var signature = largeurs.map(function(w){ return w.toFixed(2); }).join('|') + '#' + tortue() + premiere();
     if (signature === signatureListe) return;   // ne pas reconstruire sous les doigts de la personne
     signatureListe = signature;
     zone.innerHTML = '';
@@ -45,6 +69,19 @@
       champ.setAttribute('aria-label', 'Nombre de lignes de la planche ' + numero);
       champ.addEventListener('input', function(){ lignesSaisies[numero] = champ.value; redessiner(); });
       label.appendChild(texte); label.appendChild(champ);
+      if (tortue() === 'zebre'){
+        label.classList.add('lp-zebre');
+        var nature = document.createElement('select');
+        nature.className = 'nature-planche'; nature.dataset.numero = numero;
+        nature.setAttribute('aria-label', 'Nature de la planche ' + numero);
+        [['perenne', 'Pérenne'], ['annuelle', 'Annuelle']].forEach(function(o){
+          var opt = document.createElement('option'); opt.value = o[0]; opt.textContent = o[1];
+          if (natureDe(numero) === o[0]) opt.selected = true;
+          nature.appendChild(opt);
+        });
+        nature.addEventListener('change', function(){ naturesSaisies[numero] = nature.value; redessiner(); });
+        label.appendChild(nature);
+      }
       zone.appendChild(label);
     });
   }
@@ -190,10 +227,17 @@
       for (var i = 0; i < layout.largeurs.length; i++){
         var w = layout.largeurs[i] * ECH;
         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('class', 'plan-planche');
+        rect.setAttribute('class', 'plan-planche' + (tortue() === 'zebre' && natureDe(i + 1) === 'perenne' ? ' plan-planche-perenne' : ''));
         rect.setAttribute('x', x); rect.setAttribute('y', bn + bni);
         rect.setAttribute('width', w); rect.setAttribute('height', Math.max(0, H - bn - bni - bs - bsi));
         planches.appendChild(rect);
+        if (tortue() === 'abeille'){
+          var bandeNS = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          bandeNS.setAttribute('class', 'plan-bande-perenne');
+          bandeNS.setAttribute('x', premiere() === 'perenne' ? x : x + w / 2); bandeNS.setAttribute('y', bn + bni);
+          bandeNS.setAttribute('width', w / 2); bandeNS.setAttribute('height', Math.max(0, H - bn - bni - bs - bsi));
+          planches.appendChild(bandeNS);
+        }
         x += w + (layout.passePieds[i] || 0) * ECH;
       }
     } else {
@@ -201,10 +245,17 @@
       for (var j = 0; j < layout.largeurs.length; j++){
         var h = layout.largeurs[j] * ECH;
         var rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect2.setAttribute('class', 'plan-planche');
+        rect2.setAttribute('class', 'plan-planche' + (tortue() === 'zebre' && natureDe(j + 1) === 'perenne' ? ' plan-planche-perenne' : ''));
         rect2.setAttribute('x', bo + boi); rect2.setAttribute('y', y);
         rect2.setAttribute('width', Math.max(0, L - bo - boi - be - bei)); rect2.setAttribute('height', h);
         planches.appendChild(rect2);
+        if (tortue() === 'abeille'){
+          var bandeEO = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          bandeEO.setAttribute('class', 'plan-bande-perenne');
+          bandeEO.setAttribute('x', bo + boi); bandeEO.setAttribute('y', premiere() === 'perenne' ? y : y + h / 2);
+          bandeEO.setAttribute('width', Math.max(0, L - bo - boi - be - bei)); bandeEO.setAttribute('height', h / 2);
+          planches.appendChild(bandeEO);
+        }
         y += h + (layout.passePieds[j] || 0) * ECH;
       }
     }
@@ -229,6 +280,7 @@
       });
     }
     listeLignes(layout.largeurs);
+    blocNatures(sens);
 
     var surfaceUtile = largeurUtile * hauteurUtile;
     // La surface des planches elles-mêmes — les seules à cultiver,
@@ -402,6 +454,14 @@
       corps.set('stade', document.getElementById('in-stade').value);
       corps.set('tortue', document.getElementById('in-tortue').value);
       document.querySelectorAll('.lignes-planche').forEach(function(c){ corps.set('lignes[' + c.dataset.numero + ']', c.value); });
+      if (choixPremiere){
+        corps.set('natures[premiere]', premiere());
+        // Seules les planches changées par rapport à l'alternance s'enregistrent.
+        document.querySelectorAll('.nature-planche').forEach(function(c){
+          var n = parseInt(c.dataset.numero, 10);
+          if (c.value !== natureParDefaut(n)) corps.set('natures[planches][' + n + ']', c.value);
+        });
+      }
       corps.set('longueur_m', champLongueur.value);
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
@@ -470,8 +530,10 @@
   if (choixTortue){
     choixTortue.addEventListener('change', function(){
       document.getElementById('tortue-resume').textContent = choixTortue.options[choixTortue.selectedIndex].dataset.resume;
+      redessiner();
     });
   }
+  if (choixPremiere){ choixPremiere.addEventListener('change', redessiner); }
 
   var choixStade = document.getElementById('in-stade');
   if (choixStade){
@@ -482,7 +544,7 @@
 
   Gabarit.onReset(function(){
     perimerPlants();
-    lignesSaisies = {}; signatureListe = '';
+    lignesSaisies = {}; naturesSaisies = {}; signatureListe = '';
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });

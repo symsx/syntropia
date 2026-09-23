@@ -140,6 +140,14 @@ Chaque planche a ses **lignes de plantation**, trois par défaut, à intervalles
 réglez le nombre planche par planche (de 1 à 12). La ligne centrale, en trait plein sur le plan, porte la
 biomasse et la structure, jamais de tuteurs ; les lignes recevront les plantes de service.
 
+Pour une tortue **zèbre** ou **abeille**, le plan dit aussi quelles planches — ou quelles bandes — sont
+pérennes et lesquelles annuelles : vous choisissez la première (la plus à l'ouest, ou au nord selon le sens
+des planches), les autres alternent, et en zèbre chacune se change ensuite une à une ; elles sont teintées sur
+le plan. Dans le plan de culture du potager, chaque planche porte sa nature, et la proposition de placement
+met une plante pérenne sur une planche pérenne, une annuelle sur une annuelle — d'après le cycle de son
+espèce dans **Espèces** ; en abeille, elle la met dans la bande de sa nature, que vous pouvez aussi choisir
+à la main. Une plante dont le cycle n'est pas noté se place n'importe où.
+
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
 sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent,
 l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste, et « Proposer les

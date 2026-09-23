@@ -547,7 +547,7 @@ final class Import
             return null;
         }
         foreach (array_keys($v) as $cle) {
-            if (!in_array($cle, ['bordures', 'rattrapage', 'lignes'], true)) {
+            if (!in_array($cle, ['bordures', 'rattrapage', 'lignes', 'natures'], true)) {
                 throw new \UnexpectedValueException("le plan contient une clé inconnue « $cle ».");
             }
         }
@@ -559,6 +559,21 @@ final class Import
             if (preg_match('/^[1-9][0-9]{0,2}$/', (string) $numero) !== 1 || !is_int($n)
                 || $n < \Syntropia\Planches::LIGNES_MIN || $n > \Syntropia\Planches::LIGNES_MAX) {
                 throw new \UnexpectedValueException('les lignes des planches sont mal formées (de 1 à 12 par planche).');
+            }
+        }
+        // La nature des planches — tortues zèbre et abeille (Phase 5).
+        if (isset($v['natures'])) {
+            $nat = $v['natures'];
+            $ok = is_array($nat) && array_diff(array_keys($nat), ['premiere', 'planches']) === []
+                && (!isset($nat['premiere']) || isset(\Syntropia\Planches::NATURES[$nat['premiere']]))
+                && (!isset($nat['planches']) || is_array($nat['planches']));
+            foreach ($ok ? ($nat['planches'] ?? []) : [] as $numero => $n) {
+                if (preg_match('/^[1-9][0-9]{0,2}$/', (string) $numero) !== 1 || !is_string($n) || !isset(\Syntropia\Planches::NATURES[$n])) {
+                    $ok = false;
+                }
+            }
+            if (!$ok) {
+                throw new \UnexpectedValueException('la nature des planches est mal formée (pérenne ou annuelle).');
             }
         }
         $bordures = $v['bordures'] ?? [];

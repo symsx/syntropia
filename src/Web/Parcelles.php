@@ -296,6 +296,28 @@ final class Parcelles
             }
         }
 
+        // La nature des planches (tortues zèbre et abeille) — Phase 5 : la première planche ou bande, puis l'alternance ;
+        // en zèbre, une planche peut être changée. `null` (clé absente) : on garde celles du plan enregistré.
+        $natures = null;
+        if (is_array($valeurs['natures'] ?? null)) {
+            $natures = [];
+            $premiere = trim((string) ($valeurs['natures']['premiere'] ?? ''));
+            if ($premiere !== '') {
+                if (!isset(\Syntropia\Planches::NATURES[$premiere])) {
+                    $erreurs['natures'] = 'Une planche est pérenne ou annuelle.';
+                } else {
+                    $natures['premiere'] = $premiere;
+                }
+            }
+            foreach (is_array($valeurs['natures']['planches'] ?? null) ? $valeurs['natures']['planches'] : [] as $numero => $nature) {
+                if ((string) (int) $numero !== (string) $numero || (int) $numero < 1 || !isset(\Syntropia\Planches::NATURES[(string) $nature])) {
+                    $erreurs['natures'] = 'Une planche est pérenne ou annuelle.';
+                    break;
+                }
+                $natures['planches'][(string) (int) $numero] = (string) $nature;
+            }
+        }
+
         $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_');
         $bordureInterne = $this->litBordures($valeurs['bordures_interne'] ?? [], $erreurs, 'bordure_interne_');
 
@@ -336,8 +358,21 @@ final class Parcelles
                 return ['erreurs' => ['version' => 'Le plan a changé, rechargez la page avant de modifier.'], 'version' => null];
             }
 
+            $ancien = json_decode((string) ($ligne['plan'] ?? ''), true);
+            if ($natures === null) {
+                $natures = is_array($ancien['natures'] ?? null) ? $ancien['natures'] : [];
+            }
+            if (is_array($natures['planches'] ?? null)) {
+                $natures['planches'] = array_filter($natures['planches'], static fn (mixed $n, mixed $numero): bool => (int) $numero <= $nbPlanches,
+                    ARRAY_FILTER_USE_BOTH);
+                ksort($natures['planches'], SORT_NUMERIC);
+                if ($natures['planches'] === []) {
+                    unset($natures['planches']);
+                } else {
+                    $natures['planches'] = (object) $natures['planches'];
+                }
+            }
             if ($lignes === null) {
-                $ancien = json_decode((string) ($ligne['plan'] ?? ''), true);
                 $lignes = is_array($ancien['lignes'] ?? null) ? $ancien['lignes'] : [];
             }
             // Seules les planches qui existent encore gardent leur nombre de lignes ; les autres reprendront le défaut.
@@ -347,6 +382,9 @@ final class Parcelles
             $contenu = ['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne], 'rattrapage' => $rattrapage];
             if ($lignes !== []) {
                 $contenu['lignes'] = (object) $lignes;
+            }
+            if ($natures !== []) {
+                $contenu['natures'] = $natures;
             }
             $plan = json_encode($contenu, JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(

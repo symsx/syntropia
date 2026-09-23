@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'stade'             => $_POST['stade'] ?? null,
             'tortue'            => $_POST['tortue'] ?? null,
             'lignes'            => $_POST['lignes'] ?? null,
+            'natures'           => $_POST['natures'] ?? null,
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -290,6 +291,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   #in-stade:focus, #in-tortue:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-plant{ stroke:#fff; stroke-width:1.5; }
+  .plan-planche-perenne{ fill:var(--accent); fill-opacity:.28; }
+  .plan-bande-perenne{ fill:var(--accent); fill-opacity:.28; }
+  #in-premiere-nature, .nature-planche{ padding:.2rem .3rem; font:400 .8rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.4rem; }
+  .lp-liste label.lp-zebre{ flex-wrap:wrap; }
   .plan-ligne{ stroke:var(--muted); stroke-width:2; stroke-dasharray:6 6; opacity:.7; }
   .plan-ligne-centrale{ stroke:var(--accent); stroke-width:3; stroke-dasharray:none; opacity:.9; }
   .lp-liste{ display:grid; grid-template-columns:repeat(auto-fill, minmax(8.5rem, 1fr)); gap:.3rem .6rem; margin:.3rem 0 .4rem; }
@@ -637,6 +643,19 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
            par défaut — elles recevront les plantes de service.</p>
         <div id="lignes-planches" class="lp-liste"></div>
 
+        <div id="natures-bloc" hidden>
+          <p class="pd-titre">Planches pérennes et annuelles</p>
+          <p class="pd-note" id="natures-note"></p>
+          <div class="pd-ligne">
+            <span class="pd-ligne-nom" id="premiere-libelle">La première planche</span>
+            <select id="in-premiere-nature" aria-label="Nature de la première planche ou bande">
+<?php foreach (Planches::NATURES as $cle => $lib): ?>
+              <option value="<?= $cle ?>"<?= Planches::premiereNature($planEnregistre ?? null) === $cle ? ' selected' : '' ?>><?= $lib ?></option>
+<?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
         <p class="pd-note">Bloque-herbe, coupe-vent, défense contre les animaux — une haie
            défensive en bord de parcelle.</p>
@@ -890,6 +909,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     // Les lignes de chaque planche, telles qu'enregistrées (chantier « peuplement de la parcelle », Phase 4) — le
     // défaut et les bornes viennent de Planches, seule source.
     lignes: <?= json_encode((object) (is_array($planEnregistre['lignes'] ?? null) ? $planEnregistre['lignes'] : [])) ?>,
+    // La nature des planches (zèbre, abeille — Phase 5) : la première, puis l'alternance ; les planches changées.
+    premiereNature: <?= json_encode(Planches::premiereNature($planEnregistre ?? null)) ?>,
+    natures: <?= json_encode((object) (is_array($planEnregistre['natures']['planches'] ?? null) ? $planEnregistre['natures']['planches'] : [])) ?>,
     lignesDefaut: <?= Planches::LIGNES_DEFAUT ?>, lignesMin: <?= Planches::LIGNES_MIN ?>, lignesMax: <?= Planches::LIGNES_MAX ?> };
   // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande] en mètres (chantier
   // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.

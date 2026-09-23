@@ -125,6 +125,10 @@ séparée** de la ligne centrale (ch. 11, règle 13).
 - **Abeille** (ch. 15 § 8) : **pérenne et annuel sur la même planche** — une bande pérenne, une bande
   potagère ; maïs ou tournesol au centre la première année ; **émergents plafonnés à 3,50 m** ; trancher
   une fois par an la ligne médiane à 30 cm ; prend **deux fois la surface** d'un potager classique.
+- **Nature des planches, dans l'atelier** (le porteur, 2026-09-23) : zèbre — on choisit la nature de la première planche
+  (à l'ouest ou au nord), les autres alternent, chacune se change ; abeille — on choisit la nature de la première bande,
+  les bandes alternent (chaque planche a donc la même disposition). La nature d'une plante se lit dans son cycle
+  (vivace ou ligneuse : pérenne ; annuelle ou bisannuelle : annuelle).
 - **Liane** (ch. 15 § 9) : une structure (pergola) porte des **lianes émergentes** (glycine, rosiers
   grimpants vigoureux…) ; kiwi et vigne en strate haute ; cultures dessous sans biomasse 3D ; **plus de
   maïs ni de tournesol après les deux premières années** ; réservée aux petites surfaces.
@@ -171,5 +175,9 @@ et non définitives » : une surcharge les corrige. Le goji garde 50 cm (ligne i
    règle 3), sans chiffre.
 4. **Le vent** : aucune espèce n'est dite « coupe-vent » par le corpus ; seule la hauteur de la bordure
    face au vent dominant est réglée. Quelles espèces porter au rôle `vent` ?
-5. **Ce qui se réalise en premier à chaque stade** (colonisation, accumulation) : toujours sans repère
+5. **La tortue liane** (le porteur, 2026-09-23 : « je n'ai pas encore assez de connaissance sur le sujet ; skill à
+   développer ») : l'atelier en dessine le plan au sol, pas la structure. Ce qui distingue sa conception au sol — où
+   vont les poteaux et les lianes émergentes, quelles cultures dessous, quelle place pour les bordures — reste à
+   documenter avant de coder quoi que ce soit de propre à la liane.
+6. **Ce qui se réalise en premier à chaque stade** (colonisation, accumulation) : toujours sans repère
    (voir `chantier-saut-du-chat.md`, question 4).

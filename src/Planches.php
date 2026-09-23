@@ -63,6 +63,58 @@ final class Planches
         return is_int($n) && $n >= self::LIGNES_MIN && $n <= self::LIGNES_MAX ? $n : self::LIGNES_DEFAUT;
     }
 
+    /** La nature d'une planche, ou d'une bande de planche (tortues zèbre et abeille, Théry ch. 15 §§ 7-8). */
+    public const NATURES = ['perenne' => 'Pérenne', 'annuelle' => 'Annuelle'];
+
+    /**
+     * La nature de chaque planche, selon le type de tortue (chantier « peuplement de la parcelle », Phase 5 — décisions du
+     * porteur, 2026-09-23) : on choisit la nature de la **première** planche (zèbre) ou de la première bande (abeille), la
+     * plus à l'ouest ou la plus au nord selon le sens des planches, **puis elles alternent**. En zèbre, chaque planche
+     * peut être changée une à une ; en abeille, chaque planche a deux bandes, dans l'ordre de l'alternance — la même
+     * disposition d'une planche à l'autre. Une autre tortue (classique, liane, pas dite) : `[]`, rien n'est marqué.
+     *
+     * @param array<string, mixed> $parcelle une ligne de `parcelle` (tortue, plan, nb_planches)
+     * @return array<int, array{nature: ?string, bandes: ?array{0: string, 1: string}}> numéro de planche → nature
+     */
+    public static function natures(array $parcelle): array
+    {
+        $tortue = (string) ($parcelle['tortue'] ?? '');
+        $nb = (int) ($parcelle['nb_planches'] ?? 0);
+        if (!in_array($tortue, ['zebre', 'abeille'], true) || $nb < 1) {
+            return [];
+        }
+        $plan = json_decode((string) ($parcelle['plan'] ?? ''), true);
+        $premiere = self::premiereNature($plan);
+        $autre = $premiere === 'perenne' ? 'annuelle' : 'perenne';
+        $out = [];
+        for ($n = 1; $n <= $nb; $n++) {
+            if ($tortue === 'abeille') {
+                $out[$n] = ['nature' => null, 'bandes' => [$premiere, $autre]];
+                continue;
+            }
+            $choisie = is_array($plan) ? ($plan['natures']['planches'][(string) $n] ?? null) : null;
+            $out[$n] = ['nature' => isset(self::NATURES[$choisie]) ? $choisie : (($n % 2 === 1) ? $premiere : $autre), 'bandes' => null];
+        }
+        return $out;
+    }
+
+    /** La nature de la première planche ou bande — pérenne tant qu'elle n'est pas dite, comme la tortue zèbre du ch. 15. */
+    public static function premiereNature(mixed $plan): string
+    {
+        $p = is_array($plan) ? ($plan['natures']['premiere'] ?? null) : null;
+        return isset(self::NATURES[$p]) ? $p : 'perenne';
+    }
+
+    /** La nature d'une plante d'après son cycle (`espece.cycle`) : vivace ou ligneuse → pérenne ; sinon annuelle ; `null` si le cycle n'est pas noté. */
+    public static function natureDuCycle(?string $cycle): ?string
+    {
+        return match ($cycle) {
+            'vivace', 'ligneuse' => 'perenne',
+            'annuelle', 'bisannuelle' => 'annuelle',
+            default => null,
+        };
+    }
+
     /** L'indice (de 0) de la ligne centrale parmi `$n` lignes à intervalles égaux : celle du milieu, ou la plus proche. */
     public static function centrale(int $n): int
     {

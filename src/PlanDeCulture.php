@@ -32,11 +32,14 @@ namespace Syntropia;
 final class PlanDeCulture
 {
     /**
-     * @param list<array{id: int, espece: string, planche: int|null}> $cultures toutes les cultures de la parcelle
+     * @param list<array{id: int, espece: string, planche: int|null, nature?: ?string}> $cultures toutes les cultures de la
+     *        parcelle ; `nature` (`perenne`/`annuelle`, d'après le cycle du référentiel) quand on la connaît
      * @param int $nbPlanches les planches du plan
-     * @return array{placements: list<array{id: int, espece: string, planche: int, raison: string}>, non_places: list<array{id: int, espece: string, raison: string}>}
+     * @param array<int, array{nature: ?string, bandes: ?array}> $natures `Planches::natures()` — tortue zèbre : une plante
+     *        ne va que sur une planche de sa nature ; tortue abeille : elle va dans la bande de sa nature
+     * @return array{placements: list<array{id: int, espece: string, planche: int, bande: ?string, raison: string}>, non_places: list<array{id: int, espece: string, raison: string}>}
      */
-    public static function proposer(array $cultures, int $nbPlanches, ?string $dossierAssociations = null): array
+    public static function proposer(array $cultures, int $nbPlanches, ?string $dossierAssociations = null, array $natures = []): array
     {
         $vide = ['placements' => [], 'non_places' => []];
         if ($nbPlanches < 1) {
@@ -80,8 +83,17 @@ final class PlanDeCulture
             $nom = (string) $c['espece'];
             $meilleure = null;
             $bloquees = [];
+            $autreNature = false;
+            $natureC = $c['nature'] ?? null;
             foreach ($planches as $numero => $noms) {
                 if (count($noms) >= $cap) {
+                    continue;
+                }
+                // Tortue zèbre : une plante pérenne va sur une planche pérenne, une annuelle sur une annuelle (Phase 5 du
+                // chantier « peuplement de la parcelle »). Une nature inconnue — cycle non noté — ne contraint rien.
+                $natureP = $natures[$numero]['nature'] ?? null;
+                if ($natureC !== null && $natureP !== null && $natureC !== $natureP) {
+                    $autreNature = true;
                     continue;
                 }
                 $bien = [];
@@ -107,14 +119,19 @@ final class PlanDeCulture
                 $voisins = array_values(array_unique(array_merge(...array_values($bloquees) ?: [[]])));
                 $nonPlaces[] = ['id' => $c['id'], 'espece' => $nom, 'raison' => $bloquees !== []
                     ? 'Chaque planche a un voisin à éviter (' . implode(', ', $voisins) . ') : ajoutez une planche, ou décidez vous-même.'
-                    : 'Toutes les planches sont pleines.'];
+                    : ($autreNature
+                        ? 'Plante ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' : aucune planche ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' n’a de place — changez la nature d’une planche dans le plan, ou décidez vous-même.'
+                        : 'Toutes les planches sont pleines.')];
                 continue;
             }
             $planches[$meilleure['numero']][] = $nom;
-            $placements[] = ['id' => $c['id'], 'espece' => $nom, 'planche' => $meilleure['numero'],
-                'raison' => $meilleure['bien'] !== []
+            // Tortue abeille : la plante va dans la bande de sa nature, si on la connaît.
+            $bande = isset($natures[$meilleure['numero']]['bandes']) && $natureC !== null ? $natureC : null;
+            $placements[] = ['id' => $c['id'], 'espece' => $nom, 'planche' => $meilleure['numero'], 'bande' => $bande,
+                'raison' => ($meilleure['bien'] !== []
                     ? 'S’entend bien avec ' . implode(', ', $meilleure['bien']) . '.'
-                    : 'Aucun voisin connu sur cette planche : placée là où il y a de la place.'];
+                    : 'Aucun voisin connu sur cette planche : placée là où il y a de la place.')
+                    . ($bande !== null ? ' Dans la bande ' . ($bande === 'perenne' ? 'pérenne' : 'annuelle') . '.' : '')];
         }
         usort($placements, static fn (array $a, array $b): int => [$a['planche'], mb_strtolower($a['espece'])] <=> [$b['planche'], mb_strtolower($b['espece'])]);
         return ['placements' => $placements, 'non_places' => $nonPlaces];

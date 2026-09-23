@@ -100,8 +100,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   partir du référentiel, avec des règles tirées d'un nœud de compétence à créer (`skills-map/`). Proposé
   le 2026-09-23 ; **Phases 1 (le nœud `skills-map/nodes/conception-de-la-tortue.md`) et 1 bis (`parcelle.tortue`,
   `espece.cycle`, schéma 11), 2 (les bordures peuplées : `ligne_plantation`, schéma 12) et 3 (proposer toutes les
-  espèces qui remplissent la fonction de la bordure, hors annuelles) et 4 (les lignes de chaque planche, `Planches.php`)
-  faites le jour même**,
+  espèces qui remplissent la fonction de la bordure, hors annuelles), 4 (les lignes de chaque planche, `Planches.php`)
+  et 5 (planches pérennes et annuelles en zèbre, bandes en abeille, respectées par le placement du potager) faites le
+  jour même**,
   commitées, pas déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,

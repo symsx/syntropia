@@ -93,7 +93,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
                       'est' => ['actif' => true, 'largeur_m' => 0.4], 'ouest' => ['actif' => true, 'largeur_m' => 0.4]],
         'interne' => ['nord' => ['actif' => true, 'largeur_m' => 0.3], 'sud' => ['actif' => true, 'largeur_m' => 0.3],
                       'est' => ['actif' => true, 'largeur_m' => 0.3], 'ouest' => ['actif' => true, 'largeur_m' => 0.3]],
-    ], 'rattrapage' => 'planches', 'lignes' => ['1' => 2, '3' => 5]], JSON_UNESCAPED_UNICODE);
+    ], 'rattrapage' => 'planches', 'lignes' => ['1' => 2, '3' => 5], 'natures' => ['premiere' => 'annuelle', 'planches' => ['2' => 'annuelle']]], JSON_UNESCAPED_UNICODE);
     $pdo->prepare('INSERT INTO parcelle (site_id, code, nom, type, longueur_m, largeur_m, orientation_lignes, nb_planches, plan, notes,
                    surface_m2, production_principale, cree_le) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
         ->execute([$siteId, 'P1', 'Verger', 'perenne', 12.5, 8, 'nord-sud', 6, $plan, "Note [\n1, 2\n] \"guillemets\" é", 100, 'Fruits', '2026-08-01 10:00:00']);
@@ -114,7 +114,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
     $ligne->execute([$p1, 2, 'haute', 'Noyer', 'multiplication', 8, 4, json_encode(['emplacement' => 'centre', 'fonctions' => [],
         'categorie' => 'production', 'couleur' => 'rouge', 'debut' => 4, 'fin' => 20, 'retrait' => 12,
         'production' => ['texte' => 'Noix', 'priorite' => 'principale']], JSON_UNESCAPED_UNICODE), 'rouge', 'production_principale']);
-    $pdo->prepare("INSERT INTO succession_ligne (parcelle_id, espece, role, planche, strate, nb_plants, date_semis, date_semis_repiquage) VALUES (?, 'Carotte', 'biomasse|bloque_herbe', 2, 'basse', 40, '2026-03-10', '2026-04-01')")->execute([$p2]);
+    $pdo->prepare("INSERT INTO succession_ligne (parcelle_id, espece, role, planche, demi_planche, strate, nb_plants, date_semis, date_semis_repiquage) VALUES (?, 'Carotte', 'biomasse|bloque_herbe', 2, 'annuelle', 'basse', 40, '2026-03-10', '2026-04-01')")->execute([$p2]);
     $pdo->prepare("INSERT INTO releve_sol (parcelle_id, `date`, point, temoin, infiltration_mm_h, etat_humidite, jours_depuis_pluie, saisi_par)
                    VALUES (?, '2026-09-10', 'Point 1', 0, 15.5, 'ressuyé', 3, ?)")->execute([$p1, $porteur]);
     $pdo->prepare("INSERT INTO intervention (parcelle_id, `date`, type, duree_h, premiere_fois, saisi_par) VALUES (?, '2026-09-11', 'taille', 2.5, 1, ?)")

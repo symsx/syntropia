@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2, 3 et 4 faites le 2026-09-23**, commitées, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2, 3, 4 et 5 faites le 2026-09-23**, commitées, pas déployées.*
 
 ## L'intention
 
@@ -252,6 +252,25 @@ on enregistre autre chose, 20 refusé avec son message, fichiers d'import aux li
 et, pour la tortue abeille, sur une **demi-planche** (`succession_ligne.demi_planche`, déjà au schéma,
 jamais écrite). Le type de tortue de la parcelle (Phase 1 bis) dit ce que la page propose : en zèbre,
 chaque planche est marquée pérenne ou annuelle ; en abeille, chaque planche a sa bande pérenne.
+
+**Décisions du porteur (2026-09-23)** : en zèbre, une alternance proposée par défaut ; on choisit la nature de la
+première planche ou bande (à gauche — à l'ouest, ou au nord selon le sens des planches), puis elles alternent ; en
+liane, l'atelier dessine le plan au sol, pas la structure — la liane est une compétence à développer (question
+ouverte du nœud).
+
+**Fait le 2026-09-23.** `Planches::natures()` (pur) : zèbre — la nature de chaque planche (première, puis alternance,
+une planche changée l'emporte) ; abeille — deux bandes par planche, dans l'ordre de l'alternance ; autre tortue : rien.
+`Planches::natureDuCycle()` : vivace ou ligneuse → pérenne, annuelle ou bisannuelle → annuelle, cycle non noté → rien.
+Enregistré dans `parcelle.plan` (`natures` : `premiere`, et les planches changées), gardé quand l'envoi ne le porte pas,
+contrôlé à l'import. Sur « Le plan », « Planches pérennes et annuelles » (visible en zèbre et en abeille), une liste
+par planche en zèbre ; planches ou bandes pérennes teintées. Sur le potager, la nature s'affiche sur chaque planche ;
+`PlanDeCulture::proposer()` ne met une plante pérenne que sur une planche pérenne (et l'annuelle sur l'annuelle) et, en
+abeille, dans la bande de sa nature — écrite dans `succession_ligne.demi_planche` (au schéma, jamais écrite jusqu'ici),
+qui se choisit aussi à la main (« La bande »). **Aucun changement de schéma.** Vérifié en local (projet supprimé) :
+alternance, planche 4 changée et relue, proposition zèbre (cassis et menthe sur pérennes, courgette sur annuelle, radis
+sans cycle n'importe où) acceptée, passage en abeille avec première bande annuelle, goji proposé dans la bande pérenne et
+placé, première nature et bande forgées refusées, `verifier-export` identique (la fixture porte natures et bande),
+1280×720 et 320×568.
 
 ### Phase 6 — Proposer les lignes de service
 

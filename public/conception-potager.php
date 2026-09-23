@@ -24,6 +24,7 @@ use Syntropia\Associations;
 use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
 use Syntropia\PlanDeCulture;
+use Syntropia\Planches;
 use Syntropia\Role;
 use Syntropia\Scenario;
 use Syntropia\Succession;
@@ -75,6 +76,20 @@ if ($parcelle === null && $parcelles !== []) {
 }
 $idP = $parcelle !== null ? (int) $parcelle['id'] : 0;
 $nbPlanches = $parcelle !== null ? (int) ($parcelle['nb_planches'] ?? 0) : 0;
+// La nature des planches — tortue zèbre (planches pérennes et annuelles) ou abeille (une bande de chaque sur chaque
+// planche) : chantier « peuplement de la parcelle », Phase 5. Vide pour une autre tortue.
+$natures = $parcelle !== null ? Planches::natures($parcelle) : [];
+$abeille = ($parcelle['tortue'] ?? null) === 'abeille' && $natures !== [];
+// La nature d'une culture se lit dans le cycle de son espèce au référentiel ; inconnue, elle ne contraint rien.
+$naturesCultures = [];
+$natureCulture = static function (string $espece) use (&$naturesCultures, $especesService, $siteId): ?string {
+    $cle = mb_strtolower(trim($espece));
+    if (!array_key_exists($cle, $naturesCultures)) {
+        $naturesCultures[$cle] = Planches::natureDuCycle($especesService->parNomUsage($espece, $siteId)['cycle'] ?? null);
+    }
+    return $naturesCultures[$cle];
+};
+$libelleNature = static fn (?string $n): string => $n === 'perenne' ? 'pérenne' : 'annuelle';
 $retour = Configuration::base() . 'conception-potager.php?parcelle=' . $idP;
 
 $erreurs = [];
@@ -113,17 +128,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
         }
     } elseif ($action === 'appliquer') {
         // Une proposition ne s'applique que sur l'état qu'on a vu : on la recalcule, et on ne pose que ce qu'elle contient encore.
-        $etat = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche']],
-            $culturesService->dUneParcelle($idP));
+        $etat = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche'],
+            'nature' => $natureCulture((string) $c['espece'])], $culturesService->dUneParcelle($idP));
         if (!hash_equals(PlanDeCulture::empreinte($etat), (string) ($_POST['empreinte'] ?? ''))) {
             $erreurs['proposition'] = 'Le plan a changé depuis cette proposition : recalculez-la avant de l’accepter.';
         } else {
             $proposee = [];
-            foreach (PlanDeCulture::proposer($etat, $nbPlanches)['placements'] as $x) {
+            $bandes = [];
+            foreach (PlanDeCulture::proposer($etat, $nbPlanches, null, $natures)['placements'] as $x) {
                 $proposee[$x['id']] = $x['planche'];
+                if ($x['bande'] !== null) {
+                    $bandes[$x['id']] = $x['bande'];
+                }
             }
             $choisies = array_map('intval', is_array($_POST['ids'] ?? null) ? $_POST['ids'] : []);
-            $n = $culturesService->placer($idP, $nbPlanches, array_intersect_key($proposee, array_flip($choisies)));
+            $n = $culturesService->placer($idP, $nbPlanches, array_intersect_key($proposee, array_flip($choisies)), $bandes);
             $_SESSION['syntropia_flash_potager'] = ['ok', $n === 0 ? 'Aucune culture n’a été placée.' : ($n === 1 ? 'Une culture est placée.' : $n . ' cultures sont placées.')];
             header('Location: ' . $retour);
             exit;
@@ -156,10 +175,11 @@ if ($saisie === null && $edition === null && $peutEcrire && ($_GET['saisie'] ?? 
 }
 
 // La proposition de placement : un aperçu, rien n'est écrit tant que la personne n'a pas accepté.
-$etatCultures = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche']], $cultures);
+$etatCultures = array_map(static fn (array $c): array => ['id' => (int) $c['id'], 'espece' => (string) $c['espece'], 'planche' => $c['planche'] === null ? null : (int) $c['planche'],
+    'nature' => $natureCulture((string) $c['espece'])], $cultures);
 $proposition = null;
 if ($parcelle !== null && $peutEcrire && $nbPlanches >= 1 && ($_GET['proposer'] ?? '') === '1' && $saisie === null) {
-    $proposition = PlanDeCulture::proposer($etatCultures, $nbPlanches);
+    $proposition = PlanDeCulture::proposer($etatCultures, $nbPlanches, null, $natures);
     $ouvre = true;
 }
 $proposeesParPlanche = [];
@@ -189,7 +209,11 @@ foreach (array_merge($numeros, $horsPlan) as $n) {
     foreach ($relations as $r) {
         $citees[Associations::normaliser($r['a'])] = $citees[Associations::normaliser($r['b'])] = true;
     }
-    $cartes[] = ['numero' => $n, 'libelle' => 'Planche ' . $n, 'hors_plan' => in_array($n, $horsPlan, true), 'cultures' => $liste,
+    $nat = $natures[$n] ?? null;
+    $cartes[] = ['numero' => $n, 'libelle' => 'Planche ' . $n
+        . ($nat !== null && $nat['nature'] !== null ? ' · ' . $libelleNature($nat['nature']) : '')
+        . ($nat !== null && $nat['bandes'] !== null ? ' · bandes ' . $libelleNature($nat['bandes'][0]) . ' puis ' . $libelleNature($nat['bandes'][1]) : ''),
+        'nature' => $nat['nature'] ?? null, 'hors_plan' => in_array($n, $horsPlan, true), 'cultures' => $liste,
         'proposees' => $proposeesParPlanche[$n] ?? [], 'relations' => $relations, 'chaine' => Succession::chaine($liste),
         'sans_fiche' => array_values(array_filter(array_unique($noms), static fn (string $x): bool => Associations::fiche($x) === null && !isset($citees[Associations::normaliser($x)])))];
 }
@@ -199,7 +223,7 @@ if ($reste !== []) {
 
 // Le formulaire. « fonctions » est une liste (les cases de service), tenue à part du reste, qui se
 // reprend champ par champ en texte.
-$f = ['espece' => '', 'planche' => '', 'strate' => '', 'espacement_m' => '', 'nb_plants' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
+$f = ['espece' => '', 'planche' => '', 'demi_planche' => '', 'strate' => '', 'espacement_m' => '', 'nb_plants' => '', 'date_semis' => '', 'date_semis_repiquage' => '', 'date_recolte' => '', 'notes' => ''];
 $fonctionsSaisie = [];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
@@ -532,10 +556,11 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <ul class="pt-cultures">
 <?php foreach ($c['cultures'] as $k): ?>
                 <li><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>&amp;culture=<?= (int) $k['id'] ?>" title="Ouvrir pour corriger"><?= $h($k['espece']) ?></a><?php else: ?><b><?= $h($k['espece']) ?></b><?php endif; ?>
-<?php $fonctionsK = Cultures::fonctions($k); if ($k['strate'] !== null || $k['date_semis'] !== null || $k['date_semis_repiquage'] !== null || $fonctionsK !== []): ?>
+<?php $fonctionsK = Cultures::fonctions($k); if ($k['strate'] !== null || $k['date_semis'] !== null || $k['date_semis_repiquage'] !== null || $fonctionsK !== [] || ($abeille && ($k['demi_planche'] ?? null) !== null)): ?>
                   <small><?= $h(implode(' · ', array_filter(array_merge(
                     array_map(static fn (string $x): string => str_replace('_', ' ', $x), $fonctionsK),
-                    [$k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis'] !== null ? 'semis ' . $dateFr((string) $k['date_semis']) : '', $k['date_semis_repiquage'] !== null ? 'en place ' . $dateFr((string) $k['date_semis_repiquage']) : '']
+                    [$abeille && in_array($k['demi_planche'] ?? '', ['perenne', 'annuelle'], true) ? 'bande ' . $libelleNature($k['demi_planche']) : '',
+                     $k['strate'] !== null ? (Cultures::STRATES[$k['strate']] ?? '') : '', $k['date_semis'] !== null ? 'semis ' . $dateFr((string) $k['date_semis']) : '', $k['date_semis_repiquage'] !== null ? 'en place ' . $dateFr((string) $k['date_semis_repiquage']) : '']
                   )))) ?></small>
 <?php endif; ?></li>
 <?php endforeach; ?>
@@ -727,10 +752,20 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <select name="planche">
                 <option value=""><?= $nbPlanches < 1 ? 'Pas de planche au plan' : 'Pas encore placée' ?></option>
 <?php for ($n = 1; $n <= $nbPlanches; $n++): ?>
-                <option value="<?= $n ?>"<?= $f['planche'] === (string) $n ? ' selected' : '' ?>>Planche <?= $n ?></option>
+                <option value="<?= $n ?>"<?= $f['planche'] === (string) $n ? ' selected' : '' ?>>Planche <?= $n ?><?= ($natures[$n]['nature'] ?? null) !== null ? ' · ' . $libelleNature($natures[$n]['nature']) : '' ?></option>
 <?php endfor; ?>
               </select>
             </label>
+<?php if ($abeille): ?>
+            <label class="pt-champ">La bande
+              <select name="demi_planche">
+                <option value="">—</option>
+<?php foreach (Planches::NATURES as $cle => $lib): ?>
+                <option value="<?= $cle ?>"<?= $f['demi_planche'] === $cle ? ' selected' : '' ?>><?= $lib ?></option>
+<?php endforeach; ?>
+              </select>
+            </label>
+<?php endif; ?>
             <label class="pt-champ">Sa strate
               <select name="strate">
                 <option value="">—</option>
