@@ -45,6 +45,23 @@ moment-là, et montre **le plan vu de dessus** à ce moment-là.
 - **Curseur** : il surligne sur la frise ce qui est présent (« à essayer pour voir ce que cela donne »), et montre le
   plan vu de dessus à ce moment-là. **Semaine pour le potager, échelle adaptable pour les pérennes.**
 
+## Décisions du porteur (2026-09-23, seconde série)
+
+- **Plantae** : le porteur continue Plantae et l'installe chez alwaysdata — **l'atelier peut s'appuyer dessus**. Le mode
+  d'accès (l'instantané `contenu/guildes-plantae.json`, réexporté, ou une lecture directe) se décide à la Phase 6.
+- **Le calendrier gère aussi les plantes de service et les bordures** : les dates de semis et de plantation des lignes de
+  service des planches ; pour les bordures, **quand planter et quand perturber**. Ce sont des **prévisions** : le jour
+  exact d'une perturbation s'adapte ensuite au jour opportun (la pluie, notamment) — le journal des perturbations
+  (`suivi-perturbation.php`) garde ce qui a été fait.
+- **L'occupation d'une planche commence à la mise en place** (semis en place ou repiquage). **L'atelier ne gère pas la
+  pépinière** : le semis sous abri reste l'affaire du porteur de projet (sa date se note, sans plus).
+- **Un délai de germination, en jours, pour les annuelles et les bisannuelles** : une donnée du référentiel
+  (`espece.delai_germination_j`), pour situer la levée après un semis en place.
+- **Pas de collision au sol : 5 cm au moins** entre deux plantes de strates différentes — « uniquement mon idée, mais
+  on part sur ça » (le porteur) ; à affiner avec l'expérience. Entre deux plantes de **même strate**, l'espacement ; pour
+  deux espèces différentes, **la moyenne de leurs espacements**, comme sur une ligne de bordure (hypothèse de travail,
+  à confirmer).
+
 ## Phases
 
 ### Phase 1 — La compétence : les quatre dimensions
@@ -57,9 +74,17 @@ successions du ch. 8 et du module 5, les trois temps pré-culture / principale /
 
 Une classe pure `Temps` : la semaine comme unité (lundi ISO), la fenêtre d'occupation d'une plante en semaines, et le
 changement d'échelle (semaine, mois, année). Pour une **culture du potager**, la fenêtre va de sa mise en place (semis en
-place ou repiquage) à sa récolte (question n° 3). Pour les **lignes de service et les bordures**, voir la question
-n° 2. Pour une **plante du scénario pérenne**, ses périodes rapportées au calendrier par la date de plantation de la
-parcelle.
+place ou repiquage) à sa récolte ; la levée, pour un semis en place, après le délai de germination de l'espèce
+(`espece.delai_germination_j`, nouvelle colonne — schéma 13). Pour une **plante du scénario pérenne**, ses périodes
+rapportées au calendrier par la date de plantation de la parcelle.
+
+### Phase 2 bis — Le calendrier des plantes de service et des bordures
+
+Les **lignes de service des planches** reçoivent leurs dates de semis ou de plantation (et de fin) ; les **bordures**,
+leur date de plantation et leurs **perturbations prévues**. L'atelier propose ces dates depuis le calendrier de l'espèce
+au référentiel (et Lopez) ; la personne les corrige. Ce sont des prévisions, dites comme telles : le jour réel s'adapte
+au temps qu'il fait, et le journal des perturbations garde ce qui a été fait. Un changement de schéma (des dates sur
+`ligne_plantation`, et les perturbations prévues) — sa forme se décide en début de phase.
 
 ### Phase 3 — Les points de plantation
 
@@ -89,20 +114,11 @@ puis ajuster.
 ### Phase 6 — Les besoins des productions
 
 Proposer les plantes de service **aussi d'après les besoins des productions** (un tuteur pour un grimpant, de l'ombre,
-de l'azote…), en plus des strates vides. Source à trancher (question n° 1).
+de l'azote…), en plus des strates vides — **en s'appuyant sur Plantae** (décision du porteur), que le porteur fait
+évoluer avec les compétences de syntropie.
 
 ## Questions ouvertes
 
-1. **La source des besoins** (Phase 6). L'atelier a déjà un **instantané** des guildes de Plantae
-   (`contenu/guildes-plantae.json`, 179 plantes, lu par `src/Guildes.php`) : il ne dépend pas de l'installation de
-   Plantae chez alwaysdata, mais il vieillit et ne porte pas encore les apprentissages de la syntropie. S'en servir
-   comme repère indicatif en attendant, ou attendre Plantae 1.0 ?
-2. **Le temps des plantes de service et des bordures.** Elles n'ont pas de dates aujourd'hui. Les prendre dans le
-   calendrier de leur espèce au référentiel (`periode_semis`/`periode_repiquage`/`periode_recolte`) quand il y est, et
-   tenir une vivace ou une ligneuse pour présente toute l'année ? Ou leur donner des dates propres, ligne par ligne ?
-3. **Le début de la fenêtre d'une culture.** La planche est-elle occupée dès le **semis à l'abri** (la germination, en
-   pépinière) ou seulement à la **mise en place** (semis en place ou repiquage) ? Je penche pour la mise en place : la
-   germination à l'abri se fait ailleurs que sur la planche.
-4. **« Pas de collision » au sol** entre deux plantes de strates différentes : une distance minimale (quelques
-   centimètres ?), ou seulement que les deux points ne soient pas les mêmes ? Et entre deux plantes de même strate
-   d'espèces différentes, l'écart est-il **la moyenne de leurs espacements**, comme sur une ligne de bordure ?
+Les quatre questions du 2026-09-23 sont tranchées (voir « seconde série » plus haut). Reste à confirmer l'écart entre
+deux espèces différentes d'une même strate (hypothèse : la moyenne de leurs espacements) ; et, en début de Phase 2 bis,
+la forme des perturbations prévues d'une bordure (une date et un geste, répétés ; ou un rythme).
