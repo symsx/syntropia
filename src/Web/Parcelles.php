@@ -263,6 +263,16 @@ final class Parcelles
             }
         }
 
+        // Le type de tortue — même convention : « » : pas dit ; clé absente : on n'y touche pas. Chantier « peuplement de
+        // la parcelle », Phase 1 bis.
+        $tortue = null;
+        if (($valeurs['tortue'] ?? null) !== null) {
+            $tortue = trim((string) $valeurs['tortue']);
+            if ($tortue !== '' && \Syntropia\Tortue::tryFrom($tortue) === null) {
+                $erreurs['tortue'] = 'Le type de tortue est « Classique », « Zèbre », « Abeille » ou « Liane » — ou pas encore dit.';
+            }
+        }
+
         // Bordure externe (bloque-herbe, coupe-vent, défense) et bordure
         // interne (fournisseurs de biomasse) — même forme, quatre côtés
         // chacun actif ou non et sa largeur (5 cm à 5 m, comme la
@@ -315,11 +325,13 @@ final class Parcelles
                 'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?'
                 . ($conduite !== null ? ', conduite = ?' : '')
                 . ($stade !== null ? ', stade = ?' : '')
+                . ($tortue !== null ? ', tortue = ?' : '')
                 . ' WHERE id = ? AND site_id = ?');
             $req->execute(array_merge(
                 [$longueur, $largeur, $orientation, $plan, $nbPlanches],
                 $conduite !== null ? [$conduite !== '' ? $conduite : null] : [],
                 $stade !== null ? [$stade !== '' ? $stade : null] : [],
+                $tortue !== null ? [$tortue !== '' ? $tortue : null] : [],
                 [$id, $siteId]));
 
             $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ?');

@@ -305,6 +305,7 @@
       corps.set('version_plan', champVersionPlan.value);
       corps.set('conduite', document.getElementById('in-conduite').value);
       corps.set('stade', document.getElementById('in-stade').value);
+      corps.set('tortue', document.getElementById('in-tortue').value);
       corps.set('longueur_m', champLongueur.value);
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
@@ -363,6 +364,13 @@
     choixConduite.addEventListener('change', function(){
       document.getElementById('conduite-resume').textContent =
         choixConduite.options[choixConduite.selectedIndex].dataset.resume + ' Le vocabulaire des strates du scénario en dépend.';
+    });
+  }
+
+  var choixTortue = document.getElementById('in-tortue');
+  if (choixTortue){
+    choixTortue.addEventListener('change', function(){
+      document.getElementById('tortue-resume').textContent = choixTortue.options[choixTortue.selectedIndex].dataset.resume;
     });
   }
 

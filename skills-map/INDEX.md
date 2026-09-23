@@ -22,6 +22,7 @@ d'ajout/liaison/fusion.
 
 ## Conception
 
+- [Concevoir une tortue](nodes/conception-de-la-tortue.md) — peupler une parcelle : bordures externe/interne, lignes d'une planche, tortues zèbre/abeille/liane, choix des services
 - [Diagnostic des sols](nodes/diagnostic-des-sols.md) — indicateurs de fertilité mesurables, MARVAL, bioindication en prairie
 - [Cycles de l'eau](nodes/cycles-de-l-eau.md) — les quatre voies négligées, le dimensionnement de l'irrigation
 - [Régénération naturelle assistée](nodes/regeneration-naturelle.md) — obtenir des ligneux sans les acheter ni les transplanter

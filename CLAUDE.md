@@ -93,6 +93,18 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   personnelle) a été **nettoyé hors de ce dépôt** (une anomalie structurelle répétée dix fois, corrigée ; rien
   d'agronomique inventé ni changé) — **n'a toujours pas servi d'essai d'import** (ses colonnes libres ne
   correspondent pas au format attendu, traduire l'un vers l'autre n'a pas été décidé).
+- `chantier-peuplement-parcelle.md` — le plan (7 phases) pour **peupler une parcelle dans l'ordre du
+  système** : les bordures (une ligne par côté, une série d'espèces qui alternent, les plants comptés
+  par espèce), les planches (fait), les productions (dont des pérennes : tortues zèbre, abeille, liane),
+  puis les lignes de service sur les planches — l'atelier **propose espèce, emplacement et nombre** à
+  partir du référentiel, avec des règles tirées d'un nœud de compétence à créer (`skills-map/`). Proposé
+  le 2026-09-23 ; **Phases 1 (le nœud `skills-map/nodes/conception-de-la-tortue.md`) et 1 bis (`parcelle.tortue`,
+  `espece.cycle`, schéma 11) faites le jour même**, pas commitées ni déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
+  liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
+  leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,
+  ligneuse), les lignes dans une nouvelle table, la première règle des services validée. Une question reste
+  ouverte (le champ « Emplacement » du scénario pérenne face aux lignes de bordure), et le référentiel n'a
+  encore ni espacement ni rôle `vent`.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -125,6 +137,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
+  Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur

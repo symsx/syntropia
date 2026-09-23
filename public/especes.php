@@ -274,7 +274,7 @@ if (($_GET['nouvelle'] ?? '') === '1') {
 $champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'periode_semis',
     'periode_repiquage', 'periode_recolte', 'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
     'rapport_cn', 'conduite_taille', 'periode_taille', 'type_plant', 'orientation_bordure', 'source', 'statut_local', 'notes'];
-$champsChoix = ['systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
+$champsChoix = ['cycle', 'systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
 $champsBool = ['serre_necessaire', 'bloque_herbe', 'deplacable'];
 $f = array_fill_keys(array_merge($champsTexte, $champsChoix, $champsBool), '');
 $source = $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'enregistrer' ? $_POST : ($edition ?? []);
@@ -469,7 +469,8 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
     $local = (int) $e['site_id'] === $siteId; ?>
               <tr class="es-item">
                 <td><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>?espece=<?= (int) $e['id'] ?>"><?= $h($nomAffiche) ?></a><?php else: ?><b><?= $h($nomAffiche) ?></b><?php endif; ?>
-                  <?php if ((string) $e['variete'] !== ''): ?><small><?= $h($e['variete']) ?></small><?php endif; ?></td>
+                  <?php if ((string) $e['variete'] !== ''): ?><small><?= $h($e['variete']) ?></small><?php endif; ?>
+                  <?php if (($e['cycle'] ?? null) !== null): ?><small class="es-cycle"><?= $h(mb_strtolower(explode(' (', Especes::CYCLES[$e['cycle']] ?? $e['cycle'])[0])) ?></small><?php endif; ?></td>
                 <td><?= $h(implode(' · ', array_map(static fn (string $c): string => $labelsRoles[$c] ?? $c, array_filter(explode('|', (string) ($e['role'] ?? '')))))) ?></td>
                 <td><?= $cal !== [] ? $h(implode(' · ', $cal)) : '' ?></td>
                 <td><?= $local ? '<span class="es-surcharge-puce">votre surcharge</span>' : '<span class="es-cadre-puce">cadre</span>' ?></td>
@@ -526,6 +527,14 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               <input type="text" name="nom_usuel" maxlength="160" value="<?= $h($f['nom_usuel']) ?>" placeholder="Ex. Consoude">
             </label>
           </div>
+          <label class="es-champ">Cycle <small>annuelle ou pérenne — les bordures retiennent les vivaces et les ligneuses</small>
+            <select name="cycle">
+              <option value="">—</option>
+<?php foreach (Especes::CYCLES as $cle => $lib): ?>
+              <option value="<?= $cle ?>"<?= $f['cycle'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
+<?php endforeach; ?>
+            </select>
+          </label>
           <p class="pd-titre" style="margin-top:.6rem">Calendrier <small style="font-weight:400">— en mots, comme « fin avril » ou « mi à fin juillet »</small></p>
           <label class="es-champ">Semis à l'abri
             <input type="text" name="periode_semis" maxlength="60" value="<?= $h($f['periode_semis']) ?>" placeholder="Ex. mars-avril">

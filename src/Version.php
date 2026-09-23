@@ -42,9 +42,10 @@ final class Version
      * `succession_ligne.nb_plants`, combien de plants une culture du potager demande (colonne facultative, idem). 9 :
      * `parcelle.stade`, le stade du terrain (colonne facultative, idem). 10 :
      * `espece.periode_semis`/`periode_repiquage`/`periode_recolte`, le calendrier d'une espèce, en mots comme
-     * Lopez (trois colonnes facultatives, idem).
+     * Lopez (trois colonnes facultatives, idem). 11 : `parcelle.tortue`, le type de tortue, et `espece.cycle`, le cycle
+     * de vie (deux colonnes facultatives, idem).
      */
-    public const SCHEMA = 10;
+    public const SCHEMA = 11;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

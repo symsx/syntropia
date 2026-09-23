@@ -196,6 +196,18 @@ final class Especes
     }
 
     /**
+     * Le cycle de vie d'une espèce — une donnée de la succession syntropique (le porteur, 2026-09-23,
+     * `chantier-peuplement-parcelle.md`). Les bordures retiennent les vivaces et les ligneuses ; les lignes de
+     * biomasse des planches, surtout les annuelles. Liste fermée, une valeur ; l'ENUM de `espece.cycle` la répète.
+     */
+    public const CYCLES = [
+        'annuelle' => 'Annuelle',
+        'bisannuelle' => 'Bisannuelle',
+        'vivace' => 'Vivace (herbacée pérenne)',
+        'ligneuse' => 'Ligneuse',
+    ];
+
+    /**
      * Whitelist des colonnes qu'un site peut renseigner sur sa propre
      * surcharge — tout sauf `id`/`site_id`, qui ne se saisissent pas.
      * Publique : la page (formulaire, en-tête attendu d'un import CSV)
@@ -207,7 +219,7 @@ final class Especes
         'nom_usuel', 'role', 'strates_possibles', 'systeme',
         'entree_scenario', 'sortie_scenario',
         'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
-        'periode_semis', 'periode_repiquage', 'periode_recolte',
+        'periode_semis', 'periode_repiquage', 'periode_recolte', 'cycle',
         'biomasse', 'rapport_cn', 'conduite_taille', 'periode_taille',
         'type_plant', 'origine', 'serre_necessaire', 'bloque_herbe',
         'orientation_bordure', 'deplacable', 'source', 'statut_local', 'notes',
@@ -318,6 +330,7 @@ final class Especes
         $liste('role', self::roles(), 'Une valeur de la liste — production, ou une fonction de service du scénario.');
         $liste('strates_possibles', Conduite::toutesLesStrates(), 'Une strate proposée par la conduite syntropique ou jardin-forêt.');
         $enum('systeme', ['colonisation', 'accumulation', 'abondance'], 'Colonisation, accumulation ou abondance.');
+        $enum('cycle', array_keys(self::CYCLES), 'Annuelle, bisannuelle, vivace ou ligneuse.');
         $enum('entree_scenario', array_keys(Scenario::PERIODES), 'Une période du scénario (placenta1…climax).');
         $enum('sortie_scenario', array_keys(Scenario::PERIODES), 'Une période du scénario (placenta1…climax).');
         $nombre('espacement_monoculture_m', 0.01, 50);

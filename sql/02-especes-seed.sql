@@ -194,3 +194,30 @@ VALUES
   (0, 'Helianthus annuus', 'à une fleur', 'Tournesol géant à une fleur', 'biomasse', 'emergente', NULL, NULL,
    'remarque du porteur, 2026-09-18',
    'préféré pour la biomasse — une seule fleur, peu de ramification, beaucoup de feuillage ; pas encore sourcé dans connaissances/, à vérifier avant usage réel');
+
+-- Le cycle de vie — schéma 11, chantier-peuplement-parcelle.md (Phase 1 bis). Une donnée de la succession
+-- syntropique (le porteur, 2026-09-23) : les bordures retiennent vivaces et ligneuses, les lignes de biomasse des
+-- planches surtout des annuelles. `UPDATE … AND cycle IS NULL` : rejoué sans rien réécrire.
+--   - `ligneuse` : les arbres, arbustes et la vigne du cadre — la « biomasse ligneuse » du corpus (ch. 14, ch. 15).
+--   - `annuelle` : maïs, tournesol, féverole (« les annuelles de biomasse », ch. 08, ch. 11), souci (« une ligne
+--     d'annuelles émergentes », ch. 14 § 4.2), haricot, courgette, courge, concombre.
+--   - `vivace` : mélisse, consoude, menthe (les bordures vivantes, ch. 03, ch. 11, ch. 14), artichaut, topinambour,
+--     silphie (« des bandes de grandes vivaces », Joala, tortues-et-succession.md), ail des ours, fraisiers.
+--   - **Laissés vides, parce que la réponse dépend du climat ou de la conduite** : tomate, poivron, aubergine
+--     (vivaces sous leur climat d'origine, cultivés en annuelles ici), pomme de terre (vivace par son tubercule,
+--     cultivée en annuelle), lavande (sous-arbrisseau, entre vivace et ligneuse). À la personne d'en décider, par
+--     une surcharge.
+UPDATE espece SET cycle = 'ligneuse'
+  WHERE site_id = 0 AND cycle IS NULL AND nom_scientifique IN (
+    'Robinia pseudoacacia', 'Populus', 'Salix', 'Corylus avellana', 'Crataegus monogyna', 'Prunus spinosa',
+    'Carpinus betulus', 'Betula pendula', 'Malus domestica', 'Pyrus communis', 'Cydonia oblonga', 'Juglans regia',
+    'Prunus avium', 'Eucalyptus gunnii', 'Fraxinus excelsior', 'Morus alba', 'Sambucus nigra', 'Elaeagnus umbellata',
+    'Ribes nigrum', 'Lonicera fragrantissima', 'Lycium barbarum', 'Buddleja davidii', 'Vitis vinifera');
+UPDATE espece SET cycle = 'annuelle'
+  WHERE site_id = 0 AND cycle IS NULL AND nom_scientifique IN (
+    'Zea mays', 'Helianthus annuus', 'Vicia faba', 'Calendula officinalis', 'Phaseolus vulgaris', 'Cucurbita pepo',
+    'Cucurbita maxima', 'Cucumis sativus');
+UPDATE espece SET cycle = 'vivace'
+  WHERE site_id = 0 AND cycle IS NULL AND nom_scientifique IN (
+    'Melissa officinalis', 'Symphytum officinale', 'Mentha', 'Cynara scolymus', 'Helianthus tuberosus',
+    'Silphium perfoliatum', 'Allium ursinum', 'Fragaria vesca', 'Fragaria ×ananassa');

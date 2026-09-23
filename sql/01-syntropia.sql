@@ -360,6 +360,11 @@ CREATE TABLE IF NOT EXISTS `parcelle` (
   -- (croissance rapide, biomasse ; la friche qui évolue vers le boisement). Deux stades, par parcelle : décision du
   -- porteur, 2026-09-21. NULL = pas dit. La grille de Joala en compte un troisième, l'abondance (schéma 9).
   `stade`           ENUM('colonisation','accumulation') NULL,
+  -- LE TYPE DE TORTUE : `classique`, `zebre` (planches pérennes et annuelles alternées), `abeille` (une bande
+  -- pérenne et une bande annuelle sur chaque planche) ou `liane` (des lianes sur une structure, des cultures dessous)
+  -- — Théry, ch. 15 §§ 7 à 9. Il oriente les propositions de peuplement. Décision du porteur, 2026-09-23
+  -- (chantier-peuplement-parcelle.md) ; NULL = pas dit (schéma 11).
+  `tortue`          ENUM('classique','zebre','abeille','liane') NULL,
 
   -- La géométrie, telle que `outils/calcul-plants.py` l'attend.
   -- LA GEOMETRIE PART DE LA TAILLE DE LA PARCELLE, non du nombre de
@@ -503,6 +508,11 @@ CREATE TABLE IF NOT EXISTS `espece` (
   `periode_semis`      VARCHAR(60) NULL,
   `periode_repiquage`  VARCHAR(60) NULL,
   `periode_recolte`    VARCHAR(60) NULL,
+
+  -- LE CYCLE DE VIE, une donnée de la succession syntropique (le porteur, 2026-09-23) : `annuelle`, `bisannuelle`,
+  -- `vivace` (herbacée pérenne), `ligneuse`. Les bordures retiennent les vivaces et les ligneuses ; les lignes de
+  -- biomasse des planches, surtout les annuelles (chantier-peuplement-parcelle.md ; schéma 11).
+  `cycle`              ENUM('annuelle','bisannuelle','vivace','ligneuse') NULL,
 
   `biomasse`         VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
@@ -1068,6 +1078,31 @@ EXECUTE ajout_rec;
 DEALLOCATE PREPARE ajout_rec;
 
 
+-- Rattrapage d'une table `parcelle` créée avant `tortue`, et d'une table `espece` créée avant `cycle` — schéma 11.
+-- Même forme que ci-dessus.
+SET @tortue_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'parcelle'
+                         AND COLUMN_NAME = 'tortue');
+SET @ajout_tortue = IF(@tortue_existe = 0,
+                       'ALTER TABLE `parcelle` ADD COLUMN `tortue` ENUM(''classique'',''zebre'',''abeille'',''liane'') NULL AFTER `stade`',
+                       'DO 0');
+PREPARE ajout_tortue FROM @ajout_tortue;
+EXECUTE ajout_tortue;
+DEALLOCATE PREPARE ajout_tortue;
+
+SET @cycle_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = DATABASE()
+                        AND TABLE_NAME = 'espece'
+                        AND COLUMN_NAME = 'cycle');
+SET @ajout_cycle = IF(@cycle_existe = 0,
+                      'ALTER TABLE `espece` ADD COLUMN `cycle` ENUM(''annuelle'',''bisannuelle'',''vivace'',''ligneuse'') NULL AFTER `periode_recolte`',
+                      'DO 0');
+PREPARE ajout_cycle FROM @ajout_cycle;
+EXECUTE ajout_cycle;
+DEALLOCATE PREPARE ajout_cycle;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1146,6 +1181,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 8 = `succession_ligne.nb_plants` (combien de plants une culture du potager demande — colonne facultative, idem) ;
 -- 9 = `parcelle.stade` (le stade du terrain : colonisation ou accumulation — colonne facultative, idem) ;
 -- 10 = `espece.periode_semis`/`periode_repiquage`/`periode_recolte` (le calendrier d'une espèce, en mots
--- comme Lopez — trois colonnes facultatives, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '10')
+-- comme Lopez — trois colonnes facultatives, idem) ;
+-- 11 = `parcelle.tortue` (le type de tortue) et `espece.cycle` (annuelle, bisannuelle, vivace, ligneuse) — deux
+-- colonnes facultatives, idem.
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '11')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

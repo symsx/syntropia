@@ -131,7 +131,10 @@ Vous dites aussi, pour chaque parcelle, le **stade du terrain** — d'où vous p
 **colonisation** (des conditions difficiles, faibles ressources) ou l'**accumulation** (une
 croissance rapide de biomasse, la friche qui évolue vers le boisement). Le scénario le rappelle
 avec ce que la formation en dit. Ce qu'il faut réaliser en premier à chaque stade, elle ne le
-donne pas encore : la page le dit plutôt que de l'inventer.
+donne pas encore : la page le dit plutôt que de l'inventer. Vous y dites enfin le **type de
+tortue** : classique, **zèbre** (des planches pérennes alternent avec des planches annuelles),
+**abeille** (une bande pérenne et une bande potagère sur chaque planche) ou **liane** (des lianes sur
+une structure, des cultures protégées dessous) — ce qu'en dit Théry s'affiche sous le choix.
 
 Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les
@@ -145,7 +148,7 @@ Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos pr
 surcharge locale prime sur le cadre pour la même espèce, sans le changer pour les autres ; la
 retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
 de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
-d'une espèce, et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
+d'une espèce, son **cycle** (annuelle, bisannuelle, vivace ou ligneuse), et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
 liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le scénario
 pérenne et le plan de culture) — ce qui nourrit, dans le plan de culture d'un potager, les mêmes
 suggestions que le repère de Lopez. Un fichier CSV peut aussi importer plusieurs espèces d'un

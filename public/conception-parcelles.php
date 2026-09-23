@@ -10,6 +10,7 @@ use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\Stade;
+use Syntropia\Tortue;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\Parcelles;
@@ -71,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'bordures_interne'  => $_POST['bordures_interne'] ?? [],
             'conduite'          => $_POST['conduite'] ?? null,
             'stade'             => $_POST['stade'] ?? null,
+            'tortue'            => $_POST['tortue'] ?? null,
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -207,11 +209,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
   }
   #in-conduite:focus{ outline:2px solid var(--accent); outline-offset:1px; }
-  #in-stade{
+  #in-stade, #in-tortue{
     grid-column:1 / -1; width:100%; padding:.4rem .5rem; font:400 .86rem var(--texte); color:var(--ink);
     background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
   }
-  #in-stade:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  #in-stade:focus, #in-tortue:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
@@ -483,6 +485,18 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         </div>
 <?php $stadeActif = Stade::depuis($parcelleActive['stade'] ?? null); ?>
         <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . Stade::premierGeste() : 'Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Deux stades, par parcelle.', ENT_QUOTES, 'UTF-8') ?></p>
+
+        <p class="pd-titre">Le type de tortue</p>
+        <div class="pd-ligne">
+          <select id="in-tortue" aria-label="Type de tortue de la parcelle">
+            <option value=""<?= trim((string) ($parcelleActive['tortue'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Ce que la parcelle portera sur ses planches : il orientera ce que l’atelier vous proposera d’y planter.">Pas encore dit</option>
+<?php foreach (Tortue::tous() as $to): ?>
+            <option value="<?= $to->value ?>"<?= trim((string) ($parcelleActive['tortue'] ?? '')) === $to->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($to->explication(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($to->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+          </select>
+        </div>
+<?php $tortueActive = Tortue::depuis($parcelleActive['tortue'] ?? null); ?>
+        <p class="pd-note" id="tortue-resume"><?= htmlspecialchars($tortueActive !== null ? $tortueActive->explication() : 'Ce que la parcelle portera sur ses planches : il orientera ce que l’atelier vous proposera d’y planter.', ENT_QUOTES, 'UTF-8') ?></p>
 
         <p class="pd-titre">La parcelle <span class="pd-unite">(m)</span></p>
         <div class="pd-ligne">
