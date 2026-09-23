@@ -546,7 +546,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           </ul>
         </div>
 <?php endif; ?>
-        <p class="pg-pied">Un potager se compose par planches : ce qui pousse sur chacune, et ce qui s'entend bien.</p>
+        <p class="pg-pied">Un potager se compose par planches : ce qui est cultivé et les associations positives.</p>
       </div>
     </nav>
 
