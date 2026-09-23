@@ -63,6 +63,21 @@ moment-là, et montre **le plan vu de dessus** à ce moment-là.
   porteur**).
 - **Les perturbations prévues d'une bordure : une liste de dates** (le porteur), chacune avec son geste.
 
+## Le prévu et le réalisé (le porteur, 2026-09-23)
+
+- **En Conception**, les dates forment **un calendrier prévisionnel** : ce sont des prévisions, dites comme telles.
+- **En Réalisation**, le plan se met en place sur le terrain **à la période prévue** ; **la date exacte — la date de
+  réalisation — se donne à ce moment-là**.
+- **En Suivi**, le calendrier et le scénario **s'adaptent à l'avancement réel** : aux observations et aux actions
+  réelles.
+- Exemple : **la température du sol au printemps décide des semis** — la date est une prévision, la température observée
+  donne la date réelle. Le corpus le dit : *« le critère n'est pas la date mais la température du sol »*, 6 °C pour le maïs,
+  5 °C pour le tournesol (Théry, ch. 9, règle 9).
+
+Conséquences pour ce chantier : **chaque date se garde en deux temps** — la prévue (Conception) et la réalisée
+(Réalisation), sans que l'une n'écrase l'autre ; la frise et le curseur montrent le prévu, et le réalisé quand il existe ;
+une espèce peut porter **la température de sol qui déclenche son semis**, une condition à observer plutôt qu'une date.
+
 ## Phases
 
 ### Phase 1 — La compétence : les quatre dimensions
@@ -97,8 +112,9 @@ relecture dans le formulaire (320×568), `verifier-export` identique (la fixture
 Les **lignes de service des planches** reçoivent leurs dates de semis ou de plantation (et de fin) ; les **bordures**,
 leur date de plantation et leurs **perturbations prévues**. L'atelier propose ces dates depuis le calendrier de l'espèce
 au référentiel (et Lopez) ; la personne les corrige. Ce sont des prévisions, dites comme telles : le jour réel s'adapte
-au temps qu'il fait, et le journal des perturbations garde ce qui a été fait. Un changement de schéma (des dates sur
-`ligne_plantation`, et les perturbations prévues) — sa forme se décide en début de phase.
+au temps qu'il fait, et le journal des perturbations garde ce qui a été fait. Un changement de schéma (des dates
+**prévues** sur `ligne_plantation`, et les perturbations prévues en liste de dates) — pensé pour recevoir plus tard, à
+côté de chaque date prévue, sa **date réalisée** (Phase 7).
 
 ### Phase 3 — Les points de plantation
 
@@ -124,6 +140,15 @@ Sur la frise du scénario et sur le calendrier du potager, **un curseur de temps
 année) surligne ce qui est présent à ce moment-là. Sur **« Le plan »** (`conception-parcelles.php`), le même curseur
 dessine **la parcelle vue de dessus à ce moment-là** : bordures, lignes de service, productions en place. À essayer,
 puis ajuster.
+
+### Phase 7 — Du prévu au réalisé
+
+La page Réalisation reçoit **la date réelle** de chaque mise en place (une culture, une ligne de service, une bordure),
+à côté de la date prévue ; le Suivi **recale** le calendrier sur ce qui s'est réellement passé (les cultures suivantes
+se décalent d'autant, en proposition) ; une espèce peut porter **la température du sol qui déclenche son semis**
+(`espece`, une colonne — le corpus en donne deux : maïs 6 °C, tournesol 5 °C), et un relevé de température du sol en
+Suivi dit si le moment est venu. À préciser avec le porteur avant de commencer : quelles pages de Réalisation et de
+Suivi portent ces dates, et comment la température du sol se relève.
 
 ### Phase 6 — Les besoins des productions
 

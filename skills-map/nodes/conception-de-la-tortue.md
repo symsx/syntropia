@@ -162,6 +162,10 @@ Décisions du porteur (2026-09-23, `chantier-film-de-la-parcelle.md`), avec ce q
   (Joala 5-C) — et les successions du ch. 8 le font déjà ; une culture peut **revenir plusieurs fois d'affilée**.
 - **Le calendrier est une prévision** : planter, semer, perturber — le jour réel d'une perturbation s'adapte au jour
   opportun (la pluie, notamment) ; ce qui a été fait se note au journal.
+- **Le prévu et le réalisé** (le porteur, 2026-09-23) : en Conception, un calendrier **prévisionnel** ; en Réalisation, la
+  mise en place à la période prévue, et **la date exacte donnée à ce moment-là** ; en Suivi, le calendrier et le scénario
+  **s'adaptent** à l'avancement réel. Exemple sourcé : *« le critère n'est pas la date mais la température du sol »* —
+  6 °C pour le maïs, 5 °C pour le tournesol (Théry, ch. 9, règle 9).
 - **C'est un film** : on le regarde avec un curseur de temps — ce qui est présent à ce moment, et la parcelle vue de
   dessus à ce moment.
 
