@@ -107,9 +107,13 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   **déployé le 2026-09-23** (septième vague, voir § Point de reprise) ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,
-  ligneuse), les lignes dans une nouvelle table, la première règle des services validée. Une question reste
-  ouverte (le champ « Emplacement » du scénario pérenne face aux lignes de bordure), et le référentiel n'a
-  encore ni espacement ni rôle `vent`.
+  ligneuse), les lignes dans une nouvelle table, la première règle des services validée, les lignes de bordure du
+  plan font foi face au champ « Emplacement » du scénario. Les espacements cotés du corpus sont au cadre ; le rôle
+  `vent` n'a toujours aucune espèce. La suite : `chantier-film-de-la-parcelle.md`.
+- `chantier-film-de-la-parcelle.md` — le plan (6 phases) du **scénario en quatre dimensions** : chaque plante à son
+  point de plantation au sol, sans collision ; les espacements respectés dans une même strate ; le temps en semaines,
+  de la germination à la récolte, à l'échelle choisie ; les vides du calendrier montrés et comblés ; un curseur de
+  temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, **pas commencé**, quatre questions ouvertes.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
