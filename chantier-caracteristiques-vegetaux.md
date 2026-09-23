@@ -6,6 +6,15 @@
 > bloque-herbe, tuteur pour grimpantes…). Deux sources possibles : ce que l'atelier connaît déjà en interne,
 > ou ce que le porteur de projet importe. Quatre décisions du porteur cadrent ce chantier (2026-09-22) — voir
 > § Décisions.
+>
+> **Suite ouverte, 2026-09-23** : le porteur a demandé un modèle de fichier d'import — quelles colonnes, et
+> lesquelles doivent être fermées à une liste de valeurs. Proposition faite (hors de ce dépôt :
+> `~/Bureau/Projets/organisation_cultures/entrees/especes-modele-import.{csv,md}`, vérifiée ligne par ligne
+> contre `Especes::valider()`), **deux décisions en attente** avant tout changement de code : (1) `role`
+> devient-il une liste fermée (`production` + les 24 fonctions de `Scenario::FONCTIONS`), revenant sur le choix
+> de la Phase 1 de le garder libre ? (2) l'import doit-il **ignorer** une colonne inconnue plutôt que refuser
+> le fichier entier, pour qu'un même fichier serve de catalogue personnel (fournisseur, stock, taux de
+> germination du lot…) et d'import atelier ?
 
 ## Ce que le porteur demande
 
