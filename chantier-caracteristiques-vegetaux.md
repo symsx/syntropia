@@ -1,7 +1,6 @@
 # Les caractéristiques des végétaux pour le calendrier de plantation — plan
 
-> **État au 2026-09-22 — Phases 1 (étendre `espece`) et 2 (la page qui manque) faites, pas déployées ; Phase 3
-> (brancher au potager) pas commencée.**
+> **État au 2026-09-23 — les trois phases sont faites, pas déployées. Le chantier est terminé.**
 > Demandé par le porteur : pour composer un calendrier de plantation, l'atelier doit connaître les
 > caractéristiques des plantes que la personne veut cultiver — de production, ou de service (biomasse,
 > bloque-herbe, tuteur pour grimpantes…). Deux sources possibles : ce que l'atelier connaît déjà en interne,
@@ -116,9 +115,21 @@ complètent :
    retrait d'une surcharge, import valide/refusé (colonne inconnue, ligne invalide), lecteur (panneau absent,
    POST forgé 403), `verifier-export` identique (aucun changement de schéma), captures d'écran à 1280×720,
    1024×600 et 320×568 sans débordement, pagination réelle (22/16/9 lignes visibles selon la taille).
-3. **Brancher au potager.** À l'ajout d'une culture dans `conception-potager.php`, si l'espèce est connue du
-   référentiel (cadre ou surcharge du site), proposer ses repères de calendrier et ses rôles de service — même
-   mécanique que le repère de Lopez aujourd'hui, généralisée à toute espèce connue.
+3. **Brancher au potager — faite (2026-09-23). Le chantier est terminé, trois phases.**
+   `Especes::parNomUsage()` (nouvelle) retrouve une espèce par un nom d'usage — celui tapé dans le formulaire de
+   culture, pas forcément `nom_scientifique`/`variete` exacts — avec le même rapprochement que les voisinages de
+   la page (`Associations::memeNom()` : sans accent ni casse, singulier ou pluriel). `Especes::
+   datesIndicatives()` (nouvelle, pure) reprend la logique de `CalendrierLopez::datesIndicatives()`, étendue à
+   la **récolte** — que Lopez ne donne jamais. Sur `conception-potager.php`, à l'édition d'une culture dont le
+   nom est connu du référentiel (cadre ou surcharge du site) : un bloc « Repère du référentiel », **à côté** du
+   repère de Lopez (les deux peuvent coexister, chacun dit sa source) — ses trois dates avec un bouton
+   « Reprendre ces dates » (même mécanique que Lopez, généralisée à `date_recolte`), et si `role` porte des clés
+   de `Scenario::FONCTIONS`, un bouton « Reprendre ces fonctions de service » qui coche les cases correspondantes
+   et ouvre le détail. Le nom de l'espèce s'ajoute aussi aux suggestions de saisie (`datalist`), et un lien
+   « voir/corriger → » renvoie vers `especes.php?espece=ID`. **Aucun changement de schéma.** Vérifié en local
+   (projet de test supprimé) : espèce connue par nom usuel/scientifique/pluriel, dates et fonctions reprises par
+   un vrai clic de navigateur (CDP), espèce inconnue sans bloc, lecteur (rien de visible), `verifier-export`
+   identique, 1280×720 et 320×568 sans débordement.
 4. *Plus tard, hors de ce chantier si demandé* : étendre au scénario pérenne (décision 1) ; une source
    d'espacement et de germination plus riche pourrait aussi nourrir `Materiel::quantiteCulture()` (taux de
    réussite par espèce, plutôt que la convention à 80 % de Lopez).

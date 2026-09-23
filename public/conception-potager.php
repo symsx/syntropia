@@ -29,6 +29,7 @@ use Syntropia\Scenario;
 use Syntropia\Succession;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
+use Syntropia\Web\Especes;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Sites;
 
@@ -47,6 +48,7 @@ $siteId = (int) $site['id'];
 $peutEcrire = $sites->peutEcrireSur($siteId, $compteId);
 $parcellesService = new Parcelles();
 $culturesService = new Cultures();
+$especesService = new Especes();
 
 $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('d/m/Y');
@@ -220,9 +222,18 @@ $connues = array_map(static fn (array $l): string => (string) $l['nom'], array_v
 foreach (CalendrierLopez::table() as $l) {
     $connues[] = $l['culture'];
 }
+// Les espèces du référentiel (cadre + vos surcharges) : voir/éditer sur la page « Espèces ».
+foreach ($especesService->toutes($siteId) as $e) {
+    $connues[] = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']);
+}
 $connues = array_values(array_unique($connues));
 $repere = $f['espece'] !== '' && $editionId > 0 ? CalendrierLopez::pour($f['espece']) : null;
 $indicatives = $repere !== null ? CalendrierLopez::datesIndicatives($repere, new DateTimeImmutable('today')) : null;
+// Le référentiel des espèces — Phase 3 du chantier « caractéristiques des végétaux » : même mécanique que le
+// repère de Lopez, généralisée à toute espèce connue (calendrier et rôles de service).
+$especeConnue = $f['espece'] !== '' && $editionId > 0 ? $especesService->parNomUsage($f['espece'], $siteId) : null;
+$indicativesEspece = $especeConnue !== null ? Especes::datesIndicatives($especeConnue, new DateTimeImmutable('today')) : null;
+$fonctionsEspece = $especeConnue !== null ? Scenario::fonctionsDe((string) ($especeConnue['role'] ?? '')) : [];
 
 // Le calendrier : une année, des mois, et pour chaque culture datée ce qui s'y passe (S semis à l'abri, P mise en place, R récolte).
 $vue = ($_GET['vue'] ?? '') === 'calendrier' ? 'calendrier' : 'planches';
@@ -690,11 +701,26 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             <?= $h($repere['culture']) ?> : semis <b><?= $h($repere['semis'] !== '' ? $repere['semis'] : '—') ?></b> · repiquage <b><?= $h($repere['repiquage'] !== '' ? $repere['repiquage'] : '—') ?></b><?= $repere['a_verifier'] === 'repiquage' ? ' <small>(la source signale ce repiquage « à vérifier » : rien n’est proposé)</small>' : '' ?><br>
             <small>Des dates en mots, donc indicatives — le milieu de la fenêtre. « Un point de départ à remplacer par sa propre mesure », dit le livre.</small><br>
 <?php if ($indicatives['semis'] !== null || $indicatives['repiquage'] !== null): ?>
-            <button type="button" class="pt-bouton pt-bouton--calme" id="pt-reprendre" data-semis="<?= $h($indicatives['semis'] ?? '') ?>" data-repiquage="<?= $h($indicatives['repiquage'] ?? '') ?>">Reprendre ces dates<?= $indicatives['semis'] !== null ? ' (' . $h($dateFr($indicatives['semis'])) . ($indicatives['repiquage'] !== null ? ' → ' . $h($dateFr($indicatives['repiquage'])) : '') . ')' : '' ?></button>
+            <button type="button" class="pt-bouton pt-bouton--calme pt-reprendre-bouton" data-semis="<?= $h($indicatives['semis'] ?? '') ?>" data-repiquage="<?= $h($indicatives['repiquage'] ?? '') ?>">Reprendre ces dates<?= $indicatives['semis'] !== null ? ' (' . $h($dateFr($indicatives['semis'])) . ($indicatives['repiquage'] !== null ? ' → ' . $h($dateFr($indicatives['repiquage'])) : '') . ')' : '' ?></button>
 <?php endif; ?>
           </div>
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
           <p class="pt-note">Pas de repère de Lopez pour cette culture : son tableau ne couvre que dix-sept cultures d'automne et d'hiver. Rien n'est proposé — la date est à vous.</p>
+<?php endif; ?>
+<?php if ($especeConnue !== null && ($indicativesEspece['semis'] !== null || $indicativesEspece['repiquage'] !== null || $indicativesEspece['recolte'] !== null || $fonctionsEspece !== [])): ?>
+          <div class="pt-repere"><b>Repère du référentiel</b> <small>[<?= (int) $especeConnue['site_id'] === $siteId ? 'votre surcharge' : 'cadre' ?> — <a href="especes.php?espece=<?= (int) $especeConnue['id'] ?>">voir/corriger →</a>]</small><br>
+<?php if ($indicativesEspece['semis'] !== null || $indicativesEspece['repiquage'] !== null || $indicativesEspece['recolte'] !== null): ?>
+            <?= $h((string) ($especeConnue['nom_usuel'] ?: $especeConnue['nom_scientifique'])) ?> :
+            <?= $especeConnue['periode_semis'] !== null ? 'semis <b>' . $h((string) $especeConnue['periode_semis']) . '</b>' : '' ?>
+            <?= $especeConnue['periode_repiquage'] !== null ? ' · repiquage <b>' . $h((string) $especeConnue['periode_repiquage']) . '</b>' : '' ?>
+            <?= $especeConnue['periode_recolte'] !== null ? ' · récolte <b>' . $h((string) $especeConnue['periode_recolte']) . '</b>' : '' ?><br>
+            <small>Des dates en mots, donc indicatives — le milieu de la fenêtre, comme le repère de Lopez.</small><br>
+            <button type="button" class="pt-bouton pt-bouton--calme pt-reprendre-bouton" data-semis="<?= $h($indicativesEspece['semis'] ?? '') ?>" data-repiquage="<?= $h($indicativesEspece['repiquage'] ?? '') ?>" data-recolte="<?= $h($indicativesEspece['recolte'] ?? '') ?>">Reprendre ces dates<?= $indicativesEspece['semis'] !== null ? ' (' . $h($dateFr($indicativesEspece['semis'])) . ($indicativesEspece['repiquage'] !== null ? ' → ' . $h($dateFr($indicativesEspece['repiquage'])) : '') . ($indicativesEspece['recolte'] !== null ? ' → ' . $h($dateFr($indicativesEspece['recolte'])) : '') . ')' : '' ?></button>
+<?php endif; ?>
+<?php if ($fonctionsEspece !== []): ?>
+            <br><button type="button" class="pt-bouton pt-bouton--calme" id="pt-reprendre-fonctions" data-fonctions="<?= $h(implode(',', $fonctionsEspece)) ?>">Reprendre ces fonctions de service (<?= $h(implode(', ', array_map(static fn (string $x): string => str_replace('_', ' ', $x), $fonctionsEspece))) ?>)</button>
+<?php endif; ?>
+          </div>
 <?php endif; ?>
           <div class="pt-deux">
             <label class="pt-champ">La planche
@@ -815,11 +841,24 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
       if (a && tirette) a.addEventListener('click', function(ev){ ev.preventDefault(); tirette.click(); });
     });
 
-    var reprendre = document.getElementById('pt-reprendre');
-    if (reprendre) reprendre.addEventListener('click', function(){
-      var f = reprendre.closest('form') || document.querySelector('.pt-form form');
-      if (reprendre.dataset.semis) f.querySelector('[name=date_semis]').value = reprendre.dataset.semis;
-      if (reprendre.dataset.repiquage) f.querySelector('[name=date_semis_repiquage]').value = reprendre.dataset.repiquage;
+    document.querySelectorAll('.pt-reprendre-bouton').forEach(function(reprendre){
+      reprendre.addEventListener('click', function(){
+        var f = reprendre.closest('form') || document.querySelector('.pt-form form');
+        if (reprendre.dataset.semis) f.querySelector('[name=date_semis]').value = reprendre.dataset.semis;
+        if (reprendre.dataset.repiquage) f.querySelector('[name=date_semis_repiquage]').value = reprendre.dataset.repiquage;
+        if (reprendre.dataset.recolte) f.querySelector('[name=date_recolte]').value = reprendre.dataset.recolte;
+      });
+    });
+    var reprendreFonctions = document.getElementById('pt-reprendre-fonctions');
+    if (reprendreFonctions) reprendreFonctions.addEventListener('click', function(){
+      var f = reprendreFonctions.closest('form') || document.querySelector('.pt-form form');
+      var cles = reprendreFonctions.dataset.fonctions.split(',');
+      cles.forEach(function(cle){
+        var c = f.querySelector('[name="fonctions[]"][value="' + cle + '"]');
+        if (c) c.checked = true;
+      });
+      var detail = f.querySelector('.pt-fonctions-detail');
+      if (detail) detail.open = true;
     });
 
     /* Le bureau ne défile jamais : chaque vue se réduit, puis se pagine en montrant autant d'éléments que la place le permet. */

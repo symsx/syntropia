@@ -82,15 +82,15 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   dont les réserves se disent à l'écran : des ordres de conduite, des tables non symétriques, deux plantes toxiques.
 - `chantier-caracteristiques-vegetaux.md` — le plan (3 phases) pour que l'atelier connaisse les **caractéristiques des
   végétaux** (dates de semis/plantation/récolte, rôles de service) qui nourrissent le calendrier de plantation d'un
-  potager — par le référentiel `espece` (à étendre) et un import du porteur (à construire). Proposé le 2026-09-22,
-  **Phases 1 (étendre `espece`) et 2 (`public/especes.php`) faites le 2026-09-22, pas déployées** ; Phase 3 (brancher au
-  potager) pas commencée. Quatre décisions tranchées : le potager
+  potager — par le référentiel `espece` et `public/especes.php`. Proposé le 2026-09-22, **les trois phases sont faites,
+  chantier terminé le 2026-09-23, pas déployé**. Quatre décisions tranchées : le potager
   d'abord, pas le scénario pérenne ; le référentiel `espece` plutôt qu'une table séparée ; le vocabulaire des rôles de
   `Scenario::FONCTIONS`, repris pour **`succession_ligne.role`** (pas pour `espece.role`, qui garde son vocabulaire
   propre — écart trouvé en codant, voir § Point de reprise). Un premier fichier fourni par le porteur
   (`base_semences_planification_maraichage.csv`, une banque de semences personnelle) a été **nettoyé hors de ce dépôt**
-  (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé ni changé) — il servira de premier
-  essai réel une fois l'import construit (Phase 2).
+  (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé ni changé) — **n'a finalement pas
+  servi d'essai d'import** (ses colonnes libres ne correspondent pas au format attendu, traduire l'un vers l'autre
+  n'a pas été décidé).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1668,6 +1668,17 @@ récit.*
   ajout, édition, retrait, import valide et refusé (colonne inconnue, ligne invalide, rien écrit), lecteur (panneau
   absent, POST forgé 403), `verifier-export` identique, trois tailles d'écran sans débordement. **Pas déployé.**
   Détail : `chantier-caracteristiques-vegetaux.md` § Phase 2.
+- **Le référentiel branché au potager — Phase 3, dernière, du chantier « caractéristiques des végétaux »,
+  2026-09-23. Le chantier est terminé, trois phases.** `Especes::parNomUsage()` (retrouve une espèce par un nom
+  d'usage, même rapprochement que les voisinages — `Associations::memeNom()`) et `Especes::datesIndicatives()`
+  (pure, reprend `CalendrierLopez::datesIndicatives()`, étendue à la récolte, que Lopez ne donne jamais). Sur
+  `conception-potager.php`, à l'édition d'une culture connue du référentiel : un bloc « Repère du référentiel »
+  à côté de celui de Lopez (les deux peuvent coexister), avec ses trois dates et — si `role` porte des clés de
+  `Scenario::FONCTIONS` — un bouton qui coche les fonctions de service correspondantes. Un lien renvoie vers
+  `especes.php?espece=ID`. **Aucun changement de schéma.** Vérifié en local (projet de test supprimé) : espèce
+  reconnue par nom usuel, scientifique ou au pluriel, dates et fonctions reprises par un vrai clic de navigateur
+  (CDP), espèce inconnue sans bloc, lecteur (rien de visible), `verifier-export` identique, 1280×720 et 320×568
+  sans débordement. **Pas déployé.** Détail : `chantier-caracteristiques-vegetaux.md` § Phase 3.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1698,27 +1709,25 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **État au 2026-09-22 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
+0. **État au 2026-09-23 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
    il rejoue les schémas 2 à 10 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
    saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
-   module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **Phases 1 et 2** (le calendrier d'une espèce ; les fonctions de
-   service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse » ; la page `especes.php`, voir/éditer/importer).
+   module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **terminé** (les trois phases : le calendrier d'une espèce ; les fonctions de
+   service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse » ; la page `especes.php` ; branchée à `conception-potager.php`, un
+   « Repère du référentiel » à côté de celui de Lopez).
    **Avant de lancer un `php -r`, un script ponctuel ou tout ce qui touche `Database::*` sur ce dépôt : exporter `config/local.env`
    dans le shell d'abord** — troisième fois que l'oubli fait atterrir l'écriture en production (voir [[config-base-php-precedence-footgun]]
    dans la mémoire ; l'incident du 2026-09-22, un compte de test créé puis supprimé en production, est détaillé § Point de reprise).
    **Ce qui attend, dans l'ordre où la reprise peut s'en saisir** :
-   a. **Caractéristiques des végétaux, Phase 3** — brancher `especes.php` à `conception-potager.php` : si l'espèce saisie est connue du
-      référentiel, proposer ses repères de calendrier et ses rôles de service, comme le fait déjà le repère de Lopez. Voir
-      `chantier-caracteristiques-vegetaux.md`. Le fichier de semences du porteur reste à traduire vers le format d'import — pas de règle de
-      correspondance donnée, donc pas codée.
-   b. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
+   a. **Saut du chat, Phase 4 (l'itinéraire technique)** — bloquée : il faut du porteur **la liste des itinéraires et leurs critères de choix**, et de la formation **le tableau « itinéraire × période → quoi planter »**
       et **ce qu'on réalise en premier à chaque stade** (question n° 4 : le stade dit aujourd'hui « pas encore de repère »). Ne pas la coder sans cela.
-   c. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;
+   b. **Décisions du porteur en suspens** (`chantier-plan-de-culture.md` § « À trancher », `chantier-saut-du-chat.md`) : un **second tableau de repères d'été** (Joala, Dordogne, dates en mots) à côté de Lopez ;
       un **alias « maïs »** / « maïs doux » ; afficher la **divergence Joala/Weinrich** (fenouil–tomate) ; une **règle de famille** (fèves ou pois avant haricots) — sans source de familles au dépôt ; la **définition du glossaire**
-      du saut du chat (Théry : l'effet de la perturbation ; Joala 5-1 : le sol bascule vers une fertilité auto-entretenue).
-   d. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
+      du saut du chat (Théry : l'effet de la perturbation ; Joala 5-1 : le sol bascule vers une fertilité auto-entretenue) ; une correspondance entre les colonnes du fichier de semences du porteur
+      (`base_semences_planification_maraichage.csv`) et celles de l'import CSV d'`especes.php` — sans elle, ce fichier reste hors d'usage.
+   c. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
       scénario pérenne (`Guildes.php` n'est branché à aucune page), les exemples de fréquence de coupe par plante.
-   e. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
+   d. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
       du porteur), puis rattacher au corpus et voir quelles questions ouvertes il ferme. `dossier-qualification.md` et `qualif_syntropia.py` restent **non commités** (ils ne sont pas à moi).
 1. **Chantier « inscription par parrainage »** — plan dans
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Syntropia\Web;
 
 use PDO;
+use Syntropia\Associations;
 use Syntropia\CalendrierLopez;
 use Syntropia\Conduite;
 use Syntropia\Database;
@@ -105,6 +106,79 @@ final class Especes
         $req = $this->pdo()->prepare('SELECT * FROM espece WHERE id = ?');
         $req->execute([$id]);
         return $req->fetch() ?: null;
+    }
+
+    /**
+     * Retrouve une espèce par un nom d'usage — celui qu'on tape dans un scénario ou un plan de culture, pas
+     * forcément `nom_scientifique` ni `variete` exacts. Chantier « caractéristiques des végétaux », Phase 3 :
+     * même rapprochement de noms que les voisinages de la page (`Associations::memeNom()` — sans accent ni
+     * casse, singulier ou pluriel), pour proposer le calendrier et les rôles d'une espèce connue. `null` si
+     * rien ne correspond, y compris texte vide — ce n'est jamais un rapprochement forcé.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function parNomUsage(string $nom, int $siteId): ?array
+    {
+        $nom = trim($nom);
+        if ($nom === '') {
+            return null;
+        }
+        foreach ($this->toutes($siteId) as $e) {
+            if (Associations::memeNom((string) $e['nom_usuel'], $nom) || Associations::memeNom((string) $e['nom_scientifique'], $nom)) {
+                return $e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Des dates INDICATIVES depuis le calendrier d'une espèce — le milieu de chaque fenêtre, à la prochaine
+     * occurrence, comme `CalendrierLopez::datesIndicatives()` (dont elle reprend la logique, étendue à la
+     * récolte : Lopez ne la donne pas, `espece` le peut). La mise en place ne précède jamais le semis, la
+     * récolte ne précède jamais la mise en place — ni, à défaut, le semis.
+     *
+     * @param array<string, mixed> $espece une ligne d'`espece` (periode_semis, periode_repiquage, periode_recolte)
+     * @return array{semis: ?string, repiquage: ?string, recolte: ?string}
+     */
+    public static function datesIndicatives(array $espece, \DateTimeImmutable $reference): array
+    {
+        $periode = static fn (mixed $t): ?array => is_string($t) && $t !== '' ? CalendrierLopez::periode($t) : null;
+        $ps = $periode($espece['periode_semis'] ?? null);
+        $pr = $periode($espece['periode_repiquage'] ?? null);
+        $prc = $periode($espece['periode_recolte'] ?? null);
+        $annee = (int) $reference->format('Y');
+        $aujourdhui = $reference->setTime(0, 0);
+        $date = static fn (array $p, int $a): \DateTimeImmutable => new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $a, $p['mois'], $p['milieu']));
+
+        $semis = null;
+        if ($ps !== null) {
+            $semis = $date($ps, $annee);
+            if ($semis < $aujourdhui) {
+                $semis = $date($ps, $annee + 1);
+            }
+        }
+        $repiquage = null;
+        if ($pr !== null) {
+            $depart = $semis !== null ? (int) $semis->format('Y') : $annee;
+            $repiquage = $date($pr, $depart);
+            if ($semis !== null && $repiquage < $semis) {
+                $repiquage = $date($pr, $depart + 1);
+            } elseif ($semis === null && $repiquage < $aujourdhui) {
+                $repiquage = $date($pr, $depart + 1);
+            }
+        }
+        $recolte = null;
+        if ($prc !== null) {
+            $base = $repiquage ?? $semis;
+            $depart = $base !== null ? (int) $base->format('Y') : $annee;
+            $recolte = $date($prc, $depart);
+            if ($base !== null && $recolte < $base) {
+                $recolte = $date($prc, $depart + 1);
+            } elseif ($base === null && $recolte < $aujourdhui) {
+                $recolte = $date($prc, $depart + 1);
+            }
+        }
+        return ['semis' => $semis?->format('Y-m-d'), 'repiquage' => $repiquage?->format('Y-m-d'), 'recolte' => $recolte?->format('Y-m-d')];
     }
 
     /**
