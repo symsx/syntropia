@@ -31,8 +31,14 @@ final class Bordures
 
     public const COTES = ['nord' => 'nord', 'sud' => 'sud', 'ouest' => 'ouest', 'est' => 'est'];
 
-    /** Une série ne dépasse pas douze places — la limite de la référence (`ImplantationBordures`). */
-    public const MAX_SERIE = 12;
+    /**
+     * Une série ne dépasse pas trente places — un garde-fou. La référence (`ImplantationBordures`) s'arrêtait à douze ;
+     * proposer **toutes** les espèces qui conviennent (le porteur, 2026-09-23) peut aller au-delà.
+     */
+    public const MAX_SERIE = 30;
+
+    /** Ce qu'une bordure ne retient pas : ses plantes sont pérennes (le porteur, 2026-09-23). */
+    public const CYCLES_EXCLUS = ['annuelle', 'bisannuelle'];
 
     /** Au-delà, le dessin n'échantillonne plus ; les comptes restent exacts. */
     public const MAX_POINTS = 400;
@@ -153,6 +159,41 @@ final class Bordures
             $positions = $echantillon;
         }
         return ['ok' => true, 'manquants' => [], 'comptes' => $comptes, 'total' => $total, 'positions' => $positions];
+    }
+
+    /**
+     * Ce que l'atelier propose pour une bordure : **toutes** les espèces du référentiel qui remplissent sa fonction
+     * (décision du porteur, 2026-09-23), dans l'ordre reçu, **sauf les annuelles et bisannuelles** — une bordure porte
+     * des plantes pérennes ; un cycle non noté ne l'écarte pas. Chacune vient avec les fonctions qu'elle y remplit et,
+     * s'il y a lieu, une réserve tirée du corpus : sur une face sud ou ouest de la bordure externe, le ch. 14 (§ 4.2,
+     * règle 1) ne veut que des émergentes — une espèce dont la strate notée ne l'est pas est signalée, non écartée.
+     *
+     * @param list<array<string, mixed>> $especes le référentiel du site (`Especes::toutes()`)
+     * @return list<array{espece: array<string, mixed>, fonctions: list<string>, reserve: ?string}>
+     */
+    public static function proposer(string $cadre, string $cote, array $especes): array
+    {
+        $out = [];
+        foreach ($especes as $e) {
+            if (!self::convient($cadre, $e) || in_array((string) ($e['cycle'] ?? ''), self::CYCLES_EXCLUS, true)) {
+                continue;
+            }
+            $roles = array_filter(explode('|', (string) ($e['role'] ?? '')));
+            $fonctions = [];
+            foreach (self::CADRES[$cadre]['fonctions'] as $f) {
+                if (in_array($f, $roles, true) || ($f === 'bloque_herbe' && (int) ($e['bloque_herbe'] ?? 0) === 1)) {
+                    $fonctions[] = $f;
+                }
+            }
+            $reserve = null;
+            $strates = array_values(array_filter(explode('|', (string) ($e['strates_possibles'] ?? ''))));
+            if ($cadre === 'externe' && in_array($cote, ['sud', 'ouest'], true) && $strates !== [] && !in_array('emergente', $strates, true)) {
+                $reserve = 'Face ' . $cote . ', exposée : le ch. 14 n’y veut que des plantes émergentes, et sa strate notée est « '
+                    . implode(', ', $strates) . ' ».';
+            }
+            $out[] = ['espece' => $e, 'fonctions' => $fonctions, 'reserve' => $reserve];
+        }
+        return $out;
     }
 
     /**

@@ -116,6 +116,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             array_splice($serie, (int) $m[1], 1);
         } elseif ($geste === 'vider') {
             $serie = [];
+        } elseif ($geste === 'poser') {
+            // La proposition acceptée (Phase 3) : les espèces cochées, dans l'ordre proposé, remplacent la série.
+            $serie = array_values(array_map('intval', is_array($_POST['choix'] ?? null) ? $_POST['choix'] : []));
+            if ($serie === []) {
+                $message = 'Cochez au moins une espèce de la proposition.';
+            }
         } else {
             $message = 'Ce geste n’est pas reconnu.';
         }
@@ -219,6 +225,8 @@ if ($parcelleActive !== null) {
 $lignesBordures = [];
 $especesSite = [];
 $bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string) array_key_first($erreursLigne) : ''));
+// La bordure dont on regarde la proposition (Phase 3) — rien ne s'écrit avant « Poser cette série ».
+$bordureProposee = ($_GET['proposer'] ?? '') === '1' ? $bordureOuverte : '';
 if ($parcelleActive !== null && !$demandeNouvelle) {
     $lignesBordures = $lignesService->etat($parcelleActive, $siteId);
     $especesSite = (new Especes())->toutes($siteId);
@@ -298,6 +306,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .bl-bouton[disabled], .bl-cote.bl-suspendu .bl-bouton, .bl-cote.bl-suspendu .bl-retirer{ opacity:.45; pointer-events:none; }
   .bl-alerte{ color:var(--alerte); font:400 .78rem var(--texte); margin:.3rem 0 0; }
   #bl-suspendu{ color:var(--alerte); }
+  .bl-proposer{ display:inline-block; margin:.2rem 0 .3rem; font:500 .8rem var(--texte); color:var(--accent); }
+  .bl-proposition{ border-top:1px dashed var(--line); margin-top:.4rem; }
+  .bl-choix{ list-style:none; margin:.3rem 0; padding:0; display:flex; flex-direction:column; gap:.3rem; }
+  .bl-choix label{ display:flex; gap:.4rem; align-items:flex-start; font:400 .8rem/1.35 var(--texte); color:var(--ink); }
+  .bl-reserve{ display:block; color:var(--alerte); }
+  .bl-cote.bl-suspendu .bl-proposer{ opacity:.45; pointer-events:none; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
   .plan-mesure{ font:600 13px var(--texte); fill:var(--ink); font-variant-numeric:tabular-nums; }
@@ -686,6 +700,48 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           <p class="bl-alerte">La ligne est plus courte qu'un espacement : aucun plant n'y tient.</p>
 <?php endif; ?>
 <?php endif; ?>
+<?php if ($peutEcrire && $geo !== null && $bordureProposee === $cle):
+    $proposition = Bordures::proposer($cadre, $cote, $especesSite);
+    $comptables = array_values(array_filter($proposition, static fn (array $pr): bool => $pr['espece']['espacement_retenu_m'] !== null));
+    $apercu = $comptables !== [] ? Bordures::compter($geo['longueur'], array_map(static fn (array $pr): float => (float) $pr['espece']['espacement_retenu_m'], $comptables)) : null;
+    $formProp = 'bl-prop-' . str_replace(':', '-', $cle); ?>
+          <div class="bl-proposition">
+            <p class="pd-titre" style="margin-top:.4rem">Ce que l'atelier propose</p>
+<?php if ($proposition === []): ?>
+            <p class="pd-note">Aucune espèce de votre référentiel ne porte la fonction de cette bordure
+              (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>), hors annuelles. Ajoutez-la
+              dans <a href="especes.php">Espèces</a> : le rôle, ou la case « bloque l'herbe ».</p>
+<?php else: ?>
+            <p class="pd-note">Toutes les espèces vivaces ou ligneuses de votre référentiel qui savent
+              <?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?> — les annuelles n'y sont pas, une
+              bordure est pérenne. Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui n'ont pas
+              d'espacement ne sont pas cochées, faute de pouvoir les compter.<?= $apercu !== null && $apercu['ok'] ? ' Les '
+              . count($comptables) . ' cochées donneraient ' . $apercu['total'] . ' plants sur ' . htmlspecialchars($nombreFr($geo['longueur']), ENT_QUOTES, 'UTF-8') . ' m.' : '' ?></p>
+            <form method="post" id="<?= $formProp ?>">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="action" value="ligne_bordure">
+              <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+              <input type="hidden" name="emplacement" value="<?= htmlspecialchars($cle, ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="version_ligne" value="<?= htmlspecialchars($lb['version'], ENT_QUOTES, 'UTF-8') ?>">
+              <ul class="bl-choix">
+<?php foreach ($proposition as $pr): $e = $pr['espece']; ?>
+                <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= $e['espacement_retenu_m'] !== null ? ' checked' : '' ?>>
+                  <span><b><?= htmlspecialchars((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></b>
+                    — <?= htmlspecialchars(implode(', ', array_map(static fn (string $f): string => mb_strtolower(\Syntropia\Scenario::FONCTIONS[$f] ?? $f), $pr['fonctions'])), ENT_QUOTES, 'UTF-8') ?> ;
+                    <?= $e['espacement_retenu_m'] !== null ? htmlspecialchars($nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') : 'sans espacement' ?><?php if ($pr['reserve'] !== null): ?>
+                    <small class="bl-reserve"><?= htmlspecialchars($pr['reserve'], ENT_QUOTES, 'UTF-8') ?></small><?php endif; ?></span></label></li>
+<?php endforeach; ?>
+              </ul>
+              <div class="bl-ajout">
+                <button type="submit" name="geste" value="poser" class="bl-bouton"><?= $lb['places'] === [] ? 'Poser cette série' : 'Remplacer la ligne par cette série' ?></button>
+                <a class="bl-retirer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;bordure=<?= rawurlencode($cle) ?>">Annuler</a>
+              </div>
+            </form>
+<?php endif; ?>
+          </div>
+<?php elseif ($peutEcrire && $geo !== null): ?>
+          <a class="bl-proposer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;bordure=<?= rawurlencode($cle) ?>&amp;proposer=1">Proposer les espèces de cette bordure</a>
+<?php endif; ?>
 <?php if (isset($erreursLigne[$cle])): ?>
           <p class="bl-alerte" role="alert"><?= htmlspecialchars($erreursLigne[$cle], ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
@@ -768,8 +824,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
       <p><strong>Les plantes des bordures</strong> — une fois le plan enregistré, chaque côté actif reçoit une
          ligne de plants : choisissez une espèce, ou plusieurs qui alternent (la diversité est le principe). La
          bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
-         font viennent en tête de la liste. L'atelier compte les plants de chaque espèce d'après leur espacement
-         (<a href="especes.php">Espèces</a>) et les dessine sur le plan.</p>
+         font viennent en tête de la liste. « Proposer les espèces de cette bordure » les montre toutes (hors annuelles :
+         une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
+         d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan.</p>
 <?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>

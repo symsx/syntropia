@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis et 2 faites le 2026-09-23**, commitées, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2 et 3 faites le 2026-09-23**, commitées, pas déployées.*
 
 ## L'intention
 
@@ -208,6 +208,21 @@ n'est écrit avant l'accord). La proposition filtre le référentiel par la fonc
 (des émergentes sur les faces sud et ouest exposées) et **propose plusieurs espèces**, pour la
 diversité. Elle dit pourquoi chacune est retenue et ce qui manque (« aucune espèce du référentiel ne
 porte la fonction *vent* »).
+
+**Décisions du porteur (2026-09-23)** : proposer **toutes** les espèces qui remplissent la fonction de la bordure ; une
+plante que jardineries et pépiniéristes destinent à la « bordure » peut être tenue pour bloque-herbe (la sauge, le thym
+luisant — ajouté au cadre, nom scientifique à préciser —, la mélisse dont la case est confirmée).
+
+**Fait le 2026-09-23.** `Bordures::proposer()` (pur) : toutes les espèces du référentiel qui conviennent (rôle, ou case
+`bloque_herbe` pour l'externe), **sauf les annuelles et bisannuelles** — une bordure est pérenne, décision du porteur ;
+un cycle non noté ne l'écarte pas —, chacune avec ses fonctions et, sur une face sud ou ouest de l'externe, la réserve
+du ch. 14 si sa strate notée n'est pas émergente (signalée, non écartée). Dans chaque bloc de bordure, « Proposer les
+espèces de cette bordure » ouvre la liste, cochée d'avance pour celles qui ont un espacement (les autres ne se
+comptent pas), avec le nombre de plants que donneraient les cochées ; « Poser cette série » (ou « Remplacer la
+ligne ») l'écrit sous le verrou de version, rien avant. La série passe à 30 places au plus (12 dans la référence).
+Vérifié en local (projet et comptes supprimés) : externe sud, 9 espèces proposées, 7 cochées, 25 plants sur 10 m,
+posées ; interne nord, 21 espèces sans maïs ni tournesol ; rien de coché refusé ; conflit de version ; lecteur (ni
+lien ni proposition) ; 1280×720 et 320×568.
 
 ### Phase 4 — Les lignes des planches
 

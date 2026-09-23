@@ -62,6 +62,14 @@ extérieure du livre ; la bordure interne à sa ligne intérieure.
   acide ou hydromorphe, ch. 03, ch. 14) ; sauges (nord et est) ; consoude, artichaut (ch. 03) ; consoude
   seule, repiquée en boutures de racines (ch. 11).
 
+**Règle du porteur (2026-09-23)** : une plante que les jardineries et pépiniéristes destinent à la « bordure » peut
+être tenue pour **bloque-herbe** (exemples donnés : la sauge, le thym luisant, et la mélisse, dont la case `bloque_herbe`
+est confirmée). C'est ce qui permet d'élargir la palette hors du corpus.
+
+**Proposer les espèces d'une bordure (le porteur, 2026-09-23)** : l'atelier propose **toutes** les espèces du
+référentiel qui remplissent la fonction demandée par la bordure (externe : bloque-herbe ou vent ; interne : biomasse) —
+la personne garde celles qu'elle veut, dans l'ordre de l'alternance.
+
 **Bordure interne** — la biomasse :
 
 - Les mêmes plantes, plus de bonnes productrices de biomasse (mélisse, menthe) et des ligneuses pour
