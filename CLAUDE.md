@@ -102,8 +102,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   `espece.cycle`, schéma 11), 2 (les bordures peuplées : `ligne_plantation`, schéma 12) et 3 (proposer toutes les
   espèces qui remplissent la fonction de la bordure, hors annuelles), 4 (les lignes de chaque planche, `Planches.php`)
   5 (planches pérennes et annuelles en zèbre, bandes en abeille, respectées par le placement du potager) et 6 (les
-  plantes de service proposées sur les lignes des planches, `LignesDeService.php`) faites le jour même** — reste la
-  Phase 7 (Matériel et eau),
+  plantes de service proposées sur les lignes des planches, `LignesDeService.php`) et 7 (les plants des lignes du plan
+  dans Matériel et eau, où ils font foi pour les bordures) faites le jour même — chantier terminé**,
   commitées, pas déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,

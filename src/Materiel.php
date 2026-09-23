@@ -96,6 +96,48 @@ final class Materiel
     }
 
     /**
+     * Les plants posés sur les lignes du plan d'une parcelle — les bordures (`LignesPlantation::etat()`) et les lignes de
+     * service des planches (`LignesPlantation::etatPlanches()`) — une entrée par espèce et par lieu (`bord_ext`,
+     * `bord_int`, `centre` pour les planches), comptes additionnés. **Ce sont eux qui font foi** pour ce qui pousse en
+     * bordure (décision du porteur, 2026-09-23, chantier « peuplement de la parcelle ») ; `n` vaut `null` quand un
+     * espacement manque quelque part. Un côté devenu inactif ne compte pas.
+     *
+     * @return list<array{espece: string, nom_scientifique: string, origine: string, ou: string, n: ?int}>
+     */
+    public static function lignesDuPlan(array $bordures, array $planches): array
+    {
+        $out = [];
+        $ajouter = static function (string $ou, string $nom, string $sci, string $origine, ?int $n) use (&$out): void {
+            $cle = $ou . '|' . mb_strtolower($sci);
+            if (!isset($out[$cle])) {
+                $out[$cle] = ['espece' => $nom, 'nom_scientifique' => $sci, 'origine' => $origine, 'ou' => $ou, 'n' => $n];
+                return;
+            }
+            $out[$cle]['n'] = $out[$cle]['n'] === null || $n === null ? null : $out[$cle]['n'] + $n;
+        };
+        foreach ($bordures as $cle => $b) {
+            $cadre = \Syntropia\Bordures::depuisCle((string) $cle)[0] ?? null;
+            if ($cadre === null || $b['geometrie'] === null) {
+                continue;
+            }
+            foreach ($b['places'] as $k => $pl) {
+                $n = $b['compte'] !== null && $b['compte']['ok'] ? (int) $b['compte']['comptes'][$k] : null;
+                $ajouter($cadre === 'externe' ? 'bord_ext' : 'bord_int', $pl['nom'], $pl['nom_scientifique'], $pl['origine'] ?? '', $n);
+            }
+        }
+        foreach ($planches as $p) {
+            foreach ($p['lignes'] as $l) {
+                if ($l === null) {
+                    continue;
+                }
+                $e = $l['espece'];
+                $ajouter('centre', $l['nom'], $e !== null ? (string) $e['nom_scientifique'] : $l['nom'], $e !== null ? (string) ($e['origine'] ?? '') : '', $l['compte']);
+            }
+        }
+        return array_values($out);
+    }
+
+    /**
      * Le taux de réussite d'un semis, tel que Lopez en fait une convention de planification : environ 80 % — la
      * médiane exacte de son tableau, sept cultures sur dix-sept pile dessus. **Ce n'est pas une mesure** : le
      * rapport va du simple au double selon l'espèce (91 % pour le poireau, 50 % pour l'aubergine), et le livre dit

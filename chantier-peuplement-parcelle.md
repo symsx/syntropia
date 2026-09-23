@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1 à 6 faites le 2026-09-23**, commitées, pas déployées ; la Phase 7 (Matériel et eau) reste.*
+*Proposé le 2026-09-23, à la demande du porteur. **Les sept phases sont faites le 2026-09-23 — chantier terminé**, commité, pas déployé.*
 
 ## L'intention
 
@@ -304,6 +304,17 @@ les autres vides, enregistré et résumé ; conflit de version, espèce étrang�
 
 Les plants des bordures et des lignes de service entrent dans « Matériel et eau » (par espèce, par
 origine). Le livret « L'atelier » est mis à jour au déploiement.
+
+**Fait le 2026-09-23.** `Materiel::lignesDuPlan()` (pur) : une entrée par espèce et par lieu (`bord_ext`, `bord_int`,
+`centre` pour les lignes des planches), comptes additionnés, `null` si un espacement manque, un côté inactif ignoré.
+Sur « Matériel et eau » : **la décision (a) appliquée** — une plante du scénario pérenne déclarée en bordure prend le
+compte du plan dès que cette bordure porte des lignes (et reste « à déterminer » si elle n'y est pas posée) ; sans
+ligne posée sur cette bordure, l'estimation d'avant demeure. Ce que le plan porte sans que le scénario le nomme
+s'ajoute, avec l'origine du référentiel ; pour un potager, les lignes du plan s'ajoutent aux cultures. Une note le dit
+sous la liste, le panneau Informations aussi. **L'eau ne change pas** (elle se calcule sur la surface). Vérifié en local
+(projet supprimé) : 13 lavandes et 12 consoudes sur 10 m de bordure, la lavande du scénario reprenant le compte du plan,
+le romarin du scénario absent du plan « à déterminer », 9 maïs sur une ligne de planche de 4,8 m ; `verifier-export`
+identique. Le livret est à jour.
 
 ## Questions à trancher
 

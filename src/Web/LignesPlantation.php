@@ -231,6 +231,7 @@ final class LignesPlantation
                 $e = $this->especes()->parNom((string) $l['nom_scientifique'], (string) $l['variete'], $siteId);
                 $esp = $e !== null && $e['espacement_retenu_m'] !== null ? (float) $e['espacement_retenu_m'] : null;
                 $places[] = ['nom_scientifique' => (string) $l['nom_scientifique'], 'variete' => (string) $l['variete'],
+                    'origine' => $e !== null ? (string) ($e['origine'] ?? '') : '',
                     'nom' => $e !== null ? (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) : (string) $l['nom_scientifique'],
                     'connue' => $e !== null, 'espacement' => $esp, 'id' => $e !== null ? (int) $e['id'] : null];
             }

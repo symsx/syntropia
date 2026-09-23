@@ -250,6 +250,11 @@ elle est estimée à partir de l'espacement et du plan de la parcelle, et la
 page le dit. Un végétal sans origine reste à préciser, car c'est elle qui
 décide de ce qu'on achète.
 
+Les plants posés sur les **lignes du plan** — les bordures, les lignes de service des planches — s'y
+ajoutent, comptés tels quels à l'espacement de chaque espèce, avec l'origine notée dans **Espèces**.
+Pour ce qui pousse en bordure, c'est ce compte qui fait foi : un végétal du scénario déclaré « en
+bordure » prend le nombre de plants posés sur le plan, et reste « à déterminer » s'il n'y est pas posé.
+
 Pour un **potager**, la liste se déduit du plan de culture : chaque culture, avec le nombre de
 plants que vous y avez noté. Sans ce nombre, la page estime une ligne de plants sur la planche,
 à l'espacement de la culture, et le dit. Pour une culture semée à l'abri, elle ajoute les

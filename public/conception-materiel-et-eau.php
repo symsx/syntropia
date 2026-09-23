@@ -34,6 +34,7 @@ use Syntropia\Scenario;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
+use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\ReleveSol;
 use Syntropia\Web\Sites;
@@ -143,8 +144,14 @@ $entrees = [];
 $sansScenario = [];
 $sansCulture = [];
 $culturesService = new Cultures();
+$lignesService = new LignesPlantation();
 foreach ($portee as $p) {
     $bandes = Materiel::bandes($p);
+    // Les plants posés sur les lignes du plan — bordures et lignes de service des planches : ils font foi (chantier
+    // « peuplement de la parcelle », Phase 7). Une plante du scénario déclarée en bordure prend leur compte.
+    $duPlan = Materiel::lignesDuPlan($lignesService->etat($p, $siteId), $lignesService->etatPlanches($p, $siteId));
+    $bordAvecLignes = array_flip(array_column($duPlan, 'ou'));
+    $pris = [];
     // Un potager n'a pas de scénario de strates et de temps : ses cultures sont son plan de culture.
     if (($p['type'] ?? '') === 'potager') {
         $cultures = $culturesService->dUneParcelle((int) $p['id']);
@@ -155,6 +162,10 @@ foreach ($portee as $p) {
             $entrees[] = ['ligne' => ['espece' => $c['espece'], 'origine' => 'potager'], 'parcelle' => (string) $p['code'],
                 'qte' => Materiel::quantiteCulture($c, $bandes, $espacements[mb_strtolower(trim((string) $c['espece']))] ?? null)];
         }
+        foreach ($duPlan as $d) {
+            $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
+                'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
+        }
         continue;
     }
     $lignes = $parcellesService->scenario((int) $p['id']);
@@ -162,10 +173,33 @@ foreach ($portee as $p) {
         $sansScenario[] = (string) $p['code'];
     }
     foreach ($lignes as $l) {
+        $ou = Scenario::details($l)['emplacement'] ?? 'centre';
+        if (in_array($ou, ['bord_ext', 'bord_int'], true) && isset($bordAvecLignes[$ou])) {
+            $nom = mb_strtolower(trim((string) $l['espece']));
+            $n = 0;
+            $trouve = false;
+            foreach ($duPlan as $k => $d) {
+                if ($d['ou'] === $ou && in_array($nom, [mb_strtolower($d['espece']), mb_strtolower($d['nom_scientifique'])], true)) {
+                    $trouve = true;
+                    $pris[$k] = true;
+                    $n = $n === null || $d['n'] === null ? null : $n + $d['n'];
+                }
+            }
+            $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => ['n' => $trouve ? $n : null, 'mode' => 'plan', 'espacement' => null]];
+            continue;
+        }
         $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'],
             'qte' => Materiel::quantite($l, $bandes, $espacements[mb_strtolower(trim((string) $l['espece']))] ?? null)];
     }
+    // Ce que le plan porte sans que le scénario le nomme.
+    foreach ($duPlan as $k => $d) {
+        if (!isset($pris[$k])) {
+            $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
+                'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
+        }
+    }
 }
+$depuisPlan = count(array_filter($entrees, static fn (array $e): bool => ($e['qte']['mode'] ?? null) === 'plan')) > 0;
 $recap = Materiel::regrouper($entrees);
 $synthese = Materiel::synthese($recap);
 $aPrecise = count(array_filter($recap, static fn (array $r): bool => $r['origine'] === ''));
@@ -490,6 +524,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php else: ?>
             Les quantités sont celles du scénario. Sans quantité ni espacement, elles restent « à déterminer ».
 <?php endif; ?>
+<?php if ($depuisPlan): ?>
+            Les plants posés sur les lignes du <b>plan</b> — bordures, lignes de service des planches — sont comptés tels quels, à l'espacement de chaque espèce dans Espèces (d'où vient aussi leur origine) ; pour ce qui pousse en bordure, c'est ce compte qui fait foi.
+<?php endif; ?>
 <?php if ($aPotager): ?>
             Cultures du potager : la quantité est le nombre de <b>plants</b> saisi dans le plan de culture ; sans lui, une ligne de plants sur la planche, à l'espacement de la culture. Pour une culture semée à l'abri, les <b>graines</b> ajoutent la marge de semis — un taux de réussite de 80 %, la convention de planification de Lopez (91 % pour un poireau, 50 % pour une aubergine dans son livre) : à remplacer par vos propres levées. Une culture semée en place n'a pas de graines chiffrées.
 <?php endif; ?>
@@ -739,7 +776,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
       <p>Deux choses se préparent ici, avant de planter : <strong>ce qu'il faudra se procurer</strong>, et <strong>l'eau qu'il faudra donner</strong>.
-         La liste des plants se déduit du scénario de chaque parcelle ; le choix « à acheter, à multiplier, à laisser venir » vient de l'origine que vous y avez notée.</p>
+         La liste des plants se déduit du scénario de chaque parcelle, et des lignes posées sur son plan (bordures, lignes de service des planches) ; le choix « à acheter, à multiplier, à laisser venir » vient de l'origine que vous y avez notée.</p>
       <p><strong>Les besoins en eau</strong> [Lopez, <em>Les Jardins Sauvages</em>] : on n'arrose pas les légumes, on arrose la biologie du sol.
          Le besoin annuel va d'environ 750 L/m² en sol dégradé et année sèche à 300 L/m² en sol intermédiaire ; en pointe d'été, jusqu'à 5 mm par jour.
          Le sol structuré demande moins, l'ouvrage ne le chiffre pas. <strong>Ce sont des ordres de grandeur de dimensionnement, pas des normes</strong> — et ils
