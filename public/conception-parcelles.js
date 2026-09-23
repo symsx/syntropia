@@ -15,6 +15,39 @@
   var cfgPlan = (typeof PLAN_CONSTANTES !== 'undefined') ? PLAN_CONSTANTES : {};
   var PLANCHE = cfgPlan.planche || 1.2, PASSE_PIED = cfgPlan.passePied || 0.5;
   var BORD_PLANCHE = cfgPlan.bordPlanche || 0.6;
+  // Le nombre de lignes de chaque planche — ce qui est enregistré, puis ce que la personne change ici (chantier
+  // « peuplement de la parcelle », Phase 4). Une planche sans valeur prend le défaut.
+  var LIGNES_DEFAUT = cfgPlan.lignesDefaut || 3, LIGNES_MIN = cfgPlan.lignesMin || 1, LIGNES_MAX = cfgPlan.lignesMax || 12;
+  var lignesSaisies = {};
+  Object.keys(cfgPlan.lignes || {}).forEach(function(k){ lignesSaisies[k] = cfgPlan.lignes[k]; });
+  function lignesDe(numero){
+    var n = parseInt(lignesSaisies[numero], 10);
+    return (n >= LIGNES_MIN && n <= LIGNES_MAX) ? n : LIGNES_DEFAUT;
+  }
+  // La ligne centrale : celle du milieu, ou la plus proche — même règle que Planches::centrale().
+  function centrale(n){ return Math.floor((n - 1) / 2); }
+  var signatureListe = '';
+  function listeLignes(largeurs){
+    var zone = document.getElementById('lignes-planches');
+    if (!zone) return;
+    var signature = largeurs.map(function(w){ return w.toFixed(2); }).join('|');
+    if (signature === signatureListe) return;   // ne pas reconstruire sous les doigts de la personne
+    signatureListe = signature;
+    zone.innerHTML = '';
+    largeurs.forEach(function(w, i){
+      var numero = i + 1;
+      var label = document.createElement('label');
+      var texte = document.createElement('span');
+      texte.innerHTML = 'Planche ' + numero + ' <small>' + fmt(w) + ' m</small>';
+      var champ = document.createElement('input');
+      champ.type = 'number'; champ.min = LIGNES_MIN; champ.max = LIGNES_MAX; champ.step = 1;
+      champ.value = lignesDe(numero); champ.className = 'lignes-planche'; champ.dataset.numero = numero;
+      champ.setAttribute('aria-label', 'Nombre de lignes de la planche ' + numero);
+      champ.addEventListener('input', function(){ lignesSaisies[numero] = champ.value; redessiner(); });
+      label.appendChild(texte); label.appendChild(champ);
+      zone.appendChild(label);
+    });
+  }
 
   function nombre(valeur){ return parseFloat(String(valeur).replace(',', '.')) || 0; }
   function fmt(valeur, decimales){ return valeur.toFixed(decimales === undefined ? 2 : decimales).replace('.', ','); }
@@ -175,6 +208,27 @@
         y += h + (layout.passePieds[j] || 0) * ECH;
       }
     }
+
+    // Les lignes de chaque planche, à intervalles égaux dans sa largeur (Planches::dUneParcelle() côté serveur).
+    var gLignes = document.getElementById('lignes-plan');
+    if (gLignes){
+      gLignes.innerHTML = '';
+      var depart = sens === 'nord-sud' ? bo + boi : bn + bni;
+      var haut = bn + bni, bas = H - bs - bsi, gauche = bo + boi, droite = L - be - bei;
+      layout.largeurs.forEach(function(w, i){
+        var n = lignesDe(i + 1), largeurPx = w * ECH;
+        for (var j = 0; j < n; j++){
+          var d = depart + largeurPx * (j + 1) / (n + 1);
+          var trait = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          trait.setAttribute('class', 'plan-ligne' + (j === centrale(n) ? ' plan-ligne-centrale' : ''));
+          if (sens === 'nord-sud'){ trait.setAttribute('x1', d); trait.setAttribute('x2', d); trait.setAttribute('y1', haut); trait.setAttribute('y2', bas); }
+          else { trait.setAttribute('y1', d); trait.setAttribute('y2', d); trait.setAttribute('x1', gauche); trait.setAttribute('x2', droite); }
+          gLignes.appendChild(trait);
+        }
+        depart += largeurPx + (layout.passePieds[i] || 0) * ECH;
+      });
+    }
+    listeLignes(layout.largeurs);
 
     var surfaceUtile = largeurUtile * hauteurUtile;
     // La surface des planches elles-mêmes — les seules à cultiver,
@@ -347,6 +401,7 @@
       corps.set('conduite', document.getElementById('in-conduite').value);
       corps.set('stade', document.getElementById('in-stade').value);
       corps.set('tortue', document.getElementById('in-tortue').value);
+      document.querySelectorAll('.lignes-planche').forEach(function(c){ corps.set('lignes[' + c.dataset.numero + ']', c.value); });
       corps.set('longueur_m', champLongueur.value);
       corps.set('largeur_m', champLargeur.value);
       var sensChoisi = document.querySelector('input[name="sens-planches"]:checked');
@@ -427,6 +482,7 @@
 
   Gabarit.onReset(function(){
     perimerPlants();
+    lignesSaisies = {}; signatureListe = '';
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });

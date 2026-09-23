@@ -279,6 +279,23 @@ final class Parcelles
         // référence : une bordure ne devient jamais ni un fil ni un
         // champ). Chantier « plan de parcelle », Phase 4 (2026-09-18) pour
         // l'interne — géométrie seulement, pas d'assignation d'espèce.
+        // Le nombre de lignes de chaque planche (numérotée de 1) — chantier « peuplement de la parcelle », Phase 4.
+        // `null` (clé absente) : on garde ceux du plan déjà enregistré.
+        $lignes = null;
+        if (is_array($valeurs['lignes'] ?? null)) {
+            $lignes = [];
+            foreach ($valeurs['lignes'] as $numero => $n) {
+                $n = trim((string) $n);
+                if ((string) (int) $numero !== (string) $numero || (int) $numero < 1 || (int) $numero > 999
+                    || !ctype_digit($n) || (int) $n < \Syntropia\Planches::LIGNES_MIN || (int) $n > \Syntropia\Planches::LIGNES_MAX) {
+                    $erreurs['lignes'] = 'Une planche porte de ' . \Syntropia\Planches::LIGNES_MIN . ' à '
+                        . \Syntropia\Planches::LIGNES_MAX . ' lignes.';
+                    break;
+                }
+                $lignes[(string) (int) $numero] = (int) $n;
+            }
+        }
+
         $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_');
         $bordureInterne = $this->litBordures($valeurs['bordures_interne'] ?? [], $erreurs, 'bordure_interne_');
 
@@ -319,8 +336,19 @@ final class Parcelles
                 return ['erreurs' => ['version' => 'Le plan a changé, rechargez la page avant de modifier.'], 'version' => null];
             }
 
-            $plan = json_encode(['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne],
-                'rattrapage' => $rattrapage], JSON_UNESCAPED_UNICODE);
+            if ($lignes === null) {
+                $ancien = json_decode((string) ($ligne['plan'] ?? ''), true);
+                $lignes = is_array($ancien['lignes'] ?? null) ? $ancien['lignes'] : [];
+            }
+            // Seules les planches qui existent encore gardent leur nombre de lignes ; les autres reprendront le défaut.
+            $lignes = array_filter($lignes, static fn (mixed $n, mixed $numero): bool => (int) $numero <= $nbPlanches,
+                ARRAY_FILTER_USE_BOTH);
+            ksort($lignes, SORT_NUMERIC);
+            $contenu = ['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne], 'rattrapage' => $rattrapage];
+            if ($lignes !== []) {
+                $contenu['lignes'] = (object) $lignes;
+            }
+            $plan = json_encode($contenu, JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(
                 'UPDATE parcelle SET longueur_m = ?, largeur_m = ?, orientation_lignes = ?, plan = ?, nb_planches = ?'
                 . ($conduite !== null ? ', conduite = ?' : '')

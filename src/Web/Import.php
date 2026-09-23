@@ -547,12 +547,19 @@ final class Import
             return null;
         }
         foreach (array_keys($v) as $cle) {
-            if (!in_array($cle, ['bordures', 'rattrapage'], true)) {
+            if (!in_array($cle, ['bordures', 'rattrapage', 'lignes'], true)) {
                 throw new \UnexpectedValueException("le plan contient une clé inconnue « $cle ».");
             }
         }
         if (isset($v['rattrapage']) && !in_array($v['rattrapage'], ['planches', 'passe-pieds'], true)) {
             throw new \UnexpectedValueException('le rattrapage doit être « planches » ou « passe-pieds ».');
+        }
+        // Le nombre de lignes de chaque planche (schéma 12, chantier-peuplement-parcelle.md, Phase 4).
+        foreach (is_array($v['lignes'] ?? null) ? $v['lignes'] : (isset($v['lignes']) ? [0 => 'illisible'] : []) as $numero => $n) {
+            if (preg_match('/^[1-9][0-9]{0,2}$/', (string) $numero) !== 1 || !is_int($n)
+                || $n < \Syntropia\Planches::LIGNES_MIN || $n > \Syntropia\Planches::LIGNES_MAX) {
+                throw new \UnexpectedValueException('les lignes des planches sont mal formées (de 1 à 12 par planche).');
+            }
         }
         $bordures = $v['bordures'] ?? [];
         if (!is_array($bordures)) {

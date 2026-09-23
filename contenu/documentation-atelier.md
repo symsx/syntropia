@@ -136,6 +136,10 @@ tortue** : classique, **zèbre** (des planches pérennes alternent avec des plan
 **abeille** (une bande pérenne et une bande potagère sur chaque planche) ou **liane** (des lianes sur
 une structure, des cultures protégées dessous) — ce qu'en dit Théry s'affiche sous le choix.
 
+Chaque planche a ses **lignes de plantation**, trois par défaut, à intervalles égaux dans sa largeur : vous en
+réglez le nombre planche par planche (de 1 à 12). La ligne centrale, en trait plein sur le plan, porte la
+biomasse et la structure, jamais de tuteurs ; les lignes recevront les plantes de service.
+
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
 sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent,
 l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste, et « Proposer les

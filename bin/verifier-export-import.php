@@ -93,7 +93,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
                       'est' => ['actif' => true, 'largeur_m' => 0.4], 'ouest' => ['actif' => true, 'largeur_m' => 0.4]],
         'interne' => ['nord' => ['actif' => true, 'largeur_m' => 0.3], 'sud' => ['actif' => true, 'largeur_m' => 0.3],
                       'est' => ['actif' => true, 'largeur_m' => 0.3], 'ouest' => ['actif' => true, 'largeur_m' => 0.3]],
-    ], 'rattrapage' => 'planches'], JSON_UNESCAPED_UNICODE);
+    ], 'rattrapage' => 'planches', 'lignes' => ['1' => 2, '3' => 5]], JSON_UNESCAPED_UNICODE);
     $pdo->prepare('INSERT INTO parcelle (site_id, code, nom, type, longueur_m, largeur_m, orientation_lignes, nb_planches, plan, notes,
                    surface_m2, production_principale, cree_le) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
         ->execute([$siteId, 'P1', 'Verger', 'perenne', 12.5, 8, 'nord-sud', 6, $plan, "Note [\n1, 2\n] \"guillemets\" é", 100, 'Fruits', '2026-08-01 10:00:00']);
