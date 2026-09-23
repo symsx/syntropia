@@ -269,11 +269,11 @@ VALUES
    'livre-bienvenue-en-syntropie ch. 14 § 4.4, plan p. 121',
    'palissé sur les sureaux plantés chaque mètre, face nord ou est — trois pieds entre deux sureaux');
 
--- Le thym luisant — le porteur, 2026-09-23 : « lorsqu'une plante a la destination de bordure chez les jardineries et
--- pépiniéristes, on peut la considérer comme bloque-herbe ». Nom scientifique à préciser : le genre seul, la variété
--- dit l'usage courant. Sans espacement ni cycle : aucune source du dépôt ne les donne.
+-- Le thym luisant (Thymus nitens) — le porteur, 2026-09-23 : « lorsqu'une plante a la destination de bordure chez les
+-- jardineries et pépiniéristes, on peut la considérer comme bloque-herbe » ; « tapissant vigoureux », d'où couvre-sol.
+-- Sans espacement ni cycle : aucune source du dépôt ne les donne.
 INSERT IGNORE INTO espece
-  (site_id, nom_scientifique, variete, nom_usuel, role, bloque_herbe, source, statut_local)
+  (site_id, nom_scientifique, nom_usuel, role, bloque_herbe, source, statut_local)
 VALUES
-  (0, 'Thymus', 'luisant', 'Thym', 'bloque_herbe', 1,
-   'remarque du porteur, 2026-09-23', 'plante « de bordure » chez les pépiniéristes — nom scientifique et espacement à préciser');
+  (0, 'Thymus nitens', 'Thym luisant', 'bloque_herbe|couvre_sol', 1,
+   'remarque du porteur, 2026-09-23', 'plante « de bordure » chez les pépiniéristes, tapissant vigoureux — espacement à préciser');

@@ -211,7 +211,7 @@ porte la fonction *vent* »).
 
 **Décisions du porteur (2026-09-23)** : proposer **toutes** les espèces qui remplissent la fonction de la bordure ; une
 plante que jardineries et pépiniéristes destinent à la « bordure » peut être tenue pour bloque-herbe (la sauge, le thym
-luisant — ajouté au cadre, nom scientifique à préciser —, la mélisse dont la case est confirmée).
+luisant — Thymus nitens, tapissant vigoureux, ajouté au cadre —, la mélisse dont la case est confirmée).
 
 **Fait le 2026-09-23.** `Bordures::proposer()` (pur) : toutes les espèces du référentiel qui conviennent (rôle, ou case
 `bloque_herbe` pour l'externe), **sauf les annuelles et bisannuelles** — une bordure est pérenne, décision du porteur ;
