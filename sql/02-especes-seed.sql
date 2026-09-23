@@ -241,6 +241,8 @@ UPDATE espece SET espacement_retenu_m = 2.00
   WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique = 'Cucurbita maxima';
 
 -- La lavande, citée parmi les bordures extérieures bloque-herbe (ch. 03 § 4 ; ch. 14 § 4.2).
+UPDATE espece SET bloque_herbe = 1
+  WHERE site_id = 0 AND nom_scientifique = 'Lavandula' AND variete = '' AND bloque_herbe IS NULL;
 UPDATE espece SET role = CONCAT(role, '|bloque_herbe')
   WHERE site_id = 0 AND nom_scientifique = 'Lavandula' AND variete = '' AND FIND_IN_SET('bloque_herbe', REPLACE(role, '|', ',')) = 0;
 
