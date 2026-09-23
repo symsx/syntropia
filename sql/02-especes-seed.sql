@@ -278,3 +278,12 @@ INSERT IGNORE INTO espece
 VALUES
   (0, 'Thymus nitens', 'Thym luisant', 'bloque_herbe', 1,
    'remarque du porteur, 2026-09-23', 'plante « de bordure » chez les pépiniéristes, tapissant vigoureux — espacement à préciser');
+
+-- Le rôle « bordure », hors du vocabulaire de `role` (liste fermée depuis le 2026-09-23), corrigé dans les INSERT
+-- ci-dessus le même jour — mais `INSERT IGNORE` ne réécrit jamais une ligne déjà là : une base ancienne le garde.
+-- Rattrapé ici, seulement s'il est encore là : la mélisse perd « bordure » (rien dans sa note ne le justifiait), la
+-- consoude le remplace par « bloque_herbe » (sa note : « bordure vivante bloque-herbe »).
+UPDATE espece SET role = 'biomasse'
+  WHERE site_id = 0 AND nom_scientifique = 'Melissa officinalis' AND variete = '' AND role = 'biomasse|bordure';
+UPDATE espece SET role = 'biomasse|bloque_herbe'
+  WHERE site_id = 0 AND nom_scientifique = 'Symphytum officinale' AND variete = '' AND role = 'biomasse|bordure';
