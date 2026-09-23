@@ -12,7 +12,7 @@ dans ce domaine.
 
 Syntropia accompagne la conception et la conduite d'un système agroforestier
 syntropique — de la première idée jusqu'au suivi, saison après saison en se basant sur des ressources telles que
-"Bienvenue en Syntropie" de Joala, les Webinaires Lina Faraj, les cours de formation Sylvanier des Alvéoles.
+"Bienvenue en Syntropie" d'Anaëlle Théry (Joala est son entreprise), les Webinaires Lina Faraj, les cours de formation Sylvanier des Alvéoles.
 
 Chaque étape demande des informations précises, et explique à quoi elles servent.
 
