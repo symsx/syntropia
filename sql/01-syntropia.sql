@@ -513,6 +513,9 @@ CREATE TABLE IF NOT EXISTS `espece` (
   -- `vivace` (herbacée pérenne), `ligneuse`. Les bordures retiennent les vivaces et les ligneuses ; les lignes de
   -- biomasse des planches, surtout les annuelles (chantier-peuplement-parcelle.md ; schéma 11).
   `cycle`              ENUM('annuelle','bisannuelle','vivace','ligneuse') NULL,
+  -- LE DÉLAI DE GERMINATION, en jours, d'une annuelle ou d'une bisannuelle semée en place : la levée le suit
+  -- (chantier-film-de-la-parcelle.md, décision du porteur, 2026-09-23 ; schéma 13).
+  `delai_germination_j` SMALLINT UNSIGNED NULL,
 
   `biomasse`         VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
@@ -1130,6 +1133,19 @@ EXECUTE ajout_cycle;
 DEALLOCATE PREPARE ajout_cycle;
 
 
+-- Rattrapage d'une table `espece` créée avant `delai_germination_j` — schéma 13. Même forme que ci-dessus.
+SET @germ_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'espece'
+                       AND COLUMN_NAME = 'delai_germination_j');
+SET @ajout_germ = IF(@germ_existe = 0,
+                     'ALTER TABLE `espece` ADD COLUMN `delai_germination_j` SMALLINT UNSIGNED NULL AFTER `cycle`',
+                     'DO 0');
+PREPARE ajout_germ FROM @ajout_germ;
+EXECUTE ajout_germ;
+DEALLOCATE PREPARE ajout_germ;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1212,6 +1228,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 11 = `parcelle.tortue` (le type de tortue) et `espece.cycle` (annuelle, bisannuelle, vivace, ligneuse) — deux
 -- colonnes facultatives, idem ;
 -- 12 = la table `ligne_plantation` (les lignes de plants des bordures — table facultative : un fichier sans elle se
--- charge, ses lignes étant simplement absentes).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '12')
+-- charge, ses lignes étant simplement absentes) ;
+-- 13 = `espece.delai_germination_j` (le délai de germination d'une annuelle ou bisannuelle — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '13')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

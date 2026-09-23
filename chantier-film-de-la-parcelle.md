@@ -1,6 +1,6 @@
 # Chantier — le film de la parcelle : chaque plante à sa place, dans l'espace et dans le temps
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phase 1 faite le 2026-09-23.***
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1 et 2 faites le 2026-09-23**, pas déployées.*
 
 ## L'intention
 
@@ -59,8 +59,9 @@ moment-là, et montre **le plan vu de dessus** à ce moment-là.
   (`espece.delai_germination_j`), pour situer la levée après un semis en place.
 - **Pas de collision au sol : 5 cm au moins** entre deux plantes de strates différentes — « uniquement mon idée, mais
   on part sur ça » (le porteur) ; à affiner avec l'expérience. Entre deux plantes de **même strate**, l'espacement ; pour
-  deux espèces différentes, **la moyenne de leurs espacements**, comme sur une ligne de bordure (hypothèse de travail,
-  à confirmer).
+  deux espèces différentes, **la moyenne de leurs espacements**, comme sur une ligne de bordure (**confirmé par le
+  porteur**).
+- **Les perturbations prévues d'une bordure : une liste de dates** (le porteur), chacune avec son geste.
 
 ## Phases
 
@@ -79,6 +80,17 @@ changement d'échelle (semaine, mois, année). Pour une **culture du potager**, 
 place ou repiquage) à sa récolte ; la levée, pour un semis en place, après le délai de germination de l'espèce
 (`espece.delai_germination_j`, nouvelle colonne — schéma 13). Pour une **plante du scénario pérenne**, ses périodes
 rapportées au calendrier par la date de plantation de la parcelle.
+
+**Fait le 2026-09-23.** `src/Temps.php` (pur, 16 contrôles) : `semaine()` (le lundi ISO), `fenetreCulture()` (de la mise
+en place à la récolte ; la levée d'un semis en place — pas de semis sous abri noté — après le délai de germination),
+`fenetrePeriodes()`/`dateDePosition()` (les positions du scénario pérenne rapportées à la date de plantation : placenta
+1, 90 jours ; placenta 2, 180 ; placenta 3 jusqu'à 3 ans ; secondaire 1 à 15 ans ; 2 à 25 ; 3 à 60 ; le climax borné à 100
+ans — les fourchettes du ch. 11 prises à leur borne haute, un ordre de grandeur), `presente()`, `pas()` (semaine, mois,
+année). **`espece.delai_germination_j` — schéma 13** (colonne facultative) : validé de 1 à 365 jours entiers, un champ
+dans `especes.php`, une colonne du modèle CSV. **Aucune espèce du cadre n'en reçoit** : le corpus ne donne de délai de
+levée que pour des graminées de prairie. Vérifié en local : validation (vide, 0, 400, 7,5, texte refusés), saisie et
+relecture dans le formulaire (320×568), `verifier-export` identique (la fixture porte un délai). Rien ne s'en sert encore
+à l'écran : c'est la base des Phases 3 à 5.
 
 ### Phase 2 bis — Le calendrier des plantes de service et des bordures
 
@@ -121,6 +133,4 @@ de l'azote…), en plus des strates vides — **en s'appuyant sur Plantae** (dé
 
 ## Questions ouvertes
 
-Les quatre questions du 2026-09-23 sont tranchées (voir « seconde série » plus haut). Reste à confirmer l'écart entre
-deux espèces différentes d'une même strate (hypothèse : la moyenne de leurs espacements) ; et, en début de Phase 2 bis,
-la forme des perturbations prévues d'une bordure (une date et un geste, répétés ; ou un rythme).
+Aucune : toutes les questions du 2026-09-23 sont tranchées.

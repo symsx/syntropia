@@ -44,9 +44,9 @@ final class Version
      * `espece.periode_semis`/`periode_repiquage`/`periode_recolte`, le calendrier d'une espèce, en mots comme
      * Lopez (trois colonnes facultatives, idem). 11 : `parcelle.tortue`, le type de tortue, et `espece.cycle`, le cycle
      * de vie (deux colonnes facultatives, idem). 12 : la table `ligne_plantation`, les lignes de plants des bordures
-     * (table facultative, idem).
+     * (table facultative, idem). 13 : `espece.delai_germination_j`, le délai de germination (colonne facultative, idem).
      */
-    public const SCHEMA = 12;
+    public const SCHEMA = 13;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

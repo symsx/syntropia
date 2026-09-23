@@ -271,7 +271,7 @@ if (($_GET['nouvelle'] ?? '') === '1') {
     $onglet = 'esp';
 }
 
-$champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'periode_semis',
+$champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'delai_germination_j', 'periode_semis',
     'periode_repiquage', 'periode_recolte', 'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
     'rapport_cn', 'conduite_taille', 'periode_taille', 'type_plant', 'orientation_bordure', 'source', 'statut_local', 'notes'];
 $champsChoix = ['cycle', 'systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
@@ -534,6 +534,9 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               <option value="<?= $cle ?>"<?= $f['cycle'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
             </select>
+          </label>
+          <label class="es-champ">Délai de germination (jours) <small>annuelle ou bisannuelle semée en place : la levée le suit</small>
+            <input type="number" name="delai_germination_j" min="1" max="365" step="1" inputmode="numeric" value="<?= $h($f['delai_germination_j']) ?>">
           </label>
           <p class="pd-titre" style="margin-top:.6rem">Calendrier <small style="font-weight:400">— en mots, comme « fin avril » ou « mi à fin juillet »</small></p>
           <label class="es-champ">Semis à l'abri

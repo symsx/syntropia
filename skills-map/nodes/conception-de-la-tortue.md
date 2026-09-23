@@ -149,7 +149,7 @@ Décisions du porteur (2026-09-23, `chantier-film-de-la-parcelle.md`), avec ce q
 - **Au sol** : chaque plante — de production ou de service — a **son point de plantation** ; **pas de collision** : au
   moins **5 cm** entre deux plantes de strates différentes (repère du porteur, « à affiner avec l'expérience »).
 - **La strate** : les **espacements se respectent entre plantes d'une même strate** ; deux espèces d'une même strate
-  s'écartent de la moyenne de leurs espacements (hypothèse de travail, comme sur une ligne de bordure). Une production se
+  s'écartent de la moyenne de leurs espacements (confirmé par le porteur, comme sur une ligne de bordure). Une production se
   place donc **sans tenir compte des plantes de service voisines**, qui sont dans une autre strate. Le corpus le montre :
   la forme pyramidale du potager (Théry ch. 8 § 5) superpose des strates sur une même planche ; au module 5 (Joala),
   pommes de terre, courgettes et maïs occupent la même planche à des hauteurs différentes (5-5).

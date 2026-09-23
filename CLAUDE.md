@@ -113,7 +113,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-film-de-la-parcelle.md` — le plan (6 phases) du **scénario en quatre dimensions** : chaque plante à son
   point de plantation au sol, sans collision ; les espacements respectés dans une même strate ; le temps en semaines,
   de la germination à la récolte, à l'échelle choisie ; les vides du calendrier montrés et comblés ; un curseur de
-  temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, **pas commencé**, quatre questions ouvertes.
+  temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées ; **Phases 1 (la compétence)
+  et 2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) faites**, pas déployées.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -149,6 +150,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Planches.php            les planches d'une parcelle et leurs lignes de plantation (port de planchesLayout(), 3 lignes par défaut, la centrale) ; pur
   LignesDeService.php     propose les plantes de service des lignes d'une planche — biomasse au centre, strates vides en pyramide, une espèce par ligne ; pur
   Bordures.php            les lignes de plants des bordures — géométrie (une ligne au milieu de chaque bande), compte par espèce (moyenne des espacements voisins, demi-espacement aux bouts), l'espèce convient-elle à la bordure ; pur
+  Temps.php               le temps d'une plante — la semaine (lundi ISO), la fenêtre d'une culture (mise en place → récolte, levée), les périodes du scénario rapportées à la date de plantation, l'échelle (semaine, mois, année) ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
