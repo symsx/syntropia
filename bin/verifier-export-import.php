@@ -104,6 +104,8 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
     $lp->execute([$p1, 'externe:nord', 2, 'Symphytum officinale', 'bocking 14']);
     $lp->execute([$p1, 'interne:est', 1, 'Elaeagnus umbellata', '']);
     $lp->execute([$p1, 'planche:2:2', 1, 'Zea mays', '']);
+    $pdo->prepare("INSERT INTO ligne_calendrier (parcelle_id, emplacement, mise_en_place_prevue, fin_prevue) VALUES (?, 'externe:nord', '2026-11-15', NULL), (?, 'planche:2:2', '2027-05-15', '2027-09-25')")->execute([$p1, $p1]);
+    $pdo->prepare("INSERT INTO perturbation_prevue (parcelle_id, emplacement, date_prevue, geste) VALUES (?, 'externe:nord', '2027-06-10', 'coupe_vert'), (?, 'externe:nord', '2027-12-01', 'taille_hiver')")->execute([$p1, $p1]);
     $pdo->prepare("INSERT INTO parcelle (site_id, code, nom, type) VALUES (?, 'P2', 'Potager', 'potager')")->execute([$siteId]);
     $p2 = (int) $pdo->lastInsertId();
     $ligne = $pdo->prepare('INSERT INTO scenario_ligne (parcelle_id, ordre, strate, espece, origine, espacement_m, nb_pieds, details, couleur_plan, role)

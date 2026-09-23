@@ -114,7 +114,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   point de plantation au sol, sans collision ; les espacements respectés dans une même strate ; le temps en semaines,
   de la germination à la récolte, à l'échelle choisie ; les vides du calendrier montrés et comblés ; un curseur de
   temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées ; **Phases 1 (la compétence)
-  et 2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) faites**, pas déployées.
+  2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) et 2 bis (le calendrier prévisionnel des lignes de service
+  et des bordures : `ligne_calendrier`, `perturbation_prevue` — schéma 14) faites**, pas déployées.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -165,6 +166,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
     Cultures.php             les cultures d'un potager placées par planche (`succession_ligne`), dont leurs fonctions de service (`role`, multivalué comme espece.role) — même conduite qu'Interventions ; appelé par conception-potager.php
     LignesPlantation.php     les lignes de plants d'une parcelle (`ligne_plantation`) — la série d'un côté de bordure réécrite d'un bloc sous verrou de version, et l'état compté pour le plan ; appelé par conception-parcelles.php
+    CalendrierLignes.php     le calendrier PRÉVISIONNEL des lignes (bordures, lignes de service des planches) — mise en place et fin prévues, perturbations prévues en liste de dates ; appelé par conception-parcelles.php et conception-potager.php
     Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte

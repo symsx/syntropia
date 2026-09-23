@@ -1,6 +1,6 @@
 # Chantier — le film de la parcelle : chaque plante à sa place, dans l'espace et dans le temps
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1 et 2 faites le 2026-09-23**, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 2 et 2 bis faites le 2026-09-23**, pas déployées.*
 
 ## L'intention
 
@@ -115,6 +115,23 @@ au référentiel (et Lopez) ; la personne les corrige. Ce sont des prévisions, 
 au temps qu'il fait, et le journal des perturbations garde ce qui a été fait. Un changement de schéma (des dates
 **prévues** sur `ligne_plantation`, et les perturbations prévues en liste de dates) — pensé pour recevoir plus tard, à
 côté de chaque date prévue, sa **date réalisée** (Phase 7).
+
+**Fait le 2026-09-23.** **Schéma 14** : `ligne_calendrier` (une ligne — `externe:nord`, `planche:3:2` — et sa
+`mise_en_place_prevue`, sa `fin_prevue`) et `perturbation_prevue` (une liste : date prévue et geste, ceux du journal sans
+le désherbage) ; deux tables facultatives, couvertes par l'export, l'import et `verifier-export`. `src/Web/CalendrierLignes.php`
+(dates sous verrou de version ; ajouter, retirer une perturbation ; `repere()` : la mise en place — repiquage, à défaut
+semis — et la fin — récolte — tirées du calendrier de l'espèce au référentiel, première espèce de la série qui en a un).
+Sur **« Le plan »**, chaque bordure peuplée a « Le calendrier prévu » : la plantation prévue (proposée d'après le
+référentiel, rien noté avant « Noter »), la liste des perturbations prévues, et le rappel des repères de Théry (ch. 12 :
+la première coupe en vert en juin, les suivantes quand il y a de quoi couper, les tailles de ligneux en hiver hors gel) —
+**l'atelier ne propose pas de dates de perturbation** : le corpus n'en donne pas, seulement des moments. Au **potager**,
+chaque ligne de service reçoit sa mise en place et sa fin prévues dans le panneau « Les lignes » (proposées d'après le
+calendrier de l'espèce, écrites avec les lignes) ; **le calendrier du potager** montre, en clair, les lignes de service et
+les bordures (P mise en place, F fin, T perturbation — prévues) à côté des cultures. Vérifié en local (projet supprimé) :
+date de plantation notée, deux perturbations prévues puis une retirée, geste forgé, date absente et conflit de version
+refusés ; maïs d'une ligne proposé de mi-mai à fin septembre, écrit, fin antérieure refusée ; les rangées du calendrier en
+2026 et 2027 ; lecteur (lecture seule, POST refusé) ; 320×568 ; `verifier-export` identique. **Pas encore fait** : des
+perturbations prévues pour les lignes de service des planches (le maïs central se coupe aussi) — le schéma le permet déjà.
 
 ### Phase 3 — Les points de plantation
 

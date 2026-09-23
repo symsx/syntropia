@@ -30,6 +30,7 @@ use Syntropia\Role;
 use Syntropia\Scenario;
 use Syntropia\Succession;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\CalendrierLignes;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
 use Syntropia\Web\LignesPlantation;
@@ -95,6 +96,7 @@ $libelleNature = static fn (?string $n): string => $n === 'perenne' ? 'pérenne'
 // Les lignes de service de chaque planche (chantier « peuplement de la parcelle », Phase 6) : la planche dont on ouvre les
 // lignes dans le panneau Données, et ce qui est posé.
 $lignesService = new LignesPlantation();
+$calendrierService = new CalendrierLignes();
 $planchesLignes = (int) ($_POST['numero_planche'] ?? $_GET['lignes'] ?? 0);
 $retour = Configuration::base() . 'conception-potager.php?parcelle=' . $idP;
 
@@ -159,6 +161,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
             $choix[(int) $k] = (int) $id;
         }
         $r = $lignesService->enregistrerPlanche($parcelle, $siteId, $planchesLignes, $choix, (string) ($_POST['version_lignes'] ?? ''));
+        // Puis le calendrier prévisionnel de chaque ligne (Phase 2 bis du « film de la parcelle ») ; une ligne laissée vide
+        // perd ses dates.
+        if ($r['ok']) {
+            foreach ($choix as $k => $id) {
+                $mise = $id === 0 ? '' : (string) ($_POST['mise'][$k] ?? '');
+                $fin = $id === 0 ? '' : (string) ($_POST['fin'][$k] ?? '');
+                $rd = $calendrierService->enregistrerDates($idP, LignesPlantation::clePlanche($planchesLignes, $k), $mise, $fin,
+                    (string) ($_POST['version_dates'][$k] ?? ''));
+                if (!$rd['ok']) {
+                    $r = ['ok' => false, 'erreurs' => array_map(static fn (string $e): string => 'Ligne ' . $k . ' : ' . $e, $rd['erreurs'])];
+                    break;
+                }
+            }
+        }
         if ($r['ok']) {
             $_SESSION['syntropia_flash_potager'] = ['ok', 'Les lignes de la planche ' . $planchesLignes . ' sont notées.'];
             header('Location: ' . $retour . '&lignes=' . $planchesLignes);
@@ -207,7 +223,19 @@ if ($parcelle !== null && $peutEcrire && isset($etatPlanches[$planchesLignes])) 
             $choixLignes[(int) $k] = (int) $id;
         }
     }
-    $panneauLignes = ['numero' => $planchesLignes, 'etat' => $etatP, 'proposition' => $propLignes, 'choix' => $choixLignes,
+    // Les dates prévues de chaque ligne : celles notées, sinon le repère du calendrier de l'espèce choisie (une proposition).
+    $datesLignes = [];
+    $calP = $calendrierService->dUneParcelle($idP)['dates'];
+    $maintenant = new \DateTimeImmutable('today');
+    foreach ($choixLignes as $k => $id) {
+        $notee = $calP[LignesPlantation::clePlanche($planchesLignes, $k)] ?? null;
+        $repere = $id > 0 ? CalendrierLignes::repere([$especesService->parId($id)], $maintenant) : null;
+        $datesLignes[$k] = ['version' => CalendrierLignes::version($notee), 'repere' => $repere,
+            'mise' => (string) ($_POST['mise'][$k] ?? $notee['mise_en_place_prevue'] ?? $repere['mise'] ?? ''),
+            'fin' => (string) ($_POST['fin'][$k] ?? $notee['fin_prevue'] ?? $repere['fin'] ?? ''),
+            'propose' => $notee === null && $repere !== null && !isset($_POST['mise'])];
+    }
+    $panneauLignes = ['numero' => $planchesLignes, 'etat' => $etatP, 'proposition' => $propLignes, 'choix' => $choixLignes, 'dates' => $datesLignes,
         'strates' => array_values(array_unique($strates)), 'depuis_proposition' => $partirDeLaProposition];
 }
 
@@ -350,6 +378,41 @@ foreach ($datees as $c) {
     $lignesCal[] = ['espece' => (string) $c['espece'], 'planche' => $c['planche'], 'debut' => $debut, 'mois' => $mois,
         'titre' => implode(' · ', array_filter([$S !== null ? 'semis ' . $dateFr($S) : '', $P !== null ? 'en place ' . $dateFr($P) : '', $R !== null ? 'récolte ' . $dateFr($R) : '']))];
 }
+// Les lignes de service des planches et les bordures ont aussi leur calendrier prévisionnel (chantier « film de la
+// parcelle », Phase 2 bis) : P mise en place prévue, F fin prévue, T perturbation prévue — des prévisions.
+$calendrierLignes = $parcelle !== null ? $calendrierService->dUneParcelle($idP) : ['dates' => [], 'perturbations' => []];
+$nomsBordures = [];
+foreach ($parcelle !== null ? $lignesService->etat($parcelle, $siteId) : [] as $cle => $b) {
+    $nomsBordures[$cle] = implode(', ', array_column($b['places'], 'nom'));
+}
+foreach (array_unique(array_merge(array_keys($calendrierLignes['dates']), array_keys($calendrierLignes['perturbations']))) as $cle) {
+    $dl = $calendrierLignes['dates'][$cle] ?? null;
+    $P = $dl['mise_en_place_prevue'] ?? null;
+    $F = $dl['fin_prevue'] ?? null;
+    $T = array_map(static fn (array $x): string => (string) $x['date_prevue'], $calendrierLignes['perturbations'][$cle] ?? []);
+    $toutes = array_filter(array_merge([$P, $F], $T));
+    if ($toutes === [] || (int) substr(max($toutes), 0, 4) < $annee && $F !== null || (int) substr(min($toutes), 0, 4) > $annee) {
+        continue;
+    }
+    if (preg_match('/^planche:(\d+):(\d+)$/', (string) $cle, $m) === 1) {
+        $lp = $etatPlanches[(int) $m[1]] ?? null;
+        $nom = ($lp['lignes'][(int) $m[2]]['nom'] ?? 'ligne vide') . ' · ligne ' . (int) $m[2];
+        $planche = (int) $m[1];
+    } else {
+        $nom = \Syntropia\Bordures::libelle((string) $cle) . (($nomsBordures[$cle] ?? '') !== '' ? ' · ' . $nomsBordures[$cle] : '');
+        $planche = null;
+    }
+    $mois = [];
+    for ($mm = 1; $mm <= 12; $mm++) {
+        $ym = sprintf('%04d-%02d', $annee, $mm);
+        $mois[$mm] = ['P' => $P !== null && substr((string) $P, 0, 7) === $ym, 'F' => $F !== null && substr((string) $F, 0, 7) === $ym,
+            'T' => in_array($ym, array_map(static fn (string $x): string => substr($x, 0, 7), $T), true),
+            'occ' => $P !== null && $ym >= substr((string) $P, 0, 7) && ($F === null || $ym <= substr((string) $F, 0, 7))];
+    }
+    $lignesCal[] = ['espece' => $nom, 'planche' => $planche, 'debut' => (string) ($P ?? min($toutes)), 'mois' => $mois, 'service' => true,
+        'titre' => 'Prévu : ' . implode(' · ', array_filter([$P !== null ? 'mise en place ' . $dateFr((string) $P) : '', $F !== null ? 'fin ' . $dateFr((string) $F) : '',
+            $T !== [] ? count($T) . ' perturbation' . (count($T) > 1 ? 's' : '') : '']))];
+}
 usort($lignesCal, static fn (array $a, array $b): int => [$a['planche'] ?? PHP_INT_MAX, $a['debut'], mb_strtolower($a['espece'])] <=> [$b['planche'] ?? PHP_INT_MAX, $b['debut'], mb_strtolower($b['espece'])]);
 $sansDate = count($cultures) - count($datees);
 $lienCal = static fn (int $a): string => $retour . '&vue=calendrier&annee=' . $a;
@@ -417,6 +480,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-cal th:first-child{ text-align:left; width:30%; }
   .pt-cal td{ text-align:center; padding:.22em .05em; border-bottom:1px solid var(--line); font:600 .78em var(--titre); color:var(--bouton-encre); }
   .pt-cal td.occ{ background:var(--accent); }
+  .pt-cal td.occ-service{ background:var(--accent-doux); color:var(--ink); }
   .pt-cal td.nom{ text-align:left; background:transparent; color:var(--ink); font:400 1em var(--texte); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:.2em; }
   .pt-cal td.nom small{ color:var(--muted); font-size:.8em; }
   @media (max-width:40rem){ .pt-legende{ display:none; } .pt-cal th:first-child{ width:34%; } }
@@ -683,20 +747,20 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <section class="pt-vue"<?= $vue === 'calendrier' ? '' : ' hidden' ?>>
           <div class="pt-annees">
             <a href="<?= $h($lienCal($annee - 1)) ?>" aria-label="Année précédente">←</a> <b><?= $annee ?></b> <a href="<?= $h($lienCal($annee + 1)) ?>" aria-label="Année suivante">→</a>
-            <span class="pt-legende"><b>S</b> semis à l'abri · <b>P</b> mise en place (semis en place ou repiquage) · <b>R</b> récolte</span>
+            <span class="pt-legende"><b>S</b> semis à l'abri · <b>P</b> mise en place (semis en place ou repiquage) · <b>R</b> récolte · en clair, les lignes de service et les bordures : <b>F</b> fin, <b>T</b> perturbation — prévues</span>
           </div>
 <?php if ($lignesCal === []): ?>
           <p class="pt-vide-page"><?= $datees === [] ? 'Aucune culture n’est encore datée. Notez un semis, une mise en place ou une récolte pour la voir ici.' : 'Aucune culture n’a de date en ' . $annee . '.' ?></p>
 <?php else: ?>
           <div class="pt-zone" id="pt-cal-zone">
             <table class="pt-cal">
-              <thead><tr><th>Culture</th><?php foreach ($initiales12 as $i => $lettre): ?><th title="<?= $h(['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][$i]) ?>"><?= $lettre ?></th><?php endforeach; ?></tr></thead>
+              <thead><tr><th>Culture ou ligne</th><?php foreach ($initiales12 as $i => $lettre): ?><th title="<?= $h(['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][$i]) ?>"><?= $lettre ?></th><?php endforeach; ?></tr></thead>
               <tbody>
 <?php foreach ($lignesCal as $l): ?>
                 <tr class="pt-ligne" title="<?= $h($l['titre']) ?>">
                   <td class="nom"><?= $l['planche'] !== null ? '<small>P' . (int) $l['planche'] . '</small> ' : '' ?><?= $h($l['espece']) ?></td>
-<?php foreach ($l['mois'] as $c): $lettres = ($c['S'] ? 'S' : '') . ($c['P'] ? 'P' : '') . ($c['R'] ? 'R' : ''); ?>
-                  <td class="<?= $c['occ'] || $lettres !== '' ? 'occ' : '' ?>"><?= $h($lettres) ?></td>
+<?php foreach ($l['mois'] as $c): $lettres = (!empty($c['S']) ? 'S' : '') . ($c['P'] ? 'P' : '') . (!empty($c['R']) ? 'R' : '') . (!empty($c['F']) ? 'F' : '') . (!empty($c['T']) ? 'T' : ''); ?>
+                  <td class="<?= $c['occ'] || $lettres !== '' ? (!empty($l['service']) ? 'occ occ-service' : 'occ') : '' ?>"><?= $h($lettres) ?></td>
 <?php endforeach; ?>
                 </tr>
 <?php endforeach; ?>
@@ -792,6 +856,17 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
                 </optgroup>
               </select></label>
             <small class="pt-note"><?= $h($l['raison']) ?></small>
+<?php $dl = $pl['dates'][$k]; ?>
+            <input type="hidden" name="version_dates[<?= $k ?>]" value="<?= $h($dl['version']) ?>">
+            <div class="pt-deux" style="margin-top:.3rem">
+              <label class="pt-champ">Mise en place prévue
+                <input type="date" name="mise[<?= $k ?>]" value="<?= $h($dl['mise']) ?>"></label>
+              <label class="pt-champ">Fin prévue
+                <input type="date" name="fin[<?= $k ?>]" value="<?= $h($dl['fin']) ?>"></label>
+            </div>
+<?php if ($dl['propose']): ?>
+            <small class="pt-note">Dates proposées d'après le calendrier de <?= $h($dl['repere']['espece']) ?> dans Espèces — une prévision, à corriger.</small>
+<?php endif; ?>
           </div>
 <?php endforeach; ?>
           <button type="submit" class="pt-bouton">Enregistrer les lignes</button>

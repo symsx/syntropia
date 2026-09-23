@@ -14,6 +14,7 @@ use Syntropia\Role;
 use Syntropia\Stade;
 use Syntropia\Tortue;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\CalendrierLignes;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\LignesPlantation;
@@ -98,6 +99,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
             exit;
         }
+    } elseif (in_array($action, ['bordure_date', 'perturbation_ajouter', 'perturbation_retirer'], true)) {
+        // Le calendrier prévisionnel d'une bordure (chantier « film de la parcelle », Phase 2 bis) : sa plantation prévue,
+        // ses perturbations prévues — une liste de dates, chacune avec son geste.
+        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
+        $emplacement = (string) ($_POST['emplacement'] ?? '');
+        $cal = new CalendrierLignes();
+        if ($parcellesService->parId($parcelleId, $siteId) === null) {
+            $r = ['ok' => false, 'erreurs' => ['parcelle' => 'Cette parcelle n’appartient pas à ce projet.']];
+        } elseif (Bordures::depuisCle($emplacement) === null) {
+            $r = ['ok' => false, 'erreurs' => ['emplacement' => 'Cette bordure n’existe pas.']];
+        } elseif ($action === 'bordure_date') {
+            $r = $cal->enregistrerDates($parcelleId, $emplacement, (string) ($_POST['mise_en_place_prevue'] ?? ''), '', (string) ($_POST['version_dates'] ?? ''));
+        } elseif ($action === 'perturbation_ajouter') {
+            $r = $cal->ajouterPerturbation($parcelleId, $emplacement, (string) ($_POST['date_prevue'] ?? ''), (string) ($_POST['geste'] ?? ''));
+        } else {
+            $cal->retirerPerturbation((int) ($_POST['perturbation_id'] ?? 0), $parcelleId);
+            $r = ['ok' => true, 'erreurs' => []];
+        }
+        if ($r['ok']) {
+            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId . '&bordure=' . rawurlencode($emplacement));
+            exit;
+        }
+        $erreursLigne[$emplacement] = implode(' ', $r['erreurs']);
     } elseif ($action === 'ligne_bordure') {
         // La ligne d'un côté de bordure : la série telle qu'affichée, et un geste — ajouter une espèce au bout,
         // retirer une place, vider. Toute la série est réécrite d'un bloc, sous le verrou de sa version.
@@ -227,12 +251,14 @@ if ($parcelleActive !== null) {
 // l'écran sans être enregistrés ; conception-parcelles.js masque alors les plants et suspend la saisie.
 $lignesBordures = [];
 $especesSite = [];
+$calendrierBordures = ['dates' => [], 'perturbations' => []];
 $bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string) array_key_first($erreursLigne) : ''));
 // La bordure dont on regarde la proposition (Phase 3) — rien ne s'écrit avant « Poser cette série ».
 $bordureProposee = ($_GET['proposer'] ?? '') === '1' ? $bordureOuverte : '';
 if ($parcelleActive !== null && !$demandeNouvelle) {
     $lignesBordures = $lignesService->etat($parcelleActive, $siteId);
     $especesSite = (new Especes())->toutes($siteId);
+    $calendrierBordures = (new CalendrierLignes())->dUneParcelle((int) $parcelleActive['id']);
 }
 $couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53'];
 $plantsDessin = [];
@@ -321,6 +347,10 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .bl-bouton[disabled], .bl-cote.bl-suspendu .bl-bouton, .bl-cote.bl-suspendu .bl-retirer{ opacity:.45; pointer-events:none; }
   .bl-alerte{ color:var(--alerte); font:400 .78rem var(--texte); margin:.3rem 0 0; }
   #bl-suspendu{ color:var(--alerte); }
+  .bl-calendrier{ border-top:1px dashed var(--line); margin-top:.5rem; }
+  .bl-date{ display:flex; flex-direction:column; gap:.15rem; font:400 .78rem var(--texte); color:var(--muted); flex:1; }
+  .bl-ajout input[type=date]{ padding:.25rem .3rem; font:400 .8rem var(--texte); color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:.4rem; min-width:0; }
+  .bl-ajout{ flex-wrap:wrap; }
   .bl-proposer{ display:inline-block; margin:.2rem 0 .3rem; font:500 .8rem var(--texte); color:var(--accent); }
   .bl-proposition{ border-top:1px dashed var(--line); margin-top:.4rem; }
   .bl-choix{ list-style:none; margin:.3rem 0; padding:0; display:flex; flex-direction:column; gap:.3rem; }
@@ -809,6 +839,68 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
             <button type="submit" name="geste" value="vider" class="bl-retirer" style="margin-top:.3rem">Vider la ligne</button>
 <?php endif; ?>
           </form>
+<?php endif; ?>
+<?php if ($lb['places'] !== []):
+    $dc = $calendrierBordures['dates'][$cle] ?? null;
+    $pp = $calendrierBordures['perturbations'][$cle] ?? [];
+    $idsSerie = array_filter(array_column($lb['places'], 'id'));
+    $repere = $dc === null ? CalendrierLignes::repere(array_map(static fn (int $i): ?array => (new Especes())->parId($i), $idsSerie), new \DateTimeImmutable('today')) : null; ?>
+          <div class="bl-calendrier">
+            <p class="pd-titre" style="margin-top:.5rem">Le calendrier prévu</p>
+            <p class="pd-note">Des prévisions : la date réelle se donnera à la Réalisation, et le jour d'une perturbation
+              s'adaptera au temps qu'il fait — le journal gardera ce qui a été fait.</p>
+<?php if ($peutEcrire): ?>
+            <form method="post" class="bl-ajout">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="action" value="bordure_date">
+              <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+              <input type="hidden" name="emplacement" value="<?= htmlspecialchars($cle, ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="version_dates" value="<?= htmlspecialchars(CalendrierLignes::version($dc), ENT_QUOTES, 'UTF-8') ?>">
+              <label class="bl-date">Plantation prévue
+                <input type="date" name="mise_en_place_prevue" value="<?= htmlspecialchars((string) ($dc['mise_en_place_prevue'] ?? $repere['mise'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"></label>
+              <button type="submit" class="bl-bouton">Noter</button>
+            </form>
+<?php if ($repere !== null): ?>
+            <p class="pd-note">Date proposée d'après le calendrier de <?= htmlspecialchars($repere['espece'], ENT_QUOTES, 'UTF-8') ?> dans Espèces — rien n'est noté avant « Noter ».</p>
+<?php endif; ?>
+<?php else: ?>
+            <p class="pd-note">Plantation prévue : <?= $dc !== null && $dc['mise_en_place_prevue'] !== null ? htmlspecialchars((string) $dc['mise_en_place_prevue'], ENT_QUOTES, 'UTF-8') : 'pas encore notée' ?>.</p>
+<?php endif; ?>
+<?php if ($pp !== []): ?>
+            <ol class="bl-serie">
+<?php foreach ($pp as $x): ?>
+              <li><span><?= htmlspecialchars((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y'), ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars(CalendrierLignes::libelleGeste((string) $x['geste']), ENT_QUOTES, 'UTF-8') ?></span>
+<?php if ($peutEcrire): ?>
+                <form method="post" style="margin-left:auto">
+                  <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+                  <input type="hidden" name="action" value="perturbation_retirer">
+                  <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+                  <input type="hidden" name="emplacement" value="<?= htmlspecialchars($cle, ENT_QUOTES, 'UTF-8') ?>">
+                  <input type="hidden" name="perturbation_id" value="<?= (int) $x['id'] ?>">
+                  <button type="submit" class="bl-retirer" aria-label="Retirer cette perturbation prévue">✕</button>
+                </form>
+<?php endif; ?></li>
+<?php endforeach; ?>
+            </ol>
+<?php endif; ?>
+<?php if ($peutEcrire): ?>
+            <form method="post" class="bl-ajout">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="action" value="perturbation_ajouter">
+              <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+              <input type="hidden" name="emplacement" value="<?= htmlspecialchars($cle, ENT_QUOTES, 'UTF-8') ?>">
+              <input type="date" name="date_prevue" aria-label="Date prévue de la perturbation">
+              <select name="geste" aria-label="Geste prévu">
+<?php foreach (CalendrierLignes::GESTES as $g): ?>
+                <option value="<?= $g ?>"><?= htmlspecialchars(CalendrierLignes::libelleGeste($g), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+              </select>
+              <button type="submit" class="bl-bouton">Prévoir</button>
+            </form>
+            <p class="pd-note">Repères de Théry (ch. 12) : la première coupe en vert en juin, les suivantes quand il y a de quoi
+              couper ; les tailles de ligneux en hiver, hors gel — à recaler sur l'état des bourgeons de votre lieu.</p>
+<?php endif; ?>
+          </div>
 <?php endif; ?>
         </details>
 <?php endforeach; ?>

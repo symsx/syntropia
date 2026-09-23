@@ -154,7 +154,9 @@ ouvre la proposition de l'atelier — la biomasse sur la ligne centrale (émerge
 tuteurs), puis les strates que les productions laissent vides, les plus hautes près du centre (la forme
 pyramidale), une espèce par ligne, celles du cycle qui convient à la planche d'abord. Vous gardez ou changez
 chaque choix ; l'atelier compte les plants de chaque ligne d'après l'espacement de l'espèce, et chaque planche
-résume ses lignes. La strate d'une production se lit dans ce que vous avez saisi, à défaut dans **Espèces** ;
+résume ses lignes. Chaque ligne y reçoit aussi sa **mise en place et sa fin prévues**, proposées d'après
+le calendrier de l'espèce ; le calendrier du potager les montre, en clair, à côté des cultures, avec les
+bordures et leurs perturbations prévues. La strate d'une production se lit dans ce que vous avez saisi, à défaut dans **Espèces** ;
 inconnue, elle ne compte pas.
 
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
@@ -170,6 +172,11 @@ moyenne de leurs espacements, et à chaque bout la moitié du sien — et les de
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
 bordures, les plants se recomptent quand le plan est de nouveau enregistré. Dans le scénario, une plante
 déclarée « en bordure » renvoie à ces lignes : c'est leur compte qui fait foi.
+
+Chaque bordure a aussi son **calendrier prévu** : la date de plantation (l'atelier la propose d'après le
+calendrier de ses espèces dans **Espèces**, quand il le connaît) et une liste de **perturbations prévues**, chacune
+une date et un geste. Ce sont des prévisions : la date réelle se donnera à la Réalisation, et le jour d'une
+perturbation s'adaptera au temps qu'il fait — le journal gardera ce qui a été fait.
 
 Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les

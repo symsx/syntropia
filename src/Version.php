@@ -45,8 +45,9 @@ final class Version
      * Lopez (trois colonnes facultatives, idem). 11 : `parcelle.tortue`, le type de tortue, et `espece.cycle`, le cycle
      * de vie (deux colonnes facultatives, idem). 12 : la table `ligne_plantation`, les lignes de plants des bordures
      * (table facultative, idem). 13 : `espece.delai_germination_j`, le délai de germination (colonne facultative, idem).
+     * 14 : les tables `ligne_calendrier` et `perturbation_prevue`, le calendrier prévisionnel des lignes (facultatives, idem).
      */
-    public const SCHEMA = 13;
+    public const SCHEMA = 14;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

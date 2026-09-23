@@ -711,6 +711,44 @@ CREATE TABLE IF NOT EXISTS `ligne_plantation` (
 
 
 -- ---------------------------------------------------------------------
+-- LE CALENDRIER PRÉVISIONNEL DES LIGNES — schéma 14, 2026-09-23 (chantier-film-de-la-parcelle.md, Phase 2 bis)
+--
+-- Une ligne de plants (un côté de bordure, `externe:nord`… ; une ligne de service d'une planche, `planche:3:2`) a sa
+-- date de mise en place PRÉVUE (plantation ou semis) et, pour une ligne de planche, sa fin prévue. Ce sont des
+-- PRÉVISIONS, en Conception (le porteur, 2026-09-23) : la date réelle se donne en Réalisation, et le Suivi recale le
+-- calendrier sur l'avancement réel — d'où `_prevue` dans les noms : une date réalisée viendra à côté, sans l'écraser.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ligne_calendrier` (
+  `id`                   INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parcelle_id`          INT UNSIGNED NOT NULL,
+  `emplacement`          VARCHAR(40) NOT NULL,
+  `mise_en_place_prevue` DATE NULL,
+  `fin_prevue`           DATE NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_ligne_calendrier` (`parcelle_id`, `emplacement`),
+  CONSTRAINT `fk_ligne_calendrier_parcelle` FOREIGN KEY (`parcelle_id`)
+    REFERENCES `parcelle` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- LES PERTURBATIONS PRÉVUES d'une ligne — une LISTE DE DATES, chacune avec son geste (le porteur, 2026-09-23). Le jour
+-- réel s'adapte au jour opportun (la pluie, notamment) ; le journal (`intervention`) garde ce qui a été fait. Mêmes
+-- gestes que le journal (`Perturbation::TYPES`), sauf le désherbage.
+CREATE TABLE IF NOT EXISTS `perturbation_prevue` (
+  `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parcelle_id`  INT UNSIGNED NOT NULL,
+  `emplacement`  VARCHAR(40) NOT NULL,
+  `date_prevue`  DATE NOT NULL,
+  `geste`        ENUM('coupe_vert','taille_hiver','fauche','recepage','affaiblissement') NOT NULL,
+
+  PRIMARY KEY (`id`),
+  KEY `ix_perturbation_prevue` (`parcelle_id`, `emplacement`, `date_prevue`),
+  CONSTRAINT `fk_perturbation_prevue_parcelle` FOREIGN KEY (`parcelle_id`)
+    REFERENCES `parcelle` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+
+-- ---------------------------------------------------------------------
 -- LA SUCCESSION DU POTAGER — `P-modele-potager/succession.csv`
 --
 -- Une saison, deux demi-planches en miroir, deux successions du ch. 8. Ce
@@ -1229,6 +1267,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- colonnes facultatives, idem ;
 -- 12 = la table `ligne_plantation` (les lignes de plants des bordures — table facultative : un fichier sans elle se
 -- charge, ses lignes étant simplement absentes) ;
--- 13 = `espece.delai_germination_j` (le délai de germination d'une annuelle ou bisannuelle — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '13')
+-- 13 = `espece.delai_germination_j` (le délai de germination d'une annuelle ou bisannuelle — colonne facultative, idem) ;
+-- 14 = les tables `ligne_calendrier` et `perturbation_prevue` (le calendrier prévisionnel des lignes — tables
+-- facultatives, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '14')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);
