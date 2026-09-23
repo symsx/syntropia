@@ -130,8 +130,10 @@ calendrier de l'espèce, écrites avec les lignes) ; **le calendrier du potager*
 les bordures (P mise en place, F fin, T perturbation — prévues) à côté des cultures. Vérifié en local (projet supprimé) :
 date de plantation notée, deux perturbations prévues puis une retirée, geste forgé, date absente et conflit de version
 refusés ; maïs d'une ligne proposé de mi-mai à fin septembre, écrit, fin antérieure refusée ; les rangées du calendrier en
-2026 et 2027 ; lecteur (lecture seule, POST refusé) ; 320×568 ; `verifier-export` identique. **Pas encore fait** : des
-perturbations prévues pour les lignes de service des planches (le maïs central se coupe aussi) — le schéma le permet déjà.
+2026 et 2027 ; lecteur (lecture seule, POST refusé) ; 320×568 ; `verifier-export` identique. **Ajouté le même jour, à la
+demande du porteur** : les perturbations prévues des lignes de service des planches (le maïs, le tournesol de la ligne
+centrale), dans le panneau « Les lignes » — la ligne (la centrale par défaut), la date, le geste ; vérifié (deux lignes,
+retrait, ligne forgée refusée, T au calendrier, 320×568).
 
 ### Phase 3 — Les points de plantation
 

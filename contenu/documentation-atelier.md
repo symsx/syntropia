@@ -155,7 +155,8 @@ tuteurs), puis les strates que les productions laissent vides, les plus hautes p
 pyramidale), une espèce par ligne, celles du cycle qui convient à la planche d'abord. Vous gardez ou changez
 chaque choix ; l'atelier compte les plants de chaque ligne d'après l'espacement de l'espèce, et chaque planche
 résume ses lignes. Chaque ligne y reçoit aussi sa **mise en place et sa fin prévues**, proposées d'après
-le calendrier de l'espèce ; le calendrier du potager les montre, en clair, à côté des cultures, avec les
+le calendrier de l'espèce, et ses **perturbations prévues** (le maïs, le tournesol de la ligne centrale se coupent eux
+aussi) ; le calendrier du potager les montre, en clair, à côté des cultures, avec les
 bordures et leurs perturbations prévues. La strate d'une production se lit dans ce que vous avez saisi, à défaut dans **Espèces** ;
 inconnue, elle ne compte pas.
 

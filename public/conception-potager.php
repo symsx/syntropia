@@ -181,6 +181,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
             exit;
         }
         $erreurs += $r['erreurs'];
+    } elseif (in_array($action, ['perturbation_ajouter', 'perturbation_retirer'], true)) {
+        // Les perturbations prévues d'une ligne de service (le maïs, le tournesol de la ligne centrale…) — une liste de
+        // dates, chacune avec son geste (chantier « film de la parcelle », Phase 2 bis).
+        $k = (int) ($_POST['ligne'] ?? 0);
+        $n = \Syntropia\Planches::nombreDeLignes(json_decode((string) ($parcelle['plan'] ?? ''), true), $planchesLignes);
+        if ($planchesLignes < 1 || $planchesLignes > $nbPlanches || $k < 1 || $k > $n) {
+            $erreurs['ligne'] = 'Cette ligne n’existe pas sur la planche.';
+        } else {
+            $emplacement = LignesPlantation::clePlanche($planchesLignes, $k);
+            if ($action === 'perturbation_ajouter') {
+                $r = $calendrierService->ajouterPerturbation($idP, $emplacement, (string) ($_POST['date_prevue'] ?? ''), (string) ($_POST['geste'] ?? ''));
+            } else {
+                $calendrierService->retirerPerturbation((int) ($_POST['perturbation_id'] ?? 0), $idP);
+                $r = ['ok' => true, 'erreurs' => []];
+            }
+            if ($r['ok']) {
+                header('Location: ' . $retour . '&lignes=' . $planchesLignes);
+                exit;
+            }
+            $erreurs += $r['erreurs'];
+        }
     } elseif ($action === 'retirer') {
         $_SESSION['syntropia_flash_potager'] = $culturesService->retirer($editionId, $idP)
             ? ['ok', 'La culture est retirée du plan.']
@@ -497,6 +518,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-lignes a{ margin-left:.3em; color:var(--accent-titre); }
   .pt-ligne-choix{ margin:.5rem 0; padding:.4rem .5rem; border:1px solid var(--line); border-radius:.5rem; }
   .pt-ligne-choix select{ width:100%; margin-top:.25rem; }
+  .pt-perturbations{ margin:.2rem 0 .5rem 1rem; padding:0; font:400 .82rem var(--texte); color:var(--ink); }
   .pt-rel .bien{ color:var(--accent-titre); }
   .pt-rel .eviter{ color:var(--alerte); }
   .pt-rel small{ color:var(--muted); }
@@ -872,6 +894,51 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <button type="submit" class="pt-bouton">Enregistrer les lignes</button>
           <a class="pt-lien" href="<?= $h($retour) ?>" style="margin-left:.6rem">Fermer</a>
         </form>
+<?php $prevues = $calendrierService->dUneParcelle($idP)['perturbations']; $posees = array_filter($pl['etat']['lignes']); ?>
+        <p class="pd-titre" style="margin-top:1rem">Les perturbations prévues</p>
+        <p class="pt-note">Pour les lignes posées — le maïs, le tournesol de la ligne centrale se coupent eux aussi. Des
+          prévisions : le jour réel s'adapte au temps qu'il fait, et le journal garde ce qui a été fait. Repères de Théry
+          (ch. 12) : la première coupe en vert en juin, les suivantes quand il y a de quoi couper.</p>
+<?php if ($posees === []): ?>
+        <p class="pt-note">Posez d'abord une plante sur une ligne, puis prévoyez ses coupes.</p>
+<?php else: ?>
+<?php foreach ($posees as $k => $pose): $liste = $prevues[LignesPlantation::clePlanche((int) $pl['numero'], (int) $k)] ?? []; if ($liste === []) { continue; } ?>
+        <p class="pt-note"><b>Ligne <?= (int) $k ?> · <?= $h($pose['nom']) ?></b></p>
+        <ul class="pt-perturbations">
+<?php foreach ($liste as $x): ?>
+          <li><?= $h((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y')) ?> — <?= $h(CalendrierLignes::libelleGeste((string) $x['geste'])) ?>
+            <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>" style="display:inline">
+              <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
+              <input type="hidden" name="action" value="perturbation_retirer">
+              <input type="hidden" name="numero_planche" value="<?= (int) $pl['numero'] ?>">
+              <input type="hidden" name="ligne" value="<?= (int) $k ?>">
+              <input type="hidden" name="perturbation_id" value="<?= (int) $x['id'] ?>">
+              <button type="submit" class="pt-lien" aria-label="Retirer cette perturbation prévue">✕</button>
+            </form></li>
+<?php endforeach; ?>
+        </ul>
+<?php endforeach; ?>
+        <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>" class="pt-deux">
+          <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
+          <input type="hidden" name="action" value="perturbation_ajouter">
+          <input type="hidden" name="numero_planche" value="<?= (int) $pl['numero'] ?>">
+          <label class="pt-champ">La ligne
+            <select name="ligne">
+<?php foreach ($posees as $k => $pose): ?>
+              <option value="<?= (int) $k ?>"<?= $k === \Syntropia\Planches::centrale(count($pl['etat']['lignes'])) + 1 ? ' selected' : '' ?>>Ligne <?= (int) $k ?> · <?= $h($pose['nom']) ?></option>
+<?php endforeach; ?>
+            </select></label>
+          <label class="pt-champ">La date prévue
+            <input type="date" name="date_prevue"></label>
+          <label class="pt-champ">Le geste
+            <select name="geste">
+<?php foreach (CalendrierLignes::GESTES as $g): ?>
+              <option value="<?= $g ?>"><?= $h(CalendrierLignes::libelleGeste($g)) ?></option>
+<?php endforeach; ?>
+            </select></label>
+          <button type="submit" class="pt-bouton" style="align-self:end">Prévoir</button>
+        </form>
+<?php endif; ?>
 <?php else: ?>
         <p class="pd-titre"><?= $editionId > 0 ? 'Corriger la culture' : 'Ajouter une culture' ?> — <?= $h($parcelle['code']) ?></p>
         <p class="pt-note"><b>À quoi elle sert</b> : à placer chaque culture sur une planche, pour que ce qui s'entend bien soit voisin et que l'on évite ce qui s'entend mal. Seul le nom est demandé ; la planche, la strate et les dates viennent quand on les connaît.</p>
