@@ -166,7 +166,7 @@ puis ajuster.
 température du sol qui permet le semis, de 0 à 40 °C : un champ dans Espèces, une colonne du modèle CSV ; le cadre porte
 les deux valeurs du corpus, maïs 6 °C et tournesol 5 °C, Théry ch. 9). Le porteur a aussi demandé de retirer
 `espece.origine` « si cela n'a pas d'utilité » : elle en a une — « Matériel et eau » range par elle les plants posés
-sur les lignes du plan (bordures, lignes de service) — et reste donc, en attendant sa réponse.
+sur les lignes du plan (bordures, lignes de service) — **le porteur a décidé de la garder** (2026-09-23).
 
 La page Réalisation reçoit **la date réelle** de chaque mise en place (une culture, une ligne de service, une bordure),
 à côté de la date prévue ; le Suivi **recale** le calendrier sur ce qui s'est réellement passé (les cultures suivantes
