@@ -148,6 +148,15 @@ met une plante pérenne sur une planche pérenne, une annuelle sur une annuelle 
 espèce dans **Espèces** ; en abeille, elle la met dans la bande de sa nature, que vous pouvez aussi choisir
 à la main. Une plante dont le cycle n'est pas noté se place n'importe où.
 
+Une fois les productions placées, **les lignes de chaque planche reçoivent les plantes de service** : les
+productions se plantent de part et d'autre. Dans le plan de culture du potager, « Les lignes » d'une planche
+ouvre la proposition de l'atelier — la biomasse sur la ligne centrale (émergente de préférence, jamais de
+tuteurs), puis les strates que les productions laissent vides, les plus hautes près du centre (la forme
+pyramidale), une espèce par ligne, celles du cycle qui convient à la planche d'abord. Vous gardez ou changez
+chaque choix ; l'atelier compte les plants de chaque ligne d'après l'espacement de l'espèce, et chaque planche
+résume ses lignes. La strate d'une production se lit dans ce que vous avez saisi, à défaut dans **Espèces** ;
+inconnue, elle ne compte pas.
+
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
 sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent,
 l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste, et « Proposer les

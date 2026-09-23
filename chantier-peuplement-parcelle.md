@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis, 2, 3, 4 et 5 faites le 2026-09-23**, commitées, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1 à 6 faites le 2026-09-23**, commitées, pas déployées ; la Phase 7 (Matériel et eau) reste.*
 
 ## L'intention
 
@@ -279,6 +279,26 @@ Pour chaque planche : lire les strates des productions placées, proposer une es
 référentiel (`role`, `strates_possibles`), avec le nombre de plants ou de poquets de la ligne. Même
 geste qu'en Phase 3 : aperçu, raison, accord. Les règles viennent de la Phase 1 ; une règle absente
 se dit (« pas encore de repère »).
+
+**Décision du porteur (2026-09-23)** : les lignes d'une planche portent les plantes de service, **les productions se
+plantent de part et d'autre** (Joala, module 5 : une tranchée centrale, les productions de part et d'autre ; précisions
+dans la formation — seules les synthèses du module 5 sont lues, à la demande du porteur).
+
+**Fait le 2026-09-23.** `src/LignesDeService.php` (pur) : la ligne centrale reçoit la biomasse (émergente d'abord) ; les
+strates que les productions de la planche laissent vides se posent de la ligne la plus proche du centre vers les bords,
+de la plus haute à la plus basse (la forme pyramidale, Théry ch. 8 § 5) ; une espèce par ligne (ch. 8 § 8) ; les espèces
+du cycle qui convient à la ligne passent d'abord (planche ordinaire : annuelle ; zèbre : la nature de la planche ;
+abeille : celle de la bande, la ligne médiane annuelle, ch. 15 § 8) — préférence, non exclusion. La strate d'une
+production : celle saisie, à défaut `strates_possibles` au référentiel. `LignesPlantation::enregistrerPlanche()` —
+`ligne_plantation`, emplacement `planche:N:K`, une place par ligne, toutes les lignes d'une planche réécrites sous une
+seule version ; `etatPlanches()` compte les plants (longueur de la planche, espacement de l'espèce). Sur le potager :
+chaque planche résume ses lignes (« 3* Maïs (14) ») ; « Les lignes » ouvre, dans le panneau Données, un choix par ligne
+— la proposition si rien n'est posé (ou « Reprendre la proposition »), les candidates en tête, toutes les espèces
+ensuite. **Aucun changement de schéma.** Limite : une parcelle **pérenne** (scénario) ne place pas ses productions
+par planche — cette étape n'y est pas encore. Vérifié en local (projet supprimé) : courgette (moyenne) et tomate (haute
+au référentiel) sur une planche de 5 lignes → maïs au centre (14 plants sur 7,2 m), consoude sur la ligne voisine (18),
+les autres vides, enregistré et résumé ; conflit de version, espèce étrangère, ligne hors planche refusés ; lecteur
+(résumé seul) ; 320×568 ; `verifier-export` identique (la fixture porte une ligne de planche).
 
 ### Phase 7 — Matériel et eau, livret
 

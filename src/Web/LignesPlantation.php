@@ -9,7 +9,8 @@ use Syntropia\Bordures;
 use Syntropia\Database;
 
 /**
- * Les lignes de plants d'une parcelle (`ligne_plantation`) — pour l'instant celles des bordures.
+ * Les lignes de plants d'une parcelle (`ligne_plantation`) — celles des bordures (Phase 2) et les lignes de service des
+ * planches (Phase 6).
  *
  * Voir `chantier-peuplement-parcelle.md`, Phase 2. Une ligne = une série ordonnée d'espèces du référentiel, un
  * enregistrement par place (`rang`). Même conduite que `Interventions` : l'appartenance de la parcelle au site se
@@ -93,6 +94,112 @@ final class LignesPlantation
             throw $e;
         }
         return ['ok' => true, 'erreurs' => []];
+    }
+
+    /** La clé d'une ligne de planche : `planche:3:2` — planche 3, deuxième ligne (d'ouest en est, ou du nord au sud). */
+    public static function clePlanche(int $numero, int $ligne): string
+    {
+        return "planche:$numero:$ligne";
+    }
+
+    /**
+     * Les lignes de service d'une planche (Phase 6) : une espèce par ligne (« une ligne, une espèce », Théry ch. 8),
+     * toutes réécrites d'un bloc, sous la version de l'ensemble des lignes de la planche.
+     *
+     * @param array<int, int> $choix numéro de ligne (de 1) → identifiant d'espèce du référentiel ; 0 : la ligne reste vide
+     * @return array{ok: bool, erreurs: array<string, string>}
+     */
+    public function enregistrerPlanche(array $parcelle, int $siteId, int $numero, array $choix, string $versionRecue): array
+    {
+        $parcelleId = (int) $parcelle['id'];
+        $nbPlanches = (int) ($parcelle['nb_planches'] ?? 0);
+        if ($numero < 1 || $numero > $nbPlanches) {
+            return ['ok' => false, 'erreurs' => ['planche' => 'Cette planche n’existe pas au plan.']];
+        }
+        $n = \Syntropia\Planches::nombreDeLignes(json_decode((string) ($parcelle['plan'] ?? ''), true), $numero);
+        $places = [];
+        foreach ($choix as $ligne => $id) {
+            $ligne = (int) $ligne;
+            if ($ligne < 1 || $ligne > $n) {
+                return ['ok' => false, 'erreurs' => ['ligne' => 'La planche ' . $numero . ' compte ' . $n . ' lignes.']];
+            }
+            if ((int) $id === 0) {
+                continue;
+            }
+            $e = $this->especes()->parId((int) $id);
+            if ($e === null || !in_array((int) $e['site_id'], [0, $siteId], true)) {
+                return ['ok' => false, 'erreurs' => ['serie' => 'Une espèce choisie n’est pas dans le référentiel de ce projet.']];
+            }
+            $places[$ligne] = [(string) $e['nom_scientifique'], (string) $e['variete']];
+        }
+        $prefixe = 'planche:' . $numero . ':';
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $req = $pdo->prepare('SELECT * FROM ligne_plantation WHERE parcelle_id = ? AND emplacement LIKE ? ORDER BY emplacement, rang FOR UPDATE');
+            $req->execute([$parcelleId, $prefixe . '%']);
+            if (!hash_equals(self::versionPlanche($req->fetchAll()), $versionRecue)) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['version' => 'Les lignes de cette planche ont changé depuis que vous les avez ouvertes : rechargez la page, puis refaites votre choix.']];
+            }
+            $pdo->prepare('DELETE FROM ligne_plantation WHERE parcelle_id = ? AND emplacement LIKE ?')->execute([$parcelleId, $prefixe . '%']);
+            $ins = $pdo->prepare('INSERT INTO ligne_plantation (parcelle_id, emplacement, rang, nom_scientifique, variete) VALUES (?, ?, 1, ?, ?)');
+            foreach ($places as $ligne => [$nom, $variete]) {
+                $ins->execute([$parcelleId, self::clePlanche($numero, $ligne), $nom, $variete]);
+            }
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+        return ['ok' => true, 'erreurs' => []];
+    }
+
+    /** @param list<array<string, mixed>> $lignes toutes les lignes d'une planche */
+    public static function versionPlanche(array $lignes): string
+    {
+        $cles = array_map(static fn (array $l): array => [(string) $l['emplacement'], (string) $l['nom_scientifique'], (string) $l['variete']], $lignes);
+        return hash('sha256', json_encode($cles, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+    }
+
+    /**
+     * Les lignes de service de chaque planche d'une parcelle, résolues au référentiel et comptées sur la longueur de la
+     * planche (Phase 6).
+     *
+     * @return array<int, array{version: string, lignes: array<int, ?array{nom: string, espece: ?array, espacement: ?float, compte: ?int}>}>
+     *         numéro de planche → ses lignes (de 1), `null` pour une ligne vide
+     */
+    public function etatPlanches(array $parcelle, int $siteId): array
+    {
+        $series = $this->dUneParcelle((int) $parcelle['id']);
+        $out = [];
+        foreach (\Syntropia\Planches::dUneParcelle($parcelle) as $p) {
+            $brutes = [];
+            $lignes = [];
+            foreach ($p['lignes'] as $l) {
+                $cle = self::clePlanche($p['numero'], $l['indice'] + 1);
+                $place = $series[$cle][0] ?? null;
+                if ($place === null) {
+                    $lignes[$l['indice'] + 1] = null;
+                    continue;
+                }
+                $brutes[] = $place;
+                $e = $this->especes()->parNom((string) $place['nom_scientifique'], (string) $place['variete'], $siteId);
+                $esp = $e !== null && $e['espacement_retenu_m'] !== null ? (float) $e['espacement_retenu_m'] : null;
+                $compte = $esp !== null ? Bordures::compter($p['longueur'], [$esp]) : null;
+                $lignes[$l['indice'] + 1] = ['nom' => $e !== null ? (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) : (string) $place['nom_scientifique'],
+                    'espece' => $e, 'espacement' => $esp, 'compte' => $compte !== null && $compte['ok'] ? $compte['total'] : null];
+            }
+            // Des lignes enregistrées au-delà du nombre actuel de la planche comptent dans la version (on les efface en réécrivant).
+            foreach ($series as $cle => $places) {
+                if (str_starts_with($cle, 'planche:' . $p['numero'] . ':') && !in_array($places[0], $brutes, true)) {
+                    $brutes[] = $places[0];
+                }
+            }
+            usort($brutes, static fn (array $a, array $b): int => [$a['emplacement'], $a['rang']] <=> [$b['emplacement'], $b['rang']]);
+            $out[$p['numero']] = ['version' => self::versionPlanche($brutes), 'lignes' => $lignes, 'longueur' => $p['longueur']];
+        }
+        return $out;
     }
 
     /**

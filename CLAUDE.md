@@ -101,8 +101,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   le 2026-09-23 ; **Phases 1 (le nœud `skills-map/nodes/conception-de-la-tortue.md`) et 1 bis (`parcelle.tortue`,
   `espece.cycle`, schéma 11), 2 (les bordures peuplées : `ligne_plantation`, schéma 12) et 3 (proposer toutes les
   espèces qui remplissent la fonction de la bordure, hors annuelles), 4 (les lignes de chaque planche, `Planches.php`)
-  et 5 (planches pérennes et annuelles en zèbre, bandes en abeille, respectées par le placement du potager) faites le
-  jour même**,
+  5 (planches pérennes et annuelles en zèbre, bandes en abeille, respectées par le placement du potager) et 6 (les
+  plantes de service proposées sur les lignes des planches, `LignesDeService.php`) faites le jour même** — reste la
+  Phase 7 (Matériel et eau),
   commitées, pas déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,
@@ -142,6 +143,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
   Planches.php            les planches d'une parcelle et leurs lignes de plantation (port de planchesLayout(), 3 lignes par défaut, la centrale) ; pur
+  LignesDeService.php     propose les plantes de service des lignes d'une planche — biomasse au centre, strates vides en pyramide, une espèce par ligne ; pur
   Bordures.php            les lignes de plants des bordures — géométrie (une ligne au milieu de chaque bande), compte par espèce (moyenne des espacements voisins, demi-espacement aux bouts), l'espèce convient-elle à la bordure ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur

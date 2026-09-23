@@ -23,6 +23,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Associations;
 use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
+use Syntropia\LignesDeService;
 use Syntropia\PlanDeCulture;
 use Syntropia\Planches;
 use Syntropia\Role;
@@ -31,6 +32,7 @@ use Syntropia\Succession;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
+use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Sites;
 
@@ -90,6 +92,10 @@ $natureCulture = static function (string $espece) use (&$naturesCultures, $espec
     return $naturesCultures[$cle];
 };
 $libelleNature = static fn (?string $n): string => $n === 'perenne' ? 'pérenne' : 'annuelle';
+// Les lignes de service de chaque planche (chantier « peuplement de la parcelle », Phase 6) : la planche dont on ouvre les
+// lignes dans le panneau Données, et ce qui est posé.
+$lignesService = new LignesPlantation();
+$planchesLignes = (int) ($_POST['numero_planche'] ?? $_GET['lignes'] ?? 0);
 $retour = Configuration::base() . 'conception-potager.php?parcelle=' . $idP;
 
 $erreurs = [];
@@ -147,6 +153,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
             header('Location: ' . $retour);
             exit;
         }
+    } elseif ($action === 'lignes_planche') {
+        $choix = [];
+        foreach (is_array($_POST['choix'] ?? null) ? $_POST['choix'] : [] as $k => $id) {
+            $choix[(int) $k] = (int) $id;
+        }
+        $r = $lignesService->enregistrerPlanche($parcelle, $siteId, $planchesLignes, $choix, (string) ($_POST['version_lignes'] ?? ''));
+        if ($r['ok']) {
+            $_SESSION['syntropia_flash_potager'] = ['ok', 'Les lignes de la planche ' . $planchesLignes . ' sont notées.'];
+            header('Location: ' . $retour . '&lignes=' . $planchesLignes);
+            exit;
+        }
+        $erreurs += $r['erreurs'];
     } elseif ($action === 'retirer') {
         $_SESSION['syntropia_flash_potager'] = $culturesService->retirer($editionId, $idP)
             ? ['ok', 'La culture est retirée du plan.']
@@ -160,6 +178,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
 }
 
 $cultures = $parcelle !== null ? $culturesService->dUneParcelle($idP) : [];
+$etatPlanches = $parcelle !== null ? $lignesService->etatPlanches($parcelle, $siteId) : [];
+// Le panneau des lignes d'une planche : ce qui est posé, la proposition (strates vides, biomasse au centre) et les choix.
+$panneauLignes = null;
+if ($parcelle !== null && $peutEcrire && isset($etatPlanches[$planchesLignes])) {
+    $ouvre = true;
+    $strates = [];
+    foreach ($cultures as $c) {
+        if ((int) ($c['planche'] ?? 0) !== $planchesLignes) {
+            continue;
+        }
+        $connues = $c['strate'] !== null ? [(string) $c['strate']]
+            : array_values(array_intersect(LignesDeService::strates($especesService->parNomUsage((string) $c['espece'], $siteId) ?? []), LignesDeService::STRATES));
+        $strates = array_merge($strates, $connues);
+    }
+    $etatP = $etatPlanches[$planchesLignes];
+    $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesService->toutes($siteId), $natures[$planchesLignes] ?? null);
+    // Rien de posé sur la planche, ou « Reprendre la proposition » : les choix partent de la proposition.
+    $partirDeLaProposition = ($_GET['proposer_lignes'] ?? '') === '1' || array_filter($etatP['lignes']) === [];
+    $choixLignes = [];
+    foreach ($propLignes as $l) {
+        $k = $l['indice'] + 1;
+        $pose = $etatP['lignes'][$k] ?? null;
+        $choixLignes[$k] = $partirDeLaProposition ? (int) ($l['proposee']['id'] ?? 0) : (int) ($pose['espece']['id'] ?? 0);
+    }
+    if (isset($_POST['choix']) && is_array($_POST['choix'])) {
+        foreach ($_POST['choix'] as $k => $id) {
+            $choixLignes[(int) $k] = (int) $id;
+        }
+    }
+    $panneauLignes = ['numero' => $planchesLignes, 'etat' => $etatP, 'proposition' => $propLignes, 'choix' => $choixLignes,
+        'strates' => array_values(array_unique($strates)), 'depuis_proposition' => $partirDeLaProposition];
+}
 
 $edition = null;
 if ($saisie === null && $peutEcrire && $parcelle !== null && isset($_GET['culture'])) {
@@ -379,6 +429,10 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   .pt-carte:has(.pt-propose){ border-color:var(--accent); }
   .pt-rel{ margin:.35em 0 0; padding:.3em 0 0; border-top:1px solid var(--line); font:400 .8em/1.35 var(--texte); color:var(--ink); }
   .pt-rel p{ margin:.1em 0; }
+  .pt-lignes{ margin:.3em 0 0; padding:.25em 0 0; border-top:1px dashed var(--line); font:400 .8em/1.35 var(--texte); color:var(--ink); }
+  .pt-lignes a{ margin-left:.3em; color:var(--accent-titre); }
+  .pt-ligne-choix{ margin:.5rem 0; padding:.4rem .5rem; border:1px solid var(--line); border-radius:.5rem; }
+  .pt-ligne-choix select{ width:100%; margin-top:.25rem; }
   .pt-rel .bien{ color:var(--accent-titre); }
   .pt-rel .eviter{ color:var(--alerte); }
   .pt-rel small{ color:var(--muted); }
@@ -604,6 +658,18 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php endif; ?>
               </div>
 <?php endif; ?>
+<?php $lp = $c['numero'] !== null ? ($etatPlanches[$c['numero']] ?? null) : null; if ($lp !== null): ?>
+              <p class="pt-lignes"><small>Lignes de service : <?php
+                $morceaux = [];
+                foreach ($lp['lignes'] as $k => $l) {
+                    $morceaux[] = $k . ($k === \Syntropia\Planches::centrale(count($lp['lignes'])) + 1 ? '*' : '') . ' '
+                        . ($l === null ? '—' : $l['nom'] . ($l['compte'] !== null ? ' (' . $l['compte'] . ')' : ''));
+                }
+                echo $h(implode(' · ', $morceaux)); ?></small>
+<?php if ($peutEcrire): ?>
+                <a href="<?= $h($retour) ?>&amp;lignes=<?= (int) $c['numero'] ?>">Les lignes</a>
+<?php endif; ?></p>
+<?php endif; ?>
             </section>
 <?php endforeach; ?>
           </div>
@@ -687,6 +753,50 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <a class="pt-lien" href="<?= $h($retour) ?>" style="margin-left:.6rem">Laisser tomber</a>
         </form>
 <?php endif; ?>
+<?php elseif ($panneauLignes !== null): $pl = $panneauLignes; $nL = count($pl['etat']['lignes']); ?>
+        <p class="pd-titre">Les lignes de la planche <?= (int) $pl['numero'] ?> — <?= $h($parcelle['code']) ?></p>
+        <p class="pt-note"><b>À quoi elles servent</b> : les lignes de la planche portent les plantes de service ; les productions se
+          plantent de part et d'autre. La ligne centrale porte la biomasse et la structure, jamais de tuteurs ; les autres complètent
+          les strates que les productions laissent vides, les plus hautes près du centre (la forme pyramidale). Une ligne, une espèce.
+          <?= $pl['strates'] !== [] ? 'Strates déjà tenues par les productions : ' . $h(implode(', ', array_map(static fn (string $x): string => LignesDeService::LIBELLES[$x] ?? $x, $pl['strates']))) . '.' : 'Aucune strate connue pour les productions de cette planche : toutes sont à compléter.' ?>
+          Le nombre de lignes se règle sur <a href="conception-parcelles.php?parcelle=<?= $idP ?>">le plan</a>.</p>
+<?php if (!$pl['depuis_proposition']): ?>
+        <p class="pt-note"><a class="pt-lien" href="<?= $h($retour) ?>&amp;lignes=<?= (int) $pl['numero'] ?>&amp;proposer_lignes=1">Reprendre la proposition de l'atelier</a> — rien n'est écrit avant « Enregistrer les lignes ».</p>
+<?php else: ?>
+        <p class="pt-note">Les choix ci-dessous partent de la <b>proposition de l'atelier</b> : rien n'est écrit avant « Enregistrer les lignes ».</p>
+<?php endif; ?>
+        <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
+          <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
+          <input type="hidden" name="action" value="lignes_planche">
+          <input type="hidden" name="parcelle" value="<?= $idP ?>">
+          <input type="hidden" name="numero_planche" value="<?= (int) $pl['numero'] ?>">
+          <input type="hidden" name="version_lignes" value="<?= $h($pl['etat']['version']) ?>">
+<?php foreach ($pl['proposition'] as $l): $k = $l['indice'] + 1; $pose = $pl['etat']['lignes'][$k] ?? null;
+    $idsCand = array_map(static fn (array $e): int => (int) $e['id'], $l['candidats']); ?>
+          <div class="pt-ligne-choix">
+            <label>Ligne <?= $k ?><?= $l['centrale'] ? ' — centrale' : '' ?><?= $l['strate'] !== null ? ' · strate ' . $h(LignesDeService::LIBELLES[$l['strate']] ?? $l['strate']) : '' ?>
+              <?= $pose !== null && $pose['compte'] !== null ? '<small>(' . (int) $pose['compte'] . ' plants posés)</small>' : '' ?>
+              <select name="choix[<?= $k ?>]">
+                <option value="0">Laisser vide</option>
+<?php if ($l['candidats'] !== []): ?>
+                <optgroup label="Proposées pour cette ligne">
+<?php foreach ($l['candidats'] as $e): ?>
+                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ($e['espacement_retenu_m'] !== null ? ' — ' . rtrim(rtrim(number_format((float) $e['espacement_retenu_m'], 2, ',', ''), '0'), ',') . ' m' : ' — sans espacement')) ?></option>
+<?php endforeach; ?>
+                </optgroup>
+<?php endif; ?>
+                <optgroup label="Les autres espèces">
+<?php foreach ($especesService->toutes($siteId) as $e): if (in_array((int) $e['id'], $idsCand, true)) { continue; } ?>
+                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique'])) ?></option>
+<?php endforeach; ?>
+                </optgroup>
+              </select></label>
+            <small class="pt-note"><?= $h($l['raison']) ?></small>
+          </div>
+<?php endforeach; ?>
+          <button type="submit" class="pt-bouton">Enregistrer les lignes</button>
+          <a class="pt-lien" href="<?= $h($retour) ?>" style="margin-left:.6rem">Fermer</a>
+        </form>
 <?php else: ?>
         <p class="pd-titre"><?= $editionId > 0 ? 'Corriger la culture' : 'Ajouter une culture' ?> — <?= $h($parcelle['code']) ?></p>
         <p class="pt-note"><b>À quoi elle sert</b> : à placer chaque culture sur une planche, pour que ce qui s'entend bien soit voisin et que l'on évite ce qui s'entend mal. Seul le nom est demandé ; la planche, la strate et les dates viennent quand on les connaît.</p>

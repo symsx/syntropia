@@ -103,6 +103,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
     $lp->execute([$p1, 'externe:nord', 1, 'Lavandula', '']);
     $lp->execute([$p1, 'externe:nord', 2, 'Symphytum officinale', 'bocking 14']);
     $lp->execute([$p1, 'interne:est', 1, 'Elaeagnus umbellata', '']);
+    $lp->execute([$p1, 'planche:2:2', 1, 'Zea mays', '']);
     $pdo->prepare("INSERT INTO parcelle (site_id, code, nom, type) VALUES (?, 'P2', 'Potager', 'potager')")->execute([$siteId]);
     $p2 = (int) $pdo->lastInsertId();
     $ligne = $pdo->prepare('INSERT INTO scenario_ligne (parcelle_id, ordre, strate, espece, origine, espacement_m, nb_pieds, details, couleur_plan, role)
