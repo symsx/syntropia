@@ -116,7 +116,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées ; **Phases 1 (la compétence)
   2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) et 2 bis (le calendrier prévisionnel des lignes de service
   et des bordures : `ligne_calendrier`, `perturbation_prevue` — schéma 14) faites**, et `espece.temperature_sol_semis_c`
-  (schéma 15, en avance sur la Phase 7) ; pas déployées.
+  (schéma 15, en avance sur la Phase 7) ; **déployées le 2026-09-23** (huitième vague).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1751,6 +1751,15 @@ récit.*
   passent l'examen d'import (lecture seule). **Comme avant, les parcours eux-mêmes ne sont pas testés en production** (règle
   du 2026-09-18) : à essayer avec le vrai compte — le type de tortue, les lignes des bordures et leur proposition, les
   lignes des planches, les natures zèbre/abeille, les plantes de service au potager, Matériel et eau, la page Espèces.
+- **Déploiement des schémas 13 à 15 — 2026-09-23 (huitième vague).** Le chantier « film de la parcelle », Phases 1, 2 et 2 bis
+  (le temps des plantes, le calendrier prévisionnel des lignes de service et des bordures, leurs perturbations prévues), le
+  délai de germination et la température du sol au référentiel, les phrases corrigées du potager et du livret. **Avant** :
+  production lue sans rien changer (schéma 12, données inchangées depuis la septième vague, aucune surcharge d'espèce) ; le
+  cadre comparé espèce par espèce à la base locale — identique, seules les deux colonnes nouvelles manquaient. **`base` puis
+  `fichiers`** (21 fichiers). **Après** : schéma 15, code et base d'accord, tables `ligne_calendrier` et
+  `perturbation_prevue` présentes, températures du cadre posées (maïs 6 °C, tournesols 5 °C), données inchangées, aucun écart
+  `rsync`, syntaxe PHP distante sans erreur, pages 302 pour un anonyme, dossiers protégés 403, les deux projets réels
+  exportés et examinés (lecture seule). Les parcours restent à essayer avec le vrai compte.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

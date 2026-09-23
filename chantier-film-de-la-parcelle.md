@@ -1,6 +1,6 @@
 # Chantier — le film de la parcelle : chaque plante à sa place, dans l'espace et dans le temps
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 2 et 2 bis faites le 2026-09-23**, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 2 et 2 bis faites et déployées le 2026-09-23** (schéma 15).*
 
 ## L'intention
 
