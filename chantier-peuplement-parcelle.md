@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Les sept phases sont faites le 2026-09-23 — chantier terminé**, commité, pas déployé.*
+*Proposé le 2026-09-23, à la demande du porteur. **Les sept phases sont faites le 2026-09-23 — chantier terminé**, déployé le 2026-09-23 (schéma 12).*
 
 ## L'intention
 

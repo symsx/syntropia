@@ -104,7 +104,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   5 (planches pérennes et annuelles en zèbre, bandes en abeille, respectées par le placement du potager) et 6 (les
   plantes de service proposées sur les lignes des planches, `LignesDeService.php`) et 7 (les plants des lignes du plan
   dans Matériel et eau, où ils font foi pour les bordures) faites le jour même — chantier terminé**,
-  commitées, pas déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
+  **déployé le 2026-09-23** (septième vague, voir § Point de reprise) ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,
   ligneuse), les lignes dans une nouvelle table, la première règle des services validée. Une question reste
@@ -1729,6 +1729,19 @@ récit.*
   (formulaire absent, POST forgé 403), 1280×720 et 320×568 sans débordement (capture à l'appui). **Pas
   déployé** — la production reste au schéma 2, et cette évolution ne change pas le schéma. Détail :
   `chantier-caracteristiques-vegetaux.md` § Suite au chantier.
+- **Déploiement des schémas 3 à 12 — 2026-09-23 (septième vague).** Tout ce qui attendait depuis le 2026-09-20 : saut du
+  chat (Phases 1 à 3 et 5), plan de culture du potager, associations, caractéristiques des végétaux (`especes.php`), et le
+  chantier « peupler une parcelle » (sept phases). **Avant** : l'état de la production lu sans rien changer (MariaDB
+  11.4.13, schéma 2, 2 projets, 1 parcelle, 12 réponses, 3 tracés, 46 espèces au cadre, 2 comptes) ; le cadre comparé à la
+  base locale espèce par espèce — **un écart trouvé** : la mélisse et la consoude portaient encore le rôle « bordure » (corrigé
+  le 2026-09-23 dans les `INSERT IGNORE`, qui ne réécrivent pas une ligne existante) : deux `UPDATE` ciblés ajoutés au seed.
+  **Ordre suivi : `base` puis `fichiers`** (61 fichiers). **Après** : schéma 12, code et base d'accord, toutes les tables et
+  colonnes attendues présentes, données du projet inchangées, cadre à 52 espèces (42 avec un cycle, 17 avec un espacement,
+  plus aucun rôle « bordure »), aucun écart `rsync` restant, syntaxe PHP 8.4 distante des fichiers neufs sans erreur, pages
+  302 pour un anonyme, `src/`, `sql/`, `bin/`, `contenu/`, `config/base.php` 403 ; les deux projets réels s'exportent et
+  passent l'examen d'import (lecture seule). **Comme avant, les parcours eux-mêmes ne sont pas testés en production** (règle
+  du 2026-09-18) : à essayer avec le vrai compte — le type de tortue, les lignes des bordures et leur proposition, les
+  lignes des planches, les natures zèbre/abeille, les plantes de service au potager, Matériel et eau, la page Espèces.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1759,8 +1772,7 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **État au 2026-09-23 — pour la reprise.** **Rien de ce qui suit n'est déployé** : le porteur teste en local ; la production est restée au **schéma 2** (`bin/deployer.py base` d'abord —
-   il rejoue les schémas 2 à 10 —, puis `fichiers` ; avant, relire l'état de la production sans rien changer, comme aux vagues précédentes). **Fait depuis le 2026-09-20, commité** :
+0. **État au 2026-09-23 — pour la reprise.** **Tout ce qui suit est déployé** (septième vague, schéma 12, voir § Point de reprise) ; les parcours restent à essayer en production avec le vrai compte. **Fait depuis le 2026-09-20, commité** :
    saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
    module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **terminé** (les trois phases : le calendrier d'une espèce ; les fonctions de
    service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse » ; la page `especes.php` ; branchée à `conception-potager.php`, un
