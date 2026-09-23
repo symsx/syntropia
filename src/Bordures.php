@@ -21,10 +21,14 @@ namespace Syntropia;
  */
 final class Bordures
 {
-    /** Les deux bordures, et les fonctions que chacune remplit (celles de `Scenario::FONCTIONS`). */
+    /**
+     * Les deux bordures, et les fonctions que chacune remplit (celles de `Scenario::FONCTIONS`). **En bordure, couvrir le
+     * sol et bloquer l'herbe sont la même fonction** (le porteur, 2026-09-23) : une plante couvre-sol convient donc à la
+     * bordure externe.
+     */
     public const CADRES = [
-        'externe' => ['libelle' => 'Bordure externe', 'fonctions' => ['bloque_herbe', 'vent'],
-            'role' => 'bloquer l’herbe et freiner le vent'],
+        'externe' => ['libelle' => 'Bordure externe', 'fonctions' => ['bloque_herbe', 'couvre_sol', 'vent'],
+            'role' => 'bloquer l’herbe — couvrir le sol revient au même — et freiner le vent'],
         'interne' => ['libelle' => 'Bordure interne', 'fonctions' => ['biomasse'],
             'role' => 'apporter de la biomasse'],
     ];

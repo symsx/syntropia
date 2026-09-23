@@ -213,6 +213,11 @@ porte la fonction *vent* »).
 plante que jardineries et pépiniéristes destinent à la « bordure » peut être tenue pour bloque-herbe (la sauge, le thym
 luisant — Thymus nitens, tapissant vigoureux, ajouté au cadre ; couvrir le sol et bloquer l'herbe y sont la même fonction —, la mélisse dont la case est confirmée).
 
+**Précisions du porteur (2026-09-23, après la Phase 3)** : en bordure, **couvrir le sol et bloquer l'herbe sont la même
+fonction** — une plante couvre-sol convient à la bordure externe (`Bordures::CADRES`) ; **une bordure n'est pas une
+planche** — elle ne porte que des plantes de service, une bordure = une ligne ; les « bordures vivantes » d'une planche
+du ch. 11 sont, dans l'atelier, des lignes de service de la planche (Phase 6).
+
 **Fait le 2026-09-23.** `Bordures::proposer()` (pur) : toutes les espèces du référentiel qui conviennent (rôle, ou case
 `bloque_herbe` pour l'externe), **sauf les annuelles et bisannuelles** — une bordure est pérenne, décision du porteur ;
 un cycle non noté ne l'écarte pas —, chacune avec ses fonctions et, sur une face sud ou ouest de l'externe, la réserve

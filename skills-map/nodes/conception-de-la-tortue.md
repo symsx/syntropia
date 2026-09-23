@@ -64,7 +64,12 @@ extérieure du livre ; la bordure interne à sa ligne intérieure.
 
 **Règle du porteur (2026-09-23)** : une plante que les jardineries et pépiniéristes destinent à la « bordure » peut
 être tenue pour **bloque-herbe** (exemples donnés : la sauge, le thym luisant, et la mélisse, dont la case `bloque_herbe`
-est confirmée). C'est ce qui permet d'élargir la palette hors du corpus.
+est confirmée). C'est ce qui permet d'élargir la palette hors du corpus. **En bordure, couvrir le sol et bloquer l'herbe
+sont la même fonction** (le porteur, 2026-09-23) : une plante couvre-sol convient à la bordure externe.
+
+**Une bordure n'est pas une planche** (le porteur, 2026-09-23) : elle ne porte que des plantes de service, et, pour
+simplifier, **une bordure = une ligne**. Les « bordures vivantes » d'une planche du ch. 11 (consoude, mélisse sur ses
+bords) n'ont pas de statut à part dans l'atelier : ce sont des lignes de service de la planche (étape 4).
 
 **Proposer les espèces d'une bordure (le porteur, 2026-09-23)** : l'atelier propose **toutes** les espèces du
 référentiel qui remplissent la fonction demandée par la bordure (externe : bloque-herbe ou vent ; interne : biomasse) —
@@ -160,9 +165,8 @@ et non définitives » : une surcharge les corrige. Le goji garde 50 cm (ligne i
 1. **Une règle de choix des services plus fine** que « compléter les strates vides » : quelle espèce de
    service pour quelle production (au-delà des associations de Weinrich, qui ne parlent que des
    productions) ? Rien au corpus aujourd'hui.
-2. **Les bordures vivantes d'une planche** (consoude, mélisse sur ses bords) sont-elles des **lignes de
-   la planche** (donc de l'étape 4), à côté de la ligne centrale et des lignes de maïs ? Le modèle à
-   3 lignes par défaut ne dit pas où elles se placent.
+2. ~~Les bordures vivantes d'une planche~~ — **tranché par le porteur (2026-09-23)** : une bordure n'est pas une
+   planche ; sur une planche, ce sont des lignes de service comme les autres.
 3. **Le seuil de « dense »** pour une bordure : le corpus dit « en cas de doute, planter plus » (ch. 03,
    règle 3), sans chiffre.
 4. **Le vent** : aucune espèce n'est dite « coupe-vent » par le corpus ; seule la hauteur de la bordure
