@@ -182,6 +182,20 @@ final class Especes
     }
 
     /**
+     * Les valeurs possibles de `role` — une liste fermée, plusieurs valeurs à la fois (séparées par `|`).
+     * `production` (l'espèce se cultive pour ce qu'elle donne), plus les fonctions de service du scénario
+     * pérenne (`Scenario::FONCTIONS`) : le même vocabulaire, décidé par le porteur pour ne pas en tenir deux.
+     * Une méthode plutôt qu'une constante : un `array_keys()` sur la constante d'une autre classe ne se calcule
+     * pas à la déclaration. La page en construit les cases à cocher.
+     *
+     * @return list<string>
+     */
+    public static function roles(): array
+    {
+        return array_merge(['production'], array_keys(Scenario::FONCTIONS));
+    }
+
+    /**
      * Whitelist des colonnes qu'un site peut renseigner sur sa propre
      * surcharge — tout sauf `id`/`site_id`, qui ne se saisissent pas.
      * Publique : la page (formulaire, en-tête attendu d'un import CSV)
@@ -296,10 +310,12 @@ final class Especes
         };
 
         $texte('nom_usuel', 160);
-        // Le rôle reste un champ libre, séparé par `|` (voir chantier-caracteristiques-vegetaux.md, Phase 1 : le seed
-        // curé y porte déjà « production », hors du vocabulaire de Scenario::FONCTIONS) — aucune contrainte au-delà
-        // de sa longueur ; c'est `Scenario::fonctionsDe()` qui en tire, à la lecture, ce qui est une vraie fonction.
-        $texte('role', 120);
+        // Le rôle : une liste fermée, plusieurs valeurs possibles — `production`, plus les fonctions de service du
+        // scénario pérenne (`Scenario::FONCTIONS`). Décision du porteur, 2026-09-23 (chantier-caracteristiques-
+        // vegetaux.md) : revient sur le choix de la Phase 1 de le laisser libre — « production » manquait alors à ce
+        // vocabulaire, il y est désormais explicitement ajouté. Le seed curé (`sql/02-especes-seed.sql`) a été
+        // vérifié conforme (une valeur « bordure », hors vocabulaire, corrigée à cette occasion).
+        $liste('role', self::roles(), 'Une valeur de la liste — production, ou une fonction de service du scénario.');
         $liste('strates_possibles', Conduite::toutesLesStrates(), 'Une strate proposée par la conduite syntropique ou jardin-forêt.');
         $enum('systeme', ['colonisation', 'accumulation', 'abondance'], 'Colonisation, accumulation ou abondance.');
         $enum('entree_scenario', array_keys(Scenario::PERIODES), 'Une période du scénario (placenta1…climax).');

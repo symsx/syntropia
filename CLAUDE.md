@@ -85,12 +85,14 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   potager — par le référentiel `espece` et `public/especes.php`. Proposé le 2026-09-22, **les trois phases sont faites,
   chantier terminé le 2026-09-23, pas déployé**. Quatre décisions tranchées : le potager
   d'abord, pas le scénario pérenne ; le référentiel `espece` plutôt qu'une table séparée ; le vocabulaire des rôles de
-  `Scenario::FONCTIONS`, repris pour **`succession_ligne.role`** (pas pour `espece.role`, qui garde son vocabulaire
-  propre — écart trouvé en codant, voir § Point de reprise). Un premier fichier fourni par le porteur
-  (`base_semences_planification_maraichage.csv`, une banque de semences personnelle) a été **nettoyé hors de ce dépôt**
-  (une anomalie structurelle répétée dix fois, corrigée ; rien d'agronomique inventé ni changé) — **n'a finalement pas
-  servi d'essai d'import** (ses colonnes libres ne correspondent pas au format attendu, traduire l'un vers l'autre
-  n'a pas été décidé).
+  `Scenario::FONCTIONS`, repris pour **`succession_ligne.role`**. **`espece.role` a rejoint ce même vocabulaire le
+  2026-09-23** — écart de la Phase 1 (le garder libre) refermé sur demande du porteur : liste fermée, plusieurs
+  valeurs à la fois (`Especes::roles()`), avec un modèle CSV téléchargeable depuis `especes.php` et une tolérance
+  aux colonnes inconnues d'un import (ignorées, dites à l'aperçu, plus jamais refusées) — voir § Point de reprise.
+  Un premier fichier fourni par le porteur (`base_semences_planification_maraichage.csv`, une banque de semences
+  personnelle) a été **nettoyé hors de ce dépôt** (une anomalie structurelle répétée dix fois, corrigée ; rien
+  d'agronomique inventé ni changé) — **n'a toujours pas servi d'essai d'import** (ses colonnes libres ne
+  correspondent pas au format attendu, traduire l'un vers l'autre n'a pas été décidé).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1679,6 +1681,32 @@ récit.*
   reconnue par nom usuel, scientifique ou au pluriel, dates et fonctions reprises par un vrai clic de navigateur
   (CDP), espèce inconnue sans bloc, lecteur (rien de visible), `verifier-export` identique, 1280×720 et 320×568
   sans débordement. **Pas déployé.** Détail : `chantier-caracteristiques-vegetaux.md` § Phase 3.
+- **`espece.role` en liste fermée, un modèle d'import téléchargeable, une import tolérant aux colonnes
+  inconnues — suite au chantier « caractéristiques des végétaux », 2026-09-23.** Après la Phase 3, le porteur a
+  demandé un modèle de fichier d'import pour sa banque de semences personnelle, avec des champs fermés là où ça
+  a du sens (« usage=production, biomasse, bloque-herbe… »). Proposition faite hors dépôt
+  (`~/Bureau/Projets/organisation_cultures/entrees/especes-modele-import.{csv,md}`), puis deux décisions du
+  porteur : (1) `role` devient une **liste fermée, plusieurs valeurs à la fois** — revient sur le choix de la
+  Phase 1 de le garder libre ; `Especes::roles()` (méthode, pas une constante — `array_keys()` sur
+  `Scenario::FONCTIONS` ne se calcule pas à la déclaration d'une constante d'une autre classe) donne
+  `production` + les 24 clés de `Scenario::FONCTIONS`, `especes.php` les affiche en cases à cocher (même
+  modèle que `strates_possibles`). **Corrigé au passage, sourcé** : le seed curé portait `biomasse|bordure` sur
+  Mélisse et Consoude — `bordure` hors du vocabulaire ; retiré pour Mélisse (rien dans sa note ne le
+  justifiait), remplacé par `bloque_herbe` pour Consoude (sa propre note dit « bordure vivante bloque-herbe »).
+  (2) une colonne de l'en-tête que l'atelier ne connaît pas **n'empêche plus l'import** : elle est ignorée et
+  dite à l'aperçu (« colonne ignorée : … »), plutôt que de refuser le fichier entier — pour qu'un même fichier
+  serve de catalogue personnel (fournisseur, stock…) et d'import atelier. Troisième pièce ajoutée avec ces deux
+  décisions : `contenu/especes-modele-import.csv`, un **modèle téléchargeable** directement depuis `especes.php`
+  (onglet Importer, lien « Télécharger un modèle ») — le même contenu, republié dans le dépôt, que le fichier
+  personnel. **Aucun changement de schéma** (`espece.role` reste le même `VARCHAR`, seule sa validation change).
+  Vérifié en local (compte et site de test supprimés, orphelins `espece` nettoyés après coup) : 25 cases à
+  cocher rendues, deux rôles cochés enregistrés et relus (`biomasse|tuteur` en base), édition pré-coche les
+  bonnes cases, valeur hors liste forgée par POST direct refusée (rien écrit), import avec une colonne inconnue
+  accepté avec l'avertissement à l'aperçu puis réellement écrit en base, modèle téléchargé identique au fichier
+  personnel et revalidé contre `Especes::valider()` (0 colonne inconnue, 0 erreur sur 6 lignes), lecteur
+  (formulaire absent, POST forgé 403), 1280×720 et 320×568 sans débordement (capture à l'appui). **Pas
+  déployé** — la production reste au schéma 2, et cette évolution ne change pas le schéma. Détail :
+  `chantier-caracteristiques-vegetaux.md` § Suite au chantier.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise

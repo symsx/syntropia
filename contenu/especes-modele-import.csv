@@ -1,0 +1,7 @@
+nom_scientifique;variete;nom_usuel;role;periode_semis;periode_repiquage;periode_recolte;type_plant;espacement_retenu_m;plants_par_ml;origine;notes
+Zea mays;population locale;Maïs population;biomasse|tuteur;fin avril;mi mai;fin septembre;direct, en poquets;0,25;;multiplication;Tranchée centrale de planche, à tailler pour la biomasse
+Helianthus annuus;;Tournesol;biomasse|tuteur|nectar;fin avril;;fin septembre;direct;0,5;;achat;
+Symphytum officinale;bocking 14;Consoude;biomasse|azote;;debut mars;;éclat de racine;0,6;;multiplication;Ne fleurit presque jamais avec cette variété — stérile
+Solanum lycopersicum;;Tomate;production;fin février;mi mai;;godet, sous abri;0,5;;achat;Tuteurer tôt
+Phaseolus vulgaris;nain;Haricot nain;production|azote;;mi mai;;direct;;;achat;À semer un mois après un tuteur vivant si en association
+Tropaeolum majus;;Capucine;couvre_sol|refuge|production;;mi mai;;direct ou godet;0,3;;multiplication;"Fleurs et feuilles comestibles ; attire les pucerons loin des productions"

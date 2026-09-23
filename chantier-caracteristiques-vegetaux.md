@@ -7,14 +7,24 @@
 > ou ce que le porteur de projet importe. Quatre décisions du porteur cadrent ce chantier (2026-09-22) — voir
 > § Décisions.
 >
-> **Suite ouverte, 2026-09-23** : le porteur a demandé un modèle de fichier d'import — quelles colonnes, et
-> lesquelles doivent être fermées à une liste de valeurs. Proposition faite (hors de ce dépôt :
-> `~/Bureau/Projets/organisation_cultures/entrees/especes-modele-import.{csv,md}`, vérifiée ligne par ligne
-> contre `Especes::valider()`), **deux décisions en attente** avant tout changement de code : (1) `role`
-> devient-il une liste fermée (`production` + les 24 fonctions de `Scenario::FONCTIONS`), revenant sur le choix
-> de la Phase 1 de le garder libre ? (2) l'import doit-il **ignorer** une colonne inconnue plutôt que refuser
-> le fichier entier, pour qu'un même fichier serve de catalogue personnel (fournisseur, stock, taux de
-> germination du lot…) et d'import atelier ?
+> **Suite au chantier, tranchée et faite le 2026-09-23** : le porteur a demandé un modèle de fichier d'import.
+> Proposition faite (hors de ce dépôt : `~/Bureau/Projets/organisation_cultures/entrees/especes-modele-import.
+> {csv,md}`, vérifiée ligne par ligne contre `Especes::valider()`), puis deux décisions tranchées par le
+> porteur : (1) `role` devient une **liste fermée, plusieurs valeurs à la fois** (`production` + les 24
+> fonctions de `Scenario::FONCTIONS`) — revient sur le choix de la Phase 1 de le garder libre ; le seed curé
+> (deux espèces, Mélisse et Consoude) portait une valeur hors de cette liste (`bordure`), corrigée d'après
+> leur propre note sourcée. (2) une colonne de l'en-tête inconnue de l'atelier **n'empêche plus l'import** :
+> elle est ignorée et dite à l'aperçu, plutôt que de faire refuser le fichier entier — pour qu'un même
+> fichier serve de catalogue personnel et d'import atelier. Une troisième pièce ajoutée avec ces deux
+> décisions : un **modèle téléchargeable** directement depuis `especes.php` (onglet Importer), servant
+> `contenu/especes-modele-import.csv` — le même contenu que le fichier personnel ci-dessus, republié dans le
+> dépôt pour que l'atelier le propose lui-même, plutôt que de renvoyer vers un fichier hors de sa portée.
+> `Especes::roles()` (méthode, pas une constante — `array_keys()` sur `Scenario::FONCTIONS` ne se calcule pas
+> à la déclaration d'une constante) porte la liste ; `especes.php` l'affiche en cases à cocher, comme
+> `strates_possibles`. Vérifié en local (CDP) : 25 cases à cocher, plusieurs rôles enregistrés et relus,
+> valeur forgée hors liste refusée (rien écrit), import avec une colonne inconnue accepté et signalé à
+> l'aperçu puis réellement écrit, lecteur (formulaire absent, POST forgé 403), modèle téléchargé identique au
+> fichier personnel et revalidé (0 colonne inconnue, 0 erreur), 1280×720 et 320×568 sans débordement.
 
 ## Ce que le porteur demande
 

@@ -51,6 +51,21 @@ $retour = Configuration::base() . 'especes.php';
 const MAX_OCTETS_CSV = 1_000_000;
 const MAX_LIGNES_CSV = 500;
 
+// Un modèle à télécharger — un fichier déjà valide, à compléter ou à faire compléter, plutôt que de deviner le
+// format depuis la seule liste des colonnes reconnues. Un GET simple : lecture seule, sans effet, pas de jeton
+// nécessaire (déjà derrière `exige()` plus haut) — comme un lien de documentation, pas un formulaire.
+if (($_GET['telecharger'] ?? '') === 'modele') {
+    $modele = @file_get_contents(__DIR__ . '/../contenu/especes-modele-import.csv');
+    if ($modele !== false) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="especes-modele-import.csv"');
+        header('Cache-Control: no-store');
+        header('Content-Length: ' . strlen($modele));
+        echo $modele;
+        exit;
+    }
+}
+
 $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 
 /**
@@ -59,12 +74,17 @@ $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, '
  * **tout ou rien** si une ligne échoue : le fichier entier est refusé, avec le motif de chaque ligne en cause,
  * plutôt qu'un import partiel dont l'état serait difficile à relire.
  *
- * @return array{ok: bool, lignes: list<array<string, mixed>>, erreurs: array<int|string, string>, total: int}
+ * Une colonne de l'en-tête inconnue de l'atelier (une banque de semences personnelle porte souvent plus de
+ * colonnes que ce que l'atelier lit — quantité de lot, semencier, taux de germinance…) n'empêche plus l'import
+ * depuis le 2026-09-23 (décision du porteur) : elle est simplement ignorée, et dite comme telle à l'aperçu —
+ * jamais avalée en silence, pour qu'une vraie faute de frappe dans un nom de colonne attendu reste visible.
+ *
+ * @return array{ok: bool, lignes: list<array<string, mixed>>, erreurs: array<int|string, string>, ignorees: list<string>, total: int}
  */
 $examinerCsv = static function (string $texte): array {
     $texte = (string) preg_replace('/^\xEF\xBB\xBF/', '', $texte);
     if (trim($texte) === '') {
-        return ['ok' => false, 'lignes' => [], 'erreurs' => ['Le fichier est vide.'], 'total' => 0];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => ['Le fichier est vide.'], 'ignorees' => [], 'total' => 0];
     }
     $flux = fopen('php://temp', 'r+b');
     fwrite($flux, $texte);
@@ -72,18 +92,14 @@ $examinerCsv = static function (string $texte): array {
     $entete = fgetcsv($flux, 0, ';', '"', '');
     if ($entete === false || $entete === null) {
         fclose($flux);
-        return ['ok' => false, 'lignes' => [], 'erreurs' => ['La première ligne (l’en-tête des colonnes) est illisible.'], 'total' => 0];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => ['La première ligne (l’en-tête des colonnes) est illisible.'], 'ignorees' => [], 'total' => 0];
     }
     $entete = array_map(static fn (string $c): string => trim($c), $entete);
     $connues = array_merge(['nom_scientifique', 'variete'], Especes::COLONNES);
-    $inconnues = array_diff($entete, $connues);
-    if ($inconnues !== []) {
-        fclose($flux);
-        return ['ok' => false, 'lignes' => [], 'erreurs' => ['Colonne' . (count($inconnues) > 1 ? 's' : '') . ' inconnue' . (count($inconnues) > 1 ? 's' : '') . ' : ' . implode(', ', $inconnues) . '.'], 'total' => 0];
-    }
+    $ignorees = array_values(array_diff($entete, $connues));
     if (!in_array('nom_scientifique', $entete, true)) {
         fclose($flux);
-        return ['ok' => false, 'lignes' => [], 'erreurs' => ['La colonne « nom_scientifique » est obligatoire : c’est la clé de chaque espèce.'], 'total' => 0];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => ['La colonne « nom_scientifique » est obligatoire : c’est la clé de chaque espèce.'], 'ignorees' => $ignorees, 'total' => 0];
     }
     $brutes = [];
     while (($r = fgetcsv($flux, 0, ';', '"', '')) !== false) {
@@ -92,16 +108,20 @@ $examinerCsv = static function (string $texte): array {
         }
         if (count($r) !== count($entete)) {
             fclose($flux);
-            return ['ok' => false, 'lignes' => [], 'erreurs' => ['Ligne ' . (count($brutes) + 2) . ' : ' . count($r) . ' colonnes au lieu de ' . count($entete) . '.'], 'total' => 0];
+            return ['ok' => false, 'lignes' => [], 'erreurs' => ['Ligne ' . (count($brutes) + 2) . ' : ' . count($r) . ' colonnes au lieu de ' . count($entete) . '.'], 'ignorees' => $ignorees, 'total' => 0];
         }
-        $brutes[] = array_combine($entete, $r);
+        $ligne = array_combine($entete, $r);
+        foreach ($ignorees as $col) {
+            unset($ligne[$col]);
+        }
+        $brutes[] = $ligne;
     }
     fclose($flux);
     if ($brutes === []) {
-        return ['ok' => false, 'lignes' => [], 'erreurs' => ['Aucune ligne à importer sous l’en-tête.'], 'total' => 0];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => ['Aucune ligne à importer sous l’en-tête.'], 'ignorees' => $ignorees, 'total' => 0];
     }
     if (count($brutes) > MAX_LIGNES_CSV) {
-        return ['ok' => false, 'lignes' => [], 'erreurs' => [MAX_LIGNES_CSV . ' lignes au plus par import — divisez le fichier.'], 'total' => count($brutes)];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => [MAX_LIGNES_CSV . ' lignes au plus par import — divisez le fichier.'], 'ignorees' => $ignorees, 'total' => count($brutes)];
     }
 
     $pretes = [];
@@ -129,9 +149,9 @@ $examinerCsv = static function (string $texte): array {
         $pretes[] = ['nom_scientifique' => $nom, 'variete' => $variete] + $v['valeurs'];
     }
     if ($erreursLignes !== []) {
-        return ['ok' => false, 'lignes' => [], 'erreurs' => $erreursLignes, 'total' => count($brutes)];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => $erreursLignes, 'ignorees' => $ignorees, 'total' => count($brutes)];
     }
-    return ['ok' => true, 'lignes' => $pretes, 'erreurs' => [], 'total' => count($pretes)];
+    return ['ok' => true, 'lignes' => $pretes, 'erreurs' => [], 'ignorees' => $ignorees, 'total' => count($pretes)];
 };
 
 $erreurs = [];
@@ -223,7 +243,8 @@ if (is_array($attenteImport) && is_string($attenteImport['texte'] ?? null)) {
     $examen = $examinerCsv($attenteImport['texte']);
     $apercuImport = $examen['ok']
         ? ['fichier' => $attenteImport['fichier'], 'total' => $examen['total'],
-            'noms' => array_slice(array_column($examen['lignes'], 'nom_scientifique'), 0, 10)]
+            'noms' => array_slice(array_column($examen['lignes'], 'nom_scientifique'), 0, 10),
+            'ignorees' => $examen['ignorees']]
         : null;
     if (!$examen['ok']) {
         unset($_SESSION['syntropia_import_especes']);
@@ -250,7 +271,7 @@ if (($_GET['nouvelle'] ?? '') === '1') {
     $onglet = 'esp';
 }
 
-$champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'role', 'periode_semis',
+$champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'periode_semis',
     'periode_repiquage', 'periode_recolte', 'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
     'rapport_cn', 'conduite_taille', 'periode_taille', 'type_plant', 'orientation_bordure', 'source', 'statut_local', 'notes'];
 $champsChoix = ['systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
@@ -279,7 +300,13 @@ $strateSaisie = is_array($strateBrute)
     ? array_values(array_filter(array_map('strval', $strateBrute), static fn (string $x): bool => $x !== ''))
     : array_values(array_filter(explode('|', (string) $strateBrute), static fn (string $x): bool => $x !== ''));
 
-$rolesConnus = array_merge(array_keys(Scenario::FONCTIONS), ['production']);
+// Le rôle : liste fermée depuis le 2026-09-23 (décision du porteur), plusieurs valeurs à la fois — même
+// double forme que strates_possibles (tableau des cases cochées, ou texte `|` venu d'un import).
+$labelsRoles = ['production' => 'Production'] + Scenario::FONCTIONS;
+$roleBrut = $source['role'] ?? '';
+$roleSaisi = is_array($roleBrut)
+    ? array_values(array_filter(array_map('strval', $roleBrut), static fn (string $x): bool => $x !== ''))
+    : array_values(array_filter(explode('|', (string) $roleBrut), static fn (string $x): bool => $x !== ''));
 
 $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('d/m/Y');
 ?>
@@ -338,6 +365,8 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
   .es-form input:focus, .es-form select:focus, .es-form textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .es-deux{ display:grid; grid-template-columns:1fr 1fr; gap:.5rem; }
   .es-note{ font:400 .74rem/1.4 var(--texte); color:var(--muted); margin:.2rem 0 .6rem; }
+  .es-fonctions-detail{ margin:0 0 .6rem; }
+  .es-fonctions-detail summary{ font:500 .8rem var(--titre); color:var(--accent-titre); cursor:pointer; }
   .es-fonctions{ display:grid; gap:.15rem; margin-top:.4rem; max-height:9rem; overflow-y:auto; }
   .es-fonctions label{ display:flex; gap:.4rem; align-items:flex-start; font:400 .76rem/1.3 var(--texte); color:var(--ink); }
   .es-choix{ display:flex; gap:.5rem; align-items:flex-start; margin:0 0 .5rem; font:400 .82rem/1.35 var(--texte); color:var(--ink); }
@@ -441,7 +470,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               <tr class="es-item">
                 <td><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>?espece=<?= (int) $e['id'] ?>"><?= $h($nomAffiche) ?></a><?php else: ?><b><?= $h($nomAffiche) ?></b><?php endif; ?>
                   <?php if ((string) $e['variete'] !== ''): ?><small><?= $h($e['variete']) ?></small><?php endif; ?></td>
-                <td><?= $h(str_replace('|', ' · ', (string) ($e['role'] ?? ''))) ?></td>
+                <td><?= $h(implode(' · ', array_map(static fn (string $c): string => $labelsRoles[$c] ?? $c, array_filter(explode('|', (string) ($e['role'] ?? '')))))) ?></td>
                 <td><?= $cal !== [] ? $h(implode(' · ', $cal)) : '' ?></td>
                 <td><?= $local ? '<span class="es-surcharge-puce">votre surcharge</span>' : '<span class="es-cadre-puce">cadre</span>' ?></td>
               </tr>
@@ -507,10 +536,16 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
           <label class="es-champ">Récolte
             <input type="text" name="periode_recolte" maxlength="60" value="<?= $h($f['periode_recolte']) ?>">
           </label>
-          <label class="es-champ">Rôle <small>libre, séparé par | — ex. biomasse|bloque_herbe</small>
-            <input type="text" name="role" maxlength="120" list="es-roles" value="<?= $h($f['role']) ?>">
-            <datalist id="es-roles"><?php foreach ($rolesConnus as $r): ?><option value="<?= $h($r) ?>"><?php endforeach; ?></datalist>
-          </label>
+          <details class="es-fonctions-detail"<?= $roleSaisi !== [] ? ' open' : '' ?>>
+            <summary>Rôle (<?= count($roleSaisi) ?>)</summary>
+            <p class="es-note">Ce à quoi sert l'espèce, une ou plusieurs à la fois — production, ou une fonction de
+              service comme le scénario et le plan de culture les connaissent déjà.</p>
+            <div class="es-fonctions">
+<?php foreach ($labelsRoles as $cle => $lib): ?>
+              <label><input type="checkbox" class="case" name="role[]" value="<?= $h($cle) ?>"<?= in_array($cle, $roleSaisi, true) ? ' checked' : '' ?>> <?= $h($lib) ?></label>
+<?php endforeach; ?>
+            </div>
+          </details>
           <div class="es-deux">
             <label class="es-champ">Espacement retenu (m)
               <input type="number" name="espacement_retenu_m" min="0.01" max="50" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_retenu_m']) ?>">
@@ -630,6 +665,9 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
         <div class="es-apercu">
           <p><strong><?= $h($apercuImport['fichier']) ?></strong> — <?= $apercuImport['total'] ?> espèce<?= $apercuImport['total'] > 1 ? 's' : '' ?> prête<?= $apercuImport['total'] > 1 ? 's' : '' ?> à écrire.</p>
           <ul><?php foreach ($apercuImport['noms'] as $n): ?><li><?= $h($n) ?></li><?php endforeach; ?><?php if ($apercuImport['total'] > count($apercuImport['noms'])): ?><li>… et <?= $apercuImport['total'] - count($apercuImport['noms']) ?> autre<?= $apercuImport['total'] - count($apercuImport['noms']) > 1 ? 's' : '' ?></li><?php endif; ?></ul>
+<?php if ($apercuImport['ignorees'] !== []): ?>
+          <p class="es-note">Colonne<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> ignorée<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> (pas lue<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> par l'atelier) : <?= $h(implode(', ', $apercuImport['ignorees'])) ?>.</p>
+<?php endif; ?>
           <p class="es-note">Une espèce déjà connue de ce site (cadre ou surcharge) verra sa surcharge mise à jour ; les autres deviennent des surcharges nouvelles. Rien n'est écrit avant confirmation.</p>
         </div>
         <form method="post" action="<?= $h($retour) ?>">
@@ -645,9 +683,12 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
 <?php else: ?>
         <p class="es-note">Un fichier CSV (séparateur <code>;</code>), une ligne d'en-tête avec les noms de colonnes
            attendus, une ligne par espèce. Seule <code>nom_scientifique</code> est obligatoire ; les autres colonnes
-           peuvent manquer, une case peut rester vide. Le fichier est vérifié en entier avant d'écrire quoi que ce
-           soit : s'il y a une erreur, rien n'est écrit.</p>
+           peuvent manquer, une case peut rester vide. Une colonne que l'atelier ne connaît pas n'empêche pas
+           l'import : elle est simplement ignorée, et dite à l'aperçu. Le fichier est vérifié en entier avant
+           d'écrire quoi que ce soit : s'il y a une erreur sur une ligne attendue, rien n'est écrit.</p>
         <p class="es-cols">Colonnes reconnues : nom_scientifique, variete, <?= $h(implode(', ', Especes::COLONNES)) ?>.</p>
+        <p class="es-note"><a class="es-lien" href="?telecharger=modele">Télécharger un modèle</a> — un fichier déjà
+           valide, à remplir ou à faire remplir, plutôt que de partir de la seule liste des colonnes.</p>
         <form method="post" action="<?= $h($retour) ?>" enctype="multipart/form-data" class="es-form">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
           <input type="hidden" name="action" value="verifier">
@@ -678,9 +719,9 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
          pour les autres. La retirer rend au site la version du cadre, si elle existe.</p>
       <p><strong>Le calendrier</strong> se dit en mots, comme le tableau de Lopez (« fin avril », « mi à fin
          juillet ») — des repères indicatifs, pas des dates : c'est vous qui les corrigez à l'usage.</p>
-      <p><strong>Le rôle</strong> reste un champ libre, séparé par « | » : certaines valeurs (biomasse,
-         bloque_herbe, tuteur…) sont aussi celles que le scénario reconnaît comme fonctions de service ;
-         d'autres, comme « production », ne le sont pas et n'en ont pas besoin.</p>
+      <p><strong>Le rôle</strong> se choisit dans une liste fermée, une ou plusieurs valeurs à la fois — production,
+         ou une fonction de service, le même vocabulaire que le scénario pérenne et le plan de culture du
+         potager (biomasse, bloque-herbe, tuteur…) : pour ne pas en tenir deux.</p>
     </div>
   </aside>
 

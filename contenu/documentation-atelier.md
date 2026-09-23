@@ -145,10 +145,14 @@ Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos pr
 surcharge locale prime sur le cadre pour la même espèce, sans le changer pour les autres ; la
 retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
 de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
-d'une espèce, et les fonctions de service qu'elle rend (biomasse, bloque-herbe, tuteur…) — ce
-qui nourrit, dans le plan de culture d'un potager, les mêmes suggestions que le repère de
-Lopez. Un fichier CSV peut aussi importer plusieurs espèces d'un coup : il est vérifié en
-entier avant d'écrire quoi que ce soit, et s'il y a une erreur, rien n'est écrit.
+d'une espèce, et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
+liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le scénario
+pérenne et le plan de culture) — ce qui nourrit, dans le plan de culture d'un potager, les mêmes
+suggestions que le repère de Lopez. Un fichier CSV peut aussi importer plusieurs espèces d'un
+coup — un modèle déjà valide se télécharge depuis cette page : il est vérifié en entier avant
+d'écrire quoi que ce soit, et s'il y a une erreur sur une colonne attendue, rien n'est écrit ; une
+colonne que l'atelier ne connaît pas n'empêche pas l'import, elle est simplement ignorée et dite
+à l'aperçu.
 
 Le panneau Informations du scénario dit aussi **si le scénario prépare le saut du chat** :
 des plantes à perturber, une large part de biomasse (le repère de Théry est de 70 à 80 %),
