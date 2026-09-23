@@ -136,6 +136,15 @@ tortue** : classique, **zèbre** (des planches pérennes alternent avec des plan
 **abeille** (une bande pérenne et une bande potagère sur chaque planche) ou **liane** (des lianes sur
 une structure, des cultures protégées dessous) — ce qu'en dit Théry s'affiche sous le choix.
 
+Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
+sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent,
+l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste. L'atelier compte
+les plants de chaque espèce d'après leur espacement, pris dans **Espèces** — entre deux plants voisins, la
+moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan. Une espèce
+sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
+bordures, les plants se recomptent quand le plan est de nouveau enregistré. Dans le scénario, une plante
+déclarée « en bordure » renvoie à ces lignes : c'est leur compte qui fait foi.
+
 Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les
 strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a

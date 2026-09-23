@@ -6,13 +6,16 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Bordures;
 use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\Stade;
 use Syntropia\Tortue;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
+use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Sites;
 
@@ -32,6 +35,9 @@ $parcellesService = new Parcelles();
 
 $erreursCreation = [];
 $erreursPlan = [];
+// emplacement → message : une erreur sur la ligne d'une bordure (chantier « peuplement de la parcelle », Phase 2).
+$erreursLigne = [];
+$lignesService = new LignesPlantation();
 $codeSaisi = '';
 $nomSaisi = '';
 $typeSaisi = 'perenne';
@@ -89,6 +95,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId);
             exit;
         }
+    } elseif ($action === 'ligne_bordure') {
+        // La ligne d'un côté de bordure : la série telle qu'affichée, et un geste — ajouter une espèce au bout,
+        // retirer une place, vider. Toute la série est réécrite d'un bloc, sous le verrou de sa version.
+        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
+        $emplacement = (string) ($_POST['emplacement'] ?? '');
+        $serie = array_values(array_map('intval', is_array($_POST['serie'] ?? null) ? $_POST['serie'] : []));
+        $geste = (string) ($_POST['geste'] ?? '');
+        $message = null;
+        if ($parcellesService->parId($parcelleId, $siteId) === null) {
+            $message = 'Cette parcelle n’appartient pas à ce projet.';
+        } elseif ($geste === 'ajouter') {
+            $ajout = (int) ($_POST['ajout'] ?? 0);
+            if ($ajout <= 0) {
+                $message = 'Choisissez d’abord une espèce à ajouter.';
+            } else {
+                $serie[] = $ajout;
+            }
+        } elseif (preg_match('/^retirer:(\d{1,2})$/', $geste, $m) === 1 && isset($serie[(int) $m[1]])) {
+            array_splice($serie, (int) $m[1], 1);
+        } elseif ($geste === 'vider') {
+            $serie = [];
+        } else {
+            $message = 'Ce geste n’est pas reconnu.';
+        }
+        if ($message === null) {
+            $r = $lignesService->enregistrer($parcelleId, $siteId, $emplacement, $serie, (string) ($_POST['version_ligne'] ?? ''));
+            if ($r['ok']) {
+                header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId
+                    . '&bordure=' . rawurlencode($emplacement));
+                exit;
+            }
+            $message = implode(' ', $r['erreurs']);
+        }
+        $erreursLigne[$emplacement] = $message;
     }
 }
 
@@ -174,6 +214,30 @@ if ($parcelleActive !== null) {
     $planBordureInterne = $litBordures($planBordureInterne, $planEnregistre['bordures']['interne'] ?? null);
 }
 
+// Les lignes des bordures : ce qui est posé, compté sur le plan ENREGISTRÉ — les champs du plan, eux, peuvent changer à
+// l'écran sans être enregistrés ; conception-parcelles.js masque alors les plants et suspend la saisie.
+$lignesBordures = [];
+$especesSite = [];
+$bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string) array_key_first($erreursLigne) : ''));
+if ($parcelleActive !== null && !$demandeNouvelle) {
+    $lignesBordures = $lignesService->etat($parcelleActive, $siteId);
+    $especesSite = (new Especes())->toutes($siteId);
+}
+$couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53'];
+$plantsDessin = [];
+foreach ($lignesBordures as $cle => $lb) {
+    $g = $lb['geometrie'];
+    if ($g === null || $lb['compte'] === null || !$lb['compte']['ok']) {
+        continue;
+    }
+    $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
+    $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
+    foreach ($lb['compte']['positions'] as [$k, $d]) {
+        $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $k % count($couleursPlants), round($g['bande'], 3)];
+    }
+}
+$nombreFr = static fn (float $v): string => rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
+
 $nomAffiche = $auth->nomAffiche() ?? '';
 $initiales = '';
 foreach (preg_split('/\s+/', trim($nomAffiche)) ?: [] as $mot) {
@@ -215,6 +279,25 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   }
   #in-stade:focus, #in-tortue:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
+  .plan-plant{ stroke:#fff; stroke-width:1.5; }
+  #plantations.plan-perime{ display:none; }
+  .bl-cote{ border:1px solid var(--line); border-radius:.5rem; padding:.35rem .55rem; margin:.35rem 0; }
+  .bl-cote > summary{ cursor:pointer; font:500 .84rem var(--texte); color:var(--ink); }
+  .bl-cote > summary small{ color:var(--muted); font-weight:400; }
+  .bl-serie{ list-style:none; margin:.4rem 0; padding:0; display:flex; flex-direction:column; gap:.25rem; }
+  .bl-serie li{ display:flex; align-items:center; gap:.4rem; font:400 .82rem var(--texte); color:var(--ink); }
+  .bl-pastille{ width:.7rem; height:.7rem; border-radius:50%; flex:none; border:1px solid var(--line); }
+  .bl-serie .bl-nombre{ margin-left:auto; color:var(--muted); white-space:nowrap; }
+  .bl-retirer{ background:none; border:0; color:var(--muted); cursor:pointer; font-size:.9rem; padding:0 .2rem; }
+  .bl-retirer:hover, .bl-retirer:focus-visible{ color:var(--alerte); }
+  .bl-ajout{ display:flex; gap:.35rem; align-items:center; margin-top:.3rem; }
+  .bl-ajout select{ flex:1; min-width:0; padding:.3rem .4rem; font:400 .8rem var(--texte); color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:.4rem; }
+  .bl-bouton{ padding:.3rem .6rem; font:500 .78rem var(--texte); color:var(--ink); background:var(--accent-doux);
+    border:1px solid var(--accent); border-radius:.4rem; cursor:pointer; }
+  .bl-bouton[disabled], .bl-cote.bl-suspendu .bl-bouton, .bl-cote.bl-suspendu .bl-retirer{ opacity:.45; pointer-events:none; }
+  .bl-alerte{ color:var(--alerte); font:400 .78rem var(--texte); margin:.3rem 0 0; }
+  #bl-suspendu{ color:var(--alerte); }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
   .plan-mesure{ font:600 13px var(--texte); fill:var(--ink); font-variant-numeric:tabular-nums; }
@@ -424,6 +507,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <rect class="plan-bordure-interne" data-cote="sud"   id="bordure-interne-sud"   x="0" y="0" width="1200" height="0"/>
           <rect class="plan-bordure-interne" data-cote="ouest" id="bordure-interne-ouest" x="0" y="0" width="0" height="800"/>
           <rect class="plan-bordure-interne" data-cote="est"   id="bordure-interne-est"   x="0" y="0" width="0" height="800"/>
+          <g id="plantations" aria-hidden="true"></g>
 
           <line class="plan-fleche" id="fleche-longueur" x1="0" y1="-16" x2="1200" y2="-16" marker-start="url(#fl)" marker-end="url(#fl)"/>
           <text class="plan-mesure" id="mesure-longueur" x="600" y="-24" text-anchor="middle">12,00 m</text>
@@ -549,6 +633,95 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
            rectangle posé d'un clic, plus rien à ressaisir.</p>
         <button type="button" class="pd-reel-bouton" id="plan-bouton">Enregistrer le plan</button>
 
+        <p class="pd-titre" id="bl-titre">Les plantes des bordures</p>
+        <p class="pd-note">Une ligne de plants par côté, au milieu de sa bande : une espèce, ou plusieurs qui
+           alternent. L'écart entre deux plants voisins est la moyenne de leurs espacements, et chaque bout
+           garde la moitié du sien. Les espacements viennent de <a href="especes.php">Espèces</a>.</p>
+        <p class="pd-note" id="bl-suspendu" hidden>Le plan a changé : enregistrez-le d'abord — les plants se
+           comptent sur le plan enregistré.</p>
+<?php foreach (array_diff_key($erreursLigne, $lignesBordures) as $message): ?>
+        <p class="bl-alerte" role="alert"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
+<?php endforeach; ?>
+<?php if ($lignesBordures === []): ?>
+        <p class="pd-note">Aucune bordure sur le plan enregistré : les lignes s'appuient sur lui. Cochez les côtés
+           voulus, donnez-leur une largeur, enregistrez le plan — leurs lignes apparaîtront ici.</p>
+<?php endif; ?>
+<?php foreach ($lignesBordures as $cle => $lb):
+    [$cadre, $cote] = Bordures::depuisCle($cle);
+    $geo = $lb['geometrie'];
+    $compte = $lb['compte'];
+    $resume = $lb['places'] === [] ? 'vide'
+        : ($geo === null ? 'côté inactif — la ligne est gardée'
+        : ($compte['ok'] ? $compte['total'] . ' plant' . ($compte['total'] > 1 ? 's' : '') : 'pas de compte'));
+    $convenantes = array_values(array_filter($especesSite, static fn (array $e): bool => Bordures::convient($cadre, $e)));
+    $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
+    $etiquette = static function (array $e) use ($nombreFr): string {
+        $nom = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
+        return $nom . ' — ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement');
+    }; ?>
+        <details class="bl-cote" id="bl-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>"<?= $bordureOuverte === $cle ? ' open' : '' ?>>
+          <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . $cote, ENT_QUOTES, 'UTF-8') ?>
+            <small>— <?= $geo !== null ? htmlspecialchars($nombreFr($geo['longueur']) . ' m · ', ENT_QUOTES, 'UTF-8') : '' ?><?= htmlspecialchars($resume, ENT_QUOTES, 'UTF-8') ?></small></summary>
+          <p class="pd-note">Pour <?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>.</p>
+<?php if ($lb['places'] !== []): ?>
+          <ol class="bl-serie">
+<?php foreach ($lb['places'] as $k => $pl): ?>
+            <li><span class="bl-pastille" style="background:<?= $couleursPlants[$k % count($couleursPlants)] ?>"></span>
+              <span><?= htmlspecialchars($pl['nom'] . ($pl['variete'] !== '' ? ' (' . $pl['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></span>
+              <span class="bl-nombre"><?php
+                if (!$pl['connue']) { echo 'inconnue du référentiel'; }
+                elseif ($pl['espacement'] === null) { echo 'sans espacement'; }
+                elseif ($compte !== null && $compte['ok']) { echo (int) $compte['comptes'][$k], ' · ', htmlspecialchars($nombreFr($pl['espacement']), ENT_QUOTES, 'UTF-8'), ' m'; }
+                else { echo htmlspecialchars($nombreFr($pl['espacement']), ENT_QUOTES, 'UTF-8'), ' m'; } ?></span>
+<?php if ($peutEcrire): ?>
+              <button type="submit" form="bl-form-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>" name="geste" value="retirer:<?= $k ?>" class="bl-retirer" aria-label="Retirer <?= htmlspecialchars($pl['nom'], ENT_QUOTES, 'UTF-8') ?> de la série">✕</button>
+<?php endif; ?>
+            </li>
+<?php endforeach; ?>
+          </ol>
+<?php if ($compte !== null && !$compte['ok'] && $compte['manquants'] !== []): ?>
+          <p class="bl-alerte">Pas de compte : <?= htmlspecialchars(implode(', ', array_map(static fn (int $k): string => $lb['places'][$k]['nom'], $compte['manquants'])), ENT_QUOTES, 'UTF-8') ?>
+            n'<?= count($compte['manquants']) > 1 ? 'ont' : 'a' ?> pas d'espacement — renseignez-le dans <a href="especes.php">Espèces</a>.</p>
+<?php elseif ($compte !== null && $compte['ok'] && $compte['total'] === 0): ?>
+          <p class="bl-alerte">La ligne est plus courte qu'un espacement : aucun plant n'y tient.</p>
+<?php endif; ?>
+<?php endif; ?>
+<?php if (isset($erreursLigne[$cle])): ?>
+          <p class="bl-alerte" role="alert"><?= htmlspecialchars($erreursLigne[$cle], ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+<?php if ($peutEcrire): ?>
+          <form method="post" id="bl-form-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>" class="bl-form">
+            <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="action" value="ligne_bordure">
+            <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+            <input type="hidden" name="emplacement" value="<?= htmlspecialchars($cle, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="version_ligne" value="<?= htmlspecialchars($lb['version'], ENT_QUOTES, 'UTF-8') ?>">
+<?php foreach ($lb['places'] as $pl): ?>
+            <input type="hidden" name="serie[]" value="<?= (int) ($pl['id'] ?? 0) ?>">
+<?php endforeach; ?>
+<?php if ($lb['places'] === [] || $geo !== null): ?>
+            <div class="bl-ajout">
+              <select name="ajout" aria-label="Espèce à ajouter au bout de la série">
+                <option value="">Ajouter une espèce…</option>
+<?php foreach (['Pour cette bordure' => $convenantes, 'Les autres espèces' => $autres] as $groupe => $liste): if ($liste === []) { continue; } ?>
+                <optgroup label="<?= htmlspecialchars($groupe, ENT_QUOTES, 'UTF-8') ?>">
+<?php foreach ($liste as $e): ?>
+                  <option value="<?= (int) $e['id'] ?>"><?= htmlspecialchars($etiquette($e), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+                </optgroup>
+<?php endforeach; ?>
+              </select>
+              <button type="submit" name="geste" value="ajouter" class="bl-bouton">Ajouter</button>
+            </div>
+<?php endif; ?>
+<?php if ($lb['places'] !== []): ?>
+            <button type="submit" name="geste" value="vider" class="bl-retirer" style="margin-top:.3rem">Vider la ligne</button>
+<?php endif; ?>
+          </form>
+<?php endif; ?>
+        </details>
+<?php endforeach; ?>
+
         <p class="pd-titre">Ce que la géométrie donne</p>
         <dl class="pd-resultat" id="resultat">
           <div class="pd-champ"><dt>Surface utile</dt><dd id="r-surface">—</dd></div>
@@ -592,6 +765,11 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          <strong>Déplacer un bord</strong> — tirez le bord d'une bordure sur le dessin
          pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à
          jour au relâchement.</p>
+      <p><strong>Les plantes des bordures</strong> — une fois le plan enregistré, chaque côté actif reçoit une
+         ligne de plants : choisissez une espèce, ou plusieurs qui alternent (la diversité est le principe). La
+         bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
+         font viennent en tête de la liste. L'atelier compte les plants de chaque espèce d'après leur espacement
+         (<a href="especes.php">Espèces</a>) et les dessine sur le plan.</p>
 <?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
@@ -636,6 +814,10 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
   // parcelle.md § Phase 2.
   var PLAN_CONSTANTES = { planche: <?= Parcelles::PLANCHE_M ?>, passePied: <?= Parcelles::PASSE_PIED_M ?>,
     bordPlanche: <?= Parcelles::BORD_PLANCHE_M ?> };
+  // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande] en mètres (chantier
+  // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.
+  var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,
+      'ouvrir' => $bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte))], JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="conception-parcelles.js"></script>
 <?php endif; ?>

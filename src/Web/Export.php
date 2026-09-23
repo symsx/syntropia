@@ -60,6 +60,7 @@ final class Export
         'releves_sol' => 'releve_sol',
         'interventions' => 'intervention',
         'constats' => 'constat',
+        'lignes' => 'ligne_plantation',
     ];
 
     /**
@@ -206,7 +207,11 @@ final class Export
             $refParcelle[(int) $p['id']] = $ref;
             $entree = ['ref' => $ref] + $this->ligne('parcelle', $p);
             foreach (self::ENFANTS_PARCELLE as $partie => $table) {
-                $ordre = in_array($table, ['releve_sol', 'intervention', 'constat'], true) ? '`date`, id' : 'id';
+                $ordre = match (true) {
+                    in_array($table, ['releve_sol', 'intervention', 'constat'], true) => '`date`, id',
+                    $table === 'ligne_plantation' => 'emplacement, rang',
+                    default => 'id',
+                };
                 $entree[$partie] = array_map(fn (array $l): array => $this->ligne($table, $l),
                     $this->lire("SELECT * FROM $table WHERE parcelle_id = ? ORDER BY $ordre", [(int) $p['id']]));
             }
@@ -434,7 +439,7 @@ final class Export
     private function empreinteSchema(): string
     {
         $tables = ['site', 'participant', 'reponse', 'synthese', 'ressource', 'gisement', 'commande', 'espece',
-            'parcelle', 'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'celebration',
+            'parcelle', 'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'ligne_plantation', 'celebration',
             'reconnaissance', 'calque_element'];
         $lignes = [];
         foreach ($tables as $t) {

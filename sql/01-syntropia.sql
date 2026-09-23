@@ -681,6 +681,33 @@ CREATE TABLE IF NOT EXISTS `constat` (
 
 
 -- ---------------------------------------------------------------------
+-- LES LIGNES DE PLANTATION — schéma 12, 2026-09-23 (chantier-peuplement-parcelle.md, Phase 2)
+--
+-- Une bordure (un côté de l'externe ou de l'interne) porte UNE ligne de plants, faite d'une série d'une ou plusieurs
+-- espèces qui alternent (décision du porteur, 2026-09-23). Un enregistrement par place de la série : `rang` 1, 2, 3…
+-- dans l'ordre de l'alternance. L'espèce se désigne comme au référentiel, par (`nom_scientifique`, `variete`) — un
+-- nom, non un identifiant, pour qu'un projet exporté la retrouve dans un autre atelier ; son espacement se lit dans
+-- `espece`, jamais recopié ici. Le nombre de plants ne s'enregistre pas : il se calcule (`Bordures::compter()`).
+--
+-- `emplacement` : `externe:nord`, `interne:est`… ; les lignes des planches (Phase 4) y prendront leur propre forme.
+-- Une ligne dont le côté devient inactif reste en base, en attente, sans compte.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ligne_plantation` (
+  `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parcelle_id`      INT UNSIGNED NOT NULL,
+  `emplacement`      VARCHAR(40) NOT NULL,
+  `rang`             SMALLINT UNSIGNED NOT NULL,
+  `nom_scientifique` VARCHAR(160) NOT NULL,
+  `variete`          VARCHAR(120) NOT NULL DEFAULT '',
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_ligne_rang` (`parcelle_id`, `emplacement`, `rang`),
+  CONSTRAINT `fk_ligne_parcelle` FOREIGN KEY (`parcelle_id`)
+    REFERENCES `parcelle` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+
+-- ---------------------------------------------------------------------
 -- LA SUCCESSION DU POTAGER — `P-modele-potager/succession.csv`
 --
 -- Une saison, deux demi-planches en miroir, deux successions du ch. 8. Ce
@@ -1183,6 +1210,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 10 = `espece.periode_semis`/`periode_repiquage`/`periode_recolte` (le calendrier d'une espèce, en mots
 -- comme Lopez — trois colonnes facultatives, idem) ;
 -- 11 = `parcelle.tortue` (le type de tortue) et `espece.cycle` (annuelle, bisannuelle, vivace, ligneuse) — deux
--- colonnes facultatives, idem.
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '11')
+-- colonnes facultatives, idem ;
+-- 12 = la table `ligne_plantation` (les lignes de plants des bordures — table facultative : un fichier sans elle se
+-- charge, ses lignes étant simplement absentes).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '12')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

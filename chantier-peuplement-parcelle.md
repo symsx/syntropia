@@ -1,6 +1,6 @@
 # Chantier — peupler une parcelle : bordures, planches, services
 
-*Proposé le 2026-09-23, à la demande du porteur. **Phases 1 et 1 bis faites le 2026-09-23**, pas commitées, pas déployées.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phases 1, 1 bis et 2 faites le 2026-09-23**, commitées, pas déployées.*
 
 ## L'intention
 
@@ -179,6 +179,26 @@ la moyenne de leurs espacements ; aux deux bouts, la moitié de l'espacement du 
 (décisions du porteur). Les lignes vont dans une nouvelle table (une ligne de plantation par
 enregistrement : la parcelle, l'endroit — un côté de bordure ou une ligne de planche —, la série
 ordonnée des espèces) ; `Version::SCHEMA` monte, export, import et `verifier-export` la couvrent.
+
+**Fait le 2026-09-23.** Table `ligne_plantation` (**schéma 12**, table facultative) : un enregistrement par place de la
+série (`emplacement` `externe:nord`…, `rang`, l'espèce désignée comme au référentiel par `nom_scientifique`/`variete` —
+un nom, non un identifiant, pour qu'un export la retrouve ailleurs ; l'espacement se lit toujours dans `espece`, le
+nombre de plants ne s'enregistre pas). `src/Bordures.php` (pur, 18 contrôles : géométrie des lignes au milieu de chaque
+bande, compte avec la moyenne des voisins et le demi-espacement aux bouts, échantillon de 400 points pour le dessin,
+`convient()` : l'espèce remplit-elle la fonction de la bordure — rôle, ou la case `bloque_herbe`) ;
+`src/Web/LignesPlantation.php` (la série d'un côté réécrite d'un bloc sous verrou de version ; seules les espèces du
+référentiel du projet, cadre ou surcharge). Sur « Le plan », une section « Les plantes des bordures » : un bloc par côté
+(longueur, total, chaque espèce avec son nombre), ajouter une espèce au bout de la série (celles qui remplissent la
+fonction en tête de liste), retirer une place, vider ; les plants dessinés en couleur sur le plan. **Les lignes se
+comptent sur le plan enregistré** : dès qu'une dimension ou une bordure change à l'écran, les plants se masquent et la
+saisie se suspend ; enregistrer le plan recharge la page, recomptée. Un côté devenu inactif garde sa ligne, sans compte.
+Le scénario pérenne renvoie, sous « Emplacement », à ces lignes (décision (a)) ; **la reprise du compte dans « Matériel
+et eau » reste à la Phase 7**. Vérifié en local (projets et comptes de test supprimés) : 30 plants sur 12 m au pas de
+0,40 m (15 lavandes, 15 consoudes), 24 sur 11,2 m pour chalef et mélisse (pas de 0,45 m), recompte à 9,2 m (20),
+espèce sans espacement (pas de compte, dit), retrait, ligne vidée, conflit de version, emplacement forgé, espèce d'un
+autre projet, parcelle d'un autre projet, ajout sans choix, lecteur (rien à saisir, POST refusé), `verifier-export`
+identique (la fixture porte trois places), 1280×720, 412×800 et 320×568. **Au déploiement : `bin/deployer.py base`
+d'abord.**
 
 ### Phase 3 — Proposer les bordures
 

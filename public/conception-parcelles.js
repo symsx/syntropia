@@ -195,9 +195,49 @@
     document.getElementById('r-lineaire').textContent = fmt(lineaire) + ' m';
   }
 
+  /* ------------------------------------------ les plants des bordures
+     Posés sur le plan ENREGISTRÉ (chantier « peuplement de la parcelle »,
+     Phase 2) : le serveur les compte et les place, ce script les dessine.
+     Dès que la géométrie change à l'écran sans être enregistrée, ils ne
+     correspondent plus — on les masque et on suspend leur saisie, plutôt
+     que de montrer des plants au mauvais endroit. */
+  var cfgPlants = (typeof PLANTS_BORDURES !== 'undefined') ? PLANTS_BORDURES : { plants: [], couleurs: [] };
+  var plantsPerimes = false;
+  (function dessinerPlants(){
+    var g = document.getElementById('plantations');
+    if (!g) return;
+    cfgPlants.plants.forEach(function(p){
+      var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('class', 'plan-plant');
+      c.setAttribute('cx', p[0] * 100); c.setAttribute('cy', p[1] * 100);
+      c.setAttribute('r', Math.max(3, Math.min(9, p[3] * 100 / 2.5)));
+      c.setAttribute('fill', cfgPlants.couleurs[p[2]]);
+      g.appendChild(c);
+    });
+  })();
+  function perimerPlants(){
+    if (plantsPerimes) return;
+    plantsPerimes = true;
+    var g = document.getElementById('plantations');
+    if (g) g.classList.add('plan-perime');
+    var note = document.getElementById('bl-suspendu');
+    if (note) note.hidden = false;
+    document.querySelectorAll('.bl-cote').forEach(function(d){ d.classList.add('bl-suspendu'); });
+  }
+  if (cfgPlants.ouvrir){
+    var aOuvrir = document.getElementById(cfgPlants.ouvrir) || document.getElementById('bl-titre');
+    var tirette = document.getElementById('tirette');
+    if (aOuvrir && tirette){
+      tirette.click();
+      setTimeout(function(){ aOuvrir.scrollIntoView({ block: 'center' }); }, 350);
+    }
+  }
+
   document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"]').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
+    el.addEventListener('input', perimerPlants);
+    el.addEventListener('change', perimerPlants);
   });
   function champDeInterne(cote){ return document.querySelector('.bordure-interne-largeur[data-cote="' + cote + '"]'); }
 
@@ -272,6 +312,7 @@
     var largeur = Math.min(plafond, Math.max(0.1, enCours.largeurDepart + delta));
     champDe(enCours.cote).value = fmt(largeur);
     redessiner();
+    perimerPlants();
     montrerBulle(enCours.rect);
   });
   document.addEventListener('pointerup', function(){
@@ -331,6 +372,9 @@
         .then(function(j){
           boutonPlan.disabled = false;
           if (j.ok){
+            // La géométrie a changé : les lignes des bordures se recomptent sur
+            // le plan qui vient d'être écrit — la page se recharge pour les montrer.
+            if (plantsPerimes){ location.href = location.pathname + '?parcelle=' + encodeURIComponent(document.getElementById('plan-parcelle-id').value) + '&bordure=' + encodeURIComponent('recompte'); return; }
             champVersionPlan.value = j.version;
             etatPlan.textContent = 'Plan enregistré.';
             etatPlan.hidden = false;
@@ -382,6 +426,7 @@
   }
 
   Gabarit.onReset(function(){
+    perimerPlants();
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });

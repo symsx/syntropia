@@ -697,6 +697,8 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
                   </select>
                 </label>
               </div>
+              <p class="sc-note">En bordure, les plants se posent et se comptent sur
+                <a href="conception-parcelles.php?parcelle=<?= $idP ?>&amp;bordure=recompte">le plan</a>, côté par côté : c'est ce compte qui fait foi.</p>
               <label class="sc-champ">Production visée
                 <select name="production">
                   <option value="">Accompagnement uniquement</option>

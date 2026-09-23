@@ -99,7 +99,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   puis les lignes de service sur les planches — l'atelier **propose espèce, emplacement et nombre** à
   partir du référentiel, avec des règles tirées d'un nœud de compétence à créer (`skills-map/`). Proposé
   le 2026-09-23 ; **Phases 1 (le nœud `skills-map/nodes/conception-de-la-tortue.md`) et 1 bis (`parcelle.tortue`,
-  `espece.cycle`, schéma 11) faites le jour même**, pas commitées ni déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
+  `espece.cycle`, schéma 11) et 2 (les bordures peuplées : `ligne_plantation`, schéma 12) faites le jour même**,
+  commitées, pas déployées ; tranché le jour même : le type de tortue (classique, zèbre, abeille,
   liane) est un réglage de la parcelle, l'écart entre deux plants voisins d'une bordure est la moyenne de
   leurs espacements (la moitié aux bouts), une colonne `espece.cycle` (annuelle, bisannuelle, vivace,
   ligneuse), les lignes dans une nouvelle table, la première règle des services validée. Une question reste
@@ -137,6 +138,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
+  Bordures.php            les lignes de plants des bordures — géométrie (une ligne au milieu de chaque bande), compte par espèce (moyenne des espacements voisins, demi-espacement aux bouts), l'espèce convient-elle à la bordure ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
@@ -150,6 +152,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Invitations.php         codes d'invitation — condition de l'inscription
     Sites.php                les sites d'un compte, et son projet actif — voir chantier-inscription-parrainage.md
     Cultures.php             les cultures d'un potager placées par planche (`succession_ligne`), dont leurs fonctions de service (`role`, multivalué comme espece.role) — même conduite qu'Interventions ; appelé par conception-potager.php
+    LignesPlantation.php     les lignes de plants d'une parcelle (`ligne_plantation`) — la série d'un côté de bordure réécrite d'un bloc sous verrou de version, et l'état compté pour le plan ; appelé par conception-parcelles.php
     Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte

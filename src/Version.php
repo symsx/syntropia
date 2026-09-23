@@ -43,9 +43,10 @@ final class Version
      * `parcelle.stade`, le stade du terrain (colonne facultative, idem). 10 :
      * `espece.periode_semis`/`periode_repiquage`/`periode_recolte`, le calendrier d'une espèce, en mots comme
      * Lopez (trois colonnes facultatives, idem). 11 : `parcelle.tortue`, le type de tortue, et `espece.cycle`, le cycle
-     * de vie (deux colonnes facultatives, idem).
+     * de vie (deux colonnes facultatives, idem). 12 : la table `ligne_plantation`, les lignes de plants des bordures
+     * (table facultative, idem).
      */
-    public const SCHEMA = 11;
+    public const SCHEMA = 12;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;
