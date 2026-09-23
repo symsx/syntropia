@@ -221,3 +221,48 @@ UPDATE espece SET cycle = 'vivace'
   WHERE site_id = 0 AND cycle IS NULL AND nom_scientifique IN (
     'Melissa officinalis', 'Symphytum officinale', 'Mentha', 'Cynara scolymus', 'Helianthus tuberosus',
     'Silphium perfoliatum', 'Allium ursinum', 'Fragaria vesca', 'Fragaria ×ananassa');
+
+-- Les espacements du corpus — chantier-peuplement-parcelle.md (accord du porteur, 2026-09-23). Les plans cotés du
+-- ch. 14 (bords de carapace, p. 117, 119, 121), le ch. 11 (bordures vivantes d'une planche) et le ch. 08 (lignes d'une
+-- planche) : `connaissances/livre-bienvenue-en-syntropie/`. **La source les dit « indicatifs et non définitifs »** : on
+-- peut resserrer ou élargir — d'où `espacement_retenu_m`, que la personne corrige par une surcharge. Le goji a deux
+-- cotes : 50 cm sur la ligne intérieure (p. 117), 20 cm conduit en tressage (p. 119) ; la première est retenue.
+UPDATE espece SET espacement_retenu_m = 0.40
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique IN ('Lavandula', 'Symphytum officinale', 'Melissa officinalis');
+UPDATE espece SET espacement_retenu_m = 0.50
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique IN ('Elaeagnus umbellata', 'Lycium barbarum', 'Mentha', 'Zea mays');
+UPDATE espece SET espacement_retenu_m = 0.60
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique = 'Ribes nigrum';
+UPDATE espece SET espacement_retenu_m = 1.00
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique = 'Sambucus nigra';
+UPDATE espece SET espacement_retenu_m = 0.20
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique = 'Helianthus annuus';
+UPDATE espece SET espacement_retenu_m = 2.00
+  WHERE site_id = 0 AND espacement_retenu_m IS NULL AND nom_scientifique = 'Cucurbita maxima';
+
+-- La lavande, citée parmi les bordures extérieures bloque-herbe (ch. 03 § 4 ; ch. 14 § 4.2).
+UPDATE espece SET role = CONCAT(role, '|bloque_herbe')
+  WHERE site_id = 0 AND nom_scientifique = 'Lavandula' AND variete = '' AND FIND_IN_SET('bloque_herbe', REPLACE(role, '|', ',')) = 0;
+
+-- Les plantes des bords de carapace que le cadre n'avait pas — ch. 03 § 4 (« bordures extérieures, rôle : bloquer
+-- l'entrée de l'herbe : consoude, romarin, hysope, sauge, lavande, artichaut ») et les plans cotés du ch. 14. Le cycle
+-- de l'hysope, du romarin, du lavandin et des sauges reste vide, comme celui de la lavande : des sous-arbrisseaux,
+-- entre vivace et ligneuse. Ne se transposent pas sur sol acide ou hydromorphe (ch. 03, ch. 14).
+INSERT IGNORE INTO espece
+  (site_id, nom_scientifique, nom_usuel, role, cycle, espacement_retenu_m, bloque_herbe, source, statut_local)
+VALUES
+  (0, 'Hyssopus officinalis', 'Hysope', 'bloque_herbe', NULL, 0.40, 1,
+   'livre-bienvenue-en-syntropie ch. 03 § 4 ; ch. 14 § 4.2, plan p. 117',
+   'bande extérieure, face sud ou ouest — espacement indicatif ; drainage et pH à vérifier'),
+  (0, 'Salvia rosmarinus', 'Romarin', 'bloque_herbe', NULL, 0.40, 1,
+   'livre-bienvenue-en-syntropie ch. 03 § 4 ; ch. 14 § 4.2, plan p. 117',
+   'bande extérieure, face sud ou ouest — espacement indicatif ; drainage et pH à vérifier'),
+  (0, 'Lavandula ×intermedia', 'Lavandin', 'bloque_herbe', NULL, 0.40, 1,
+   'livre-bienvenue-en-syntropie ch. 14 § 4.2, plan p. 117',
+   'bande extérieure, face sud ou ouest — espacement indicatif ; drainage et pH à vérifier'),
+  (0, 'Salvia', 'Sauge', 'bloque_herbe', NULL, 0.40, 1,
+   'livre-bienvenue-en-syntropie ch. 03 § 4 ; ch. 14 § 4.3, plan p. 119',
+   'bande extérieure, face nord ou est — les sauges arbustives (sauge de Jérusalem) demandent bien plus de largeur'),
+  (0, 'Rubus fruticosus', 'Mûrier sans épines', 'production|biomasse', 'ligneuse', 0.25, NULL,
+   'livre-bienvenue-en-syntropie ch. 14 § 4.4, plan p. 121',
+   'palissé sur les sureaux plantés chaque mètre, face nord ou est — trois pieds entre deux sureaux');

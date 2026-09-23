@@ -94,6 +94,11 @@ compte** :
 Les fonctions et les espacements arriveront par la saisie ou l'import (décision ci-dessus). Tant qu'ils
 manquent, **la proposition reste vide et le dit**. Ce n'est pas un défaut du code.
 
+**Mis à jour le 2026-09-23** (accord du porteur) : les espacements cotés du corpus (ch. 08, 11, 14) sont dans le cadre —
+lavande, consoude, mélisse 0,40 m ; chalef, goji, menthe, maïs 0,50 m ; cassis 0,60 m ; sureau 1 m ; tournesol 0,20 m ;
+courge 2 m — et cinq plantes de bord de carapace y entrent (hysope, romarin, lavandin, sauge — bloque-herbe, 0,40 m —
+et mûrier sans épines, 0,25 m). Le rôle `vent` reste sans espèce : le corpus n'en nomme aucune.
+
 ## Ce que les sources disent déjà (à reprendre dans la compétence, Phase 1)
 
 - **Bordure externe** (ch. 14 § 4) : d'abord une barrière **bloque-herbe**, ensuite une réserve de

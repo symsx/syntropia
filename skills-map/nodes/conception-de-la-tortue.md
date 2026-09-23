@@ -127,8 +127,9 @@ au centre, pas de biomasse 3D en année 2 si les bordures vivantes ont pris.
 
 ## Espacements donnés par le corpus
 
-À reprendre dans le référentiel (`espece.espacement_retenu_m`) **seulement avec l'accord du porteur** —
-les distances du ch. 14 sont « indicatives et non définitives ».
+**Repris dans le référentiel du cadre le 2026-09-23, avec l'accord du porteur** (`sql/02-especes-seed.sql`, avec
+hysope, romarin, lavandin, sauge et mûrier sans épines, ajoutés au cadre) — les distances du ch. 14 sont « indicatives
+et non définitives » : une surcharge les corrige. Le goji garde 50 cm (ligne intérieure) ; 20 cm vaut pour le tressage.
 
 | Plante | Espacement | Où | Source |
 |---|---|---|---|
