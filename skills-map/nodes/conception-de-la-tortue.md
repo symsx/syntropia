@@ -142,6 +142,29 @@ la lumière par strate (Joala, `strates-et-lumiere.md` — le guide de `concepti
 de biomasse et de perturbation à l'implantation (ch. 11, règle 7). Plus : une espèce par ligne, pas de tuteur
 au centre, pas de biomasse 3D en année 2 si les bordures vivantes ont pris.
 
+## Le scénario en quatre dimensions
+
+Décisions du porteur (2026-09-23, `chantier-film-de-la-parcelle.md`), avec ce que le corpus en dit.
+
+- **Au sol** : chaque plante — de production ou de service — a **son point de plantation** ; **pas de collision** : au
+  moins **5 cm** entre deux plantes de strates différentes (repère du porteur, « à affiner avec l'expérience »).
+- **La strate** : les **espacements se respectent entre plantes d'une même strate** ; deux espèces d'une même strate
+  s'écartent de la moyenne de leurs espacements (hypothèse de travail, comme sur une ligne de bordure). Une production se
+  place donc **sans tenir compte des plantes de service voisines**, qui sont dans une autre strate. Le corpus le montre :
+  la forme pyramidale du potager (Théry ch. 8 § 5) superpose des strates sur une même planche ; au module 5 (Joala),
+  pommes de terre, courgettes et maïs occupent la même planche à des hauteurs différentes (5-5).
+- **Le temps** : une plante occupe sa place **de sa mise en place (semis en place ou repiquage) à sa récolte** ; la
+  levée d'un semis en place suit un **délai de germination** propre à l'espèce (annuelles et bisannuelles). L'unité est
+  **la semaine** ; **l'échelle se choisit selon le cycle** — la semaine pour un potager, le mois ou l'année pour des
+  pérennes — comme l'échelle d'une carte. **L'atelier ne gère pas la pépinière** : le semis sous abri est l'affaire du
+  porteur de projet.
+- **Un espace ne reste pas vide** dans le temps : les trois temps d'une planche — pré-culture, principale, post-culture
+  (Joala 5-C) — et les successions du ch. 8 le font déjà ; une culture peut **revenir plusieurs fois d'affilée**.
+- **Le calendrier est une prévision** : planter, semer, perturber — le jour réel d'une perturbation s'adapte au jour
+  opportun (la pluie, notamment) ; ce qui a été fait se note au journal.
+- **C'est un film** : on le regarde avec un curseur de temps — ce qui est présent à ce moment, et la parcelle vue de
+  dessus à ce moment.
+
 ## Espacements donnés par le corpus
 
 **Repris dans le référentiel du cadre le 2026-09-23, avec l'accord du porteur** (`sql/02-especes-seed.sql`, avec

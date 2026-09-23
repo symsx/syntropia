@@ -1,6 +1,6 @@
 # Chantier — le film de la parcelle : chaque plante à sa place, dans l'espace et dans le temps
 
-*Proposé le 2026-09-23, à la demande du porteur. Pas commencé.*
+*Proposé le 2026-09-23, à la demande du porteur. **Phase 1 faite le 2026-09-23.***
 
 ## L'intention
 
@@ -69,6 +69,8 @@ moment-là, et montre **le plan vu de dessus** à ce moment-là.
 Le nœud `skills-map/nodes/conception-de-la-tortue.md` gagne une section « Le scénario en quatre dimensions » : les
 règles ci-dessus, décisions du porteur, et ce que le corpus en dit (la forme pyramidale, l'occupation de l'espace en
 successions du ch. 8 et du module 5, les trois temps pré-culture / principale / post-culture de 5-C). Aucun code.
+
+**Fait le 2026-09-23** : section « Le scénario en quatre dimensions » du nœud.
 
 ### Phase 2 — Le temps de chaque plante
 
