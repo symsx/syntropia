@@ -516,6 +516,9 @@ CREATE TABLE IF NOT EXISTS `espece` (
   -- LE DÉLAI DE GERMINATION, en jours, d'une annuelle ou d'une bisannuelle semée en place : la levée le suit
   -- (chantier-film-de-la-parcelle.md, décision du porteur, 2026-09-23 ; schéma 13).
   `delai_germination_j` SMALLINT UNSIGNED NULL,
+  -- LA TEMPÉRATURE DU SOL qui permet le semis (la germination), en °C : « le critère n'est pas la date mais la
+  -- température du sol » (Théry, ch. 9 — maïs 6 °C, tournesol 5 °C). Décision du porteur, 2026-09-23 ; schéma 15.
+  `temperature_sol_semis_c` DECIMAL(3,1) NULL,
 
   `biomasse`         VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
@@ -1184,6 +1187,19 @@ EXECUTE ajout_germ;
 DEALLOCATE PREPARE ajout_germ;
 
 
+-- Rattrapage d'une table `espece` créée avant `temperature_sol_semis_c` — schéma 15. Même forme que ci-dessus.
+SET @tsol_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'espece'
+                       AND COLUMN_NAME = 'temperature_sol_semis_c');
+SET @ajout_tsol = IF(@tsol_existe = 0,
+                     'ALTER TABLE `espece` ADD COLUMN `temperature_sol_semis_c` DECIMAL(3,1) NULL AFTER `delai_germination_j`',
+                     'DO 0');
+PREPARE ajout_tsol FROM @ajout_tsol;
+EXECUTE ajout_tsol;
+DEALLOCATE PREPARE ajout_tsol;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1269,6 +1285,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- charge, ses lignes étant simplement absentes) ;
 -- 13 = `espece.delai_germination_j` (le délai de germination d'une annuelle ou bisannuelle — colonne facultative, idem) ;
 -- 14 = les tables `ligne_calendrier` et `perturbation_prevue` (le calendrier prévisionnel des lignes — tables
--- facultatives, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '14')
+-- facultatives, idem) ;
+-- 15 = `espece.temperature_sol_semis_c` (la température du sol qui permet le semis — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '15')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

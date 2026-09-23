@@ -192,7 +192,8 @@ surcharge locale prime sur le cadre pour la même espèce, sans le changer pour 
 retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
 de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
 d'une espèce, son **cycle** (annuelle, bisannuelle, vivace ou ligneuse), son délai de germination en jours (une
-annuelle ou bisannuelle semée en place), et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
+annuelle ou bisannuelle semée en place), la température du sol qui permet de la semer (« le critère n'est pas la date
+mais la température du sol », dit Théry), et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
 liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le scénario
 pérenne et le plan de culture) — ce qui nourrit, dans le plan de culture d'un potager, les mêmes
 suggestions que le repère de Lopez. Un fichier CSV peut aussi importer plusieurs espèces d'un

@@ -115,7 +115,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   de la germination à la récolte, à l'échelle choisie ; les vides du calendrier montrés et comblés ; un curseur de
   temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées ; **Phases 1 (la compétence)
   2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) et 2 bis (le calendrier prévisionnel des lignes de service
-  et des bordures : `ligne_calendrier`, `perturbation_prevue` — schéma 14) faites**, pas déployées.
+  et des bordures : `ligne_calendrier`, `perturbation_prevue` — schéma 14) faites**, et `espece.temperature_sol_semis_c`
+  (schéma 15, en avance sur la Phase 7) ; pas déployées.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.

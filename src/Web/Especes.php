@@ -219,7 +219,7 @@ final class Especes
         'nom_usuel', 'role', 'strates_possibles', 'systeme',
         'entree_scenario', 'sortie_scenario',
         'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
-        'periode_semis', 'periode_repiquage', 'periode_recolte', 'cycle', 'delai_germination_j',
+        'periode_semis', 'periode_repiquage', 'periode_recolte', 'cycle', 'delai_germination_j', 'temperature_sol_semis_c',
         'biomasse', 'rapport_cn', 'conduite_taille', 'periode_taille',
         'type_plant', 'origine', 'serre_necessaire', 'bloque_herbe',
         'orientation_bordure', 'deplacable', 'source', 'statut_local', 'notes',
@@ -331,6 +331,8 @@ final class Especes
         $liste('strates_possibles', Conduite::toutesLesStrates(), 'Une strate proposée par la conduite syntropique ou jardin-forêt.');
         $enum('systeme', ['colonisation', 'accumulation', 'abondance'], 'Colonisation, accumulation ou abondance.');
         $enum('cycle', array_keys(self::CYCLES), 'Annuelle, bisannuelle, vivace ou ligneuse.');
+        // La température du sol qui permet le semis, en °C (Théry ch. 9 ; schéma 15).
+        $nombre('temperature_sol_semis_c', 0, 40);
         // Le délai de germination, en jours entiers (chantier « film de la parcelle », schéma 13).
         if (array_key_exists('delai_germination_j', $v)) {
             $brut = trim((string) $v['delai_germination_j']);

@@ -287,3 +287,10 @@ UPDATE espece SET role = 'biomasse'
   WHERE site_id = 0 AND nom_scientifique = 'Melissa officinalis' AND variete = '' AND role = 'biomasse|bordure';
 UPDATE espece SET role = 'biomasse|bloque_herbe'
   WHERE site_id = 0 AND nom_scientifique = 'Symphytum officinale' AND variete = '' AND role = 'biomasse|bordure';
+
+-- La température du sol qui permet le semis — schéma 15. « Le critère n'est pas la date mais la température du sol » :
+-- 6 °C pour le maïs, 5 °C pour le tournesol (Théry, ch. 9, règle 9). Les seules valeurs du corpus.
+UPDATE espece SET temperature_sol_semis_c = 6.0
+  WHERE site_id = 0 AND temperature_sol_semis_c IS NULL AND nom_scientifique = 'Zea mays';
+UPDATE espece SET temperature_sol_semis_c = 5.0
+  WHERE site_id = 0 AND temperature_sol_semis_c IS NULL AND nom_scientifique = 'Helianthus annuus';

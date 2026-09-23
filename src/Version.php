@@ -46,8 +46,9 @@ final class Version
      * de vie (deux colonnes facultatives, idem). 12 : la table `ligne_plantation`, les lignes de plants des bordures
      * (table facultative, idem). 13 : `espece.delai_germination_j`, le délai de germination (colonne facultative, idem).
      * 14 : les tables `ligne_calendrier` et `perturbation_prevue`, le calendrier prévisionnel des lignes (facultatives, idem).
+     * 15 : `espece.temperature_sol_semis_c`, la température du sol qui permet le semis (colonne facultative, idem).
      */
-    public const SCHEMA = 14;
+    public const SCHEMA = 15;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;
