@@ -1908,11 +1908,11 @@ il apparaît réellement, pour ne pas noyer le motif.
    (2) le moment venu (quand Plantae aura codé le rattachement), donner au porteur une ligne `acces` `('plantae', 'administrateur')` ;
    (3) `acces.application` n'a pas de liste fermée dans le code : `Comptes::APPLICATION = 'syntropia'`, et le schéma
    (`sql/00-comptes.sql`) documente `'syntropia'`, `'plantae'` — **réponse pas encore transmise à `bdd_vg2`**.
-   **Signalé par Plantae, pas traité — la production affiche les erreurs PHP dans les pages, chemins du serveur compris** :
-   `display_errors` n'est réglé nulle part sur le compte (défaut actif), et `~/www/syntropia/` n'a aucun `.user.ini`. Ce qui a marché
-   pour Plantae : un `public/.user.ini` (`display_errors = Off`, `display_startup_errors = Off`, `log_errors = On` — journal dans
-   `~/admin/logs/php/`), **fermé au web** par `<FilesMatch "^\.user\.ini$"> Require all denied` dans `public/.htaccess` (servi tel quel
-   il répond 200), et **relu seulement au bout de cinq minutes** (`user_ini.cache_ttl = 300`). À proposer au porteur puis déployer.
+   **Les erreurs PHP n'apparaissent plus dans les pages — signalé par Plantae, corrigé et déployé le 2026-09-29** :
+   `display_errors` n'était réglé nulle part sur le compte (défaut actif, chemins du serveur affichés). `public/.user.ini`
+   (`display_errors = Off`, `display_startup_errors = Off`, `log_errors = On` — journal dans `~/admin/logs/php/`), fermé au web par
+   `public/.htaccess` (403 vérifié). PHP-FPM ne le relit qu'au bout de cinq minutes (`user_ini.cache_ttl = 300`) : un contrôle
+   immédiat montre encore l'ancienne valeur. Le serveur de développement (`bin/dev.py`) l'ignore.
    Deux constats au passage : `config/base.php` est en 664 sur le serveur (protégé par `.htaccess`, mais 640 suffit — PHP tourne sous
    `jubile`, les fichiers sont déposés par `jubile_dev`, un 600 serait illisible) ; `www.jubile.alwaysdata.net` ne résout pas, et la
    règle de `~/www/.htaccess` qui y redirige n'a pas de `RewriteEngine On` — **ne pas la « réparer »**, c'est elle qui garde le compte
