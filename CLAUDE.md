@@ -1826,8 +1826,15 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **2026-09-30** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut ; le
-   déploiement est consigné juste en dessous de cette ligne quand il a eu lieu.
+0. **2026-09-30** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut.
+   **Déployé le 2026-09-30 (dixième vague)**, commité et poussé (`origin/main` à jour). **Avant** : production lue sans rien
+   changer (schéma 17, 2 projets, 1 parcelle, 53 espèces au cadre, aucune surcharge, aucune ligne de plantation).
+   **`base` puis `fichiers`** (28 fichiers). **Après** : schéma 18, code et base d'accord, les deux colonnes de strate
+   présentes, cadre à 65 espèces (32 strates de production et 18 de service dites, 9 lianes), données du projet inchangées,
+   aucun écart `rsync`, syntaxe PHP distante sans erreur, pages 302 pour un anonyme, `src/`, `sql/`, `contenu/`, `bin/`,
+   `config/base.php` 403 ; les deux projets réels exportés et examinés (lecture seule). Les parcours restent à essayer avec
+   le vrai compte : la tortue liane (position de la ligne, proposition des lianes), la strate proposée au scénario et au
+   potager, l'occupation au sol, les deux strates dans Espèces.
    **État au 2026-09-29 — pour la reprise.** **Tout est commité, poussé sur GitHub (`origin/main` à jour) et déployé** (neuvième vague, **schéma 17**, voir § Point de reprise) ;
    les parcours restent à essayer en production avec le vrai compte. **Fait le 2026-09-29** : zoom du plan de parcelle et plan sur toute la largeur ;
    `espece.hauteur_m` et `espece.largeur_m` (envergure : plants des bordures dessinés à leur taille réelle, une couleur par espèce) ; la fiche du porteur
