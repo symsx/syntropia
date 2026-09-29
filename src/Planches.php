@@ -31,29 +31,66 @@ final class Planches
     /**
      * La largeur de chaque planche d'un rang et de chaque passe-pied — port de `planchesLayout()`.
      *
-     * @return array{n: int, largeurs: list<float>, passePieds: list<float>}
+     * Le principe (le porteur, 2026-09-29) : **chaque demi-planche a son passe-pied** — on travaille une planche depuis
+     * le passe-pied, sans jamais marcher dessus. Deux dispositions le tiennent :
+     *  - sans passe-pieds le long des bords (par défaut) : les planches vont d'un bord à l'autre, et celles des deux bords,
+     *    qui n'ont de passe-pied que d'un côté, ne font qu'une demi-planche (`BORD_PLANCHE_M`) ;
+     *  - avec (`$bords`) : un passe-pied avant la première planche et après la dernière — toutes à `PLANCHE_M`.
+     * Une planche seule est **centrée** : la place de part et d'autre devient ses passe-pieds.
+     *
+     * `debut` : la place laissée avant la première planche (et, symétrique, après la dernière).
+     *
+     * @return array{n: int, largeurs: list<float>, passePieds: list<float>, debut: float}
      */
-    public static function disposition(float $disponible, string $rattrapage): array
+    public static function disposition(float $disponible, string $rattrapage, bool $bords = false): array
     {
         $planche = Parcelles::PLANCHE_M;
         $passe = Parcelles::PASSE_PIED_M;
         $bord = Parcelles::BORD_PLANCHE_M;
-        $n = $disponible > $planche ? max(1, (int) floor(($disponible - $planche) / ($planche + $passe)) + 1) : ($disponible > 0 ? 1 : 0);
-        if ($n <= 0) {
-            return ['n' => 0, 'largeurs' => [], 'passePieds' => []];
+        if ($disponible <= 0) {
+            return ['n' => 0, 'largeurs' => [], 'passePieds' => [], 'debut' => 0.0];
         }
+        if ($disponible <= $planche) {
+            return ['n' => 1, 'largeurs' => [$disponible], 'passePieds' => [], 'debut' => 0.0];
+        }
+        if ($bords) {
+            // n planches et n + 1 passe-pieds : n × (planche + passe-pied) + passe-pied ≤ disponible. `1e-9` : qu'un compte
+            // tout rond (5,60 m pour trois planches) ne tombe pas d'une planche sur une erreur d'arrondi.
+            $n = max(1, (int) floor(($disponible - $passe) / ($planche + $passe) + 1e-9));
+            $reste = $disponible - $n * $planche - ($n + 1) * $passe;
+            $pl = $planche;
+            if ($reste < 0) {
+                $ppp = ($disponible - $planche) / 2; // une planche, des passe-pieds plus étroits que l'idéal
+            } elseif ($rattrapage === 'planches') {
+                $pl = $planche + $reste / $n;
+                $ppp = $passe;
+            } else {
+                $ppp = $passe + $reste / ($n + 1);
+            }
+            return ['n' => $n, 'largeurs' => array_fill(0, $n, $pl), 'passePieds' => array_fill(0, $n - 1, $ppp), 'debut' => $ppp];
+        }
+        // Deux demi-planches aux bords, n − 2 planches entières, n − 1 passe-pieds (le porteur, 2026-09-29 — le compte
+        // précédent traitait les planches de bord comme entières, et en posait trop peu) :
+        // 2 × bord + (n − 2) × planche + (n − 1) × passe-pied ≤ disponible.
+        $n = max(1, (int) floor(($disponible - 2 * $bord + 2 * $planche + $passe) / ($planche + $passe) + 1e-9));
         if ($n === 1) {
-            return ['n' => 1, 'largeurs' => [min($planche, $disponible)], 'passePieds' => []];
+            return ['n' => 1, 'largeurs' => [$planche], 'passePieds' => [], 'debut' => ($disponible - $planche) / 2];
         }
         if ($n === 2) {
-            return ['n' => 2, 'largeurs' => [$bord, $bord], 'passePieds' => [max(0.0, $disponible - 2 * $bord)]];
+            return ['n' => 2, 'largeurs' => [$bord, $bord], 'passePieds' => [max(0.0, $disponible - 2 * $bord)], 'debut' => 0.0];
         }
         $nInt = $n - 2;
         $reste = ($disponible - 2 * $bord) - ($nInt * $planche + ($n - 1) * $passe);
         $pInt = $rattrapage === 'planches' ? $planche + $reste / $nInt : $planche;
         $ppp = $rattrapage === 'planches' ? $passe : $passe + $reste / ($n - 1);
         return ['n' => $n, 'largeurs' => array_merge([$bord], array_fill(0, $nInt, $pInt), [$bord]),
-            'passePieds' => array_fill(0, $n - 1, $ppp)];
+            'passePieds' => array_fill(0, $n - 1, $ppp), 'debut' => 0.0];
+    }
+
+    /** Le plan demande-t-il un passe-pied le long des deux bords (avant la première planche, après la dernière) ? */
+    public static function passePiedsAuxBords(mixed $plan): bool
+    {
+        return is_array($plan) && ($plan['passe_pieds_bords'] ?? false) === true;
     }
 
     /** Le nombre de lignes d'une planche (numérotée de 1), d'après le plan enregistré ; 3 par défaut. */
@@ -150,10 +187,10 @@ final class Planches
         $largeurUtile = max(0.0, $L - $cote('ouest') - $cote('est'));
         $hauteurUtile = max(0.0, $H - $cote('nord') - $cote('sud'));
         $rattrapage = is_array($plan) && ($plan['rattrapage'] ?? '') === 'planches' ? 'planches' : 'passe-pieds';
-        $disp = self::disposition($nordSud ? $largeurUtile : $hauteurUtile, $rattrapage);
+        $disp = self::disposition($nordSud ? $largeurUtile : $hauteurUtile, $rattrapage, self::passePiedsAuxBords($plan));
 
         $out = [];
-        $pos = $nordSud ? $x0 : $y0;
+        $pos = ($nordSud ? $x0 : $y0) + $disp['debut'];
         foreach ($disp['largeurs'] as $k => $w) {
             $numero = $k + 1;
             $n = self::nombreDeLignes($plan, $numero);

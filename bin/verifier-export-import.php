@@ -93,7 +93,7 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
                       'est' => ['actif' => true, 'largeur_m' => 0.4], 'ouest' => ['actif' => true, 'largeur_m' => 0.4]],
         'interne' => ['nord' => ['actif' => true, 'largeur_m' => 0.3], 'sud' => ['actif' => true, 'largeur_m' => 0.3],
                       'est' => ['actif' => true, 'largeur_m' => 0.3], 'ouest' => ['actif' => true, 'largeur_m' => 0.3]],
-    ], 'rattrapage' => 'planches', 'lignes' => ['1' => 2, '3' => 5], 'natures' => ['premiere' => 'annuelle', 'planches' => ['2' => 'annuelle']]], JSON_UNESCAPED_UNICODE);
+    ], 'rattrapage' => 'planches', 'passe_pieds_bords' => true, 'lignes' => ['1' => 2, '3' => 5], 'natures' => ['premiere' => 'annuelle', 'planches' => ['2' => 'annuelle']]], JSON_UNESCAPED_UNICODE);
     $pdo->prepare('INSERT INTO parcelle (site_id, code, nom, type, longueur_m, largeur_m, orientation_lignes, nb_planches, plan, notes,
                    surface_m2, production_principale, cree_le) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)')
         ->execute([$siteId, 'P1', 'Verger', 'perenne', 12.5, 8, 'nord-sud', 6, $plan, "Note [\n1, 2\n] \"guillemets\" é", 100, 'Fruits', '2026-08-01 10:00:00']);
@@ -133,8 +133,8 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
     $pdo->prepare("INSERT INTO commande (site_id, espece, quantite, prix_unitaire) VALUES (?, 'Figuier', 3, 12.5)")->execute([$siteId]);
     $pdo->prepare("INSERT INTO ressource (site_id, categorie, libelle, manque) VALUES (?, 'materielle', 'Une brouette', 1)")->execute([$siteId]);
     $pdo->prepare("INSERT INTO synthese (site_id, phase, question, texte) VALUES (?, 'definition', 'vision', 'Un verger vivant')")->execute([$siteId]);
-    $pdo->prepare("INSERT INTO espece (site_id, nom_scientifique, variete, nom_usuel, espacement_retenu_m, serre_necessaire, periode_semis, periode_repiquage, periode_recolte, cycle, delai_germination_j, temperature_sol_semis_c)
-                   VALUES (?, 'Symphytum officinale', 'bocking 14', 'Consoude locale', 0.6, 0, 'mars-avril', 'mai', NULL, 'vivace', 12, 7.5)")->execute([$siteId]);
+    $pdo->prepare("INSERT INTO espece (site_id, nom_scientifique, variete, nom_usuel, espacement_retenu_m, serre_necessaire, periode_semis, periode_repiquage, periode_recolte, cycle, delai_germination_j, temperature_sol_semis_c, hauteur_m, largeur_m)
+                   VALUES (?, 'Symphytum officinale', 'bocking 14', 'Consoude locale', 0.6, 0, 'mars-avril', 'mai', NULL, 'vivace', 12, 7.5, 1.2, 0.8)")->execute([$siteId]);
     $reponse = $pdo->prepare("INSERT INTO reponse (site_id, participant_id, phase, question, texte) VALUES (?, ?, 'definition', ?, ?)");
     $reponse->execute([$siteId, $porteur, 'vision', 'Cultiver en forêt']);
     $reponse->execute([$siteId, $porteur, 'objectifs_productions', 'Fruits, noix']);

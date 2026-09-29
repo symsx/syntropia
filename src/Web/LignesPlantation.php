@@ -233,7 +233,9 @@ final class LignesPlantation
                 $places[] = ['nom_scientifique' => (string) $l['nom_scientifique'], 'variete' => (string) $l['variete'],
                     'origine' => $e !== null ? (string) ($e['origine'] ?? '') : '',
                     'nom' => $e !== null ? (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) : (string) $l['nom_scientifique'],
-                    'connue' => $e !== null, 'espacement' => $esp, 'id' => $e !== null ? (int) $e['id'] : null];
+                    'connue' => $e !== null, 'espacement' => $esp, 'id' => $e !== null ? (int) $e['id'] : null,
+                    // L'envergure adulte, pour dessiner le plant à sa taille réelle (schéma 17) ; `null` si inconnue.
+                    'largeur' => $e !== null && ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null];
             }
             $geo = $geometrie[$cle] ?? null;
             $compte = $geo !== null && $places !== []

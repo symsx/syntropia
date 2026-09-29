@@ -121,31 +121,85 @@
    * formule que `Parcelles::enregistrerPlan()` côté serveur (le nombre de
    * planches, pas leur largeur individuelle — un calcul purement client,
    * voir chantier-plan-de-parcelle.md § Phase 3). */
-  function planchesLayout(disponible, rattrapage){
-    var pas = PLANCHE + PASSE_PIED;
-    var n = disponible > PLANCHE ? Math.max(1, Math.floor((disponible - PLANCHE) / pas) + 1) : (disponible > 0 ? 1 : 0);
-    var largeurs = [], passePieds = [];
-    if (n <= 0){ return { n: 0, largeurs: largeurs, passePieds: passePieds }; }
-    if (n === 1){
-      largeurs = [Math.min(PLANCHE, disponible)];
-    } else if (n === 2){
+  // Chaque demi-planche a son passe-pied (le porteur, 2026-09-29). Sans passe-pieds le long des bords, les planches des
+  // deux bords ne font qu'une demi-planche ; avec (`bords`), un passe-pied avant la première et après la dernière, et
+  // toutes à PLANCHE. Une planche seule est centrée. `debut` : la place avant la première planche. Même calcul que
+  // Planches::disposition() côté serveur — les deux doivent rester identiques.
+  function planchesLayout(disponible, rattrapage, bords){
+    if (disponible <= 0){ return { n: 0, largeurs: [], passePieds: [], debut: 0 }; }
+    if (disponible <= PLANCHE){ return { n: 1, largeurs: [disponible], passePieds: [], debut: 0 }; }
+    var i, largeurs = [], passePieds = [];
+    if (bords){
+      var nb = Math.max(1, Math.floor((disponible - PASSE_PIED) / (PLANCHE + PASSE_PIED) + 1e-9));
+      var resteB = disponible - nb * PLANCHE - (nb + 1) * PASSE_PIED;
+      var pl = PLANCHE, pp;
+      if (resteB < 0){ pp = (disponible - PLANCHE) / 2; }
+      else if (rattrapage === 'planches'){ pl = PLANCHE + resteB / nb; pp = PASSE_PIED; }
+      else { pp = PASSE_PIED + resteB / (nb + 1); }
+      for (i = 0; i < nb; i++){ largeurs.push(pl); }
+      for (i = 0; i < nb - 1; i++){ passePieds.push(pp); }
+      return { n: nb, largeurs: largeurs, passePieds: passePieds, debut: pp };
+    }
+    // Deux demi-planches aux bords, n − 2 planches entières, n − 1 passe-pieds (2026-09-29).
+    var n = Math.max(1, Math.floor((disponible - 2 * BORD_PLANCHE + 2 * PLANCHE + PASSE_PIED) / (PLANCHE + PASSE_PIED) + 1e-9));
+    if (n === 1){ return { n: 1, largeurs: [PLANCHE], passePieds: [], debut: (disponible - PLANCHE) / 2 }; }
+    if (n === 2){
       // Ni l'une ni l'autre n'est intérieure : rien à qui laisser le
       // rattrapage « planches », tout va au passe-pied qui les sépare.
-      largeurs = [BORD_PLANCHE, BORD_PLANCHE];
-      passePieds = [Math.max(0, disponible - 2 * BORD_PLANCHE)];
-    } else {
-      var nInt = n - 2;
-      var idealInt = nInt * PLANCHE + (n - 1) * PASSE_PIED;
-      var reste = (disponible - 2 * BORD_PLANCHE) - idealInt;
-      var pInt = PLANCHE, ppp = PASSE_PIED;
-      if (rattrapage === 'planches'){ pInt = PLANCHE + reste / nInt; }
-      else { ppp = PASSE_PIED + reste / (n - 1); }
-      largeurs.push(BORD_PLANCHE);
-      for (var i = 0; i < nInt; i++){ largeurs.push(pInt); }
-      largeurs.push(BORD_PLANCHE);
-      for (var j = 0; j < n - 1; j++){ passePieds.push(ppp); }
+      return { n: 2, largeurs: [BORD_PLANCHE, BORD_PLANCHE], passePieds: [Math.max(0, disponible - 2 * BORD_PLANCHE)], debut: 0 };
     }
-    return { n: n, largeurs: largeurs, passePieds: passePieds };
+    var nInt = n - 2;
+    var reste = (disponible - 2 * BORD_PLANCHE) - (nInt * PLANCHE + (n - 1) * PASSE_PIED);
+    var pInt = PLANCHE, ppp = PASSE_PIED;
+    if (rattrapage === 'planches'){ pInt = PLANCHE + reste / nInt; }
+    else { ppp = PASSE_PIED + reste / (n - 1); }
+    largeurs.push(BORD_PLANCHE);
+    for (i = 0; i < nInt; i++){ largeurs.push(pInt); }
+    largeurs.push(BORD_PLANCHE);
+    for (i = 0; i < n - 1; i++){ passePieds.push(ppp); }
+    return { n: n, largeurs: largeurs, passePieds: passePieds, debut: 0 };
+  }
+  function passePiedsBords(){ var c = document.getElementById('passe-pieds-bords'); return !!(c && c.checked); }
+
+  /* ------------------------------------------------------------- le zoom
+     Le plan entier tient toujours dans le bureau (z = 1) ; zoomer resserre
+     le viewBox autour d'un centre, sans rien redessiner — tout est déjà en
+     unités du plan. Le cadre prend les proportions du bureau, pas celles de
+     la parcelle : agrandi, le plan occupe toute la largeur (ou la hauteur)
+     de l'écran. Dans un sens où le plan déborde du cadre, le cadre ne sort
+     pas de la parcelle ; dans l'autre, le plan reste centré. */
+  var ZOOM_MAX = 8;
+  var vue = { l: 1240, h: 900, z: 1, cx: 620, cy: 450 };
+  function borner(centre, cadre, etendue){
+    return cadre >= etendue ? etendue / 2 : Math.min(etendue - cadre / 2, Math.max(cadre / 2, centre));
+  }
+  function appliquerVue(){
+    vue.z = Math.min(ZOOM_MAX, Math.max(1, vue.z));
+    var boite = svg.getBoundingClientRect();
+    var ratio = boite.width > 0 && boite.height > 0 ? boite.width / boite.height : vue.l / vue.h;
+    var w0 = Math.max(vue.l, vue.h * ratio);
+    var w = w0 / vue.z, h = w / ratio;
+    vue.cx = borner(vue.cx, w, vue.l);
+    vue.cy = borner(vue.cy, h, vue.h);
+    svg.setAttribute('viewBox', (vue.cx - w / 2) + ' ' + (vue.cy - h / 2) + ' ' + w + ' ' + h);
+    bureau.classList.toggle('plan-zoome', vue.z > 1);
+    var moins = document.getElementById('plan-zoom-moins'), plus = document.getElementById('plan-zoom-plus');
+    var tout = document.getElementById('plan-zoom-tout');
+    if (moins){ moins.disabled = vue.z <= 1; plus.disabled = vue.z >= ZOOM_MAX; tout.hidden = vue.z <= 1; }
+  }
+  // Zoomer d'un facteur en gardant sous le pointeur le point qui s'y trouvait
+  // (au centre du plan pour les boutons).
+  function zoomer(facteur, xEcran, yEcran){
+    var avant = vue.z;
+    var p = xEcran === undefined ? null : versMetres(xEcran, yEcran);
+    vue.z = Math.min(ZOOM_MAX, Math.max(1, vue.z * facteur));
+    if (vue.z === avant) return;
+    if (p){
+      var k = avant / vue.z;
+      vue.cx = p.x + (vue.cx - p.x) * k;
+      vue.cy = p.y + (vue.cy - p.y) * k;
+    }
+    appliquerVue();
   }
 
   function redessiner(){
@@ -156,7 +210,8 @@
     var ECH = 100; // 1 m = 100 unités svg
     var L = longueur * ECH, H = largeur * ECH;
 
-    svg.setAttribute('viewBox', '0 0 ' + (L + 140) + ' ' + (H + 100));
+    vue.l = L + 140; vue.h = H + 100;
+    appliquerVue();
     svg.querySelector('g').setAttribute('transform', 'translate(70,40)');
     svg.querySelector('.plan-parcelle-fond').setAttribute('width', L);
     svg.querySelector('.plan-parcelle-fond').setAttribute('height', H);
@@ -219,11 +274,11 @@
     var rattrapageChoisi = document.querySelector('input[name="rattrapage"]:checked');
     var rattrapage = rattrapageChoisi ? rattrapageChoisi.value : 'passe-pieds';
     var disponible = sens === 'nord-sud' ? largeurUtile : hauteurUtile;
-    var layout = planchesLayout(disponible, rattrapage);
+    var layout = planchesLayout(disponible, rattrapage, passePiedsBords());
     var nbPlanches = layout.n;
 
     if (sens === 'nord-sud'){
-      var x = bo + boi;
+      var x = bo + boi + layout.debut * ECH;
       for (var i = 0; i < layout.largeurs.length; i++){
         var w = layout.largeurs[i] * ECH;
         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -241,7 +296,7 @@
         x += w + (layout.passePieds[i] || 0) * ECH;
       }
     } else {
-      var y = bn + bni;
+      var y = bn + bni + layout.debut * ECH;
       for (var j = 0; j < layout.largeurs.length; j++){
         var h = layout.largeurs[j] * ECH;
         var rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -264,7 +319,7 @@
     var gLignes = document.getElementById('lignes-plan');
     if (gLignes){
       gLignes.innerHTML = '';
-      var depart = sens === 'nord-sud' ? bo + boi : bn + bni;
+      var depart = (sens === 'nord-sud' ? bo + boi : bn + bni) + layout.debut * ECH;
       var haut = bn + bni, bas = H - bs - bsi, gauche = bo + boi, droite = L - be - bei;
       layout.largeurs.forEach(function(w, i){
         var n = lignesDe(i + 1), largeurPx = w * ECH;
@@ -297,7 +352,8 @@
     document.getElementById('r-planches').textContent = nbPlanches;
     document.getElementById('r-planche-bord').textContent = layout.largeurs.length ? fmt(layout.largeurs[0]) + ' m' : '—';
     document.getElementById('r-planche-interieure').textContent = layout.largeurs.length > 2 ? fmt(layout.largeurs[1]) + ' m' : '—';
-    document.getElementById('r-passe-pied').textContent = layout.passePieds.length ? fmt(layout.passePieds[0]) + ' m' : '—';
+    var passePiedAffiche = layout.passePieds.length ? layout.passePieds[0] : (passePiedsBords() && layout.debut > 0 ? layout.debut : 0);
+    document.getElementById('r-passe-pied').textContent = passePiedAffiche ? fmt(passePiedAffiche) + ' m' : '—';
     document.getElementById('r-lineaire').textContent = fmt(lineaire) + ' m';
   }
 
@@ -312,13 +368,21 @@
   (function dessinerPlants(){
     var g = document.getElementById('plantations');
     if (!g) return;
-    cfgPlants.plants.forEach(function(p){
+    function disque(p, classe, r){
       var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      c.setAttribute('class', 'plan-plant');
+      c.setAttribute('class', classe);
       c.setAttribute('cx', p[0] * 100); c.setAttribute('cy', p[1] * 100);
-      c.setAttribute('r', Math.max(3, Math.min(9, p[3] * 100 / 2.5)));
+      c.setAttribute('r', r);
       c.setAttribute('fill', cfgPlants.couleurs[p[2]]);
+      c.setAttribute('stroke', cfgPlants.couleurs[p[2]]); // le point central le remplace par du blanc (CSS)
       g.appendChild(c);
+    }
+    // Une espèce dont l'envergure adulte est connue (Espèces, « Largeur adulte ») se dessine à sa taille réelle —
+    // un disque transparent, pour voir où les plants se recouvrent, et un point à l'endroit où l'on plante. Sans
+    // envergure connue, une pastille proportionnée à la bande, comme avant.
+    cfgPlants.plants.filter(function(p){ return p[4]; }).forEach(function(p){ disque(p, 'plan-plant-envergure', p[4] * 100 / 2); });
+    cfgPlants.plants.forEach(function(p){
+      disque(p, 'plan-plant', p[4] ? 3 : Math.max(3, Math.min(9, p[3] * 100 / 2.5)));
     });
   })();
   function perimerPlants(){
@@ -339,7 +403,7 @@
     }
   }
 
-  document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"]').forEach(function(el){
+  document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"], #passe-pieds-bords').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
     el.addEventListener('input', perimerPlants);
@@ -428,6 +492,45 @@
     Gabarit.bulle.cacher();
   });
 
+  /* ----------------------------------------- zoomer et parcourir le plan
+     La molette zoome sous le pointeur ; un plan agrandi se fait glisser —
+     sauf quand « Déplacer un bord » saisit une bordure (écouteur posé plus
+     haut, donc servi avant celui-ci). */
+  svg.addEventListener('wheel', function(e){
+    e.preventDefault();
+    zoomer(e.deltaY < 0 ? 1.25 : 0.8, e.clientX, e.clientY);
+  }, { passive: false });
+
+  var parcours = null;
+  svg.addEventListener('pointerdown', function(e){
+    if (enCours || vue.z <= 1 || e.button !== 0) return;
+    var ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    parcours = { x: e.clientX, y: e.clientY, cx: vue.cx, cy: vue.cy, unite: 1 / ctm.a };
+    bureau.classList.add('plan-parcouru');
+    e.preventDefault();
+  });
+  document.addEventListener('pointermove', function(e){
+    if (!parcours) return;
+    vue.cx = parcours.cx - (e.clientX - parcours.x) * parcours.unite;
+    vue.cy = parcours.cy - (e.clientY - parcours.y) * parcours.unite;
+    appliquerVue();
+  });
+  document.addEventListener('pointerup', function(){
+    if (!parcours) return;
+    parcours = null;
+    bureau.classList.remove('plan-parcouru');
+  });
+
+  var zoomPlus = document.getElementById('plan-zoom-plus');
+  if (zoomPlus){
+    zoomPlus.addEventListener('click', function(){ zoomer(1.5); });
+    document.getElementById('plan-zoom-moins').addEventListener('click', function(){ zoomer(1 / 1.5); });
+    document.getElementById('plan-zoom-tout').addEventListener('click', function(){ vue.z = 1; appliquerVue(); });
+  }
+  // Le cadre suit les proportions du bureau : une fenêtre redimensionnée le recalcule.
+  window.addEventListener('resize', appliquerVue);
+
   /* ----------------------------------------------- enregistrer le plan
      lui-même — longueur, largeur, bordures, sens des planches. Chantier
      « plan de parcelle », Phase 1 : jusqu'ici purement client, rien de
@@ -468,6 +571,7 @@
       corps.set('orientation_lignes', sensChoisi ? sensChoisi.value : 'nord-sud');
       var rattrapageChoisi = document.querySelector('input[name="rattrapage"]:checked');
       corps.set('rattrapage', rattrapageChoisi ? rattrapageChoisi.value : 'passe-pieds');
+      corps.set('passe_pieds_bords', passePiedsBords() ? '1' : '0');
       document.querySelectorAll('.bordure-active').forEach(function(c){
         var cote = c.dataset.cote;
         corps.set('bordures[' + cote + '][actif]', c.checked ? '1' : '');
@@ -552,6 +656,7 @@
     document.querySelectorAll('.bordure-interne-largeur').forEach(function(c){ c.value = '0,40'; });
     document.getElementById('sens-nord-sud').checked = true;
     document.getElementById('rattrapage-passe-pieds').checked = true;
+    document.getElementById('passe-pieds-bords').checked = false;
     redessiner();
   });
 

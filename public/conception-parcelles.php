@@ -76,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'largeur_m'         => $_POST['largeur_m'] ?? '',
             'orientation_lignes' => $_POST['orientation_lignes'] ?? '',
             'rattrapage'        => $_POST['rattrapage'] ?? '',
+            'passe_pieds_bords' => $_POST['passe_pieds_bords'] ?? '0',
             'bordures'          => $_POST['bordures'] ?? [],
             'bordures_interne'  => $_POST['bordures_interne'] ?? [],
             'conduite'          => $_POST['conduite'] ?? null,
@@ -198,6 +199,7 @@ $planOrientation = 'nord-sud';
 // que sur la culture, un choix par défaut aussi défendable que l'autre.
 // Chantier « plan de parcelle », Phase 3 (2026-09-18).
 $planRattrapage = 'passe-pieds';
+$planPassePiedsBords = false;
 $planBordures = [
     'nord'  => ['actif' => true, 'largeur_m' => 0.40],
     'sud'   => ['actif' => true, 'largeur_m' => 0.40],
@@ -243,6 +245,7 @@ if ($parcelleActive !== null) {
     if (in_array($planEnregistre['rattrapage'] ?? '', ['planches', 'passe-pieds'], true)) {
         $planRattrapage = $planEnregistre['rattrapage'];
     }
+    $planPassePiedsBords = \Syntropia\Planches::passePiedsAuxBords($planEnregistre);
     $planBordures = $litBordures($planBordures, $planEnregistre['bordures']['externe'] ?? null);
     $planBordureInterne = $litBordures($planBordureInterne, $planEnregistre['bordures']['interne'] ?? null);
 }
@@ -260,7 +263,16 @@ if ($parcelleActive !== null && !$demandeNouvelle) {
     $especesSite = (new Especes())->toutes($siteId);
     $calendrierBordures = (new CalendrierLignes())->dUneParcelle((int) $parcelleActive['id']);
 }
-$couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53'];
+$couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53', '#1f6f78', '#b36b00', '#556b2f', '#7a3b3b'];
+// Une couleur par espèce (nom scientifique + variété), la même sur toutes les bordures de la parcelle — dans l'ordre où
+// les espèces apparaissent. Au-delà de dix espèces, les couleurs reviennent.
+$indicesEspeces = [];
+foreach ($lignesBordures as $lb) {
+    foreach ($lb['places'] as $pl) {
+        $indicesEspeces[$pl['nom_scientifique'] . "\0" . $pl['variete']] ??= count($indicesEspeces);
+    }
+}
+$couleurDe = static fn (array $pl): int => $indicesEspeces[$pl['nom_scientifique'] . "\0" . $pl['variete']] % count($couleursPlants);
 $plantsDessin = [];
 foreach ($lignesBordures as $cle => $lb) {
     $g = $lb['geometrie'];
@@ -270,7 +282,9 @@ foreach ($lignesBordures as $cle => $lb) {
     $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
     $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
     foreach ($lb['compte']['positions'] as [$k, $d]) {
-        $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $k % count($couleursPlants), round($g['bande'], 3)];
+        // [x, y, couleur, largeur de la bande, envergure de l'espèce (m, ou null si inconnue)]
+        $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $couleurDe($lb['places'][$k]), round($g['bande'], 3),
+            $lb['places'][$k]['largeur'] ?? null];
     }
 }
 $nombreFr = static fn (float $v): string => rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
@@ -293,7 +307,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <link rel="stylesheet" href="assets/css/gabarit.css">
 <style>
   /* propre à cette étape : la géométrie de la parcelle, en SVG */
-  .bureau-carte{ width:100%; height:100%; max-width:64rem; filter:drop-shadow(0 10px 24px var(--ombre)); }
+  .bureau-carte{ width:100%; height:100%; filter:drop-shadow(0 10px 24px var(--ombre)); }
   .plan-parcelle-fond{ fill:var(--surface); stroke:var(--line); stroke-width:2; }
   .plan-bordure{ fill:var(--accent-doux); fill-opacity:.55; stroke:var(--accent); stroke-width:2; cursor:default; }
   .outil-deplacer-actif .plan-bordure{ cursor:ns-resize; }
@@ -301,6 +315,21 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .outil-deplacer-actif .plan-bordure[data-cote="est"]{ cursor:ew-resize; }
   .plan-bordure:hover{ fill-opacity:.78; }
   .plan-bordure.en-glissement{ fill-opacity:.9; stroke-width:3; }
+  /* Le zoom du plan — mêmes réglages posés sur le bureau que la carte du terrain. */
+  .plan-reglures{
+    position:absolute; left:1rem; bottom:1rem; z-index:4; margin:0;
+    display:flex; align-items:center; gap:.4rem;
+  }
+  .plan-zoom{
+    min-width:2rem; padding:.3rem .6rem; border:1px solid var(--line); border-radius:.5rem; background:var(--surface);
+    color:var(--accent-titre); font:600 .9rem var(--titre); line-height:1; cursor:pointer;
+  }
+  .plan-zoom-tout{ font-size:.72rem; text-transform:uppercase; letter-spacing:.02em; }
+  .plan-zoom:hover:not(:disabled){ background:var(--accent-fond); }
+  .plan-zoom:disabled{ color:var(--muted); cursor:default; opacity:.6; }
+  .plan-zoom:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+  .plan-zoome .bureau-carte{ cursor:grab; touch-action:none; }
+  .plan-parcouru .bureau-carte{ cursor:grabbing; }
   /* Bordure interne — la biomasse, distincte de l'externe (bloque-herbe,
      coupe-vent, défense) : vert plutôt qu'or, même palette que les
      planches (--socle-accent). Chantier « plan de parcelle », Phase 4. */
@@ -317,6 +346,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   #in-stade:focus, #in-tortue:focus{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-plant{ stroke:#fff; stroke-width:1.5; }
+  .plan-plant-envergure{ fill-opacity:.28; stroke-opacity:.6; stroke-width:1; }
   .plan-planche-perenne{ fill:var(--accent); fill-opacity:.28; }
   .plan-bande-perenne{ fill:var(--accent); fill-opacity:.28; }
   #in-premiere-nature, .nature-planche{ padding:.2rem .3rem; font:400 .8rem var(--texte); color:var(--ink);
@@ -585,6 +615,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           </marker>
         </defs>
       </svg>
+      <p class="plan-reglures" role="group" aria-label="Zoom du plan">
+        <button type="button" id="plan-zoom-moins" class="plan-zoom" aria-label="Dézoomer" title="Dézoomer" disabled>−</button>
+        <button type="button" id="plan-zoom-plus" class="plan-zoom" aria-label="Zoomer" title="Zoomer">+</button>
+        <button type="button" id="plan-zoom-tout" class="plan-zoom plan-zoom-tout" hidden>tout voir</button>
+      </p>
     </main>
 
     <div class="scrim" id="scrim-droit"></div>
@@ -667,6 +702,11 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           <label><input type="radio" class="radio" name="rattrapage" id="rattrapage-planches" value="planches"<?= $planRattrapage === 'planches' ? ' checked' : '' ?>>Sur les planches</label>
         </div>
 
+        <p class="pd-titre">Passe-pieds</p>
+        <p class="pd-note">Chaque demi-planche se travaille depuis un passe-pied, sans marcher sur la planche. Sans passe-pied
+           le long des bords, les planches des deux bords ne font qu'une demi-planche.</p>
+        <label class="pd-ligne-nom"><input type="checkbox" class="case" id="passe-pieds-bords"<?= $planPassePiedsBords ? ' checked' : '' ?>>Un passe-pied le long des deux bords</label>
+
         <p class="pd-titre">Lignes par planche</p>
         <p class="pd-note">Les lignes de plantation de chaque planche, à intervalles égaux dans sa largeur ; la
            ligne centrale (en trait plein sur le plan) porte la biomasse et la structure, jamais de tuteurs. Trois
@@ -745,7 +785,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php if ($lb['places'] !== []): ?>
           <ol class="bl-serie">
 <?php foreach ($lb['places'] as $k => $pl): ?>
-            <li><span class="bl-pastille" style="background:<?= $couleursPlants[$k % count($couleursPlants)] ?>"></span>
+            <li><span class="bl-pastille" style="background:<?= $couleursPlants[$couleurDe($pl)] ?>"></span>
               <span><?= htmlspecialchars($pl['nom'] . ($pl['variete'] !== '' ? ' (' . $pl['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></span>
               <span class="bl-nombre"><?php
                 if (!$pl['connue']) { echo 'inconnue du référentiel'; }
@@ -947,7 +987,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
       <p><strong>Sélection</strong> — cliquez une bordure du dessin pour la choisir.
          <strong>Déplacer un bord</strong> — tirez le bord d'une bordure sur le dessin
          pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à
-         jour au relâchement.</p>
+         jour au relâchement. <strong>Zoom</strong> — la molette, ou « − » et « + » en bas du plan ;
+         agrandi, le plan se fait glisser.</p>
       <p><strong>Les plantes des bordures</strong> — une fois le plan enregistré, chaque côté actif reçoit une
          ligne de plants : choisissez une espèce, ou plusieurs qui alternent (la diversité est le principe). La
          bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
@@ -1010,7 +1051,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
   var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,
       'ouvrir' => $bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte))], JSON_UNESCAPED_UNICODE) ?>;
 </script>
-<script src="conception-parcelles.js"></script>
+<script src="conception-parcelles.js?v=<?= (int) @filemtime(__DIR__ . '/conception-parcelles.js') ?>"></script>
 <?php endif; ?>
 </body>
 </html>

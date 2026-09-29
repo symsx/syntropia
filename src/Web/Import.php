@@ -548,12 +548,16 @@ final class Import
             return null;
         }
         foreach (array_keys($v) as $cle) {
-            if (!in_array($cle, ['bordures', 'rattrapage', 'lignes', 'natures'], true)) {
+            if (!in_array($cle, ['bordures', 'rattrapage', 'passe_pieds_bords', 'lignes', 'natures'], true)) {
                 throw new \UnexpectedValueException("le plan contient une clé inconnue « $cle ».");
             }
         }
         if (isset($v['rattrapage']) && !in_array($v['rattrapage'], ['planches', 'passe-pieds'], true)) {
             throw new \UnexpectedValueException('le rattrapage doit être « planches » ou « passe-pieds ».');
+        }
+        // Un passe-pied le long des deux bords (2026-09-29) : vrai ou faux, rien d'autre.
+        if (isset($v['passe_pieds_bords']) && !is_bool($v['passe_pieds_bords'])) {
+            throw new \UnexpectedValueException('« passe-pieds le long des bords » doit être vrai ou faux.');
         }
         // Le nombre de lignes de chaque planche (schéma 12, chantier-peuplement-parcelle.md, Phase 4).
         foreach (is_array($v['lignes'] ?? null) ? $v['lignes'] : (isset($v['lignes']) ? [0 => 'illisible'] : []) as $numero => $n) {

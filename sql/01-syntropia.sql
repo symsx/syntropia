@@ -519,8 +519,15 @@ CREATE TABLE IF NOT EXISTS `espece` (
   -- LA TEMPÉRATURE DU SOL qui permet le semis (la germination), en °C : « le critère n'est pas la date mais la
   -- température du sol » (Théry, ch. 9 — maïs 6 °C, tournesol 5 °C). Décision du porteur, 2026-09-23 ; schéma 15.
   `temperature_sol_semis_c` DECIMAL(3,1) NULL,
+  -- LA HAUTEUR, en mètres, qu'atteint la plante adulte (une moyenne, conduite libre sauf mention dans `notes`). Servira
+  -- à estimer l'ombre qu'elle porte vers le nord sur ses voisines, et à dessiner la parcelle vue de côté. Décision du
+  -- porteur, 2026-09-29 ; schéma 16.
+  `hauteur_m`        DECIMAL(4,2) NULL,
+  -- LA LARGEUR, en mètres : l'envergure de la plante adulte (une moyenne). Dessine chaque plant des bordures à sa taille
+  -- réelle sur le plan de la parcelle. Décision du porteur, 2026-09-29 ; schéma 17.
+  `largeur_m`        DECIMAL(4,2) NULL,
 
-  `biomasse`         VARCHAR(8) NULL,           -- + / ++ / +++
+  `biomasse`        VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
   `conduite_taille`  VARCHAR(120) NULL,
   `periode_taille`   VARCHAR(120) NULL,
@@ -1200,6 +1207,32 @@ EXECUTE ajout_tsol;
 DEALLOCATE PREPARE ajout_tsol;
 
 
+-- Rattrapage d'une table `espece` créée avant `hauteur_m` — schéma 16. Même forme que ci-dessus.
+SET @haut_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'espece'
+                       AND COLUMN_NAME = 'hauteur_m');
+SET @ajout_haut = IF(@haut_existe = 0,
+                     'ALTER TABLE `espece` ADD COLUMN `hauteur_m` DECIMAL(4,2) NULL AFTER `temperature_sol_semis_c`',
+                     'DO 0');
+PREPARE ajout_haut FROM @ajout_haut;
+EXECUTE ajout_haut;
+DEALLOCATE PREPARE ajout_haut;
+
+
+-- Rattrapage d'une table `espece` créée avant `largeur_m` — schéma 17. Même forme que ci-dessus.
+SET @larg_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                     WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'espece'
+                       AND COLUMN_NAME = 'largeur_m');
+SET @ajout_larg = IF(@larg_existe = 0,
+                     'ALTER TABLE `espece` ADD COLUMN `largeur_m` DECIMAL(4,2) NULL AFTER `hauteur_m`',
+                     'DO 0');
+PREPARE ajout_larg FROM @ajout_larg;
+EXECUTE ajout_larg;
+DEALLOCATE PREPARE ajout_larg;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1286,6 +1319,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 13 = `espece.delai_germination_j` (le délai de germination d'une annuelle ou bisannuelle — colonne facultative, idem) ;
 -- 14 = les tables `ligne_calendrier` et `perturbation_prevue` (le calendrier prévisionnel des lignes — tables
 -- facultatives, idem) ;
--- 15 = `espece.temperature_sol_semis_c` (la température du sol qui permet le semis — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '15')
+-- 15 = `espece.temperature_sol_semis_c` (la température du sol qui permet le semis — colonne facultative, idem) ;
+-- 16 = `espece.hauteur_m` (la hauteur de la plante adulte — colonne facultative, idem) ;
+-- 17 = `espece.largeur_m` (l'envergure de la plante adulte — colonne facultative, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '17')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

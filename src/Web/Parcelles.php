@@ -242,6 +242,12 @@ final class Parcelles
         if (!in_array($rattrapage, ['planches', 'passe-pieds'], true)) {
             $erreurs['rattrapage'] = 'Le rattrapage doit se faire sur les planches ou sur les passe-pieds.';
         }
+        // Un passe-pied le long des deux bords, avant la première planche et après la dernière (le porteur, 2026-09-29) —
+        // `null` (clé absente) : on garde celui du plan enregistré.
+        $bords = null;
+        if (array_key_exists('passe_pieds_bords', $valeurs)) {
+            $bords = in_array((string) $valeurs['passe_pieds_bords'], ['1', 'on', 'true'], true);
+        }
 
         // La conduite propre à cette parcelle — « » (vide) : elle hérite du site ;
         // `null` (clé absente) : on n'y touche pas. Chantier « scénario de
@@ -338,10 +344,6 @@ final class Parcelles
         $largeurUtile = max(0.0, $longueur - $totalCote('ouest') - $totalCote('est'));
         $hauteurUtile = max(0.0, $largeur - $totalCote('nord') - $totalCote('sud'));
         $base = $orientation === 'nord-sud' ? $largeurUtile : $hauteurUtile;
-        $pas = self::PLANCHE_M + self::PASSE_PIED_M;
-        $nbPlanches = $base > self::PLANCHE_M
-            ? max(1, (int) floor(($base - self::PLANCHE_M) / $pas) + 1)
-            : ($base > 0 ? 1 : 0);
 
         $pdo = $this->pdo();
         $pdo->beginTransaction();
@@ -359,6 +361,9 @@ final class Parcelles
             }
 
             $ancien = json_decode((string) ($ligne['plan'] ?? ''), true);
+            $bords ??= \Syntropia\Planches::passePiedsAuxBords($ancien);
+            // Le compte vient de la même disposition que le dessin et les lignes (`Planches::disposition()`).
+            $nbPlanches = \Syntropia\Planches::disposition($base, $rattrapage, $bords)['n'];
             if ($natures === null) {
                 $natures = is_array($ancien['natures'] ?? null) ? $ancien['natures'] : [];
             }
@@ -380,6 +385,9 @@ final class Parcelles
                 ARRAY_FILTER_USE_BOTH);
             ksort($lignes, SORT_NUMERIC);
             $contenu = ['bordures' => ['externe' => $bordures, 'interne' => $bordureInterne], 'rattrapage' => $rattrapage];
+            if ($bords) {
+                $contenu['passe_pieds_bords'] = true;
+            }
             if ($lignes !== []) {
                 $contenu['lignes'] = (object) $lignes;
             }

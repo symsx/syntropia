@@ -47,8 +47,10 @@ final class Version
      * (table facultative, idem). 13 : `espece.delai_germination_j`, le délai de germination (colonne facultative, idem).
      * 14 : les tables `ligne_calendrier` et `perturbation_prevue`, le calendrier prévisionnel des lignes (facultatives, idem).
      * 15 : `espece.temperature_sol_semis_c`, la température du sol qui permet le semis (colonne facultative, idem).
+     * 16 : `espece.hauteur_m`, la hauteur de la plante adulte (colonne facultative, idem).
+     * 17 : `espece.largeur_m`, l'envergure de la plante adulte (colonne facultative, idem).
      */
-    public const SCHEMA = 15;
+    public const SCHEMA = 17;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

@@ -124,8 +124,13 @@ aide aux choix de l'itinéraire technique de conduite du projet.
 
 Pour créer une parcelle, un code et un nom suffisent. Son plan se précise
 ensuite : dimensions, bordures externe et interne, planches, sens des planches.
-Le nombre de planches se calcule tout seul. Une parcelle peut être conduite
-autrement que le site.
+Le nombre de planches se calcule tout seul. Chaque demi-planche se travaille depuis un
+passe-pied, sans marcher sur la planche : sans passe-pied le long des bords, les planches des deux bords
+ne font qu'une demi-planche ; avec (« Un passe-pied le long des deux bords »), toutes font une planche
+entière. Une planche seule se centre. Une parcelle peut être conduite
+autrement que le site. Le plan se zoome à la molette ou par les boutons « − » et
+« + » posés en bas à gauche ; une fois agrandi, il se fait glisser, et « Tout voir »
+le ramène entier.
 
 Vous dites aussi, pour chaque parcelle, le **stade du terrain** — d'où vous partez : la
 **colonisation** (des conditions difficiles, faibles ressources) ou l'**accumulation** (une
@@ -169,7 +174,8 @@ que vous voulez, elles alternent dans cet ordre. Une plante que les pépiniéris
 peut être notée « bloque l'herbe » dans Espèces ; en bordure, une plante couvre-sol compte aussi comme
 bloque-herbe. L'atelier compte
 les plants de chaque espèce d'après leur espacement, pris dans **Espèces** — entre deux plants voisins, la
-moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan. Une espèce
+moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan : à leur taille
+réelle quand leur **largeur** adulte est connue, pour voir où ils se recouvrent, sinon par une pastille. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
 bordures, les plants se recomptent quand le plan est de nouveau enregistré. Dans le scénario, une plante
 déclarée « en bordure » renvoie à ces lignes : c'est leur compte qui fait foi.
@@ -191,7 +197,8 @@ Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos pr
 surcharge locale prime sur le cadre pour la même espèce, sans le changer pour les autres ; la
 retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
 de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
-d'une espèce, son **cycle** (annuelle, bisannuelle, vivace ou ligneuse), son délai de germination en jours (une
+d'une espèce, son **cycle** (annuelle, bisannuelle, vivace ou ligneuse), sa **hauteur** adulte en mètres (une
+moyenne, que l'atelier ne lit pas encore) et sa **largeur** (son envergure, qui dessine les plants des bordures), son délai de germination en jours (une
 annuelle ou bisannuelle semée en place), la température du sol qui permet de la semer (« le critère n'est pas la date
 mais la température du sol », dit Théry), et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
 liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le scénario
