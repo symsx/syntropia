@@ -1777,6 +1777,25 @@ récit.*
   **Pièges vus** : `espece.source` fait 120 caractères et `statut_local` 60 — `INSERT IGNORE` coupe le surplus sans rien
   dire (des statuts anciens du cadre sont coupés ainsi depuis l'origine) ; une surcharge d'espèce remplace toute la fiche du
   cadre, espacement compris.
+- **La tortue liane, et les strates selon l'usage — 2026-09-30.** Deux demandes du porteur, d'après des pages de
+  *Bienvenue en syntropie* versées ce jour (`~/projets/organisation_cultures/entrees/bienvenue_en_syntropie/bon/`).
+  (1) **Tortue liane** (ch. 15 § 9, p. 131-132, complétées au corpus et au nœud `conception-de-la-tortue.md`) : l'atelier
+  dessine le plan au sol, pas la structure ; une **ligne des lianes** (`Planches::ligneDesLianes()`, clé `liane:<position>`
+  de `ligne_plantation`, même conduite qu'une bordure) au cœur, côté nord ou côté est (`parcelle.plan.liane.position`) ;
+  une liane se reconnaît à la strate `7_liane` ; la ligne centrale des planches garde sa biomasse **deux ans** après
+  `date_plantation` (`LignesDeService::liane()`), puis plus de biomasse annuelle ; glycine, rosiers grimpants, kiwi,
+  kiwaï, kiwano, achocha, capucine grimpante au cadre. (2) **Les quatre strates de lumière** (ch. 05, p. 38-40) : corpus
+  complété ; `src/Strates.php` (repères de lumière et d'occupation au sol 20/40/60/80 %), la **strate proposée** au
+  scénario et au potager (`assets/js/strates.js`), **l'occupation au sol** par strate dans leurs Informations
+  (`src/Web/Occupation.php`) ; puis, décision du porteur (« tout dépend de l'utilisation de la plante »),
+  **`espece.strate_production` et `espece.strate_service`** (le P et le B du tableau de Théry ; bloque-herbe = service) —
+  **`Version::SCHEMA` passe à 18** —, recomposées plante par plante là où une source le dit (32 et 18 valeurs ; le
+  noisetier d'après des études trouvées par le serveur MCP Consensus) ; une colonne vide : la seule strate de l'espèce,
+  sinon rien n'est deviné. Figuier, framboisier, groseillier, caseille au cadre (65 espèces). **Conséquence dite au
+  porteur** : la ligne centrale d'un potager propose le tournesol avant le maïs (maïs B en haute au ch. 05, au centre au
+  ch. 08) — à trancher dans Espèces s'il le veut. Vérifié en local (CDP, projets de test supprimés, `verifier-export`
+  identique). Détail : `chantier-peuplement-parcelle.md` § Suite — la tortue liane, `chantier-caracteristiques-
+  vegetaux.md` § Suite — les quatre strates.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
@@ -1807,7 +1826,9 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **État au 2026-09-29 — pour la reprise.** **Tout est commité, poussé sur GitHub (`origin/main` à jour) et déployé** (neuvième vague, **schéma 17**, voir § Point de reprise) ;
+0. **2026-09-30** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut ; le
+   déploiement est consigné juste en dessous de cette ligne quand il a eu lieu.
+   **État au 2026-09-29 — pour la reprise.** **Tout est commité, poussé sur GitHub (`origin/main` à jour) et déployé** (neuvième vague, **schéma 17**, voir § Point de reprise) ;
    les parcours restent à essayer en production avec le vrai compte. **Fait le 2026-09-29** : zoom du plan de parcelle et plan sur toute la largeur ;
    `espece.hauteur_m` et `espece.largeur_m` (envergure : plants des bordures dessinés à leur taille réelle, une couleur par espèce) ; la fiche du porteur
    `contenu/especes-modele-import.csv` (21 espèces, **au niveau de la variété** — « c'est au niveau de la variété que l'on connaît les caractéristiques qui
