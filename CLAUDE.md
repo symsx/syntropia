@@ -1895,15 +1895,28 @@ il apparaît réellement, pour ne pas noyer le motif.
    produits.
 12. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
-13. **Installer Plantae sur alwaysdata, à `/plantae/` — cadré le 2026-09-24, pas commencé.**
-   Le chantier vit dans l'autre dépôt : `~/projets/bdd_vg2/chantier-installation-alwaysdata.md`
-   (écrit d'ici, **pas encore commité**), à reprendre dans une session ouverte sur `bdd_vg2`.
-   Six décisions du porteur l'attendent, d'abord : alwaysdata remplace-t-il PlanetHoster
-   (`tout-emoi.go.yo.fr/plantae/`, en ligne depuis le 17 août) ou les deux coexistent-ils ?
-   Pour Syntropia : rien ne change, il lit Plantae par instantanés CSV
-   (`bin/catalogue-plantae.py`) ; une lecture directe de la base est une question ouverte.
-   Au déploiement de Plantae, ne rien toucher à `~/www/syntropia/`, et vérifier ensuite que
-   `/syntropia/` répond toujours.
+13. **Plantae est installé sur le même compte alwaysdata — fait côté `bdd_vg2`, mis à jour depuis (porteur, 2026-09-29).**
+   `https://jubile.alwaysdata.net/plantae/` **remplace** `tout-emoi.go.yo.fr/plantae/`. **À Plantae, ne jamais toucher d'ici** :
+   `~/www/plantae/` et la base `jubile_plantae` (comme `bdd_vg2` s'interdit `~/www/syntropia/`). La page d'accueil du compte
+   (`~/www/index.html`) porte les deux boutons. Vérifié le 2026-09-29 : `/syntropia/` et `/plantae/` répondent en 200.
+   Syntropia lit toujours Plantae par instantanés CSV (`bin/catalogue-plantae.py`).
+   **Plantae lira `jubile_syntropia_comptes`** (décision du porteur, `EV-060` dans `~/projets/bdd_vg2/EVOLUTION-DECISIONS.md`) —
+   les comptes de Syntropia font référence : lecture de `compte` (identifiant, empreinte, `actif`) et d'une ligne `acces`
+   `application = 'plantae'`, `role = 'administrateur'` ; **Plantae n'écrit rien** (ni `tentative`, ni `derniere_connexion`) et
+   garde son cookie. L'utilisateur MySQL `jubile_plantae` n'a que `SELECT` sur `jubile_syntropia_comptes`. **Ce qui nous engage** :
+   (1) prévenir `bdd_vg2` avant de renommer ou retirer une colonne de `compte`/`acces` ou une valeur de `acces.role` ;
+   (2) le moment venu (quand Plantae aura codé le rattachement), donner au porteur une ligne `acces` `('plantae', 'administrateur')` ;
+   (3) `acces.application` n'a pas de liste fermée dans le code : `Comptes::APPLICATION = 'syntropia'`, et le schéma
+   (`sql/00-comptes.sql`) documente `'syntropia'`, `'plantae'` — **réponse pas encore transmise à `bdd_vg2`**.
+   **Signalé par Plantae, pas traité — la production affiche les erreurs PHP dans les pages, chemins du serveur compris** :
+   `display_errors` n'est réglé nulle part sur le compte (défaut actif), et `~/www/syntropia/` n'a aucun `.user.ini`. Ce qui a marché
+   pour Plantae : un `public/.user.ini` (`display_errors = Off`, `display_startup_errors = Off`, `log_errors = On` — journal dans
+   `~/admin/logs/php/`), **fermé au web** par `<FilesMatch "^\.user\.ini$"> Require all denied` dans `public/.htaccess` (servi tel quel
+   il répond 200), et **relu seulement au bout de cinq minutes** (`user_ini.cache_ttl = 300`). À proposer au porteur puis déployer.
+   Deux constats au passage : `config/base.php` est en 664 sur le serveur (protégé par `.htaccess`, mais 640 suffit — PHP tourne sous
+   `jubile`, les fichiers sont déposés par `jubile_dev`, un 600 serait illisible) ; `www.jubile.alwaysdata.net` ne résout pas, et la
+   règle de `~/www/.htaccess` qui y redirige n'a pas de `RewriteEngine On` — **ne pas la « réparer »**, c'est elle qui garde le compte
+   joignable. Plantae reprendra un jour l'apparence de Syntropia (`EV-130` : fontes, charte, licence FFL de Clash Display à vérifier).
 14. **`../syntropia-depot` (`~/projets/syntropia-depot`) est périmé** (14-15 septembre,
    64 fichiers) : c'est la sortie de `deployer.py preparer`, jamais relue, recréée de zéro à
    chaque appel. Supprimable sans risque — le porteur n'a pas encore dit s'il le supprime.
