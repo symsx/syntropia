@@ -149,7 +149,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   PlanDeCulture.php       propose le placement des cultures d'un potager sur les planches du plan (regrouper ce qui s'entend bien, écarter ce qui s'entend mal, ne jamais bouger une culture déjà placée, répartir) ; pur
   Guildes.php             lit l'instantané des guildes de Plantae (`contenu/guildes-plantae.json`) : besoins et services par catégorie, et le bilan d'un ensemble de plantes (besoins couverts par un autre membre, restés sans réponse, plantes sans guilde connue) ; pur
   Associations.php        lit les tables d'association de `contenu/associations/` (potager, verger, succession) — ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte ; une relation est connue si l'une des deux plantes la cite (tables non symétriques) ; signale les plantes toxiques ; pur
-  Planches.php            les planches d'une parcelle et leurs lignes de plantation (port de planchesLayout(), 3 lignes par défaut, la centrale) ; pur
+  Planches.php            les planches d'une parcelle et leurs lignes de plantation — disposition() est LA règle (demi-planches aux bords, ou passe-pied le long des deux bords ; planche seule centrée), planchesLayout() en JS la reproduit ; 3 lignes par défaut, la centrale ; pur
   LignesDeService.php     propose les plantes de service des lignes d'une planche — biomasse au centre, strates vides en pyramide, une espèce par ligne ; pur
   Bordures.php            les lignes de plants des bordures — géométrie (une ligne au milieu de chaque bande), compte par espèce (moyenne des espacements voisins, demi-espacement aux bouts), l'espèce convient-elle à la bordure ; pur
   Temps.php               le temps d'une plante — la semaine (lundi ISO), la fenêtre d'une culture (mise en place → récolte, levée), les périodes du scénario rapportées à la date de plantation, l'échelle (semaine, mois, année) ; pur
@@ -186,6 +186,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
 contenu/
   .htaccess              refuse tout accès web
   calendrier-lopez.csv      le tableau « des semis et repiquages » de Lopez (17 cultures d'automne et d'hiver), recopié de connaissances/maraichage-naturel/lopez-plan-de-culture.md ; deux cellules « à vérifier » vides et marquées
+  especes-modele-import.csv la fiche d'espèces du porteur (21 espèces, par variété, hauteur et largeur) — modèle téléchargeable depuis especes.php ET source du cadre (fin de sql/02-especes-seed.sql, régénérée depuis elle)
   guildes-plantae.json      instantané de `guilde.csv` de Plantae (179 plantes, 564 lignes) — écrit par bin/catalogue-plantae.py, jamais à la main ; vieillit, à réexporter
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -200,7 +201,7 @@ sql/
   00-comptes.sql          4 tables — compte, acces, tentative, invitation (+ migration portable de invitation.role_site)
   01-syntropia.sql        le schéma — site, parcelle, calque_element, espece, scenario_ligne…
   01-syntropia.sql       … et à sa fin la table `atelier_version` + la ligne `schema` (DML rejoué) : à monter avec `Version::SCHEMA` ; `site.origine` (schéma 2), la table `constat` (schéma 3), `parcelle.fin_plantation` (schéma 4) et `constat.adventices` (schéma 5) et `succession_ligne.planche` (schéma 6) et `succession_ligne.date_semis` (schéma 7) et `succession_ligne.nb_plants` (schéma 8) et `parcelle.stade` (schéma 9) et `espece.periode_semis`/`periode_repiquage`/`periode_recolte` (schéma 10) y ont leur migration additive
-  02-especes-seed.sql     DML, pas du schéma — 46 espèces curatées, site_id=0 ; rejoué à chaque bin/dev.py init
+  02-especes-seed.sql     DML, pas du schéma — 53 espèces au cadre (site_id=0), dont la fiche du porteur (contenu/especes-modele-import.csv) en fin de fichier ; rejoué à chaque bin/dev.py init
 bin/
   .htaccess              refuse tout accès web — des scripts, pas des pages
   dev.py                  serveur de développement — voir Commandes
@@ -223,7 +224,7 @@ public/                racine servable du site en refonte
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
   conception-potager.php     étape 4 (Conception) pour une parcelle de type potager — le plan de culture par planche, les voisinages de Weinrich ; `conception-scenario.php` y redirige un potager
   conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
-  conception-parcelles.php   étape 7 (Conception) — vraies parcelles en liste, plan encore prototype
+  conception-parcelles.php   étape 7 (Conception) — le plan d'une parcelle (bordures, planches, lignes, plants des bordures à leur envergure) ; zoom
   conception-materiel-et-eau.php  étape 5 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
@@ -1806,7 +1807,27 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **État au 2026-09-23 — pour la reprise.** **Tout ce qui suit est déployé** (septième vague, schéma 12, voir § Point de reprise) ; les parcours restent à essayer en production avec le vrai compte. **Fait depuis le 2026-09-20, commité** :
+0. **État au 2026-09-29 — pour la reprise.** **Tout est commité, poussé sur GitHub (`origin/main` à jour) et déployé** (neuvième vague, **schéma 17**, voir § Point de reprise) ;
+   les parcours restent à essayer en production avec le vrai compte. **Fait le 2026-09-29** : zoom du plan de parcelle et plan sur toute la largeur ;
+   `espece.hauteur_m` et `espece.largeur_m` (envergure : plants des bordures dessinés à leur taille réelle, une couleur par espèce) ; la fiche du porteur
+   `contenu/especes-modele-import.csv` (21 espèces, **au niveau de la variété** — « c'est au niveau de la variété que l'on connaît les caractéristiques qui
+   importent pour la syntropie ») importée au cadre, qui passe à 53 espèces, six génériques remplacés ; planches : « Un passe-pied le long des deux bords »,
+   planche seule centrée, compte corrigé (**chaque demi-planche a son passe-pied** : on ne marche jamais sur une planche).
+   **Pour réimporter la fiche** après une modification du porteur : régénérer la fin de `sql/02-especes-seed.sql` depuis le CSV (les blocs « LES VARIÉTÉS
+   REMPLACENT… » et « LA FICHE DU PORTEUR… » — générés, jamais corrigés à la main), `bin/dev.py init`, comparer chaque case remplie à la base, puis
+   `deployer.py base`. Une case vide de la fiche ne touche à rien ; `source` ≤ 120 et `statut_local` ≤ 60 caractères.
+   **Ouvert après le 2026-09-29** :
+   - **Le porteur** doit cliquer « Enregistrer le plan » de La Vadaux P1 en production (9 → 10 planches ; `nb_planches` ne se recalcule qu'à
+     l'enregistrement — lu par le potager, le matériel, les lignes de planche). En local, P2 attend la case « passe-pieds le long des bords » pour garder
+     sa planche centrée (sinon, deux demi-planches).
+   - **Proposé, sans réponse** : agrandir `espece.statut_local` (60 caractères — des statuts anciens du cadre sont coupés depuis l'origine, ex. le
+     chalef ; ce serait un schéma 18).
+   - **Prochaine évolution annoncée par le porteur** : la hauteur servira à **estimer l'ombre portée vers le nord** d'une plante sur ses voisines (optimiser
+     le placement) et à **dessiner la parcelle vue de côté**. Rien ne lit encore `hauteur_m`. À cadrer avec lui avant de coder (quelle date/soleil,
+     quelle géométrie, quelle échelle de temps — cf. `chantier-film-de-la-parcelle.md`).
+   - Une surcharge d'espèce (page Espèces) **remplace toute la fiche du cadre**, espacement compris : n'y saisir qu'une largeur fait perdre le compte des
+     plants. Pas corrigé — à signaler si le porteur édite des espèces une à une.
+   **Fait du 2026-09-20 au 2026-09-23** :
    saut du chat Phases 1, 2, 2 bis, 2 ter, **3** (stade du terrain : deux stades, par parcelle) et **5** (la conception) ; associations Phase 1 ; plan de culture du potager **terminé** (Phases 1 à 6) ;
    module 5 de la formation versé au corpus ; chantier « caractéristiques des végétaux » **terminé** (les trois phases : le calendrier d'une espèce ; les fonctions de
    service d'une culture de potager, multivaluées, remplacent la case unique « plante de biomasse » ; la page `especes.php` ; branchée à `conception-potager.php`, un
