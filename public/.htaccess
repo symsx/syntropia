@@ -7,6 +7,17 @@
     Allow from all
 </IfModule>
 
+# Le réglage PHP du dossier (`.user.ini`) n'est pas une page : servi tel quel, il répondrait 200.
+<FilesMatch "^\.user\.ini$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 # Les fontes, servies depuis ce dépôt et non depuis un tiers. Deux
 # précautions, comme dans le dépôt de référence : le type MIME, qu'un
 # Apache ancien peut ignorer pour le woff2 ; et un cache long, parce
