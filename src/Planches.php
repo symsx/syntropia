@@ -167,27 +167,12 @@ final class Planches
      */
     public static function dUneParcelle(array $parcelle): array
     {
-        $L = (float) ($parcelle['longueur_m'] ?? 0);
-        $H = (float) ($parcelle['largeur_m'] ?? 0);
-        if ($L <= 0 || $H <= 0) {
+        $z = self::zone($parcelle);
+        if ($z === null) {
             return [];
         }
-        $plan = json_decode((string) ($parcelle['plan'] ?? ''), true);
-        $cote = static function (string $c) use ($plan): float {
-            $t = 0.0;
-            foreach (['externe', 'interne'] as $cadre) {
-                $b = is_array($plan) ? ($plan['bordures'][$cadre][$c] ?? null) : null;
-                $t += is_array($b) && !empty($b['actif']) ? max(0.0, (float) ($b['largeur_m'] ?? 0)) : 0.0;
-            }
-            return $t;
-        };
-        $nordSud = ($parcelle['orientation_lignes'] ?? 'nord-sud') !== 'est-ouest';
-        $x0 = $cote('ouest');
-        $y0 = $cote('nord');
-        $largeurUtile = max(0.0, $L - $cote('ouest') - $cote('est'));
-        $hauteurUtile = max(0.0, $H - $cote('nord') - $cote('sud'));
-        $rattrapage = is_array($plan) && ($plan['rattrapage'] ?? '') === 'planches' ? 'planches' : 'passe-pieds';
-        $disp = self::disposition($nordSud ? $largeurUtile : $hauteurUtile, $rattrapage, self::passePiedsAuxBords($plan));
+        ['plan' => $plan, 'nordSud' => $nordSud, 'x0' => $x0, 'y0' => $y0, 'largeurUtile' => $largeurUtile,
+            'hauteurUtile' => $hauteurUtile, 'disp' => $disp] = $z;
 
         $out = [];
         $pos = ($nordSud ? $x0 : $y0) + $disp['debut'];
@@ -207,5 +192,102 @@ final class Planches
             $pos += $w + ($disp['passePieds'][$k] ?? 0.0);
         }
         return $out;
+    }
+
+    /**
+     * La zone des planches : ce que les bordures (externe et interne) laissent, et la disposition des planches dedans.
+     * `null` sans dimensions.
+     *
+     * @return array{plan: mixed, nordSud: bool, x0: float, y0: float, largeurUtile: float, hauteurUtile: float,
+     *               disp: array{n: int, largeurs: list<float>, passePieds: list<float>, debut: float}}|null
+     */
+    public static function zone(array $parcelle): ?array
+    {
+        $L = (float) ($parcelle['longueur_m'] ?? 0);
+        $H = (float) ($parcelle['largeur_m'] ?? 0);
+        if ($L <= 0 || $H <= 0) {
+            return null;
+        }
+        $plan = json_decode((string) ($parcelle['plan'] ?? ''), true);
+        $cote = static function (string $c) use ($plan): float {
+            $t = 0.0;
+            foreach (['externe', 'interne'] as $cadre) {
+                $b = is_array($plan) ? ($plan['bordures'][$cadre][$c] ?? null) : null;
+                $t += is_array($b) && !empty($b['actif']) ? max(0.0, (float) ($b['largeur_m'] ?? 0)) : 0.0;
+            }
+            return $t;
+        };
+        $nordSud = ($parcelle['orientation_lignes'] ?? 'nord-sud') !== 'est-ouest';
+        $largeurUtile = max(0.0, $L - $cote('ouest') - $cote('est'));
+        $hauteurUtile = max(0.0, $H - $cote('nord') - $cote('sud'));
+        $rattrapage = is_array($plan) && ($plan['rattrapage'] ?? '') === 'planches' ? 'planches' : 'passe-pieds';
+        return ['plan' => $plan, 'nordSud' => $nordSud, 'x0' => $cote('ouest'), 'y0' => $cote('nord'),
+            'largeurUtile' => $largeurUtile, 'hauteurUtile' => $hauteurUtile,
+            'disp' => self::disposition($nordSud ? $largeurUtile : $hauteurUtile, $rattrapage, self::passePiedsAuxBords($plan))];
+    }
+
+    /**
+     * Où court la ligne des lianes d'une tortue liane (Théry, ch. 15 § 9 — les lianes émergentes et la strate haute
+     * montent sur la structure ; « orientée à l'est ou au nord, ou plantée au cœur de la tortue entre les poteaux
+     * centraux »). Réglage de la parcelle, décision du porteur (2026-09-30) : `coeur` (par défaut), `nord` ou `est`.
+     */
+    public const POSITIONS_LIANE = ['coeur' => 'au cœur', 'nord' => 'côté nord', 'est' => 'côté est'];
+
+    public static function positionLiane(mixed $plan): string
+    {
+        $p = is_array($plan) ? ($plan['liane']['position'] ?? null) : null;
+        return is_string($p) && isset(self::POSITIONS_LIANE[$p]) ? $p : 'coeur';
+    }
+
+    /**
+     * La géométrie de la ligne des lianes, au format de `Bordures::lignes()`. L'atelier dessine le plan au sol, pas la
+     * structure (le porteur, 2026-09-30) ; la source dessine les poteaux au bord des bandes, jamais dessus — la ligne suit :
+     *  - `coeur` : au milieu du passe-pied central (le plus à l'ouest, ou au nord, de deux également centraux), sur toute la
+     *    longueur des planches ; sans passe-pied entre planches, celui du bord s'il existe, sinon le bord de la zone ;
+     *  - `nord`, `est` : le long du bord nord, ou est, de la zone des planches — au milieu du passe-pied du bord s'il y en a un.
+     * `bande` : la largeur du passe-pied où elle court, le passe-pied idéal au bord de la zone. `null` sans dimensions ni
+     * planche.
+     *
+     * @return array{cadre: string, cote: string, longueur: float, bande: float, x1: float, y1: float, x2: float, y2: float}|null
+     */
+    public static function ligneDesLianes(array $parcelle): ?array
+    {
+        $z = self::zone($parcelle);
+        if ($z === null || $z['disp']['n'] < 1 || $z['largeurUtile'] <= 0 || $z['hauteurUtile'] <= 0) {
+            return null;
+        }
+        ['nordSud' => $ns, 'x0' => $x0, 'y0' => $y0, 'largeurUtile' => $lu, 'hauteurUtile' => $hu, 'disp' => $d] = $z;
+        $position = self::positionLiane($z['plan']);
+        $passe = Parcelles::PASSE_PIED_M;
+        // Le passe-pied du bord, parallèle aux planches, existe quand la disposition laisse de la place avant la première.
+        $debut = $d['debut'];
+        if ($position === 'coeur') {
+            $depart = $ns ? $x0 : $y0;
+            if ($d['n'] >= 2) {
+                $k = intdiv($d['n'] - 2, 2);
+                $pos = $depart + $debut;
+                for ($i = 0; $i <= $k; $i++) {
+                    $pos += $d['largeurs'][$i] + ($i < $k ? $d['passePieds'][$i] : 0.0);
+                }
+                $bande = $d['passePieds'][$k];
+                $pos += $bande / 2;
+            } else {
+                $bande = $debut > 0 ? $debut : $passe;
+                $pos = $depart + ($debut > 0 ? $debut / 2 : 0.0);
+            }
+            $geo = $ns ? [$pos, $y0, $pos, $y0 + $hu] : [$x0, $pos, $x0 + $lu, $pos];
+        } elseif ($position === 'nord') {
+            // Planches est-ouest : le passe-pied du bord nord leur est parallèle.
+            $y = !$ns && $debut > 0 ? $y0 + $debut / 2 : $y0;
+            $bande = !$ns && $debut > 0 ? $debut : $passe;
+            $geo = [$x0, $y, $x0 + $lu, $y];
+        } else {
+            $x = $ns && $debut > 0 ? $x0 + $lu - $debut / 2 : $x0 + $lu;
+            $bande = $ns && $debut > 0 ? $debut : $passe;
+            $geo = [$x, $y0, $x, $y0 + $hu];
+        }
+        [$x1, $y1, $x2, $y2] = $geo;
+        return ['cadre' => 'liane', 'cote' => $position, 'longueur' => round(abs($x2 - $x1) + abs($y2 - $y1), 3), 'bande' => $bande,
+            'x1' => $x1, 'y1' => $y1, 'x2' => $x2, 'y2' => $y2];
     }
 }

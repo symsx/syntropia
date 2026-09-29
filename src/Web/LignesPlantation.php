@@ -9,8 +9,8 @@ use Syntropia\Bordures;
 use Syntropia\Database;
 
 /**
- * Les lignes de plants d'une parcelle (`ligne_plantation`) — celles des bordures (Phase 2) et les lignes de service des
- * planches (Phase 6).
+ * Les lignes de plants d'une parcelle (`ligne_plantation`) — celles des bordures (Phase 2), les lignes de service des
+ * planches (Phase 6) et la ligne des lianes d'une tortue liane (`liane:coeur`… — même conduite qu'une bordure).
  *
  * Voir `chantier-peuplement-parcelle.md`, Phase 2. Une ligne = une série ordonnée d'espèces du référentiel, un
  * enregistrement par place (`rang`). Même conduite que `Interventions` : l'appartenance de la parcelle au site se
@@ -215,13 +215,7 @@ final class LignesPlantation
         $series = $this->dUneParcelle((int) $parcelle['id']);
         $cles = array_unique(array_merge(array_keys($geometrie),
             array_filter(array_keys($series), static fn (string $c): bool => Bordures::depuisCle($c) !== null)));
-        $ordre = [];
-        foreach (array_keys(Bordures::CADRES) as $cadre) {
-            foreach (array_keys(Bordures::COTES) as $cote) {
-                $ordre[] = Bordures::cle($cadre, $cote);
-            }
-        }
-        $cles = array_values(array_intersect($ordre, $cles));
+        $cles = array_values(array_intersect(Bordures::cles(), $cles));
 
         $out = [];
         foreach ($cles as $cle) {

@@ -274,7 +274,7 @@ if (($_GET['nouvelle'] ?? '') === '1') {
 $champsTexte = ['nom_scientifique', 'variete', 'nom_usuel', 'hauteur_m', 'largeur_m', 'delai_germination_j', 'temperature_sol_semis_c', 'periode_semis',
     'periode_repiquage', 'periode_recolte', 'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
     'rapport_cn', 'conduite_taille', 'periode_taille', 'type_plant', 'orientation_bordure', 'source', 'statut_local', 'notes'];
-$champsChoix = ['cycle', 'systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
+$champsChoix = ['cycle', 'strate_production', 'strate_service', 'systeme', 'entree_scenario', 'sortie_scenario', 'biomasse', 'origine'];
 $champsBool = ['serre_necessaire', 'bloque_herbe', 'deplacable'];
 $f = array_fill_keys(array_merge($champsTexte, $champsChoix, $champsBool), '');
 $source = $_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'enregistrer' ? $_POST : ($edition ?? []);
@@ -541,6 +541,21 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
           <label class="es-champ">Largeur adulte (m) <small>l'envergure — les plants des bordures se dessinent à cette taille sur le plan</small>
             <input type="number" name="largeur_m" min="0.01" max="60" step="0.01" inputmode="decimal" value="<?= $h($f['largeur_m']) ?>">
           </label>
+          <p class="es-note" style="margin:.5rem 0 .2rem">La strate dépend de l'usage (Théry, ch. 05) : celle où la plante se
+            déploie le mieux pour sa récolte, et celle où elle rend son service — biomasse, bloque-herbe (émergente 80 à 100 % de
+            lumière, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 %). Le scénario et le potager la proposent d'après ces deux choix.</p>
+          <div class="es-deux">
+<?php foreach (['strate_production' => 'Strate de production', 'strate_service' => 'Strate de service'] as $champ => $titre): ?>
+            <label class="es-champ"><?= $titre ?>
+              <select name="<?= $champ ?>">
+                <option value="">—</option>
+<?php foreach (\Syntropia\Strates::REPERES as $cle => $r): ?>
+                <option value="<?= $cle ?>"<?= $f[$champ] === $cle ? ' selected' : '' ?>><?= $h($r['libelle']) ?></option>
+<?php endforeach; ?>
+              </select>
+            </label>
+<?php endforeach; ?>
+          </div>
           <label class="es-champ">Délai de germination (jours) <small>annuelle ou bisannuelle semée en place : la levée le suit</small>
             <input type="number" name="delai_germination_j" min="1" max="365" step="1" inputmode="numeric" value="<?= $h($f['delai_germination_j']) ?>">
           </label>

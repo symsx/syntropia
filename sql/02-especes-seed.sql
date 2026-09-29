@@ -269,6 +269,88 @@ UPDATE espece SET role = 'biomasse'
 UPDATE espece SET temperature_sol_semis_c = 5.0
   WHERE site_id = 0 AND temperature_sol_semis_c IS NULL AND nom_scientifique = 'Helianthus annuus';
 
+-- LES LIANES DE LA TORTUE LIANE — Théry, ch. 15 § 9, p. 131-132 (accord du porteur, 2026-09-30). Une liane se reconnaît à
+-- sa strate possible « Liane / grimpante » (`7_liane`), à côté de sa strate syntropique : c'est ce que lit la ligne des
+-- lianes du plan (`Bordures::convient('liane', …)`). Seul ce que la source dit est rempli : la hauteur des rosiers est le
+-- milieu de la fourchette donnée (6 à 10 m, 4 à 8 m) ; aucun espacement n'est donné — la ligne ne se compte qu'une fois
+-- l'espacement saisi dans Espèces. La glycine n'est nommée que par son genre (« originaire pour une grande part de Corée,
+-- de Chine et du Japon »), les rosiers Cécile Brünner par leur cultivar. La source dit *Rosa banksiae normalis*
+-- « pratiquement inerme », puis le rosier de Banks « pas exempt de sympathiques épines » : une seule ligne, sa note le dit.
+-- Kiwano, achocha et capucine grimpante : des lianes annuelles, qui doublent les pérennes la première année.
+INSERT IGNORE INTO espece
+  (site_id, nom_scientifique, variete, nom_usuel, role, strates_possibles, cycle, hauteur_m, notes, source, statut_local)
+VALUES
+  (0, 'Wisteria', '', 'Glycine', 'ombre|biomasse|nectar', 'emergente|7_liane', 'ligneuse', NULL,
+   'Vive et rapide ; ne craint pas la taille de perturbation, vite nécessaire ; rameaux bien proportionnés en azote et en carbone ; ralentit l\'impact des averses de grêle ; précieuse pour les pollinisateurs. Toxique à la consommation humaine et animale',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.3, p. 131', 'toxique pour l\'homme et l\'animal'),
+  (0, 'Rosa', 'Cécile Brünner Climbing', 'Rosier grimpant Cécile Brünner', 'ombre|biomasse', 'emergente|7_liane', 'ligneuse', 8,
+   'Résistant aux extrêmes de chaud et de froid, vigoureux, monte à 6 à 10 m ; épines peu importantes',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.3, p. 131', 'épines peu importantes'),
+  (0, 'Rosa banksiae', 'normalis', 'Rosier de Banks', 'ombre|biomasse', 'emergente|7_liane', 'ligneuse', 6,
+   'Pratiquement inerme selon la source, feuilles persistantes, 4 à 8 m, très vigoureux, résistant à la sécheresse — la même page dit aussi le rosier de Banks « pas exempt d\'épines » : à vérifier sur le plant',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.3, p. 131', 'épines : la source se contredit'),
+  (0, 'Actinidia deliciosa', '', 'Kiwi', 'production', 'haute|7_liane', 'ligneuse', NULL,
+   'Strate haute, à l\'ombre des lianes émergentes ; cueillette facilitée par la structure. À l\'est ou au nord, ou planté au cœur de la tortue entre les poteaux centraux',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.1 et 9.3 bis, p. 131-132', 'à l\'est ou au nord, ou entre les poteaux centraux'),
+  (0, 'Actinidia arguta', '', 'Kiwaï', 'production', 'haute|7_liane', 'ligneuse', NULL,
+   'Strate haute, à l\'ombre des lianes émergentes, selon les apports en eau ; orienté face nord-est',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.3 bis, p. 131', 'selon l\'eau disponible ; face nord-est'),
+  (0, 'Cucumis metuliferus', '', 'Kiwano', 'ombre', 'emergente|7_liane', 'annuelle', NULL,
+   'Liane annuelle résistante à la chaleur : double les lianes pérennes la première année, le temps qu\'elles s\'installent',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.4, p. 131', 'la première année seulement'),
+  (0, 'Cyclanthera pedata', '', 'Achocha', 'ombre', 'emergente|7_liane', 'annuelle', NULL,
+   'Liane annuelle résistante à la chaleur : double les lianes pérennes la première année, le temps qu\'elles s\'installent',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.4, p. 131', 'la première année seulement'),
+  (0, 'Tropaeolum majus', 'grimpante', 'Capucine grimpante', 'ombre', 'emergente|7_liane', 'annuelle', NULL,
+   'Liane annuelle résistante à la chaleur : double les lianes pérennes la première année, le temps qu\'elles s\'installent',
+   'livre-bienvenue-en-syntropie ch. 15 § 9.4, p. 131', 'la première année seulement');
+
+-- La vigne est une liane (ch. 05 : « elle grimpe dans un houppier » ; ch. 15 § 9 : strate haute de la tortue liane).
+UPDATE espece SET strates_possibles = 'haute|7_liane'
+  WHERE site_id = 0 AND nom_scientifique = 'Vitis vinifera' AND variete = '' AND strates_possibles = 'haute';
+
+-- LES QUATRE STRATES DE LUMIÈRE — Théry, ch. 05, p. 38-39 (le tableau et ses exemples, sud de la Dordogne ; « il n'y a
+-- pas de lecture absolue pour ce tableau »), relus le 2026-09-30. Une strate possible de plus quand la source en donne
+-- deux : selon l'objectif (P production, B biomasse — le sureau) ou au fil du cycle (la fève, la pomme de terre
+-- précoce). Chaque UPDATE ne touche que la valeur qu'il corrige : rejoué, il ne réécrit rien.
+UPDATE espece SET strates_possibles = 'haute'
+  WHERE site_id = 0 AND nom_scientifique = 'Salvia officinalis' AND variete = '' AND strates_possibles IS NULL;
+UPDATE espece SET strates_possibles = 'haute|moyenne'
+  WHERE site_id = 0 AND nom_scientifique = 'Sambucus nigra' AND variete = '' AND strates_possibles = 'haute';
+UPDATE espece SET strates_possibles = 'emergente|haute'
+  WHERE site_id = 0 AND nom_scientifique = 'Vicia faba' AND variete = '' AND strates_possibles = 'emergente';
+UPDATE espece SET strates_possibles = 'emergente|moyenne'
+  WHERE site_id = 0 AND nom_scientifique = 'Solanum tuberosum' AND variete = '' AND strates_possibles = 'emergente';
+-- Trois strates que le tableau du ch. 05 ne donne pas, mais que le livre dit ailleurs (relu le 2026-09-30, à la suite
+-- d'une réponse non sourcée transmise par le porteur — seul ce que le corpus confirme est repris) :
+--   - le noyer, émergent : « il n'y aura pas d'émergents — sauf pour les noyers et affiliés, qui en sont » (ch. 15, les nids) ;
+--   - l'artichaut, émergent jusqu'à la fin du placenta 3 dans un scénario (ch. 15), et parmi les « espèces de biomasse
+--     haute » (ch. 15) ;
+--   - le romarin, émergent : le ch. 14 le met sur la bande extérieure sud et ouest, où il ne veut que des émergentes —
+--     plante de garrigue, comme la lavande (ch. 05).
+-- Le noisetier reste sans strate : le corpus n'en donne pas.
+UPDATE espece SET strates_possibles = 'emergente'
+  WHERE site_id = 0 AND nom_scientifique = 'Juglans regia' AND variete = '' AND strates_possibles IS NULL;
+UPDATE espece SET strates_possibles = 'emergente|haute'
+  WHERE site_id = 0 AND nom_scientifique = 'Cynara scolymus' AND variete = '' AND strates_possibles IS NULL;
+UPDATE espece SET strates_possibles = 'emergente'
+  WHERE site_id = 0 AND nom_scientifique = 'Salvia rosmarinus' AND variete = '' AND strates_possibles IS NULL;
+
+-- … et les plantes du tableau que le cadre n'avait pas : le figuier (« figuier P » en haute, « figuier B » en moyenne),
+-- la famille des ribes (cassissier déjà là, groseillier, caseille) et le framboisier, « plantes de bord de clairière »,
+-- en haut de la strate moyenne.
+INSERT IGNORE INTO espece
+  (site_id, nom_scientifique, variete, nom_usuel, role, strates_possibles, cycle, source, statut_local)
+VALUES
+  (0, 'Ficus carica', '', 'Figuier', 'production|biomasse', 'haute|moyenne', 'ligneuse',
+   'livre-bienvenue-en-syntropie ch. 05, tableau p. 38', 'haute pour les figues, moyenne pour la biomasse'),
+  (0, 'Rubus idaeus', '', 'Framboisier', 'production', 'moyenne', 'ligneuse',
+   'livre-bienvenue-en-syntropie ch. 05, p. 38-39', 'haut de la strate moyenne — mi-ombre'),
+  (0, 'Ribes rubrum', '', 'Groseillier', 'production', 'moyenne', 'ligneuse',
+   'livre-bienvenue-en-syntropie ch. 05, p. 38-39', 'haut de la strate moyenne — mi-ombre'),
+  (0, 'Ribes ×nidigrolaria', '', 'Caseille', 'production', 'moyenne', 'ligneuse',
+   'livre-bienvenue-en-syntropie ch. 05, p. 38-39', 'haut de la strate moyenne — mi-ombre');
+
 -- LES VARIÉTÉS REMPLACENT LES ENTRÉES GÉNÉRIQUES — le porteur, 2026-09-29 : « c'est au niveau de la variété que l'on
 -- connaît les caractéristiques qui importent pour la syntropie » (la consoude Bocking 14, stérile, reste en place ; la
 -- consoude officinale, fertile, s'étend sur les cultures). Chaque ligne reprend la fiche du porteur
@@ -657,3 +739,77 @@ UPDATE espece SET
   notes = 'Mûre à ronce sans épines (cultivars \'Thornless Evergreen\', \'Loch Ness\', \'Black Satin\'…), pas le mûrier arbre (Morus). Bords nord et est : trois pieds entre deux sureaux plantés chaque mètre, palissés dessus (Théry ch. 14). Taille de formation aérée pour que les mûres mûrissent, une partie des tiges prélevée pour la biomasse. Récolte de fin juillet à septembre. Se marcotte seul par le bout des tiges',
   source = IF(source LIKE 'fiche du porteur 2026-09-29%' OR CHAR_LENGTH(source) > 120 - 30, source, CONCAT_WS(' ; ', 'fiche du porteur 2026-09-29', source))
   WHERE site_id = 0 AND nom_scientifique = 'Rubus fruticosus' AND variete = '';
+
+-- ======================================================================================================================
+-- FIN DU BLOC GÉNÉRÉ DEPUIS LA FICHE DU PORTEUR. Ce qui suit est écrit à la main : une régénération de la fiche le garde.
+-- ======================================================================================================================
+-- LA STRATE SELON L'USAGE — schéma 18 (décision du porteur, 2026-09-30) : la strate de PRODUCTION et la strate de SERVICE
+-- (biomasse, bloque-herbe), le P et le B du tableau de Théry (ch. 05, p. 38, sud de la Dordogne). Recomposées plante par
+-- plante, seulement là où une source dit la strate de cet usage :
+--   - le tableau et le texte du ch. 05 : maïs P émergente / B haute, sureau et figuier P haute / B moyenne ; la fève et
+--     la pomme de terre démarrent en émergente (production) ; le haricot nain, « parfaitement à l'aise en strate
+--     moyenne » (ch. 05, ch. 08) ; et chaque plante du tableau, dans la strate de l'usage que le livre lui donne ;
+--   - le ch. 14 (lavande, romarin : la bande extérieure sud et ouest, où ne vont que des émergentes — service bloque-herbe) ;
+--   - le ch. 15 (le noyer, émergent ; la tortue liane : lianes émergentes, kiwi et kiwaï en strate haute) ;
+--   - le noisetier : P haute / B moyenne, d'après des études (Hampson et al., 1992 et 1996, J. Am. Soc. Hort. Sci. :
+--     la récolte baisse dès 30 % d'ombre et de plus de 80 % sous 92 % ; Şen et al., 2020) — il survit à l'ombre, sans
+--     fructifier.
+-- Laissées vides : ce qu'aucune source ne dit (le service de la fève, l'artichaut — émergent dans un scénario du ch. 15,
+-- « biomasse haute » ailleurs —, le chalef — haute pour la biomasse au ch. 11, émergent au ch. 15). Une colonne vide : la
+-- seule strate de l'espèce sert pour tout usage (`Strates::proposee()`). `IS NULL` : rejoué, rien n'est réécrit.
+UPDATE espece SET strate_production = CASE CONCAT(nom_scientifique, '|', variete)
+    WHEN 'Zea mays|population locale' THEN 'emergente'
+    WHEN 'Sambucus nigra|' THEN 'haute'
+    WHEN 'Ficus carica|' THEN 'haute'
+    WHEN 'Corylus avellana|' THEN 'haute'
+    WHEN 'Vicia faba|' THEN 'emergente'
+    WHEN 'Solanum tuberosum|' THEN 'emergente'
+    WHEN 'Phaseolus vulgaris|nain' THEN 'moyenne'
+    WHEN 'Calendula officinalis|' THEN 'emergente'
+    WHEN 'Lavandula angustifolia|' THEN 'emergente'
+    WHEN 'Salvia rosmarinus|' THEN 'emergente'
+    WHEN 'Salvia officinalis|' THEN 'haute'
+    WHEN 'Melissa officinalis|' THEN 'basse'
+    WHEN 'Mentha suaveolens|' THEN 'basse'
+    WHEN 'Fragaria vesca|' THEN 'basse'
+    WHEN 'Fragaria ×ananassa|' THEN 'haute'
+    WHEN 'Solanum lycopersicum|' THEN 'haute'
+    WHEN 'Capsicum annuum|' THEN 'haute'
+    WHEN 'Solanum melongena|' THEN 'haute'
+    WHEN 'Vitis vinifera|' THEN 'haute'
+    WHEN 'Malus domestica|' THEN 'haute'
+    WHEN 'Pyrus communis|' THEN 'haute'
+    WHEN 'Allium ursinum|' THEN 'haute'
+    WHEN 'Cucurbita maxima|' THEN 'moyenne'
+    WHEN 'Cucurbita pepo|' THEN 'moyenne'
+    WHEN 'Cucumis sativus|' THEN 'moyenne'
+    WHEN 'Ribes nigrum|' THEN 'moyenne'
+    WHEN 'Ribes rubrum|' THEN 'moyenne'
+    WHEN 'Ribes ×nidigrolaria|' THEN 'moyenne'
+    WHEN 'Rubus idaeus|' THEN 'moyenne'
+    WHEN 'Juglans regia|' THEN 'emergente'
+    WHEN 'Actinidia deliciosa|' THEN 'haute'
+    WHEN 'Actinidia arguta|' THEN 'haute'
+  END
+  WHERE site_id = 0 AND strate_production IS NULL AND CONCAT(nom_scientifique, '|', variete) IN ('Zea mays|population locale', 'Sambucus nigra|', 'Ficus carica|', 'Corylus avellana|', 'Vicia faba|', 'Solanum tuberosum|', 'Phaseolus vulgaris|nain', 'Calendula officinalis|', 'Lavandula angustifolia|', 'Salvia rosmarinus|', 'Salvia officinalis|', 'Melissa officinalis|', 'Mentha suaveolens|', 'Fragaria vesca|', 'Fragaria ×ananassa|', 'Solanum lycopersicum|', 'Capsicum annuum|', 'Solanum melongena|', 'Vitis vinifera|', 'Malus domestica|', 'Pyrus communis|', 'Allium ursinum|', 'Cucurbita maxima|', 'Cucurbita pepo|', 'Cucumis sativus|', 'Ribes nigrum|', 'Ribes rubrum|', 'Ribes ×nidigrolaria|', 'Rubus idaeus|', 'Juglans regia|', 'Actinidia deliciosa|', 'Actinidia arguta|');
+UPDATE espece SET strate_service = CASE CONCAT(nom_scientifique, '|', variete)
+    WHEN 'Zea mays|population locale' THEN 'haute'
+    WHEN 'Sambucus nigra|' THEN 'moyenne'
+    WHEN 'Ficus carica|' THEN 'moyenne'
+    WHEN 'Corylus avellana|' THEN 'moyenne'
+    WHEN 'Helianthus annuus|' THEN 'emergente'
+    WHEN 'Helianthus annuus|à une fleur' THEN 'emergente'
+    WHEN 'Calendula officinalis|' THEN 'emergente'
+    WHEN 'Lavandula angustifolia|' THEN 'emergente'
+    WHEN 'Salvia rosmarinus|' THEN 'emergente'
+    WHEN 'Symphytum ×uplandicum|Bocking 14' THEN 'basse'
+    WHEN 'Melissa officinalis|' THEN 'basse'
+    WHEN 'Mentha suaveolens|' THEN 'basse'
+    WHEN 'Wisteria|' THEN 'emergente'
+    WHEN 'Cyclanthera pedata|' THEN 'emergente'
+    WHEN 'Rosa|Cécile Brünner Climbing' THEN 'emergente'
+    WHEN 'Rosa banksiae|normalis' THEN 'emergente'
+    WHEN 'Cucumis metuliferus|' THEN 'emergente'
+    WHEN 'Tropaeolum majus|grimpante' THEN 'emergente'
+  END
+  WHERE site_id = 0 AND strate_service IS NULL AND CONCAT(nom_scientifique, '|', variete) IN ('Zea mays|population locale', 'Sambucus nigra|', 'Ficus carica|', 'Corylus avellana|', 'Helianthus annuus|', 'Helianthus annuus|à une fleur', 'Calendula officinalis|', 'Lavandula angustifolia|', 'Salvia rosmarinus|', 'Symphytum ×uplandicum|Bocking 14', 'Melissa officinalis|', 'Mentha suaveolens|', 'Wisteria|', 'Cyclanthera pedata|', 'Rosa|Cécile Brünner Climbing', 'Rosa banksiae|normalis', 'Cucumis metuliferus|', 'Tropaeolum majus|grimpante');

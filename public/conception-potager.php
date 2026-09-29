@@ -28,12 +28,14 @@ use Syntropia\PlanDeCulture;
 use Syntropia\Planches;
 use Syntropia\Role;
 use Syntropia\Scenario;
+use Syntropia\Strates;
 use Syntropia\Succession;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\CalendrierLignes;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
 use Syntropia\Web\LignesPlantation;
+use Syntropia\Web\Occupation;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Sites;
 
@@ -226,11 +228,12 @@ if ($parcelle !== null && $peutEcrire && isset($etatPlanches[$planchesLignes])) 
             continue;
         }
         $connues = $c['strate'] !== null ? [(string) $c['strate']]
-            : array_values(array_intersect(LignesDeService::strates($especesService->parNomUsage((string) $c['espece'], $siteId) ?? []), LignesDeService::STRATES));
+            : array_values(array_intersect(LignesDeService::stratesProduction($especesService->parNomUsage((string) $c['espece'], $siteId) ?? []), LignesDeService::STRATES));
         $strates = array_merge($strates, $connues);
     }
     $etatP = $etatPlanches[$planchesLignes];
-    $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesService->toutes($siteId), $natures[$planchesLignes] ?? null);
+    $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesService->toutes($siteId), $natures[$planchesLignes] ?? null,
+        LignesDeService::liane($parcelle, new \DateTimeImmutable('today')));
     // Rien de posé sur la planche, ou « Reprendre la proposition » : les choix partent de la proposition.
     $partirDeLaProposition = ($_GET['proposer_lignes'] ?? '') === '1' || array_filter($etatP['lignes']) === [];
     $choixLignes = [];
@@ -447,6 +450,19 @@ foreach (preg_split('/\s+/', trim($nomAffiche)) ?: [] as $mot) {
     }
 }
 $initiales = mb_substr($initiales, 0, 2) ?: '?';
+// Les quatre strates de lumière (Théry, ch. 05) : la strate proposée d'une culture d'après le référentiel — une culture de
+// potager est une production, la plus haute de ses strates (assets/js/strates.js) — et l'occupation au sol par strate.
+$stratesEspeces = [];
+foreach ($especesService->toutes($siteId) as $e) {
+    if (($s = Strates::pourLeNavigateur($e)) !== null) {
+        foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $n) {
+            if ((string) $n !== '') {
+                $stratesEspeces[mb_strtolower(trim((string) $n))] ??= $s;
+            }
+        }
+    }
+}
+$occupation = $parcelle !== null ? (new Occupation())->dUneParcelle($parcelle, $siteId) : null;
 $titrePage = $parcelle !== null ? $parcelle['code'] . ' — ' . $parcelle['nom'] : '';
 $lienParcelle = static fn (array $p): string => (($p['type'] ?? '') === 'potager' ? 'conception-potager.php' : 'conception-scenario.php') . '?parcelle=' . (int) $p['id'];
 $listeNoms = static fn (array $noms): string => implode(', ', array_map(static fn (string $n): string => Associations::toxique($n) ? $n . ' (toxique)' : $n, $noms));
@@ -508,6 +524,11 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   @media (max-height:38rem){ .pt-note-cal{ display:none; } }
   .pt-repere{ margin:.2rem 0 .7rem; padding:.45rem .6rem; border-radius:.45rem; border:1px dashed var(--line); font:400 .78rem/1.4 var(--texte); color:var(--ink); }
   .pt-repere small{ color:var(--muted); }
+  .pi-saut{ list-style:none; margin:0 0 .9rem; padding:0; font:400 .84rem/1.45 var(--texte); }
+  .pi-saut li{ margin:0 0 .35rem; padding-left:1.3rem; position:relative; }
+  .pi-saut .pi-saut-signe{ position:absolute; left:0; }
+  .pi-saut li.ok .pi-saut-signe{ color:var(--accent-titre); }
+  .pi-saut li.attention{ color:var(--alerte); }
   .pt-repere button{ margin-top:.3rem; }
   .pt-vide{ margin:0; font:400 .82em/1.35 var(--texte); color:var(--muted); }
   .pt-cultures .pt-propose{ color:var(--accent-titre); font-style:italic; }
@@ -1027,6 +1048,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               </select>
             </label>
           </div>
+          <p class="pt-note" id="pt-strate-repere" hidden></p>
           <details class="pt-fonctions-detail"<?= $fonctionsSaisie !== [] ? ' open' : '' ?>>
             <summary>Fonctions de service (<?= count($fonctionsSaisie) ?>)</summary>
             <p class="pt-note">Ce qu'elle rend au système, au-delà de sa récolte — biomasse (celle qu'on taille : le journal des
@@ -1088,6 +1110,19 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
+<?php if ($occupation !== null): ?>
+      <p><strong>L'occupation au sol, par strate</strong> — la surface que couvrent les plantes adultes (l'envergure, dans
+         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Repères de Théry (ch. 05) : émergente 20 %, haute 40 %,
+         moyenne 60 %, basse 80 % — la somme dépasse 100 %, c'est voulu.</p>
+      <ul class="pi-saut">
+<?php foreach ($occupation as $o):
+    $manque = array_merge($o['sans_envergure'] !== [] ? ['sans envergure : ' . implode(', ', $o['sans_envergure'])] : [],
+        $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
+        <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
+          <strong><?= $h($o['libelle']) ?></strong> — <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
       <p>Un potager se compose <strong>par planche</strong> : les planches viennent du plan de la parcelle, et chacune porte plusieurs cultures — c'est le principe même de l'association.
          Le potager syntropique recrée sa biomasse chaque année par des annuelles ; les strates sont les quatre de la syntropie.</p>
       <p><strong>Ce que dit chaque planche.</strong> Les relations viennent de tables d'association (Christa Weinrich, abbaye de Fulda) : ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte.
@@ -1113,6 +1148,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 
 <script src="assets/js/etapes.js"></script>
 <script src="assets/js/gabarit.js"></script>
+<script src="assets/js/strates.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/strates.js') ?>"></script>
 <script>
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,
@@ -1136,6 +1172,11 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         if (reprendre.dataset.recolte) f.querySelector('[name=date_recolte]').value = reprendre.dataset.recolte;
       });
     });
+    // La strate proposée d'après le référentiel : une culture de potager est une production (Théry, ch. 05).
+    var champEspece = document.querySelector('input[name=espece][list=pt-connues]');
+    if (champEspece) StrateProposee({ espece: champEspece, strate: champEspece.form.querySelector('[name=strate]'),
+      note: document.getElementById('pt-strate-repere'), especes: <?= json_encode((object) $stratesEspeces, JSON_UNESCAPED_UNICODE) ?>,
+      libelles: <?= json_encode(Cultures::STRATES, JSON_UNESCAPED_UNICODE) ?>, production: function(){ return true; } });
     var reprendreFonctions = document.getElementById('pt-reprendre-fonctions');
     if (reprendreFonctions) reprendreFonctions.addEventListener('click', function(){
       var f = reprendreFonctions.closest('form') || document.querySelector('.pt-form form');

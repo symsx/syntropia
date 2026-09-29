@@ -98,7 +98,7 @@ final class Materiel
     /**
      * Les plants posés sur les lignes du plan d'une parcelle — les bordures (`LignesPlantation::etat()`) et les lignes de
      * service des planches (`LignesPlantation::etatPlanches()`) — une entrée par espèce et par lieu (`bord_ext`,
-     * `bord_int`, `centre` pour les planches), comptes additionnés. **Ce sont eux qui font foi** pour ce qui pousse en
+     * `bord_int`, `centre` pour les planches, `liane` pour la ligne des lianes d'une tortue liane), comptes additionnés. **Ce sont eux qui font foi** pour ce qui pousse en
      * bordure (décision du porteur, 2026-09-23, chantier « peuplement de la parcelle ») ; `n` vaut `null` quand un
      * espacement manque quelque part. Un côté devenu inactif ne compte pas.
      *
@@ -122,7 +122,7 @@ final class Materiel
             }
             foreach ($b['places'] as $k => $pl) {
                 $n = $b['compte'] !== null && $b['compte']['ok'] ? (int) $b['compte']['comptes'][$k] : null;
-                $ajouter($cadre === 'externe' ? 'bord_ext' : 'bord_int', $pl['nom'], $pl['nom_scientifique'], $pl['origine'] ?? '', $n);
+                $ajouter(['externe' => 'bord_ext', 'interne' => 'bord_int'][$cadre] ?? 'liane', $pl['nom'], $pl['nom_scientifique'], $pl['origine'] ?? '', $n);
             }
         }
         foreach ($planches as $p) {

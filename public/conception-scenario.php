@@ -29,9 +29,11 @@ use Syntropia\Role;
 use Syntropia\SautDuChat;
 use Syntropia\Scenario;
 use Syntropia\Stade;
+use Syntropia\Strates;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
+use Syntropia\Web\Occupation;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Scenarios;
 use Syntropia\Web\Sites;
@@ -90,6 +92,8 @@ if ($parcelle !== null) {
     $aUnePrincipale = array_filter($selection, static fn (array $s): bool => $s['priorite'] === 'principale') !== [];
     $peutAjouter = $peutEcrire && $conduiteDefinie && $aUnePrincipale;
     $souhaitsDuSite = $scenarios->souhaitsDuSite($siteId, $participantId);
+    // L'occupation au sol par strate (Théry, ch. 05) — les quatre strates de lumière, syntropie seulement.
+    $occupation = isset($conduite->strates()['emergente']) ? (new Occupation())->dUneParcelle($parcelle, $siteId) : null;
     $prepareSaut = SautDuChat::conception($lignes, $conduite->scenarioADesTemps(), (string) ($site['ressource_eau'] ?? ''), $conduite->strates(), Stade::depuis($parcelle['stade'] ?? null));
 
     $editId = (int) ($_GET['vegetal'] ?? 0);
@@ -234,9 +238,18 @@ if ($parcelle !== null) {
 
     // Suggestions de saisie : les espèces connues de ce projet, puis les noms botaniques du catalogue.
     $suggestions = [];
+    $stratesEspeces = [];
     foreach ((new Especes())->toutes($siteId) as $e) {
         $nom = trim((string) ($e['nom_usuel'] ?: $e['nom_scientifique']));
         $suggestions[$nom] = (string) $e['nom_scientifique'];
+        // Les strates que le référentiel note, pour proposer celle du végétal saisi (Théry, ch. 05 — assets/js/strates.js).
+        if (($s = Strates::pourLeNavigateur($e)) !== null) {
+            foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $n) {
+                if ((string) $n !== '') {
+                    $stratesEspeces[mb_strtolower(trim((string) $n))] ??= $s;
+                }
+            }
+        }
     }
     $catalogue = json_decode((string) @file_get_contents(__DIR__ . '/../contenu/catalogue-scenario.json'), true);
     foreach ($catalogue['vegetaux'] ?? [] as $v) {
@@ -697,6 +710,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
                   </select>
                 </label>
               </div>
+              <p class="sc-note" id="sc-strate-repere" hidden></p>
               <p class="sc-note">En bordure, les plants se posent et se comptent sur
                 <a href="conception-parcelles.php?parcelle=<?= $idP ?>&amp;bordure=recompte">le plan</a>, côté par côté : c'est ce compte qui fait foi.</p>
               <label class="sc-champ">Production visée
@@ -860,6 +874,19 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
+<?php if (($occupation ?? null) !== null): ?>
+      <p><strong>L'occupation au sol, par strate</strong> — la surface que couvrent les houppiers adultes (l'envergure, dans
+         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Les repères de Théry (ch. 05) : émergente 20 %, haute 40 %,
+         moyenne 60 %, basse 80 % — la somme dépasse 100 %, c'est voulu : chaque strate prend la lumière que la précédente laisse.</p>
+      <ul class="pi-saut">
+<?php foreach ($occupation as $o):
+    $manque = array_merge($o['sans_envergure'] !== [] ? ['sans envergure : ' . implode(', ', $o['sans_envergure'])] : [],
+        $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
+        <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
+          <strong><?= $h($o['libelle']) ?></strong> — <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
       <p>Vous composez ici <strong>un film</strong> : ce qui grandira sur cette parcelle, à quelle strate, et pendant combien de temps.
          Le tableau se lit de gauche à droite (le temps) et de haut en bas (de la strate la plus haute à la plus basse).</p>
       <p><strong>Un chemin pour le remplir</strong> — à suivre librement :</p>
@@ -876,8 +903,9 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
          biomasse et la perturbation</strong>. Prévoir <strong>au moins deux espèces par strate</strong> : la réussite d'un plant n'est
          jamais automatique. Diversifier les familles botaniques — les rosacées sont vite surreprésentées.</p>
       <p><strong>La strate se choisit par le besoin en lumière</strong>, et par le résultat attendu : un figuier ou un sureau cantonnés
-         en strate moyenne servent la biomasse et fructifient peu. D'après la formation Joala : émergente 80 à 100 % de lumière,
-         haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 % — un seuil donné par une seule formatrice, à éprouver sur votre lieu.</p>
+         en strate moyenne servent la biomasse et fructifient peu. D'après la formation Joala et Théry (ch. 05) : émergente 80 à 100 %
+         de lumière, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 % — établi dans le sud de la Dordogne, « sans lecture absolue » :
+         à éprouver sur votre lieu. Une plante peut aussi changer de strate au fil de son cycle (la fève, la pomme de terre précoce).</p>
       <p><strong>Les quarts</strong> sont des repères dans chaque période, pas des dates. Les colonnes ont la même largeur mais représentent
          des durées différentes. Des hachures marquent un retrait progressif prévu.</p>
 <?php else: ?>
@@ -904,6 +932,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
 
 <script src="assets/js/etapes.js"></script>
 <script src="assets/js/gabarit.js"></script>
+<script src="assets/js/strates.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/strates.js') ?>"></script>
 <script>
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,
@@ -928,6 +957,17 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
     }
     ajuster();
     window.addEventListener('resize', ajuster);
+<?php if ($parcelle !== null && isset($conduite->strates()['emergente'])): ?>
+    // La strate proposée d'après le référentiel (les quatre strates de lumière — syntropie seulement).
+    var formV = document.querySelector('input[name=espece][list=sc-especes]');
+    if (formV) {
+      var f = formV.form, prod = f.querySelector('[name=production]');
+      StrateProposee({ espece: formV, strate: f.querySelector('[name=strate]'), note: document.getElementById('sc-strate-repere'),
+        especes: <?= json_encode((object) $stratesEspeces, JSON_UNESCAPED_UNICODE) ?>,
+        libelles: <?= json_encode($conduite->strates(), JSON_UNESCAPED_UNICODE) ?>,
+        production: function(){ return prod && prod.value !== ''; }, autres: prod ? [prod] : [] });
+    }
+<?php endif; ?>
     // Une bulle dit ce qu'est chaque bande — jamais le title natif.
     document.querySelectorAll('[data-info]').forEach(function(a){
       function montrer(){ Gabarit.bulle.montrer(a, a.dataset.info, 'horizontal'); }

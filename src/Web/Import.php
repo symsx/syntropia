@@ -548,7 +548,7 @@ final class Import
             return null;
         }
         foreach (array_keys($v) as $cle) {
-            if (!in_array($cle, ['bordures', 'rattrapage', 'passe_pieds_bords', 'lignes', 'natures'], true)) {
+            if (!in_array($cle, ['bordures', 'rattrapage', 'passe_pieds_bords', 'lignes', 'natures', 'liane'], true)) {
                 throw new \UnexpectedValueException("le plan contient une clé inconnue « $cle ».");
             }
         }
@@ -565,6 +565,11 @@ final class Import
                 || $n < \Syntropia\Planches::LIGNES_MIN || $n > \Syntropia\Planches::LIGNES_MAX) {
                 throw new \UnexpectedValueException('les lignes des planches sont mal formées (de 1 à 12 par planche).');
             }
+        }
+        // La position de la ligne des lianes — tortue liane (2026-09-30).
+        if (isset($v['liane']) && (!is_array($v['liane']) || array_keys($v['liane']) !== ['position']
+                || !is_string($v['liane']['position']) || !isset(\Syntropia\Planches::POSITIONS_LIANE[$v['liane']['position']]))) {
+            throw new \UnexpectedValueException('la ligne des lianes est mal formée (au cœur, côté nord ou côté est).');
         }
         // La nature des planches — tortues zèbre et abeille (Phase 5).
         if (isset($v['natures'])) {

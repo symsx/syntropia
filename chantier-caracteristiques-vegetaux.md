@@ -160,3 +160,50 @@ rien écrire, le livret « L'atelier » se met à jour dans la même vague, tout
 `sql/01-syntropia.sql` monte `Version::SCHEMA` puis `python3 bin/dev.py verifier-export`. Aucune valeur
 agronomique n'est inventée : un champ vide reste vide, une donnée importée sans source reste dite « importée »,
 jamais présentée comme acquise.
+
+## Suite — les quatre strates de lumière (2026-09-30)
+
+Relu à la demande du porteur : Théry, ch. 05, p. 38-40 (le tableau des strates, sud de la Dordogne, « sans lecture
+absolue »). **Le référentiel** : la sauge reçoit sa strate (haute) ; le sureau, la fève et la pomme de terre gagnent la
+seconde strate que la source leur donne (sureau haute | moyenne selon l'objectif ; fève émergente | haute et pomme de terre
+émergente | moyenne selon le moment du cycle) ; le figuier, le framboisier, le groseillier et la caseille entrent au cadre.
+Le noyer (émergente), l'artichaut (émergente | haute) et le romarin (émergente) reçoivent la strate que le livre leur donne ailleurs (ch. 14, ch. 15), vérifiée à la suite d'une réponse non sourcée transmise par le porteur ; le noisetier reste sans strate, le corpus n'en donne pas. Quinze espèces du cadre restent sans strate. Le corpus (`ch05-le-mousquetaire-espace.md`)
+gagne le figuier, la sauge et la légende P / B du tableau.
+
+**Intégré à la conception, deux choix du porteur** (sur quatre proposés) — `src/Strates.php`, `src/Web/Occupation.php`,
+`public/assets/js/strates.js`, aucun changement de schéma :
+
+1. **La strate proposée** : dans le scénario et le potager, nommer un végétal remplit sa strate d'après le référentiel, si
+   la personne ne l'a pas choisie ; deux strates : la plus haute pour la production, la plus basse pour la biomasse et le
+   service (la règle du tableau). Une culture de potager est une production.
+2. **L'occupation au sol** par strate, dans le panneau Informations des deux pages : la surface des houppiers adultes
+   (`espece.largeur_m`, un disque par plant) rapportée à la parcelle, à côté des repères 20 / 40 / 60 / 80 %. Les plants se
+   comptent comme dans Matériel et eau (les lignes du plan font foi).
+
+Non retenus : signaler une plante hors de ses strates notées, l'écart vertical de 1,50 à 2 m entre deux strates.
+Non fait : `LignesDeService` garde son tri (la biomasse émergente au centre, d'après le ch. 08) — il ne suit pas la règle
+« la plus basse pour la biomasse », qui mettrait le maïs de la ligne centrale en haute.
+
+### La strate selon l'usage — schéma 18 (2026-09-30)
+
+**Décision du porteur** : « tout dépend de l'utilisation de la plante » — une **strate de production** (le P du tableau
+p. 38) et une **strate de service** (le B, biomasse, auquel s'ajoute le bloque-herbe), une valeur chacune :
+`espece.strate_production` et `espece.strate_service` (**`Version::SCHEMA` passe à 18**, colonnes facultatives, la fenêtre
+d'import ne se referme pas). Elles remplacent la déduction « la plus haute pour la production, la plus basse pour la
+biomasse », qui confondait l'usage et le moment du cycle (fève, pomme de terre). Une colonne vide : la seule strate
+de l'espèce ; plusieurs sans usage dit : rien n'est deviné.
+
+**Recomposées plante par plante** (`sql/02-especes-seed.sql`, après le bloc généré de la fiche) : 32 strates de production
+et 18 de service, seulement là où une source dit la strate de cet usage (ch. 05, ch. 08, ch. 14, ch. 15 ; le noisetier
+d'après des études — Hampson et al. 1992, 1996 ; Şen et al. 2020 — trouvées par le serveur Consensus). Laissées vides :
+le service de la fève, l'artichaut, le chalef (des sources divergent).
+
+**Ce qui les lit** : la strate proposée du scénario et du potager ; la proposition des lignes de service
+(`LignesDeService::stratesService()`) et la réserve des bordures ; l'occupation au sol (une plante de bordure ou de ligne
+de service compte dans sa strate de service). **Conséquence** : sur la ligne centrale d'un potager, le tournesol (service
+émergente) passe devant le maïs (service haute, d'après le ch. 05) — le ch. 08, lui, met le maïs de biomasse au centre.
+
+**Le haricot** : le porteur signale une vidéo de Théry (meilleur rendement avec plus d'ombre en plein été) — pas au corpus,
+à verser ; le livre dit déjà le haricot nain « parfaitement à l'aise en strate moyenne » (ch. 05, ch. 08) : production
+moyenne.
+

@@ -84,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             'tortue'            => $_POST['tortue'] ?? null,
             'lignes'            => $_POST['lignes'] ?? null,
             'natures'           => $_POST['natures'] ?? null,
+            'liane'             => $_POST['liane'] ?? null,
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -349,11 +350,14 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-plant-envergure{ fill-opacity:.28; stroke-opacity:.6; stroke-width:1; }
   .plan-planche-perenne{ fill:var(--accent); fill-opacity:.28; }
   .plan-bande-perenne{ fill:var(--accent); fill-opacity:.28; }
+  #in-position-liane,
   #in-premiere-nature, .nature-planche{ padding:.2rem .3rem; font:400 .8rem var(--texte); color:var(--ink);
     background:var(--surface); border:1px solid var(--line); border-radius:.4rem; }
   .lp-liste label.lp-zebre{ flex-wrap:wrap; }
   .plan-ligne{ stroke:var(--muted); stroke-width:2; stroke-dasharray:6 6; opacity:.7; }
   .plan-ligne-centrale{ stroke:var(--accent); stroke-width:3; stroke-dasharray:none; opacity:.9; }
+  /* La ligne des lianes d'une tortue liane : là où la structure porte ses lianes. */
+  .plan-ligne-liane{ stroke:#80528a; stroke-width:4; stroke-dasharray:14 6; opacity:.85; }
   .lp-liste{ display:grid; grid-template-columns:repeat(auto-fill, minmax(8.5rem, 1fr)); gap:.3rem .6rem; margin:.3rem 0 .4rem; }
   .lp-liste label{ display:flex; align-items:center; justify-content:space-between; gap:.4rem; font:400 .8rem var(--texte); color:var(--ink); }
   .lp-liste small{ color:var(--muted); }
@@ -726,6 +730,22 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           </div>
         </div>
 
+        <div id="liane-bloc"<?= ($parcelleActive['tortue'] ?? null) === 'liane' ? '' : ' hidden' ?>>
+          <p class="pd-titre">La ligne des lianes</p>
+          <p class="pd-note">Tortue liane : une structure porte des lianes émergentes, et la strate haute (vigne, kiwi)
+             à leur ombre ; dessous, des bandes de culture. L'atelier dessine le plan au sol, pas la structure : une ligne
+             marque où montent les lianes — « à l’est ou au nord, ou au cœur de la tortue entre les poteaux centraux »
+             (Théry, ch. 15). En tireté violet sur le plan.</p>
+          <div class="pd-ligne">
+            <span class="pd-ligne-nom">Elle court</span>
+            <select id="in-position-liane" aria-label="Position de la ligne des lianes">
+<?php foreach (Planches::POSITIONS_LIANE as $cle => $lib): ?>
+              <option value="<?= $cle ?>"<?= Planches::positionLiane($planEnregistre ?? null) === $cle ? ' selected' : '' ?>><?= $lib ?></option>
+<?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
         <p class="pd-note">Bloque-herbe, coupe-vent, défense contre les animaux — une haie
            défensive en bord de parcelle.</p>
@@ -770,7 +790,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     $geo = $lb['geometrie'];
     $compte = $lb['compte'];
     $resume = $lb['places'] === [] ? 'vide'
-        : ($geo === null ? 'côté inactif — la ligne est gardée'
+        : ($geo === null ? ($cadre === 'liane' ? 'pas à cette position, ou hors tortue liane — la ligne est gardée' : 'côté inactif — la ligne est gardée')
         : ($compte['ok'] ? $compte['total'] . ' plant' . ($compte['total'] > 1 ? 's' : '') : 'pas de compte'));
     $convenantes = array_values(array_filter($especesSite, static fn (array $e): bool => Bordures::convient($cadre, $e)));
     $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
@@ -779,7 +799,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         return $nom . ' — ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement');
     }; ?>
         <details class="bl-cote" id="bl-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>"<?= $bordureOuverte === $cle ? ' open' : '' ?>>
-          <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . $cote, ENT_QUOTES, 'UTF-8') ?>
+          <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . ($cadre === 'liane' ? Planches::POSITIONS_LIANE[$cote] : $cote), ENT_QUOTES, 'UTF-8') ?>
             <small>— <?= $geo !== null ? htmlspecialchars($nombreFr($geo['longueur']) . ' m · ', ENT_QUOTES, 'UTF-8') : '' ?><?= htmlspecialchars($resume, ENT_QUOTES, 'UTF-8') ?></small></summary>
           <p class="pd-note">Pour <?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>.</p>
 <?php if ($lb['places'] !== []): ?>
@@ -812,14 +832,24 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     $formProp = 'bl-prop-' . str_replace(':', '-', $cle); ?>
           <div class="bl-proposition">
             <p class="pd-titre" style="margin-top:.4rem">Ce que l'atelier propose</p>
-<?php if ($proposition === []): ?>
+<?php if ($proposition === [] && $cadre === 'liane'): ?>
+            <p class="pd-note">Aucune liane vivace ou ligneuse dans votre référentiel. Dans <a href="especes.php">Espèces</a>,
+              cochez la strate « Liane / grimpante » des lianes que vous voulez y voir.</p>
+<?php elseif ($proposition === []): ?>
             <p class="pd-note">Aucune espèce de votre référentiel ne porte la fonction de cette bordure
               (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>), hors annuelles. Ajoutez-la
               dans <a href="especes.php">Espèces</a> : le rôle, ou la case « bloque l'herbe ».</p>
 <?php else: ?>
-            <p class="pd-note">Toutes les espèces vivaces ou ligneuses de votre référentiel qui savent
-              <?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?> — les annuelles n'y sont pas, une
-              bordure est pérenne. Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui n'ont pas
+<?php if ($cadre === 'liane'):
+    $annuelles = Bordures::lianesAnnuelles($especesSite); ?>
+            <p class="pd-note">Les lianes vivaces ou ligneuses de votre référentiel (strate « Liane / grimpante »), les
+              émergentes d'abord : seules celles de contrées ensoleillées supportent le plein soleil en haut de la structure
+              (Théry, ch. 15).<?= $annuelles !== [] ? ' La première année, doublez-les de lianes annuelles le temps qu’elles s’installent : '
+              . htmlspecialchars(implode(', ', array_map(static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']), $annuelles)), ENT_QUOTES, 'UTF-8') . '.' : '' ?></p>
+<?php endif; ?>
+            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Toutes les espèces vivaces ou ligneuses de votre référentiel qui savent
+              ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . ' — les annuelles n\'y sont pas, une
+              bordure est pérenne. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui n'ont pas
               d'espacement ne sont pas cochées, faute de pouvoir les compter.<?= $apercu !== null && $apercu['ok'] ? ' Les '
               . count($comptables) . ' cochées donneraient ' . $apercu['total'] . ' plants sur ' . htmlspecialchars($nombreFr($geo['longueur']), ENT_QUOTES, 'UTF-8') . ' m.' : '' ?></p>
             <form method="post" id="<?= $formProp ?>">
@@ -845,7 +875,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endif; ?>
           </div>
 <?php elseif ($peutEcrire && $geo !== null): ?>
-          <a class="bl-proposer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;bordure=<?= rawurlencode($cle) ?>&amp;proposer=1">Proposer les espèces de cette bordure</a>
+          <a class="bl-proposer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;bordure=<?= rawurlencode($cle) ?>&amp;proposer=1"><?= $cadre === 'liane' ? 'Proposer les lianes' : 'Proposer les espèces de cette bordure' ?></a>
 <?php endif; ?>
 <?php if (isset($erreursLigne[$cle])): ?>
           <p class="bl-alerte" role="alert"><?= htmlspecialchars($erreursLigne[$cle], ENT_QUOTES, 'UTF-8') ?></p>
@@ -864,7 +894,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
             <div class="bl-ajout">
               <select name="ajout" aria-label="Espèce à ajouter au bout de la série">
                 <option value="">Ajouter une espèce…</option>
-<?php foreach (['Pour cette bordure' => $convenantes, 'Les autres espèces' => $autres] as $groupe => $liste): if ($liste === []) { continue; } ?>
+<?php foreach ([$cadre === 'liane' ? 'Les lianes' : 'Pour cette bordure' => $convenantes, 'Les autres espèces' => $autres] as $groupe => $liste): if ($liste === []) { continue; } ?>
                 <optgroup label="<?= htmlspecialchars($groupe, ENT_QUOTES, 'UTF-8') ?>">
 <?php foreach ($liste as $e): ?>
                   <option value="<?= (int) $e['id'] ?>"><?= htmlspecialchars($etiquette($e), ENT_QUOTES, 'UTF-8') ?></option>
@@ -1044,8 +1074,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     lignes: <?= json_encode((object) (is_array($planEnregistre['lignes'] ?? null) ? $planEnregistre['lignes'] : [])) ?>,
     // La nature des planches (zèbre, abeille — Phase 5) : la première, puis l'alternance ; les planches changées.
     premiereNature: <?= json_encode(Planches::premiereNature($planEnregistre ?? null)) ?>,
-    natures: <?= json_encode((object) (is_array($planEnregistre['natures']['planches'] ?? null) ? $planEnregistre['natures']['planches'] : [])) ?>,
-    lignesDefaut: <?= Planches::LIGNES_DEFAUT ?>, lignesMin: <?= Planches::LIGNES_MIN ?>, lignesMax: <?= Planches::LIGNES_MAX ?> };
+    natures: <?= json_encode((object) (is_array($planEnregistre['natures']['planches'] ?? null) ? $planEnregistre['natures']['planches'] : [])) ?>,    lignesDefaut: <?= Planches::LIGNES_DEFAUT ?>, lignesMin: <?= Planches::LIGNES_MIN ?>, lignesMax: <?= Planches::LIGNES_MAX ?> };
   // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande] en mètres (chantier
   // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.
   var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,

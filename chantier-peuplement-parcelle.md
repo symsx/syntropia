@@ -333,6 +333,28 @@ identique. Le livret est à jour.
    plus rien de lui-même : il renvoie aux lignes posées sur le plan et montre leurs nombres (Phase 2).
 6. ~~La première règle des services~~ — **tranché** : validée.
 
+## Suite — la tortue liane (2026-09-30)
+
+Le porteur a versé les pages 131-132 de *Bienvenue en syntropie* (ch. 15 § 9, « Tortue liane, tortue d'ombre »),
+complétées dans `connaissances/livre-bienvenue-en-syntropie/ch15-plantations-perennes.md` et le nœud
+`conception-de-la-tortue.md`. **Décisions du porteur** :
+
+1. **La ligne centrale garde sa biomasse les deux premières années**, pour assurer le saut du chat (la source : « plus
+   besoin de maïs ni de tournesols, sauf éventuellement les deux premières années »). `LignesDeService::liane()` compte
+   deux ans depuis `parcelle.date_plantation` ; passé ce temps, plus de biomasse annuelle proposée sur aucune ligne des
+   planches (« succession potagère sans biomasse 3D »), et la strate émergente n'est plus à compléter.
+2. **Les lianes au cadre** (`sql/02-especes-seed.sql`) : glycine (genre *Wisteria*), deux rosiers grimpants, kiwi,
+   kiwaï, et trois lianes annuelles (kiwano, achocha, capucine grimpante) ; la vigne gagne la strate liane. Aucun
+   espacement : la source n'en donne pas.
+3. **L'atelier dessine le plan au sol, pas la structure** — pas de poteaux, la source n'en donne pas l'écartement.
+4. **Une ligne propre pour les lianes** (émergentes et strate haute) : `Planches::ligneDesLianes()`, clé
+   `liane:<position>` dans `ligne_plantation`, même conduite qu'une bordure (série qui alterne, plants comptés,
+   calendrier prévu). Sa position est un réglage de la parcelle (`parcelle.plan.liane.position`) : **au cœur** (le
+   passe-pied central), **côté nord** ou **côté est** — les trois lieux que donne Théry. Une liane se reconnaît à sa
+   strate possible `7_liane` (« Liane / grimpante », déjà au vocabulaire) : **aucun changement de schéma**.
+
+Restent sans source : l'écartement des poteaux, la hauteur de la structure, les espacements des lianes.
+
 ## Hors périmètre
 
 La bordure dessinée à la main sur la carte, la tortue ronde, les portions et le décalage d'un rang

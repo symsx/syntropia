@@ -31,7 +31,16 @@ final class Bordures
             'role' => 'bloquer l’herbe — couvrir le sol revient au même — et freiner le vent'],
         'interne' => ['libelle' => 'Bordure interne', 'fonctions' => ['biomasse'],
             'role' => 'apporter de la biomasse'],
+        // La ligne des lianes d'une tortue liane (Théry, ch. 15 § 9 ; le porteur, 2026-09-30) : une ligne propre pour les
+        // lianes émergentes et la strate haute, une série qui alterne comme une bordure. Elle n'existe qu'en tortue liane ;
+        // ses « côtés » sont ses positions (`Planches::POSITIONS_LIANE`). Une liane se reconnaît à sa strate possible
+        // « Liane / grimpante » (`7_liane`) au référentiel — pas à une fonction.
+        'liane' => ['libelle' => 'Ligne des lianes', 'fonctions' => [],
+            'role' => 'porter les lianes de la structure — les émergentes en haut, la strate haute à leur ombre'],
     ];
+
+    /** La strate possible qui marque une liane au référentiel (vocabulaire jardin-forêt de `Conduite`). */
+    public const STRATE_LIANE = '7_liane';
 
     public const COTES = ['nord' => 'nord', 'sud' => 'sud', 'ouest' => 'ouest', 'est' => 'est'];
 
@@ -52,18 +61,39 @@ final class Bordures
         return "$cadre:$cote";
     }
 
+    /** @return array<string, string> les côtés d'un cadre — les positions pour la ligne des lianes */
+    public static function cotesDe(string $cadre): array
+    {
+        return $cadre === 'liane' ? Planches::POSITIONS_LIANE : self::COTES;
+    }
+
+    /** @return list<string> toutes les clés possibles, dans l'ordre d'affichage */
+    public static function cles(): array
+    {
+        $out = [];
+        foreach (array_keys(self::CADRES) as $cadre) {
+            foreach (array_keys(self::cotesDe($cadre)) as $cote) {
+                $out[] = self::cle($cadre, $cote);
+            }
+        }
+        return $out;
+    }
+
     /** @return array{0: string, 1: string}|null le cadre et le côté, ou `null` si la clé n'est pas celle d'une bordure */
     public static function depuisCle(string $cle): ?array
     {
         $morceaux = explode(':', $cle);
-        return count($morceaux) === 2 && isset(self::CADRES[$morceaux[0]]) && isset(self::COTES[$morceaux[1]])
+        return count($morceaux) === 2 && isset(self::CADRES[$morceaux[0]]) && isset(self::cotesDe($morceaux[0])[$morceaux[1]])
             ? [$morceaux[0], $morceaux[1]] : null;
     }
 
     public static function libelle(string $cle): string
     {
         $c = self::depuisCle($cle);
-        return $c === null ? $cle : self::CADRES[$c[0]]['libelle'] . ', côté ' . $c[1];
+        if ($c === null) {
+            return $cle;
+        }
+        return self::CADRES[$c[0]]['libelle'] . ', ' . ($c[0] === 'liane' ? Planches::POSITIONS_LIANE[$c[1]] : 'côté ' . $c[1]);
     }
 
     /**
@@ -111,6 +141,13 @@ final class Bordures
         $y9 = $H - $e('sud') - $i('sud');
         $poser('interne', 'ouest', $i('ouest'), $x0 + $i('ouest') / 2, $y0, $x0 + $i('ouest') / 2, $y9);
         $poser('interne', 'est', $i('est'), $x9 - $i('est') / 2, $y0, $x9 - $i('est') / 2, $y9);
+        // La ligne des lianes, en tortue liane seulement, à la position choisie.
+        if (($parcelle['tortue'] ?? null) === 'liane') {
+            $liane = Planches::ligneDesLianes($parcelle);
+            if ($liane !== null && $liane['longueur'] > 0) {
+                $out[self::cle('liane', $liane['cote'])] = $liane;
+            }
+        }
         return $out;
     }
 
@@ -183,6 +220,10 @@ final class Bordures
                 continue;
             }
             $roles = array_filter(explode('|', (string) ($e['role'] ?? '')));
+            if ($cadre === 'liane') {
+                $out[] = self::propositionLiane($e, $roles);
+                continue;
+            }
             $fonctions = [];
             foreach (self::CADRES[$cadre]['fonctions'] as $f) {
                 if (in_array($f, $roles, true) || ($f === 'bloque_herbe' && (int) ($e['bloque_herbe'] ?? 0) === 1)) {
@@ -190,14 +231,57 @@ final class Bordures
                 }
             }
             $reserve = null;
-            $strates = array_values(array_filter(explode('|', (string) ($e['strates_possibles'] ?? ''))));
+            // Une bordure rend un service : sa strate de service si elle est dite (schéma 18), sinon ses strates possibles.
+            $strates = LignesDeService::stratesService($e);
             if ($cadre === 'externe' && in_array($cote, ['sud', 'ouest'], true) && $strates !== [] && !in_array('emergente', $strates, true)) {
                 $reserve = 'Face ' . $cote . ', exposée : le ch. 14 n’y veut que des plantes émergentes, et sa strate notée est « '
                     . implode(', ', $strates) . ' ».';
             }
             $out[] = ['espece' => $e, 'fonctions' => $fonctions, 'reserve' => $reserve];
         }
+        if ($cadre === 'liane') {
+            // Les émergentes d'abord (en haut de la structure), puis la strate haute ; tri stable.
+            usort($out, static fn (array $a, array $b): int =>
+                !in_array('emergente', self::strates($a['espece']), true) <=> !in_array('emergente', self::strates($b['espece']), true));
+        }
         return $out;
+    }
+
+    /**
+     * Une liane proposée : ses fonctions de service, et où elle monte d'après sa strate (Théry, ch. 15 § 9).
+     *
+     * @param list<string> $roles
+     * @return array{espece: array<string, mixed>, fonctions: list<string>, reserve: ?string}
+     */
+    private static function propositionLiane(array $e, array $roles): array
+    {
+        $strates = self::strates($e);
+        $reserve = in_array('emergente', $strates, true)
+            ? 'Émergente : en haut de la structure — perturbée selon la lumière voulue dessous.'
+            : (in_array('haute', $strates, true)
+                ? 'Strate haute : à l’ombre des émergentes — à l’est ou au nord, ou entre les poteaux centraux.'
+                : null);
+        // La production compte ici : la vigne, le kiwi montent sur la structure pour leurs fruits.
+        return ['espece' => $e, 'fonctions' => array_values(array_intersect($roles, ['production', ...array_keys(Scenario::FONCTIONS)])), 'reserve' => $reserve];
+    }
+
+    /**
+     * Les lianes annuelles du référentiel : la première année, elles doublent les lianes pérennes le temps qu'elles
+     * s'installent (capucine grimpante, kiwano, achocha — Théry, ch. 15 § 9). Une bordure n'en garde pas ; on les montre.
+     *
+     * @param list<array<string, mixed>> $especes
+     * @return list<array<string, mixed>>
+     */
+    public static function lianesAnnuelles(array $especes): array
+    {
+        return array_values(array_filter($especes, static fn (array $e): bool =>
+            self::convient('liane', $e) && in_array((string) ($e['cycle'] ?? ''), self::CYCLES_EXCLUS, true)));
+    }
+
+    /** @return list<string> */
+    private static function strates(array $e): array
+    {
+        return array_values(array_filter(explode('|', (string) ($e['strates_possibles'] ?? ''))));
     }
 
     /**
@@ -208,6 +292,9 @@ final class Bordures
      */
     public static function convient(string $cadre, array $espece): bool
     {
+        if ($cadre === 'liane') {
+            return in_array(self::STRATE_LIANE, self::strates($espece), true);
+        }
         $roles = array_filter(explode('|', (string) ($espece['role'] ?? '')));
         foreach (self::CADRES[$cadre]['fonctions'] ?? [] as $f) {
             if (in_array($f, $roles, true) || ($f === 'bloque_herbe' && (int) ($espece['bloque_herbe'] ?? 0) === 1)) {

@@ -153,6 +153,17 @@ met une plante pérenne sur une planche pérenne, une annuelle sur une annuelle 
 espèce dans **Espèces** ; en abeille, elle la met dans la bande de sa nature, que vous pouvez aussi choisir
 à la main. Une plante dont le cycle n'est pas noté se place n'importe où.
 
+Pour une tortue **liane** — la tortue d'ombre de Théry, pour les étés secs et les pluies violentes —, l'atelier
+dessine le plan au sol, pas la structure : une **ligne des lianes**, en tireté violet, marque où montent les lianes
+de la pergola. Vous choisissez où elle court : **au cœur** (dans le passe-pied central, entre les poteaux
+centraux), **côté nord** ou **côté est**. Elle reçoit, comme une bordure, une série d'espèces qui alternent : les
+lianes émergentes en haut de la structure (glycine, rosiers grimpants), la strate haute à leur ombre (vigne, kiwi,
+kiwaï). « Proposer les lianes » montre toutes celles de votre référentiel — une liane s'y reconnaît à sa strate
+« Liane / grimpante » dans **Espèces** — et cite les lianes annuelles (capucine grimpante, kiwano, achocha) qui les
+doublent la première année. Sous la structure, la ligne centrale de chaque planche garde sa biomasse (maïs,
+tournesol) **les deux premières années** après le début de la plantation, le temps que les lianes s'installent et
+pour assurer le saut du chat ; ensuite, l'atelier ne propose plus de biomasse annuelle sur les planches.
+
 Une fois les productions placées, **les lignes de chaque planche reçoivent les plantes de service** : les
 productions se plantent de part et d'autre. Dans le plan de culture du potager, « Les lignes » d'une planche
 ouvre la proposition de l'atelier — la biomasse sur la ligne centrale (émergente de préférence, jamais de
@@ -188,7 +199,22 @@ perturbation s'adaptera au temps qu'il fait — le journal gardera ce qui a ét�
 Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
 pendant combien de temps. On compose une frise — le temps en largeur, les
 strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a
-pas d'axe du temps, le scénario se lit par strate. Le **calendrier** est un
+pas d'axe du temps, le scénario se lit par strate.
+
+En syntropie, les quatre strates classent les plantes par **besoin en lumière**, non par taille (Théry, ch. 05) :
+émergente 80 à 100 % de lumière, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 %. Quand vous nommez un végétal,
+dans le scénario comme dans le plan de culture du potager, l'atelier **propose sa strate** d'après **Espèces**, si
+vous ne l'avez pas déjà choisie. La strate dépend de l'usage : chaque espèce a une **strate de production** et une
+**strate de service** (biomasse, bloque-herbe) — le sureau en haute pour ses baies, en moyenne pour la biomasse ; le maïs
+en émergente pour ses épis, en haute pour la biomasse. Une plante de production prend la première, une plante de service
+(bordure, ligne de service d'une planche) la seconde ; vous pouvez les dire ou les corriger dans **Espèces**. Quand
+l'usage ne dit rien et que l'espèce a plusieurs strates (la fève, la pomme de terre précoce, qui changent de strate au
+fil de leur cycle), l'atelier ne devine pas : il vous laisse choisir. Le panneau Informations montre aussi **l'occupation au sol**
+de chaque strate : la surface que couvrent les plantes adultes (leur envergure, dans Espèces), rapportée à la
+parcelle, à côté des repères de Théry — émergente 20 %, haute 40 %, moyenne 60 %, basse 80 % ; la somme dépasse
+100 %, c'est voulu. Une plante sans envergure ou sans nombre de plants est nommée, et ne compte pas.
+
+Le **calendrier** est un
 premier repère de rythme, saison par saison, écrit à main levée ; son panneau
 Informations rappelle les quatre moments de la taille de perturbation et les trois où l'on
 ne taille pas les ligneux, à recaler sur l'état des bourgeons de votre lieu.
@@ -198,7 +224,8 @@ surcharge locale prime sur le cadre pour la même espèce, sans le changer pour 
 retirer rend au site la version du cadre, si elle existe. Vous y dites, en mots comme le tableau
 de Lopez (« fin avril », « mi à fin juillet »), le calendrier de semis, de repiquage et de récolte
 d'une espèce, son **cycle** (annuelle, bisannuelle, vivace ou ligneuse), sa **hauteur** adulte en mètres (une
-moyenne, que l'atelier ne lit pas encore) et sa **largeur** (son envergure, qui dessine les plants des bordures), son délai de germination en jours (une
+moyenne, que l'atelier ne lit pas encore) et sa **largeur** (son envergure, qui dessine les plants des bordures et mesure
+l'occupation au sol), sa **strate de production** et sa **strate de service**, son délai de germination en jours (une
 annuelle ou bisannuelle semée en place), la température du sol qui permet de la semer (« le critère n'est pas la date
 mais la température du sol », dit Théry), et les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
 liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le scénario
@@ -267,7 +294,7 @@ elle est estimée à partir de l'espacement et du plan de la parcelle, et la
 page le dit. Un végétal sans origine reste à préciser, car c'est elle qui
 décide de ce qu'on achète.
 
-Les plants posés sur les **lignes du plan** — les bordures, les lignes de service des planches — s'y
+Les plants posés sur les **lignes du plan** — les bordures, la ligne des lianes, les lignes de service des planches — s'y
 ajoutent, comptés tels quels à l'espacement de chaque espèce, avec l'origine notée dans **Espèces**.
 Pour ce qui pousse en bordure, c'est ce compte qui fait foi : un végétal du scénario déclaré « en
 bordure » prend le nombre de plants posés sur le plan, et reste « à déterminer » s'il n'y est pas posé.

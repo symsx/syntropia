@@ -86,6 +86,30 @@
     });
   }
 
+  // Où court la ligne des lianes, en pixels du dessin : au milieu du passe-pied central (`coeur`), ou le long du bord nord
+  // ou est de la zone des planches — au milieu du passe-pied du bord s'il y en a un. Planches::ligneDesLianes().
+  function positionLiane(){ var c = document.getElementById('in-position-liane'); return c ? c.value : 'coeur'; }
+  function ligneDesLianes(sens, layout, gauche, haut, lu, hu, ech){
+    var ns = sens === 'nord-sud', debut = layout.debut * ech, p = positionLiane();
+    if (p === 'coeur'){
+      var pos = (ns ? gauche : haut) + debut;
+      if (layout.n >= 2){
+        var k = Math.floor((layout.n - 2) / 2);
+        for (var i = 0; i <= k; i++){ pos += layout.largeurs[i] * ech + (i < k ? layout.passePieds[i] * ech : 0); }
+        pos += layout.passePieds[k] * ech / 2;
+      } else if (debut > 0){
+        pos = (ns ? gauche : haut) + debut / 2;
+      }
+      return ns ? [pos, haut, pos, haut + hu] : [gauche, pos, gauche + lu, pos];
+    }
+    if (p === 'nord'){
+      var y = !ns && debut > 0 ? haut + debut / 2 : haut;
+      return [gauche, y, gauche + lu, y];
+    }
+    var x = ns && debut > 0 ? gauche + lu - debut / 2 : gauche + lu;
+    return [x, haut, x, haut + hu];
+  }
+
   function nombre(valeur){ return parseFloat(String(valeur).replace(',', '.')) || 0; }
   function fmt(valeur, decimales){ return valeur.toFixed(decimales === undefined ? 2 : decimales).replace('.', ','); }
   function champDe(cote){ return document.querySelector('.bordure-largeur[data-cote="' + cote + '"]'); }
@@ -334,6 +358,16 @@
         depart += largeurPx + (layout.passePieds[i] || 0) * ECH;
       });
     }
+    // La ligne des lianes (tortue liane) — même règle que Planches::ligneDesLianes() côté serveur.
+    if (gLignes && tortue() === 'liane' && layout.n >= 1){
+      var geo = ligneDesLianes(sens, layout, bo + boi, bn + bni, largeurUtile * ECH, hauteurUtile * ECH, ECH);
+      var tl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      tl.setAttribute('class', 'plan-ligne-liane');
+      tl.setAttribute('x1', geo[0]); tl.setAttribute('y1', geo[1]); tl.setAttribute('x2', geo[2]); tl.setAttribute('y2', geo[3]);
+      gLignes.appendChild(tl);
+    }
+    var blocLiane = document.getElementById('liane-bloc');
+    if (blocLiane) blocLiane.hidden = tortue() !== 'liane';
     listeLignes(layout.largeurs);
     blocNatures(sens);
 
@@ -403,7 +437,7 @@
     }
   }
 
-  document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"], #passe-pieds-bords').forEach(function(el){
+  document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"], #passe-pieds-bords, #in-position-liane').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
     el.addEventListener('input', perimerPlants);
@@ -556,6 +590,7 @@
       corps.set('conduite', document.getElementById('in-conduite').value);
       corps.set('stade', document.getElementById('in-stade').value);
       corps.set('tortue', document.getElementById('in-tortue').value);
+      if (document.getElementById('in-position-liane')) corps.set('liane', positionLiane());
       document.querySelectorAll('.lignes-planche').forEach(function(c){ corps.set('lignes[' + c.dataset.numero + ']', c.value); });
       if (choixPremiere){
         corps.set('natures[premiere]', premiere());
@@ -635,6 +670,8 @@
     choixTortue.addEventListener('change', function(){
       document.getElementById('tortue-resume').textContent = choixTortue.options[choixTortue.selectedIndex].dataset.resume;
       redessiner();
+      // La ligne des lianes n'existe qu'en tortue liane : les lignes se recomptent sur le plan enregistré.
+      perimerPlants();
     });
   }
   if (choixPremiere){ choixPremiere.addEventListener('change', redessiner); }
@@ -657,6 +694,7 @@
     document.getElementById('sens-nord-sud').checked = true;
     document.getElementById('rattrapage-passe-pieds').checked = true;
     document.getElementById('passe-pieds-bords').checked = false;
+    if (document.getElementById('in-position-liane')) document.getElementById('in-position-liane').value = 'coeur';
     redessiner();
   });
 

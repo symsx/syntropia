@@ -220,7 +220,7 @@ final class Especes
         'entree_scenario', 'sortie_scenario',
         'espacement_monoculture_m', 'espacement_retenu_m', 'plants_par_ml',
         'periode_semis', 'periode_repiquage', 'periode_recolte', 'cycle', 'delai_germination_j', 'temperature_sol_semis_c',
-        'hauteur_m', 'largeur_m', 'biomasse', 'rapport_cn', 'conduite_taille', 'periode_taille',
+        'hauteur_m', 'largeur_m', 'strate_production', 'strate_service', 'biomasse', 'rapport_cn', 'conduite_taille', 'periode_taille',
         'type_plant', 'origine', 'serre_necessaire', 'bloque_herbe',
         'orientation_bordure', 'deplacable', 'source', 'statut_local', 'notes',
     ];
@@ -337,6 +337,9 @@ final class Especes
         $nombre('hauteur_m', 0.01, 60);
         // L'envergure de la plante adulte, en mètres (schéma 17) — dessine les plants des bordures à leur taille réelle.
         $nombre('largeur_m', 0.01, 60);
+        // La strate selon l'usage — production, service (biomasse, bloque-herbe) : Théry ch. 05, schéma 18.
+        $enum('strate_production', array_keys(\Syntropia\Strates::REPERES), 'Émergente, haute, moyenne ou basse.');
+        $enum('strate_service', array_keys(\Syntropia\Strates::REPERES), 'Émergente, haute, moyenne ou basse.');
         // Le délai de germination, en jours entiers (chantier « film de la parcelle », schéma 13).
         if (array_key_exists('delai_germination_j', $v)) {
             $brut = trim((string) $v['delai_germination_j']);

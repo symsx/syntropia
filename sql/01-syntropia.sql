@@ -526,6 +526,13 @@ CREATE TABLE IF NOT EXISTS `espece` (
   -- LA LARGEUR, en mètres : l'envergure de la plante adulte (une moyenne). Dessine chaque plant des bordures à sa taille
   -- réelle sur le plan de la parcelle. Décision du porteur, 2026-09-29 ; schéma 17.
   `largeur_m`        DECIMAL(4,2) NULL,
+  -- LA STRATE SELON L'USAGE (Théry, ch. 05 : « les plantes peuvent être utilisées dans différentes strates selon
+  -- l'objectif de la plantation » — le tableau p. 38 note P pour la production, B pour la biomasse) : la strate où la
+  -- plante se déploie de manière optimale pour sa PRODUCTION, et pour son SERVICE (biomasse, bloque-herbe). Une valeur
+  -- chacune, des quatre strates de lumière de la syntropie ; vide : pas cet usage, ou pas encore dit. Décision du porteur,
+  -- 2026-09-30 ; schéma 18. `strates_possibles` garde le reste (la strate qui change au fil du cycle, la liane).
+  `strate_production` ENUM('emergente','haute','moyenne','basse') NULL,
+  `strate_service`    ENUM('emergente','haute','moyenne','basse') NULL,
 
   `biomasse`        VARCHAR(8) NULL,           -- + / ++ / +++
   `rapport_cn`       VARCHAR(24) NULL,
@@ -1233,6 +1240,29 @@ EXECUTE ajout_larg;
 DEALLOCATE PREPARE ajout_larg;
 
 
+-- Rattrapage d'une table `espece` créée avant `strate_production` et `strate_service` — schéma 18. Même forme.
+SET @sp_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE()
+                     AND TABLE_NAME = 'espece'
+                     AND COLUMN_NAME = 'strate_production');
+SET @ajout_sp = IF(@sp_existe = 0,
+                   'ALTER TABLE `espece` ADD COLUMN `strate_production` ENUM(''emergente'',''haute'',''moyenne'',''basse'') NULL AFTER `largeur_m`',
+                   'DO 0');
+PREPARE ajout_sp FROM @ajout_sp;
+EXECUTE ajout_sp;
+DEALLOCATE PREPARE ajout_sp;
+SET @ss_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE()
+                     AND TABLE_NAME = 'espece'
+                     AND COLUMN_NAME = 'strate_service');
+SET @ajout_ss = IF(@ss_existe = 0,
+                   'ALTER TABLE `espece` ADD COLUMN `strate_service` ENUM(''emergente'',''haute'',''moyenne'',''basse'') NULL AFTER `strate_production`',
+                   'DO 0');
+PREPARE ajout_ss FROM @ajout_ss;
+EXECUTE ajout_ss;
+DEALLOCATE PREPARE ajout_ss;
+
+
 -- Rattrapage d'une table `constat` créée avant `adventices` — schéma 5. Même forme que ci-dessus.
 SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                     WHERE TABLE_SCHEMA = DATABASE()
@@ -1321,6 +1351,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- facultatives, idem) ;
 -- 15 = `espece.temperature_sol_semis_c` (la température du sol qui permet le semis — colonne facultative, idem) ;
 -- 16 = `espece.hauteur_m` (la hauteur de la plante adulte — colonne facultative, idem) ;
--- 17 = `espece.largeur_m` (l'envergure de la plante adulte — colonne facultative, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '17')
+-- 17 = `espece.largeur_m` (l'envergure de la plante adulte — colonne facultative, idem) ;
+-- 18 = `espece.strate_production` et `espece.strate_service` (la strate selon l'usage — colonnes facultatives, idem).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '18')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

@@ -49,6 +49,9 @@ Chaque strate ombre un peu la suivante.
 | Fraise du commerce | haute | variétés sélectionnées, contrairement à l'espèce sauvage |
 | Sureau pour les baies | haute | — |
 | Sureau pour la biomasse seule | moyenne | — |
+| Figuier pour la production | haute | tableau p. 38 seulement (« figuier P ») |
+| Figuier pour la biomasse | moyenne | tableau p. 38 seulement (« figuier B ») |
+| Sauge | haute | tableau p. 38 seulement, sans commentaire dans le texte |
 | Pommier, poirier | haute | produisent en supportant un peu d'ombre ; bas ou haut de strate selon l'exposition. Dans le sud, l'ombre devient indispensable (pommes cuites sur l'arbre) |
 | Ribes (cassis, groseille, caseille), framboisier | haut de la moyenne | plantes de bord de clairière, mi-ombre |
 | Haricot | moyenne | à l'origine une liane ; des haricots nains placés sous l'ombre des maïs et tournesols ont doublé de volume |
@@ -57,9 +60,13 @@ Chaque strate ombre un peu la suivante.
 | Fraise des bois | haut de la basse | — |
 | Mélisse, consoude, menthe | basse | les rares strates basses vraiment utilisables sous ce climat |
 
+**Le tableau de la p. 38** range les mêmes plantes par strate, avec une lettre quand l'objectif change la strate : **P = production, B = biomasse** (maïs P émergente, maïs B haute ; sureau P haute, sureau B moyenne ; figuier P haute, figuier B moyenne). Il écrit « ashosha » pour le concombre Ashosha (l'achocha, *Cyclanthera pedata*).
+
 **Deux règles qui en découlent**
 - Une même plante change de strate selon l'objectif : production ou biomasse.
 - Au potager, il y a très peu de strates basses : la plupart des légumes oscillent entre moyenne et haute.
+- Une même plante change aussi de strate **au fil de son cycle** : la fève (émergente, puis haute au printemps), la pomme de terre précoce (émergente, puis moyenne).
+- Et elle se place **dans** sa strate : en haut ou en bas selon l'exposition (pommier, poirier), en haut de la moyenne (ribes, framboisier, haricot), en haut de la basse (fraise des bois).
 
 ## 4. Occuper la strate émergente
 

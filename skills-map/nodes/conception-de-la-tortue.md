@@ -129,9 +129,25 @@ séparée** de la ligne centrale (ch. 11, règle 13).
   (à l'ouest ou au nord), les autres alternent, chacune se change ; abeille — on choisit la nature de la première bande,
   les bandes alternent (chaque planche a donc la même disposition). La nature d'une plante se lit dans son cycle
   (vivace ou ligneuse : pérenne ; annuelle ou bisannuelle : annuelle).
-- **Liane** (ch. 15 § 9) : une structure (pergola) porte des **lianes émergentes** (glycine, rosiers
-  grimpants vigoureux…) ; kiwi et vigne en strate haute ; cultures dessous sans biomasse 3D ; **plus de
-  maïs ni de tournesol après les deux premières années** ; réservée aux petites surfaces.
+- **Liane, ou tortue d'ombre** (ch. 15 § 9, pages 131-132 relues le 2026-09-30) : pour les pays où l'été devient
+  sec et la pluie violente — la carapace doit protéger de la grêle et du soleil brûlant. Une **pergola** (ou une
+  structure plus large) porte :
+  - en **émergente**, des **lianes de contrées ensoleillées**, seules capables du plein soleil en climat tempéré
+    (glycine, rosier Cécile Brünner Climbing, *Rosa banksiae* ; pistes : faux jasmin, bougainvillier, clématite de
+    Noël, bignone à vrilles) — biomasse et apports mellifères, **perturbées selon les besoins en lumière des strates
+    inférieures** : la perturbation est aérienne ;
+  - en **haute**, à l'ombre des premières : vigne, kiwi, kiwaï (face nord-est), **à l'est ou au nord, ou au cœur de
+    la tortue entre les poteaux centraux** ; et les **annuelles grimpantes** (courges, concombres) sur des **fils
+    tirés entre les poteaux** ;
+  - au sol, des **bandes de culture : une succession potagère sans biomasse 3D** ; une **bordure vivante si besoin**,
+    selon les chemins extérieurs — ou la structure se crée au cœur d'une tortue existante.
+  - **Dans le temps** : plus de maïs ni de tournesol, **sauf les deux premières années**, le temps que les lianes
+    vivaces s'installent (la photo montre une succession pommes de terre / maïs sur la planche centrale d'une liane
+    en développement) ; un **voile d'ombrage** peut protéger d'abord ; la première année, les lianes pérennes se
+    doublent de **lianes annuelles** résistantes à la chaleur (capucine grimpante, kiwano, achocha).
+  - **Adaptations** : outillage pour une perturbation aérienne régulière, plus d'investissement à la construction,
+    **petites surfaces seulement**.
+  - Le dessin montre les poteaux **au bord des bandes, jamais dessus** (lecture du dessin, non dite par le texte).
 
 ## Choisir les plantes de service d'une planche
 
@@ -205,6 +221,12 @@ et non définitives » : une surcharge les corrige. Le goji garde 50 cm (ligne i
 5. **La tortue liane** (le porteur, 2026-09-23 : « je n'ai pas encore assez de connaissance sur le sujet ; skill à
    développer ») : l'atelier en dessine le plan au sol, pas la structure. Ce qui distingue sa conception au sol — où
    vont les poteaux et les lianes émergentes, quelles cultures dessous, quelle place pour les bordures — reste à
-   documenter avant de coder quoi que ce soit de propre à la liane.
+   documenter avant de coder quoi que ce soit de propre à la liane. **2026-09-30** : les pages 131-132 relues
+   (section « Liane, ou tortue d'ombre » ci-dessus) disent les cultures dessous (succession sans biomasse 3D), la
+   place des lianes (émergentes en haut, strate haute à l'est ou au nord, ou entre les poteaux centraux) et des
+   bordures (si besoin). Restent sans source : l'**écartement des poteaux**, la **hauteur** de la structure, et
+   combien de pieds de liane par poteau. Modélisé le même jour (décisions du porteur) : plan au sol sans structure, une
+   **ligne des lianes** au cœur, au nord ou à l'est, la biomasse de la ligne centrale les deux premières années
+   (voir `chantier-peuplement-parcelle.md` § Suite — la tortue liane).
 6. **Ce qui se réalise en premier à chaque stade** (colonisation, accumulation) : toujours sans repère
    (voir `chantier-saut-du-chat.md`, question 4).

@@ -37,7 +37,7 @@ enum Tortue: string
             self::Classique => 'Des planches de production, une ligne centrale de biomasse et des bordures vivantes (Théry, ch. 8 et 11).',
             self::Zebre => 'Des planches pérennes (petits fruits, tisanes, mellifères, biomasse ligneuse) alternent avec des planches annuelles (légumes, pépinières) ; la biomasse annuelle en 3D doit réussir sur les lignes pérennes (Théry, ch. 15 § 7).',
             self::Abeille => 'Pérenne et annuel sur la même planche : une bande pérenne, une bande potagère ; des émergents de 3,50 m au plus ; elle prend deux fois la surface d’un potager classique (Théry, ch. 15 § 8).',
-            self::Liane => 'Une structure porte des lianes émergentes, des cultures protégées dessous ; plus de maïs ni de tournesol après les deux premières années ; pour les petites surfaces (Théry, ch. 15 § 9).',
+            self::Liane => 'Tortue d’ombre, pour les étés secs et les pluies violentes : une structure porte des lianes émergentes, la strate haute (vigne, kiwi) à leur ombre, et protège dessous une succession potagère sans biomasse 3D ; maïs et tournesol les deux premières années seulement, le temps que les lianes s’installent ; pour les petites surfaces (Théry, ch. 15 § 9).',
         };
     }
 

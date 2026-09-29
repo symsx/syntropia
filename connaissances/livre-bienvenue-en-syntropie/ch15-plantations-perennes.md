@@ -320,6 +320,19 @@ La plupart des lianes sont censées grimper sur des arbres et ne sont donc pas �
 | Rosier de Banks | Résistant à la sécheresse, mais épineux, ce qui rend son usage en biomasse moins agréable |
 | Autres pistes | Faux jasmins, bougainvilliers, clématites de Noël, bignones à vrilles — résistants à la sécheresse, producteurs de biomasse et sans épines |
 
+Ce ne sont que des exemples : il en existe un très grand nombre.
+
+### 9.3 bis L'étage en dessous (strate haute)
+
+- La vigne, les kiwis ou les kiwaïs — selon les apports en eau ; les kiwaïs orientés face nord-est.
+- Toutes les annuelles grimpantes de strate haute (courges, concombres…), qui se déploient sur des fils tirés entre les poteaux.
+
+### 9.3 ter Ce que montre le dessin (p. 132)
+
+*Lecture du dessin, non dite par le texte* : trois bandes parallèles sous une pergola de six poteaux (deux rangées de trois), les poteaux se dressant au bord des bandes, jamais dessus. La bande extérieure porte la bordure vivante (légende : « ajout d'une bordure vivante si besoin, en fonction des chemins extérieurs, ou création de la structure au cœur d'une tortue existante ») ; les deux autres sont des bandes de culture (« succession potagère sans biomasse 3D ») ; une courge monte à un poteau. La liane émergente couvre tout le haut de la structure ; la strate haute (kiwi, vigne) monte le long d'un poteau.
+
+Légende de la photo (p. 131) : « Succession pommes de terre / maïs sur la planche centrale d'une tortue liane en développement. »
+
 ### 9.4 Conséquence sur les placentaires
 
 Dans cette configuration, plus besoin de maïs ni de tournesols, sauf éventuellement les deux premières années, le temps que les vivaces grimpantes s'installent. Une première protection peut aussi être assurée par un voile d'ombrage déployé sur la structure.

@@ -324,6 +324,16 @@ final class Parcelles
             }
         }
 
+        // La position de la ligne des lianes (tortue liane — le porteur, 2026-09-30). `null` (clé absente) : on garde celle
+        // du plan enregistré.
+        $liane = null;
+        if (($valeurs['liane'] ?? null) !== null) {
+            $liane = trim((string) $valeurs['liane']);
+            if (!isset(\Syntropia\Planches::POSITIONS_LIANE[$liane])) {
+                $erreurs['liane'] = 'La ligne des lianes court au cœur, côté nord ou côté est.';
+            }
+        }
+
         $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_');
         $bordureInterne = $this->litBordures($valeurs['bordures_interne'] ?? [], $erreurs, 'bordure_interne_');
 
@@ -393,6 +403,10 @@ final class Parcelles
             }
             if ($natures !== []) {
                 $contenu['natures'] = $natures;
+            }
+            $liane ??= is_array($ancien['liane'] ?? null) ? ($ancien['liane']['position'] ?? null) : null;
+            if ($liane !== null && isset(\Syntropia\Planches::POSITIONS_LIANE[$liane])) {
+                $contenu['liane'] = ['position' => $liane];
             }
             $plan = json_encode($contenu, JSON_UNESCAPED_UNICODE);
             $req = $pdo->prepare(

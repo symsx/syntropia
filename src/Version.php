@@ -49,8 +49,9 @@ final class Version
      * 15 : `espece.temperature_sol_semis_c`, la température du sol qui permet le semis (colonne facultative, idem).
      * 16 : `espece.hauteur_m`, la hauteur de la plante adulte (colonne facultative, idem).
      * 17 : `espece.largeur_m`, l'envergure de la plante adulte (colonne facultative, idem).
+     * 18 : `espece.strate_production` et `espece.strate_service`, la strate selon l'usage (colonnes facultatives, idem).
      */
-    public const SCHEMA = 17;
+    public const SCHEMA = 18;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;
