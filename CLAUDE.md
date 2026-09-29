@@ -1760,6 +1760,22 @@ récit.*
   `perturbation_prevue` présentes, températures du cadre posées (maïs 6 °C, tournesols 5 °C), données inchangées, aucun écart
   `rsync`, syntaxe PHP distante sans erreur, pages 302 pour un anonyme, dossiers protégés 403, les deux projets réels
   exportés et examinés (lecture seule). Les parcours restent à essayer avec le vrai compte.
+- **Déploiement des schémas 16 et 17 — 2026-09-29 (neuvième vague).** Plan de parcelle : zoom (molette, −/+/tout voir,
+  glisser), plan sur toute la largeur du bureau ; `espece.hauteur_m` (16) et `espece.largeur_m` (17) — l'envergure dessine
+  les plants des bordures à leur taille réelle, une couleur par espèce ; la fiche du porteur
+  (`contenu/especes-modele-import.csv`, 21 espèces) importée au cadre, six entrées génériques remplacées par des variétés
+  (consoude Bocking 14 — stérile, reste en place —, maïs population, haricot nain, lavande vraie, menthe à feuilles rondes,
+  sauge officinale), capucine ajoutée ; planches : « Un passe-pied le long des deux bords » (`parcelle.plan`), une planche
+  seule centrée, compte corrigé (les planches de bord sont des demi-planches — « chaque demi-planche a son passe-pied »,
+  le porteur). **Avant** : production lue sans rien changer (schéma 15, 52 espèces au cadre, aucune surcharge, aucune ligne
+  de plantation — rien ne citait les génériques). **`base` puis `fichiers`** (20 fichiers). **Après** : schéma 17, code et
+  base d'accord, cadre à 53 espèces conforme à la fiche (291 valeurs), données inchangées, aucun écart `rsync`, syntaxe PHP
+  distante sans erreur, pages 302, dossiers 403, les deux projets exportés et examinés (lecture seule). **À faire par le
+  porteur** : « Enregistrer le plan » de La Vadaux P1 (9 → 10 planches avec le compte corrigé ; `nb_planches` ne se
+  recalcule qu'à l'enregistrement). Poussé sur GitHub le même jour — `origin` avait 153 commits de retard.
+  **Pièges vus** : `espece.source` fait 120 caractères et `statut_local` 60 — `INSERT IGNORE` coupe le surplus sans rien
+  dire (des statuts anciens du cadre sont coupés ainsi depuis l'origine) ; une surcharge d'espèce remplace toute la fiche du
+  cadre, espacement compris.
 - **Racine du compte alwaysdata (`https://jubile.alwaysdata.net/`), hors
   dépôt syntropia — 2026-09-18.** Le porteur y a posé une page d'accueil
   générale du compte ; complétée avec un lien vers l'atelier et une mise
