@@ -186,7 +186,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
 contenu/
   .htaccess              refuse tout accès web
   calendrier-lopez.csv      le tableau « des semis et repiquages » de Lopez (17 cultures d'automne et d'hiver), recopié de connaissances/maraichage-naturel/lopez-plan-de-culture.md ; deux cellules « à vérifier » vides et marquées
-  especes-modele-import.csv la fiche d'espèces du porteur (21 espèces, par variété, hauteur et largeur) — modèle téléchargeable depuis especes.php ET source du cadre (fin de sql/02-especes-seed.sql, régénérée depuis elle)
+  especes-modele-import.csv la fiche d'espèces du porteur (21 espèces, par variété, hauteur et largeur) — modèle téléchargeable depuis especes.php
+  especes-cadre.csv         LE CADRE COMPLET (143 espèces, 34 colonnes), complété par une session de recherche Claude et relu par le porteur le 2026-09-30 — source du dernier bloc généré de sql/02-especes-seed.sql, qui prime sur la fiche ci-dessus ; pour changer le cadre : changer ce CSV, régénérer le bloc (chaque valeur par Especes::valider(), une case vide ne touche à rien)
   guildes-plantae.json      instantané de `guilde.csv` de Plantae (179 plantes, 564 lignes) — écrit par bin/catalogue-plantae.py, jamais à la main ; vieillit, à réexporter
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
@@ -1826,7 +1827,15 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **2026-09-30** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut.
+0. **2026-09-30, fin de journée — pas encore commité ni déployé** : « Mon projet » dans le panneau gauche des huit pages
+   hors parcours connectées ; le **rapport C/N** de six espèces (études trouvées par Consensus, ce qui a été mesuré dit dans
+   `notes`) ; puis **le cadre complété** : `contenu/especes-cadre.csv` (65 espèces complétées, 78 ajoutées — 143 ; « Mentha »
+   générique écartée, décision du porteur) devient le dernier bloc généré de `sql/02-especes-seed.sql`. Beaucoup de valeurs
+   sont des **repères généraux d'une session Claude**, relus par le porteur, dits comme tels dans `notes`/`source` — non
+   sourcés au sens du corpus. Vérifié en local : 4576 cases égales au CSV (sauf 5 espacements du corpus voulus), résultat
+   identique dès le premier rejeu, `verifier-export` identique. **Au déploiement : `deployer.py base`** (puis `fichiers`).
+   Le modèle téléchargeable d'`especes.php` reste la fiche de 21 espèces.
+   **Même jour, plus tôt** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut.
    **Déployé le 2026-09-30 (dixième vague)**, commité et poussé (`origin/main` à jour). **Avant** : production lue sans rien
    changer (schéma 17, 2 projets, 1 parcelle, 53 espèces au cadre, aucune surcharge, aucune ligne de plantation).
    **`base` puis `fichiers`** (28 fichiers). **Après** : schéma 18, code et base d'accord, les deux colonnes de strate
