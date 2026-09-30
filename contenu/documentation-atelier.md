@@ -404,7 +404,8 @@ sélecteur, dans le panneau de navigation, change de projet. Le menu du compte, 
 haut à droite, donne accès à votre projet, aux Préférences (le récapitulatif de
 votre compte, votre nom affiché, votre mot de passe), à un nouveau projet, à
 rejoindre un projet, à importer un projet, à inviter, et — pour le porteur — aux
-participants et à l'export du projet.
+participants et à l'export du projet. Ces pages, hors du parcours, gardent aussi « Mon
+projet » dans le panneau de navigation, pour revenir au plan de la parcelle.
 
 Sur un projet, on a l'un de trois rôles. Le **porteur**, qui l'a ouvert, peut
 tout. Le **contributeur** répond et dessine avec lui. Le **lecteur** regarde,
