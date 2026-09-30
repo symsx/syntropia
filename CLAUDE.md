@@ -1839,6 +1839,18 @@ il apparaît réellement, pour ne pas noyer le motif.
    sourcés au sens du corpus. Vérifié en local : 4576 cases égales au CSV (sauf 5 espacements du corpus voulus), résultat
    identique dès le premier rejeu, `verifier-export` identique.
    Le modèle téléchargeable d'`especes.php` reste la fiche de 21 espèces.
+   **Ouvert après le 2026-09-30** :
+   - Le **C/N** n'est cherché que pour 12 des 28 espèces de biomasse (6 trouvées) ; proposé et non fait : eucalyptus,
+     sureau, topinambour — les petits arbustes d'ornement ont peu de chances de donner un chiffre dans un résumé.
+   - Pour **compléter encore le cadre** : exporter les 143 espèces en CSV (même forme que `contenu/especes-cadre.csv`,
+     `;`, virgule décimale, BOM), le porteur complète, puis on reprend la méthode du 2026-09-30 : diff contre la base
+     (cases remplies / modifiées / effacées, nouvelles espèces, conflits avec les décisions passées — ex. « Mentha »),
+     questions au porteur, régénérer le bloc généré (le script de génération n'est pas conservé : chaque ligne par
+     `Especes::valider()`, `INSERT … ON DUPLICATE KEY UPDATE` des seules cases non vides), comparer case à case après un
+     seul rejeu (en local, retirer d'abord les nouvelles espèces pour simuler la production), `verifier-export`.
+   - Le fichier de travail du porteur est `~/projets/organisation_cultures/entrees/especes-cadre-a-completer.{csv,md}`
+     (hors dépôt) ; il contient encore la ligne « Mentha », écartée à l'intégration.
+   - Proposer au porteur de faire du cadre complet le modèle téléchargeable d'`especes.php` (aujourd'hui la fiche de 21).
    **Même jour, plus tôt** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut.
    **Déployé le 2026-09-30 (dixième vague)**, commité et poussé (`origin/main` à jour). **Avant** : production lue sans rien
    changer (schéma 17, 2 projets, 1 parcelle, 53 espèces au cadre, aucune surcharge, aucune ligne de plantation).
