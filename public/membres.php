@@ -168,6 +168,7 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
           <p class="pg-titre">Le site</p>
           <ul class="pg-liste">
             <li><a href="./"><span class="pg-puce">⌂</span><span class="pg-libelle">Accueil</span></a></li>
+            <li><a href="conception-parcelles.php"><span class="pg-puce">▤</span><span class="pg-libelle">Mon projet</span></a></li>
             <li><a href="deconnexion.php"><span class="pg-puce">⏻</span><span class="pg-libelle">Se déconnecter</span></a></li>
           </ul>
         </div>
