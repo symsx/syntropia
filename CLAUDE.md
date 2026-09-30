@@ -1827,13 +1827,17 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-0. **2026-09-30, fin de journée — pas encore commité ni déployé** : « Mon projet » dans le panneau gauche des huit pages
+0. **2026-09-30, fin de journée — commité, déployé (onzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : avant,
+   production lue sans rien changer (65 espèces au cadre, aucune surcharge, 2 projets, 1 parcelle, 12 réponses, 3 tracés) ;
+   après, 143 espèces, les 4576 cases égales au CSV (5 espacements du corpus voulus), aucune « Mentha » générique, données du
+   projet inchangées, « Mon projet » servi dans les huit pages, syntaxe PHP distante sans erreur, dossiers protégés 403.
+   Le parcours reste à essayer avec le vrai compte (la page Espèces à 143 espèces n'a pas été vue dans un navigateur). Contenu : « Mon projet » dans le panneau gauche des huit pages
    hors parcours connectées ; le **rapport C/N** de six espèces (études trouvées par Consensus, ce qui a été mesuré dit dans
    `notes`) ; puis **le cadre complété** : `contenu/especes-cadre.csv` (65 espèces complétées, 78 ajoutées — 143 ; « Mentha »
    générique écartée, décision du porteur) devient le dernier bloc généré de `sql/02-especes-seed.sql`. Beaucoup de valeurs
    sont des **repères généraux d'une session Claude**, relus par le porteur, dits comme tels dans `notes`/`source` — non
    sourcés au sens du corpus. Vérifié en local : 4576 cases égales au CSV (sauf 5 espacements du corpus voulus), résultat
-   identique dès le premier rejeu, `verifier-export` identique. **Au déploiement : `deployer.py base`** (puis `fichiers`).
+   identique dès le premier rejeu, `verifier-export` identique.
    Le modèle téléchargeable d'`especes.php` reste la fiche de 21 espèces.
    **Même jour, plus tôt** : la tortue liane et les strates selon l'usage (schéma 18) — voir la puce du même jour plus haut.
    **Déployé le 2026-09-30 (dixième vague)**, commité et poussé (`origin/main` à jour). **Avant** : production lue sans rien
