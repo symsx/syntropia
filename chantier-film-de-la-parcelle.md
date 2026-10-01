@@ -63,6 +63,19 @@ moment-là, et montre **le plan vu de dessus** à ce moment-là.
   porteur**).
 - **Les perturbations prévues d'une bordure : une liste de dates** (le porteur), chacune avec son geste.
 
+## Décision du porteur (2026-10-01) — une plante qui change de strate
+
+- **Le film de la parcelle tient compte d'une plante qui passe d'une strate à une autre au fil de son cycle.** Le
+  support Joala (`connaissances/formation-joala/strates-et-lumiere.md`) et Théry (ch. 05) en donnent deux exemples : la
+  **fève** commence en émergente (la lumière d'hiver est faible) et finit sa production au printemps en haute, sous une
+  ombre légère ; la **pomme de terre** commence en émergente et grossit ses tubercules en moyenne. Aujourd'hui le
+  référentiel porte bien les deux strates (`strates_possibles`), mais l'atelier ne propose que celle du départ
+  (`strate_production` = émergente) et rien ne dit quand la plante change de strate. Cela touche la Phase 3 (les
+  espacements entre plantes **de même strate présentes au même moment**) et la Phase 5 (le plan vu de dessus à un
+  moment donné). Voir la question ouverte n° 1.
+- **Laissé de côté** : la position dans une strate (« haut de la moyenne », « bas ou haut selon l'exposition ») — elle
+  compliquerait trop les règles de l'atelier.
+
 ## Le prévu et le réalisé (le porteur, 2026-09-23)
 
 - **En Conception**, les dates forment **un calendrier prévisionnel** : ce sont des prévisions, dites comme telles.
@@ -183,4 +196,17 @@ de l'azote…), en plus des strates vides — **en s'appuyant sur Plantae** (dé
 
 ## Questions ouvertes
 
-Aucune : toutes les questions du 2026-09-23 sont tranchées.
+Toutes les questions du 2026-09-23 sont tranchées. Une question est ouverte depuis le 2026-10-01 :
+
+1. **À quel moment une plante change-t-elle de strate ?** Les sources ne donnent aucune date et aucune durée : une
+   saison pour la fève (de l'hiver au printemps), un stade pour la pomme de terre (le grossissement des tubercules).
+   Trois pistes, à trancher avec le porteur avant la Phase 3 : une date au référentiel (une période en mots, comme
+   `periode_recolte`) ; une part de la fenêtre de culture (par exemple la moitié) ; ou un nombre de semaines après la
+   mise en place.
+   **Élément de réponse du porteur (2026-10-01)**, à confirmer lors de la formation, où il posera la question : la plante
+   change de strate **à sa maturité, quand elle entre en production** — juste avant son climax, donc pendant son propre
+   secondaire. La pomme de terre grossit ses tubercules en moyenne — **sa strate de production est passée d'émergente à
+   moyenne au cadre** (décision du porteur, 2026-10-01). Le noisetier garde la sienne (production haute, service
+   moyenne, d'après les études citées au seed) : il fructifie dans une strate plus lumineuse que celle où il rend
+   service. Si la règle se confirme, la strate de production est celle de la plante mûre, et la bascule tombe au début
+   de la production (la récolte, au référentiel, en donne déjà la fin).

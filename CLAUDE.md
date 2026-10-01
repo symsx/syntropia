@@ -113,10 +113,17 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
 - `chantier-film-de-la-parcelle.md` — le plan (6 phases) du **scénario en quatre dimensions** : chaque plante à son
   point de plantation au sol, sans collision ; les espacements respectés dans une même strate ; le temps en semaines,
   de la germination à la récolte, à l'échelle choisie ; les vides du calendrier montrés et comblés ; un curseur de
-  temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées ; **Phases 1 (la compétence)
+  temps sur la frise et sur le plan vu de dessus. Proposé le 2026-09-23, questions tranchées (une rouverte le 2026-10-01 : quand une plante change de strate — la fève, la pomme de terre) ; **Phases 1 (la compétence)
   2 (`Temps.php`, `espece.delai_germination_j` — schéma 13) et 2 bis (le calendrier prévisionnel des lignes de service
   et des bordures : `ligne_calendrier`, `perturbation_prevue` — schéma 14) faites**, et `espece.temperature_sol_semis_c`
   (schéma 15, en avance sur la Phase 7) ; **déployées le 2026-09-23** (huitième vague).
+- `chantier-repartition-bordures.md` — le plan (4 phases) pour **répartir une liste de plantes sur les bordures** d'une
+  parcelle : une liste pour toute la parcelle, que l'atelier dispose sur les bordures définies (fonction, émergentes au sud
+  et à l'ouest de l'externe, brise-vent sur les côtés de l'externe que la personne coche, alternance, une espèce
+  « colonne vertébrale » par bordure un plant sur deux, espacement), sur des bordures toutes vides ; une plante sans
+  espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
+  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01, **pas
+  commencé** — la Phase 1 peut commencer.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.

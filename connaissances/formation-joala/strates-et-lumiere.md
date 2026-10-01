@@ -69,12 +69,23 @@ pour cette distinction de méthode.
 | Émergente | Lavande (plein soleil), fève (au moment de l'année), soucis/calendula (bordures, début de saison), maïs de production, pommes de terre (démarrent en émergente) |
 | Haute | Vigne (sous houpier), pommier, poirier, ail des ours, fraises du commerce (sélectionnées pour ça), tomates/poivrons/aubergines (solanacées) |
 | Moyenne | Petits fruits (ribes), haricots (à l'ombre du maïs), courgettes/courges/concombres |
-| Basse | Fraise des bois |
+| Basse | Fraise des bois (haut de la strate), mélisse, consoude, menthe |
 
-Le support note lui-même que la mélisse, la consoude et la menthe ont
-« peu de strates basses utilisables » dans son contexte climatique —
-autant dire que cette liste est un point de départ à réévaluer
-localement, pas un catalogue à recopier.
+Le support ajoute qu'il y a « peu de strates basses utilisables en
+plantation » dans son contexte climatique, et que la plupart des
+légumes oscillent entre les strates moyenne et haute.
+
+> **Correction du 2026-10-01** (relecture du support par le porteur,
+> `les_strates.txt`) : la version précédente de cette fiche ne rangeait
+> en basse que la fraise des bois et lisait la remarque « peu de strates
+> basses utilisables » comme une réserve sur la mélisse, la consoude et
+> la menthe. Le support les classe bien en **strate basse** ; la
+> remarque porte sur la rareté des plantes de strate basse sous ce
+> climat, non sur ces trois plantes. Dans l'atelier, c'est leur
+> **strate de service** (`espece.strate_service` = basse : biomasse,
+> bloque-herbe, couvre-sol), et aussi leur strate de production pour la
+> mélisse et la menthe — la consoude Bocking 14 n'a qu'un usage de
+> service.
 
 ## Limites de lecture
 
