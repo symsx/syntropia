@@ -77,7 +77,7 @@ COUVERTURE = {
         "public/compte.php", "public/inscription.php", "public/deconnexion.php",
         "public/api-projets.php", "src/Web/Sites.php", "src/Web/Comptes.php",
         "src/Web/Authentification.php", "public/exporter.php", "src/Web/Export.php", "src/Version.php",
-        "public/importer.php", "src/Web/Import.php",
+        "public/importer.php", "src/Web/Import.php", "public/journal-connexions.php",
     ],
     "Inviter et rejoindre": [
         "public/inviter.php", "public/rejoindre.php", "public/membres.php",
