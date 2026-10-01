@@ -131,9 +131,6 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   terminé et déployé le 2026-10-01** (douzième vague) — la règle (`src/RepartitionBordures.php`, pure), la coche « vent » par côté de
   l'externe (`parcelle.plan`), la page (`conception-parcelles.php`, bloc `#rb`, `LignesPlantation::poserRepartition()`) ; les espacements qui manquaient
   (46 des 64 espèces de bordure) complétés par le porteur le même jour — cadre régénéré et déployé.
-- `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
-  le rôle de responsable qualification, pour produire des scénarios de
-  test à partir de l'état réel du dépôt.
 - `skills-map/` — carte des compétences métier nécessaires aux étapes de
   l'atelier (skill `organisation-skills`), dont les noeuds citent
   `connaissances/`.
@@ -812,14 +809,9 @@ récit.*
   ces dossiers-là ne sont pas eux aussi importés.
 - Arborescence protégée par `.htaccess`, sur le modèle exact du dépôt de
   référence — vérifiée pour de vrai en ligne (voir plus haut).
-- `dossier-qualification.md` — brief transmis à cgpt (rôle : responsable
-  qualification), état réel du dépôt phase par phase, pour des
-  scénarios de test sur 3 niveaux d'utilisateur (débutant/intermédiaire/
-  avancé en agroforesterie syntropique — le critère est la connaissance
-  du domaine, l'app ne distingue pas encore les comptes par ce biais).
-  Campagne en cours, comptes `qualification`/`qualification7`… créés
-  localement par cgpt — **leurs scénarios seront confrontés au code
-  réel avant toute correction, pas supposés corrects par construction.**
+- La campagne de qualification confiée à cgpt (`dossier-qualification.md`, `qualif_syntropia.py`) est **close** :
+  les deux fichiers ont été supprimés le 2026-10-01 à la demande du porteur, devenus inutiles. Les comptes
+  `qualification`… qu'elle avait créés en local peuvent subsister dans la base locale.
 - **Le premier compte réel en production.** `sylvain` créé sur
   `https://jubile.alwaysdata.net/syntropia/` (hash calculé en local par un
   simple `password_hash()`, jamais via `php bin/compte.php` en direct —
@@ -1932,7 +1924,7 @@ il apparaît réellement, pour ne pas noyer le motif.
    c. **Pas fait, à la demande du porteur** : la chaîne complète de Lopez (besoin alimentaire → surfaces), un taux de réussite propre à chaque culture, le demi-planche en miroir, les guildes de Plantae dans une page de
       scénario pérenne (`Guildes.php` n'est branché à aucune page), les exemples de fréquence de coupe par plante.
    d. **À chaque nouveau versement de la formation** : comparer les sha256 de `~/Bureau/Projets/input/` à `connaissances/formation-joala/inventaire.json`, ne lire que le nouveau (**jusqu'au mot « transcription »**, demande
-      du porteur), puis rattacher au corpus et voir quelles questions ouvertes il ferme. `dossier-qualification.md` et `qualif_syntropia.py` restent **non commités** (ils ne sont pas à moi).
+      du porteur), puis rattacher au corpus et voir quelles questions ouvertes il ferme.
 1. **Chantier « inscription par parrainage »** — plan dans
    `chantier-inscription-parrainage.md` — **terminé**, quatre phases plus
    « Participants » ; **déployé le 2026-09-18**.
@@ -1977,9 +1969,7 @@ il apparaît réellement, pour ne pas noyer le motif.
 10. **Au-delà du premier tour** : rien ne relit encore les réponses
    enregistrées pour les présenter (récapitulatif, export, tableau de
    bord) — à voir si/quand le besoin s'en fait sentir.
-11. **Campagne de qualification avec cgpt** — `dossier-qualification.md`
-   transmis, en cours. Confronter ses scénarios au code réel une fois
-   produits.
+11. **Campagne de qualification avec cgpt** — close le 2026-10-01 (fichiers supprimés, à la demande du porteur).
 12. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
 13. **Plantae est installé sur le même compte alwaysdata — fait côté `bdd_vg2`, mis à jour depuis (porteur, 2026-09-29).**
