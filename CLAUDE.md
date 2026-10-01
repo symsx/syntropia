@@ -43,7 +43,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   Phase 4 (GeoJSON, facultative) pas commencée — voir § Point de reprise.
 - `chantier-mises-a-jour.md` — le plan (7 phases) pour mettre l'atelier à jour sans gêner ceux qui l'utilisent :
   sauvegarde avant `base`, mode maintenance, ordre des envois, pages restées ouvertes, déploiement atomique, site
-  d'essai, « Quoi de neuf ». Demandé le 2026-10-01 (bêta-testeurs en production) ; **Phases 1 et 2 faites le jour même**.
+  d'essai, « Quoi de neuf ». Demandé le 2026-10-01 (bêta-testeurs en production) ; **Phases 1 et 2 faites le jour même, et vérifiées sur le serveur
+  réel** (cycle maintenance, puis un `mettre-a-jour` complet) ; on garde les **cinq** dernières sauvegardes.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.

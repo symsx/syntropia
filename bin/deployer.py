@@ -471,7 +471,6 @@ def _sauvegarde_complete(chemin):
 
 
 def base():
-    titre("Schéma, sur les bases distantes")
     cfg = config_prod()
     if cfg is None:
         souci("config/base.php absent — voir config/base.php.exemple, puis `deployer.py config`")

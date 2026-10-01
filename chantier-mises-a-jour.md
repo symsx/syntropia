@@ -1,8 +1,8 @@
 # Chantier — mettre à jour l'atelier sans gêner ceux qui l'utilisent
 
 *Proposé le 2026-10-01, à la demande du porteur, au moment où il invite des bêta-testeurs en production. **Phases 1
-(la sauvegarde) et 2 (le mode maintenance) faites le 2026-10-01**, pas encore déployées (`bin/` et
-`public/maintenance.html` partent avec le prochain `fichiers`) ; les suivantes au fil de l'eau, avant la version 1.*
+(la sauvegarde) et 2 (le mode maintenance) faites le 2026-10-01**, **vérifiées sur le serveur réel le
+même jour** ; les suivantes au fil de l'eau, avant la version 1.*
 
 ## L'intention
 
@@ -73,9 +73,15 @@ l'on s'arrête —, `base` avec sa sauvegarde, `fichiers`, réouverture, contrô
 l'atelier fermé et dit quoi faire). Vérifié sur un **Apache local** (instance à part, port 8091, mêmes modules que la
 réécriture : `rewrite`, `headers`, `authz_core`) avec le `.htaccess` généré : accueil, pages, POST et `public/*.php` en
 **503** avec la page et `Retry-After: 300`, `Cache-Control: no-store` ; feuilles de style et fontes en 200 ; `src/` et
-`config/` toujours 403 ; rendu à 1280×720 et 360×740 (capture) ; `.htaccess` normal remis : l'atelier rouvre. **Non
-vérifié : la boucle complète sur le serveur** (`maintenance on`/`off` en production) — elle se fera au prochain
-déploiement, ou plus tôt sur accord du porteur (une dizaine de secondes de fermeture).
+`config/` toujours 403 ; rendu à 1280×720 et 360×740 (capture) ; `.htaccess` normal remis : l'atelier rouvre. 
+
+**Vérifié sur le serveur réel le 2026-10-01** (à la demande du porteur, à un moment où aucun compte n'était connecté :
+aucune session de Syntropia portant un compte modifiée dans les 30 minutes) : `maintenance on` — accueil, pages, POST et
+`public/connexion.php` en 503 avec la page, `retry-after: 300`, `cache-control: no-store`, feuille de style et fonte en
+200, `src/` et `config/` 403 ; `maintenance off` — accueil 200, page protégée 302, `.htaccess` du serveur identique au
+local. Puis **`mettre-a-jour` de bout en bout** (35 s, une vingtaine fermé) : 503 contrôlé, sauvegarde, schéma, fichiers
+(le `.htaccess` de maintenance gardé pendant l'envoi), réouverture, 200 contrôlé ; ensuite, données inchangées (2 projets,
+1 parcelle, 12 réponses, 3 tracés, 143 espèces au cadre), aucun écart de contenu `rsync`.
 
 ### Phase 3 — L'ordre des envois, et les personnes connectées
 
