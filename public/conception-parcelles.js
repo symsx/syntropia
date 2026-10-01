@@ -210,6 +210,7 @@
     var moins = document.getElementById('plan-zoom-moins'), plus = document.getElementById('plan-zoom-plus');
     var tout = document.getElementById('plan-zoom-tout');
     if (moins){ moins.disabled = vue.z <= 1; plus.disabled = vue.z >= ZOOM_MAX; tout.hidden = vue.z <= 1; }
+    majSigles();
   }
   // Zoomer d'un facteur en gardant sous le pointeur le point qui s'y trouvait
   // (au centre du plan pour les boutons).
@@ -407,14 +408,17 @@
     if (!g) return;
     // Un aperçu de répartition (rien d'enregistré) se dessine pâli.
     if (cfgPlants.apercu) g.classList.add('plan-apercu');
+    var SVG = 'http://www.w3.org/2000/svg';
+    function couleur(p){ var e = (cfgPlants.especes || [])[p[2]]; return cfgPlants.couleurs[e ? e.couleur : 0]; }
     function disque(p, classe, r){
-      var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      var c = document.createElementNS(SVG, 'circle');
       c.setAttribute('class', classe);
       c.setAttribute('cx', p[0] * 100); c.setAttribute('cy', p[1] * 100);
       c.setAttribute('r', r);
-      c.setAttribute('fill', cfgPlants.couleurs[p[2]]);
-      c.setAttribute('stroke', cfgPlants.couleurs[p[2]]); // le point central le remplace par du blanc (CSS)
+      c.setAttribute('fill', couleur(p));
+      c.setAttribute('stroke', couleur(p)); // le point central le remplace par du blanc (CSS)
       g.appendChild(c);
+      return c;
     }
     // Une espèce dont l'envergure adulte est connue (Espèces, « Largeur adulte ») se dessine par un disque transparent,
     // pour voir où les plants se recouvrent, et un point à l'endroit où l'on plante. L'envergure de la fiche est celle
@@ -426,7 +430,53 @@
     cfgPlants.plants.forEach(function(p){
       disque(p, 'plan-plant', p[4] ? 3 : Math.max(3, Math.min(9, p[3] * 100 / 2.5)));
     });
+    // Le sigle de chaque plant (Sigles.php), montré quand le zoom laisse la place de le lire (majSigles).
+    cfgPlants.plants.forEach(function(p){
+      var e = (cfgPlants.especes || [])[p[2]];
+      if (!e) return;
+      var s = document.createElementNS(SVG, 'text');
+      s.setAttribute('class', 'plan-sigle');
+      s.setAttribute('x', p[0] * 100); s.setAttribute('y', p[1] * 100);
+      s.dataset.espacement = p[5] || p[3];
+      s.textContent = e.sigle;
+      g.appendChild(s);
+    });
+    // Le nom au survol (ou au toucher) : une zone de la moitié de l'espacement autour du point, sans quoi le point, de
+    // quelques pixels, serait trop petit pour être visé ; inactive pendant « Déplacer un bord » (CSS).
+    cfgPlants.plants.forEach(function(p){
+      var e = (cfgPlants.especes || [])[p[2]];
+      if (!e) return;
+      var c = document.createElementNS(SVG, 'circle');
+      c.setAttribute('class', 'plan-plant-cible');
+      c.setAttribute('cx', p[0] * 100); c.setAttribute('cy', p[1] * 100);
+      c.setAttribute('r', Math.max(6, (p[5] || p[3]) * 100 / 2));
+      var texte = e.sigle + ' — ' + e.nom + (p[5] ? ' — ' + fmt(p[5]).replace(/,?0+$/, '') + ' m' : '')
+        + ((cfgPlants.cotes || [])[p[6]] ? ' — ' + cfgPlants.cotes[p[6]].toLowerCase() : '');
+      c.addEventListener('pointerenter', function(){ Gabarit.bulle.montrer(c, texte, 'horizontal'); });
+      c.addEventListener('pointerleave', function(){ Gabarit.bulle.cacher(); });
+      g.appendChild(c);
+    });
+    majSigles();
+    // Sur téléphone, la légende couvrirait le plan : repliée par défaut, elle s'ouvre d'un toucher.
+    var legende = document.getElementById('plan-legende');
+    if (legende && window.matchMedia('(max-width: 40rem)').matches) legende.open = false;
+    // Ouvrir ou fermer la légende change la place du plan (CSS) : il se recadre.
+    if (legende) legende.addEventListener('toggle', appliquerVue);
   })();
+  /* Les sigles se lisent à taille fixe à l'écran (11 px), et seulement là où le plant laisse assez de place à ce zoom :
+     sur un plan vu en entier, à 25 ou 40 cm d'écart, ils se chevaucheraient. Rappelée à chaque changement de vue. */
+  function majSigles(){
+    var g = document.getElementById('plantations');
+    if (!g || !svg) return;
+    var boite = svg.getBoundingClientRect(), vb = svg.viewBox && svg.viewBox.baseVal;
+    if (!vb || !vb.width || !boite.width) return;
+    var pixelsParUnite = boite.width / vb.width;
+    g.querySelectorAll('.plan-sigle').forEach(function(s){
+      s.setAttribute('font-size', 11 / pixelsParUnite);
+      s.setAttribute('stroke-width', 3 / pixelsParUnite);
+      s.style.display = parseFloat(s.dataset.espacement) * 100 * pixelsParUnite >= 22 ? '' : 'none';
+    });
+  }
   function perimerPlants(){
     if (plantsPerimes) return;
     plantsPerimes = true;

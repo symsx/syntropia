@@ -360,48 +360,64 @@ if ($parcelleActive !== null && !$demandeNouvelle) {
     }
 }
 $couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53', '#1f6f78', '#b36b00', '#556b2f', '#7a3b3b'];
-// Une couleur par espèce (nom scientifique + variété), la même sur toutes les bordures de la parcelle — dans l'ordre où
-// les espèces apparaissent. Au-delà de dix espèces, les couleurs reviennent.
-$indicesEspeces = [];
-foreach ($lignesBordures as $lb) {
-    foreach ($lb['places'] as $pl) {
-        $indicesEspeces[$pl['nom_scientifique'] . "\0" . $pl['variete']] ??= count($indicesEspeces);
+// Une couleur et un sigle par espèce (nom scientifique + variété), les mêmes sur toutes les bordures de la parcelle —
+// dans l'ordre où les espèces apparaissent. Au-delà de dix espèces les couleurs reviennent : le sigle (`Sigles`, calculé,
+// unique sur la parcelle — décision du porteur, 2026-10-01) les distingue alors, sur le plan et dans la légende.
+$especesDessin = [];   // cle => ['nom', 'variete', 'sigle', 'couleur', 'n']
+$ajouterEspece = static function (string $cle, string $nom, string $variete) use (&$especesDessin): int {
+    if (!isset($especesDessin[$cle])) {
+        $especesDessin[$cle] = ['nom' => $nom, 'variete' => $variete, 'n' => 0, 'indice' => count($especesDessin)];
     }
-}
-$couleurDe = static fn (array $pl): int => $indicesEspeces[$pl['nom_scientifique'] . "\0" . $pl['variete']] % count($couleursPlants);
+    return $especesDessin[$cle]['indice'];
+};
 $plantsDessin = [];
-foreach ($lignesBordures as $cle => $lb) {
-    $g = $lb['geometrie'];
-    if ($g === null || $lb['compte'] === null || !$lb['compte']['ok']) {
-        continue;
-    }
+$cotesDessin = [];
+$poserPlants = static function (string $cleCote, array $g, array $positions, callable $especeDe) use (&$plantsDessin, &$cotesDessin, &$especesDessin) {
+    $cotesDessin[] = Bordures::libelle($cleCote);
+    $iCote = count($cotesDessin) - 1;
     $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
     $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
-    foreach ($lb['compte']['positions'] as [$k, $d]) {
-        // [x, y, couleur, largeur de la bande, envergure de l'espèce (m, ou null si inconnue), espacement (m)]
-        $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $couleurDe($lb['places'][$k]), round($g['bande'], 3),
-            $lb['places'][$k]['largeur'] ?? null, $lb['places'][$k]['espacement'] ?? null];
+    foreach ($positions as [$k, $d]) {
+        [$cle, $largeur, $espacement] = $especeDe($k);
+        $especesDessin[$cle]['n']++;
+        // [x, y, indice de l'espèce, largeur de la bande, envergure (m, ou null), espacement (m), indice du côté]
+        $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $especesDessin[$cle]['indice'],
+            round($g['bande'], 3), $largeur, $espacement, $iCote];
     }
-}
+};
 if ($repApercu !== null && $repApercu['ok']) {
     // L'aperçu sur le plan : les bordures externe et interne sont vides, leurs plants ne sont que ceux de l'aperçu.
-    $indicesApercu = [];
     foreach ($repApercu['cotes'] as $cle => $c) {
-        $g = $repGeometrie[$cle] ?? null;
-        if ($g === null || !$c['compte']['ok']) {
-            continue;
+        foreach ($c['serie'] as $e) {
+            $ajouterEspece('#' . (int) $e['id'], (string) ($e['nom_usuel'] ?: $e['nom_scientifique']), (string) $e['variete']);
         }
-        $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
-        $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
-        foreach ($c['compte']['positions'] as [$k, $d]) {
-            $e = $c['serie'][$k];
-            $indice = $indicesApercu[(int) $e['id']] ??= count($indicesApercu);
-            $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $indice % count($couleursPlants),
-                round($g['bande'], 3), ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null,
-                ($e['espacement_retenu_m'] ?? null) !== null ? (float) $e['espacement_retenu_m'] : null];
+        $g = $repGeometrie[$cle] ?? null;
+        if ($g !== null && $c['compte']['ok']) {
+            $poserPlants($cle, $g, $c['compte']['positions'], static fn (int $k): array => ['#' . (int) $c['serie'][$k]['id'],
+                ($c['serie'][$k]['largeur_m'] ?? null) !== null ? (float) $c['serie'][$k]['largeur_m'] : null,
+                ($c['serie'][$k]['espacement_retenu_m'] ?? null) !== null ? (float) $c['serie'][$k]['espacement_retenu_m'] : null]);
         }
     }
 }
+foreach ($lignesBordures as $cle => $lb) {
+    foreach ($lb['places'] as $pl) {
+        $ajouterEspece($pl['nom_scientifique'] . "\0" . $pl['variete'], (string) $pl['nom'], (string) $pl['variete']);
+    }
+    $g = $lb['geometrie'];
+    if ($g !== null && $lb['compte'] !== null && $lb['compte']['ok']) {
+        $poserPlants($cle, $g, $lb['compte']['positions'], static fn (int $k): array => [$lb['places'][$k]['nom_scientifique'] . "\0" . $lb['places'][$k]['variete'],
+            $lb['places'][$k]['largeur'] ?? null, $lb['places'][$k]['espacement'] ?? null]);
+    }
+}
+$sigles = \Syntropia\Sigles::calculer(array_values(array_map(static fn (array $e): array => ['nom' => $e['nom'], 'variete' => $e['variete']], $especesDessin)));
+foreach (array_keys($especesDessin) as $i => $cle) {
+    $especesDessin[$cle]['sigle'] = $sigles[$i];
+    $especesDessin[$cle]['couleur'] = $especesDessin[$cle]['indice'] % count($couleursPlants);
+}
+$especeDe = static fn (array $pl): array => $especesDessin[$pl['nom_scientifique'] . "\0" . $pl['variete']];
+$couleurDe = static fn (array $pl): int => $especeDe($pl)['couleur'];
+// La légende : les espèces qui ont des plants sur le dessin, dans leur ordre d'apparition.
+$legende = array_values(array_filter($especesDessin, static fn (array $e): bool => $e['n'] > 0));
 $nombreFr = static fn (float $v): string => rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
 
 $nomAffiche = $auth->nomAffiche() ?? '';
@@ -467,6 +483,24 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-plant{ stroke:#fff; stroke-width:1.5; }
   .plan-plant-envergure{ fill-opacity:.28; stroke-opacity:.6; stroke-width:1; }
+  /* Les sigles des plants, la zone de survol, la légende (le porteur, 2026-10-01). */
+  .plan-sigle{ font-family:var(--titre); font-weight:600; fill:var(--ink); stroke:var(--surface); paint-order:stroke;
+    text-anchor:middle; dominant-baseline:central; pointer-events:none; }
+  .plan-plant-cible{ fill:transparent; stroke:none; pointer-events:all; cursor:help; }
+  .outil-deplacer-actif .plan-plant-cible{ pointer-events:none; }
+  .plan-legende{
+    position:absolute; left:1rem; top:2.6rem; z-index:4; width:13rem; max-width:calc(100% - 5rem);
+    background:var(--surface); border:1px solid var(--line); border-radius:.5rem; padding:.3rem .6rem;
+    font:400 .76rem/1.3 var(--texte); color:var(--ink); box-shadow:0 2px 8px var(--ombre);
+  }
+  .plan-legende summary{ cursor:pointer; font:600 .74rem var(--titre); text-transform:uppercase; letter-spacing:.03em; color:var(--accent-titre); }
+  .plan-legende ul{ list-style:none; margin:.3rem 0 .1rem; padding:0; }
+  .plan-legende li{ display:flex; align-items:center; gap:.35rem; break-inside:avoid; padding:.08rem 0; }
+  .plan-legende b{ font:600 .74rem var(--titre); min-width:1.9rem; }
+  .plan-legende small{ color:var(--muted); }
+  .bl-sigle{ font:600 .74rem var(--titre); min-width:1.9rem; }
+  /* Légende ouverte sur un écran assez large : le plan lui laisse sa colonne au lieu d'être recouvert (il se recadre). */
+  @media (min-width:40.01rem){ #bureau:has(#plan-legende[open]) .bureau-carte{ margin-left:14.5rem; width:calc(100% - 14.5rem); } }
   .plan-planche-perenne{ fill:var(--accent); fill-opacity:.28; }
   .plan-bande-perenne{ fill:var(--accent); fill-opacity:.28; }
   #in-position-liane,
@@ -747,6 +781,17 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           </marker>
         </defs>
       </svg>
+<?php if ($legende !== []): ?>
+      <details class="plan-legende" id="plan-legende" open>
+        <summary><?= $repApercu !== null && $repApercu['ok'] ? 'Légende de l’aperçu' : 'Légende' ?> · <?= count($legende) ?></summary>
+        <ul>
+<?php foreach ($legende as $e): ?>
+          <li><span class="bl-pastille" style="background:<?= $couleursPlants[$e['couleur']] ?>"></span><b><?= htmlspecialchars($e['sigle'], ENT_QUOTES, 'UTF-8') ?></b>
+            <span><?= htmlspecialchars($e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?> <small><?= (int) $e['n'] ?></small></span></li>
+<?php endforeach; ?>
+        </ul>
+      </details>
+<?php endif; ?>
       <p class="plan-reglures" role="group" aria-label="Zoom du plan">
         <button type="button" id="plan-zoom-moins" class="plan-zoom" aria-label="Dézoomer" title="Dézoomer" disabled>−</button>
         <button type="button" id="plan-zoom-plus" class="plan-zoom" aria-label="Zoomer" title="Zoomer">+</button>
@@ -1044,7 +1089,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php if ($lb['places'] !== []): ?>
           <ol class="bl-serie">
 <?php foreach ($lb['places'] as $k => $pl): ?>
-            <li><span class="bl-pastille" style="background:<?= $couleursPlants[$couleurDe($pl)] ?>"></span>
+            <li><span class="bl-pastille" style="background:<?= $couleursPlants[$couleurDe($pl)] ?>"></span><b class="bl-sigle"><?= htmlspecialchars($especeDe($pl)['sigle'], ENT_QUOTES, 'UTF-8') ?></b>
               <span><?= htmlspecialchars($pl['nom'] . ($pl['variete'] !== '' ? ' (' . $pl['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></span>
               <span class="bl-nombre"><?php
                 if (!$pl['connue']) { echo 'inconnue du référentiel'; }
@@ -1266,7 +1311,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
          font viennent en tête de la liste. « Proposer les espèces de cette bordure » les montre toutes (hors annuelles :
          une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
-         d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan.</p>
+         d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chaque espèce avec sa
+         couleur et son sigle : la <strong>légende</strong> les liste, les sigles s'inscrivent sur le plan quand le zoom
+         le permet, et le survol d'un point donne le nom de la plante.</p>
       <p><strong>Répartir une liste de plantes</strong> — sur des bordures encore vides, cochez une seule liste pour
          toute la parcelle : l'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance,
          des émergentes seules au sud et à l'ouest de l'externe, des brise-vent sur les côtés cochés « vent », et la
@@ -1330,6 +1377,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
   // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande, envergure, espacement] en mètres (chantier
   // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.
   var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,
+      'especes' => array_values(array_map(static fn (array $e): array => ['nom' => $e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''),
+          'sigle' => $e['sigle'], 'couleur' => $e['couleur']], $especesDessin)),
+      'cotes' => $cotesDessin,
       'apercu' => $repApercu !== null && $repApercu['ok'],
       'ouvrir' => $repOuverte ? 'rb' : ($bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte)))], JSON_UNESCAPED_UNICODE) ?>;
 </script>

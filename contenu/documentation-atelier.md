@@ -189,7 +189,10 @@ bloque-herbe. L'atelier compte
 les plants de chaque espèce d'après leur espacement, pris dans **Espèces** — entre deux plants voisins, la
 moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan : par un disque de
 leur **largeur** adulte quand elle est connue, pour voir où ils se recouvrent — borné à deux fois leur espacement,
-puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance libre —, sinon par une pastille. Une espèce
+puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance libre —, sinon par une pastille. Chaque espèce a sa couleur et un **sigle** de deux ou trois lettres (« La » pour la lavande, « FeA » et « FeC »
+pour deux variétés de feijoa), calculé pour que deux espèces de la parcelle ne se confondent jamais. Une **légende**
+les liste avec le nombre de plants ; les sigles s'inscrivent sur le plan dès que le zoom laisse la place de les lire,
+et le nom complet d'une plante s'affiche au survol de son point. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
 bordures, les plants se recomptent quand le plan est de nouveau enregistré. Au bas de la page, **Annuler les
 changements** ramène le plan tel qu'il est enregistré, et **Réinitialiser** le fait repartir des valeurs par défaut
