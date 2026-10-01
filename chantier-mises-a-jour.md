@@ -2,7 +2,8 @@
 
 *Proposé le 2026-10-01, à la demande du porteur, au moment où il invite des bêta-testeurs en production. **Phases 1
 (la sauvegarde) et 2 (le mode maintenance) faites le 2026-10-01**, **vérifiées sur le serveur réel le
-même jour** ; les suivantes au fil de l'eau, avant la version 1.*
+même jour** ; **Phases 3 (l'ordre des envois, les personnes connectées) et 4 (les pages restées ouvertes) faites le
+même jour**, la 4 pas encore déployée ; les suivantes au fil de l'eau, avant la version 1.*
 
 ## L'intention
 
@@ -102,6 +103,35 @@ ancienne, vide), seule la première est comptée.
   enregistrée. Relire chaque écriture (plan, scénario, potager, espèces…) sous cet angle.
 - **« Une nouvelle version est en ligne, rechargez la page »** : chaque page porte le numéro de version de l'atelier
   (`Version::APPLICATION`) ; `gabarit.js` le compare à celui du serveur quand la page reprend la main, et le dit.
+
+**Faite le 2026-10-01 — autrement que prévu, sur décision du porteur.** En relisant les écritures, le premier point
+s'est révélé large : les pages de réponses envoient `$_POST['x'] ?? ''` (et une réponse vide efface sa ligne),
+`Interventions`, `Constats` et `Cultures` réécrivent la ligne entière depuis le formulaire — seul `Especes` ne touche
+qu'aux colonnes reçues ; et une case décochée est elle aussi « absente ». Deux voies ont été soumises au porteur ; il a
+choisi **de refuser l'envoi d'une page périmée**, un mécanisme central qui protège tous les formulaires, y compris ceux
+de demain, plutôt qu'une revue champ par champ :
+
+- **le jeton des formulaires porte la marque du déploiement** (`Authentification::jeton()` → `…base….marque`,
+  `Version::marqueDeploiement()` : les dix premiers caractères du SHA-256 de `contenu/deploiement.txt`). Ce fichier,
+  `bin/deployer.py fichiers` l'écrit **sur le serveur** en dernier (la date et le commit), jamais dans le dépôt (exclu
+  des envois, ignoré par git) ; absent en local, la marque reste fixe. `jetonValide()` refuse un jeton de la bonne
+  session mais d'un autre déploiement, et pose un cookie `syntropia_perime` (10 minutes, lisible par le script) ;
+- **`gabarit.js` le dit** : la page suivante lit le cookie, l'efface, et affiche « Votre dernier envoi venait d'une
+  page ouverte avant une mise à jour… il n'a pas été enregistré » ; et **avant l'envoi**, la marque que renvoie
+  `api-projets.php` (appelée sur toute page connectée) est comparée à celle du chargement, au retour sur l'onglet et
+  toutes les cinq minutes : « Une nouvelle version de l'atelier vient d'être installée. Rechargez la page avant
+  d'enregistrer », avec un bouton ;
+- l'enregistrement du plan (en arrière-plan) reçoit un **409 JSON** avec la même explication, au lieu de la page
+  entière ; les `api-*` disaient déjà « Formulaire expiré — rechargez la page ».
+
+**Le prix, accepté** : après chaque mise à jour, une saisie commencée sur une page d'avant est à refaire — l'avis
+préventif rend ce cas rare. Les pages ouvertes au moment du **premier** déploiement de ce mécanisme ont un ancien
+`gabarit.js` : elles ne préviennent pas, mais leurs envois sont refusés et expliqués à la page suivante. Vérifié en
+local (CDP, compte de test supprimé) : formulaire classique d'une page périmée refusé (rien d'écrit, l'avis à la page
+suivante, cookie effacé) puis accepté une fois la page à jour ; plan périmé refusé avec le message juste ; avis
+préventif au retour sur l'onglet, absent au chargement, disparu après « Recharger la page », tenu dans l'écran à
+1280×720 et 320×568 ; sans marque de déploiement (local), tout écrit comme avant. La page de maintenance dit
+maintenant de recharger la page d'avant avant de refaire l'envoi. Livret : un paragraphe dans « Le bureau ».
 
 ### Phase 5 — Le déploiement atomique
 

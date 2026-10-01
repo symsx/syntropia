@@ -72,7 +72,17 @@ $lireRepartition = static function (array $source, array $especes): array {
 // `chantier-inscription-parrainage.md`, Phase 3.
 $peutEcrire = $sites->peutEcrireSur($siteId, $compteId);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null)) {
+$jetonOk = $_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?? null);
+// Un enregistrement du plan (en arrière-plan) venu d'une page d'avant une mise à jour : le dire, au lieu de rendre la
+// page entière à un script qui attend du JSON (chantier-mises-a-jour.md, Phase 4).
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$jetonOk && ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
+    http_response_code(409);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['ok' => false, 'erreurs' => ['jeton' => 'Cette page date d’avant une mise à jour de l’atelier : rien n’a été '
+        . 'enregistré. Rechargez-la, puis refaites votre changement.'], 'version' => null], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+if ($jetonOk) {
     $action = (string) ($_POST['action'] ?? '');
     if (!$peutEcrire) {
         $refus = ['droit' => "Vous lisez ce projet : il ne se modifie pas depuis votre compte."];

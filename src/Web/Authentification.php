@@ -7,6 +7,7 @@ namespace Syntropia\Web;
 use Syntropia\Configuration;
 use Syntropia\Profil;
 use Syntropia\Role;
+use Syntropia\Version;
 
 /**
  * Qui est là, et ce qu'il peut.
@@ -35,6 +36,8 @@ final class Authentification
     private const COOKIE = 'SYNTROPIA';
     private const COMMUN = 'auth';
     private const PROPRE = 'syntropia';
+    /** Le cookie qui dit à la page suivante qu'un envoi venait d'une page d'avant la mise à jour (lu par gabarit.js). */
+    public const COOKIE_PERIME = 'syntropia_perime';
 
     private Comptes $comptes;
 
@@ -252,16 +255,37 @@ final class Authentification
             $jeton = bin2hex(random_bytes(32));
             $_SESSION[self::PROPRE]['csrf'] = $jeton;
         }
-        return $jeton;
+        // Le jeton porte la marque du déploiement qui a servi la page (chantier-mises-a-jour.md, Phase 4, décision du
+        // porteur du 2026-10-01) : une page ouverte avant une mise à jour n'écrit plus rien après — ses formulaires
+        // pourraient ne pas porter un champ nouveau, et l'effacer.
+        return $jeton . '.' . Version::marqueDeploiement();
     }
 
     /**
-     * Un `POST` qui écrit doit porter le jeton de la session.
+     * Un `POST` qui écrit doit porter le jeton de la session, **émis par le déploiement en ligne**. Un jeton de la
+     * bonne session mais d'une page servie avant la mise à jour est refusé, et un cookie le signale à la page suivante,
+     * qui le dit (`gabarit.js`) : rien ne se perd en silence.
      */
     public function jetonValide(?string $recu): bool
     {
         $attendu = $_SESSION[self::PROPRE]['csrf'] ?? null;
-        return is_string($attendu) && is_string($recu) && hash_equals($attendu, $recu);
+        if (!is_string($attendu) || !is_string($recu)) {
+            return false;
+        }
+        $point = strrpos($recu, '.');
+        $base = $point === false ? $recu : substr($recu, 0, $point);
+        $marque = $point === false ? '' : substr($recu, $point + 1);
+        if (!hash_equals($attendu, $base)) {
+            return false;
+        }
+        if (!hash_equals(Version::marqueDeploiement(), $marque)) {
+            if (!headers_sent()) {
+                setcookie(self::COOKIE_PERIME, '1', ['expires' => time() + 600, 'path' => Configuration::base(),
+                    'samesite' => 'Lax', 'secure' => ($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off']);
+            }
+            return false;
+        }
+        return true;
     }
 
     // ------------------------------------------------------------------

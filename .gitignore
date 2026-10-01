@@ -17,3 +17,7 @@ config/base.php
 # Dossier de dépôt manuel (bin/deployer.py preparer) — voisin du
 # projet, pas dedans ; cette ligne est une redondance volontaire.
 /syntropia-depot/
+
+# Le déploiement en ligne — écrit sur le serveur par bin/deployer.py fichiers, jamais dans le dépôt
+# (chantier-mises-a-jour.md, Phase 4). Un fichier local ne sert qu'aux essais.
+contenu/deploiement.txt

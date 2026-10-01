@@ -401,6 +401,12 @@ d'emploi de la page (le panneau Informations). Un clic en dehors, ou la touche
 Sur téléphone, la barre d'outils devient un menu déroulant. Le bouton ◐, en haut,
 change le thème, clair ou sombre.
 
+**Pendant une mise à jour**, l'atelier se ferme quelques instants : toute page affiche « L'atelier se met à
+jour », et rien n'y est reçu — votre travail déjà enregistré est conservé. Une fois la mise à jour faite, une page
+restée ouverte depuis avant ne peut plus rien enregistrer, pour qu'un formulaire d'avant n'efface pas un champ
+nouveau : un avis vous propose de la recharger, et si un envoi en part quand même, l'atelier vous dit qu'il n'a pas
+été pris en compte. Rechargez la page, puis refaites votre saisie.
+
 # Comptes, projets et rôles
 
 On s'inscrit sur invitation : quelqu'un qui a déjà un compte ouvre un code de

@@ -71,7 +71,7 @@ ELEMENTS = [
 ]
 
 # Jamais envoyé, même à l'intérieur d'un dossier de la liste ci-dessus.
-EXCLUSIONS = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db", "*.tmp", "~$*"]
+EXCLUSIONS = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db", "*.tmp", "~$*", "deploiement.txt"]
 
 # Pour qui dépose à la main plutôt qu'avec `fichiers` — voisin du dépôt
 # du projet, jamais dedans (un `rglob` un peu large ne le ramasserait
@@ -299,7 +299,24 @@ def fichiers(dry_run):
             note(f"{element} — {len(lignes)} fichier(s) à envoyer" if lignes else f"{element} — déjà à jour")
         else:
             ok(f"{element} — envoyé ({len(lignes)} fichier(s))")
+    if reussite and not dry_run:
+        reussite = marquer_deploiement()
     return reussite
+
+
+def marquer_deploiement():
+    """Écrit `contenu/deploiement.txt` sur le serveur — la date et le commit (chantier-mises-a-jour.md, Phase 4). Les
+    formulaires portent sa marque (`Version::marqueDeploiement()`) : une page servie avant cet envoi ne peut plus
+    écrire, et gabarit.js prévient qu'il faut la recharger. Écrit en dernier, une fois tous les fichiers en place."""
+    commit = subprocess.run(["git", "-C", str(RACINE), "rev-parse", "--short", "HEAD"], capture_output=True, text=True)
+    ligne = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " " + (commit.stdout.strip() or "?")
+    r = subprocess.run(["ssh", HOTE_SSH, f"cat > {WWW_DISTANT}/contenu/deploiement.txt"], input=ligne + "\n",
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        souci("contenu/deploiement.txt non écrit — les pages d'avant cet envoi pourraient encore écrire")
+        return False
+    ok(f"déploiement marqué : {ligne}")
+    return True
 
 
 # ------------------------------------------------------------ maintenance

@@ -54,6 +54,8 @@ $actif = $sites->pourCompte($compteId);
 repondre(200, [
     'ok' => true,
     'csrf' => $auth->jeton(),
+    // Le déploiement en ligne : gabarit.js le compare à celui de son chargement, et prévient s'il a changé.
+    'deploiement' => Syntropia\Version::marqueDeploiement(),
     'actif' => $actif === null ? null : (int) $actif['id'],
     'projets' => array_map(static fn (array $s): array => [
         'id' => (int) $s['id'],

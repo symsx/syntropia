@@ -45,6 +45,7 @@ window.Gabarit = (function(){
     initProjets();
     initEchap();
     initTermes();
+    initAvisPerime();
 
     return api;
   }
@@ -323,12 +324,69 @@ window.Gabarit = (function(){
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(j){
         if (!j || !j.ok) return;
+        surveillerDeploiement(j.deploiement);
         var actif = j.projets.filter(function(p){ return p.id === j.actif; })[0];
         ajouterEntreesDuMenu(menu, !!actif && actif.role === 'porteur');
         if (j.projets.length > 1) ajouterSelecteurProjets(j);
         if (actif && actif.role === 'lecteur' && pageDuParcours) lectureSeule();
       })
       .catch(function(){ /* le sélecteur est un confort : jamais une erreur visible */ });
+  }
+
+  /* ------------------------------------------- les mises à jour */
+  /* Après une mise à jour de l'atelier, un envoi venu d'une page ouverte avant est refusé par le serveur (le jeton porte
+     la marque du déploiement — chantier-mises-a-jour.md, Phase 4). Deux avis, pour que rien ne se perde en silence :
+     avant l'envoi, si le déploiement en ligne a changé depuis le chargement de la page ; après, si le serveur a refusé
+     un envoi (il pose alors un cookie, que la page suivante lit et efface). */
+  var COOKIE_PERIME = 'syntropia_perime';
+  var marqueChargee = null, avisAffiche = false;
+
+  function avisVersion(texte, recharger){
+    if (avisAffiche) return;
+    avisAffiche = true;
+    var a = document.createElement('div');
+    a.className = 'avis-version';
+    a.setAttribute('role', 'alert');
+    var p = document.createElement('p');
+    p.textContent = texte;
+    a.appendChild(p);
+    if (recharger){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'avis-version-bouton'; b.textContent = 'Recharger la page';
+      b.addEventListener('click', function(){ location.reload(); });
+      a.appendChild(b);
+    }
+    var x = document.createElement('button');
+    x.type = 'button'; x.className = 'avis-version-fermer'; x.setAttribute('aria-label', "Fermer l'avis"); x.textContent = '✕';
+    x.addEventListener('click', function(){ a.remove(); });
+    a.appendChild(x);
+    document.body.appendChild(a);
+  }
+
+  function initAvisPerime(){
+    if (!/(?:^|;\s*)syntropia_perime=1(?:;|$)/.test(document.cookie)) return;
+    document.cookie = COOKIE_PERIME + '=; max-age=0; path=' + location.pathname.replace(/[^\/]*$/, '');
+    avisVersion("Votre dernier envoi venait d'une page ouverte avant une mise à jour de l'atelier : il n'a pas été "
+      + "enregistré. Cette page est à jour — refaites votre saisie.", false);
+  }
+
+  function surveillerDeploiement(marque){
+    if (marqueChargee !== null || !marque) return;
+    marqueChargee = marque;
+    function verifier(){
+      if (avisAffiche || document.visibilityState !== 'visible') return;
+      fetch('api-projets.php', { credentials: 'same-origin' })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){
+          if (j && j.ok && j.deploiement && j.deploiement !== marqueChargee){
+            avisVersion("Une nouvelle version de l'atelier vient d'être installée. Rechargez la page avant "
+              + "d'enregistrer : un envoi depuis cette page ne serait pas pris en compte.", true);
+          }
+        })
+        .catch(function(){ /* un confort : jamais une erreur visible */ });
+    }
+    document.addEventListener('visibilitychange', verifier);
+    setInterval(verifier, 5 * 60 * 1000);
   }
 
   /* Un lecteur regarde le projet. Le serveur refuse de toute façon ses

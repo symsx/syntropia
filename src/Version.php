@@ -58,4 +58,25 @@ final class Version
 
     /** Le numéro de l'atelier — à fixer par le porteur ; informatif. */
     public const APPLICATION = '0.9.0';
+
+    /**
+     * Le déploiement en ligne : une ligne que `bin/deployer.py fichiers` écrit sur le serveur à chaque envoi
+     * (`contenu/deploiement.txt` — la date et le commit), jamais dans le dépôt. Vide en local. Il change à chaque mise à
+     * jour, même quand `APPLICATION` ne bouge pas (chantier-mises-a-jour.md, Phase 4).
+     */
+    public static function deploiement(): string
+    {
+        static $lu = null;
+        if ($lu === null) {
+            $chemin = __DIR__ . '/../contenu/deploiement.txt';
+            $lu = is_file($chemin) ? trim((string) file_get_contents($chemin)) : '';
+        }
+        return $lu;
+    }
+
+    /** Une marque courte du déploiement : ce que portent le jeton des formulaires et la réponse de `api-projets.php`. */
+    public static function marqueDeploiement(): string
+    {
+        return substr(hash('sha256', self::deploiement()), 0, 10);
+    }
 }

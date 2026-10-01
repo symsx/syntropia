@@ -450,3 +450,19 @@ input:checked + .outil-bouton{ background:var(--surface); border-color:var(--acc
 }
 
 .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* L'avis d'une mise à jour (gabarit.js, chantier-mises-a-jour.md, Phase 4) : au-dessus de tout, au bas du bureau. */
+.avis-version{
+  position:fixed; left:50%; bottom:3.6rem; transform:translateX(-50%); z-index:30;
+  display:flex; align-items:center; gap:.7rem; width:min(36rem, calc(100vw - 2rem));
+  padding:.7rem .8rem .7rem 1rem; background:var(--surface); color:var(--ink);
+  border:1px solid var(--accent); border-radius:.6rem; box-shadow:0 8px 20px var(--ombre);
+  font:400 .86rem/1.4 var(--texte);
+}
+.avis-version p{ margin:0; flex:1; }
+.avis-version-bouton{
+  flex:none; padding:.35rem .7rem; font:500 .8rem var(--texte); color:var(--ink);
+  background:var(--accent-doux); border:1px solid var(--accent); border-radius:.4rem; cursor:pointer;
+}
+.avis-version-fermer{ flex:none; background:none; border:0; color:var(--muted); font-size:.9rem; cursor:pointer; padding:.2rem; }
+@media (max-width:30rem){ .avis-version{ flex-wrap:wrap; } .avis-version p{ flex-basis:calc(100% - 2rem); } }
