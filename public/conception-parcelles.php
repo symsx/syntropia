@@ -378,9 +378,9 @@ foreach ($lignesBordures as $cle => $lb) {
     $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
     $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
     foreach ($lb['compte']['positions'] as [$k, $d]) {
-        // [x, y, couleur, largeur de la bande, envergure de l'espèce (m, ou null si inconnue)]
+        // [x, y, couleur, largeur de la bande, envergure de l'espèce (m, ou null si inconnue), espacement (m)]
         $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $couleurDe($lb['places'][$k]), round($g['bande'], 3),
-            $lb['places'][$k]['largeur'] ?? null];
+            $lb['places'][$k]['largeur'] ?? null, $lb['places'][$k]['espacement'] ?? null];
     }
 }
 if ($repApercu !== null && $repApercu['ok']) {
@@ -397,7 +397,8 @@ if ($repApercu !== null && $repApercu['ok']) {
             $e = $c['serie'][$k];
             $indice = $indicesApercu[(int) $e['id']] ??= count($indicesApercu);
             $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $indice % count($couleursPlants),
-                round($g['bande'], 3), ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null];
+                round($g['bande'], 3), ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null,
+                ($e['espacement_retenu_m'] ?? null) !== null ? (float) $e['espacement_retenu_m'] : null];
         }
     }
 }
@@ -1319,7 +1320,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     // La nature des planches (zèbre, abeille — Phase 5) : la première, puis l'alternance ; les planches changées.
     premiereNature: <?= json_encode(Planches::premiereNature($planEnregistre ?? null)) ?>,
     natures: <?= json_encode((object) (is_array($planEnregistre['natures']['planches'] ?? null) ? $planEnregistre['natures']['planches'] : [])) ?>,    lignesDefaut: <?= Planches::LIGNES_DEFAUT ?>, lignesMin: <?= Planches::LIGNES_MIN ?>, lignesMax: <?= Planches::LIGNES_MAX ?> };
-  // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande] en mètres (chantier
+  // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande, envergure, espacement] en mètres (chantier
   // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.
   var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,
       'apercu' => $repApercu !== null && $repApercu['ok'],

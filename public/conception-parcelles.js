@@ -416,10 +416,13 @@
       c.setAttribute('stroke', cfgPlants.couleurs[p[2]]); // le point central le remplace par du blanc (CSS)
       g.appendChild(c);
     }
-    // Une espèce dont l'envergure adulte est connue (Espèces, « Largeur adulte ») se dessine à sa taille réelle —
-    // un disque transparent, pour voir où les plants se recouvrent, et un point à l'endroit où l'on plante. Sans
-    // envergure connue, une pastille proportionnée à la bande, comme avant.
-    cfgPlants.plants.filter(function(p){ return p[4]; }).forEach(function(p){ disque(p, 'plan-plant-envergure', p[4] * 100 / 2); });
+    // Une espèce dont l'envergure adulte est connue (Espèces, « Largeur adulte ») se dessine par un disque transparent,
+    // pour voir où les plants se recouvrent, et un point à l'endroit où l'on plante. L'envergure de la fiche est celle
+    // d'une plante en croissance libre (15 m pour un tilleul) : en bordure, taillée, elle ne l'atteint jamais — le
+    // disque est borné à deux fois l'espacement (décision du porteur, 2026-10-01). Sans envergure connue, une pastille
+    // proportionnée à la bande, comme avant.
+    function envergureDessinee(p){ return p[5] ? Math.min(p[4], 2 * p[5]) : p[4]; }
+    cfgPlants.plants.filter(function(p){ return p[4]; }).forEach(function(p){ disque(p, 'plan-plant-envergure', envergureDessinee(p) * 100 / 2); });
     cfgPlants.plants.forEach(function(p){
       disque(p, 'plan-plant', p[4] ? 3 : Math.max(3, Math.min(9, p[3] * 100 / 2.5)));
     });

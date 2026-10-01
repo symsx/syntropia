@@ -186,8 +186,9 @@ que vous voulez, elles alternent dans cet ordre. Une plante que les pépiniéris
 peut être notée « bloque l'herbe » dans Espèces ; en bordure, une plante couvre-sol compte aussi comme
 bloque-herbe. L'atelier compte
 les plants de chaque espèce d'après leur espacement, pris dans **Espèces** — entre deux plants voisins, la
-moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan : à leur taille
-réelle quand leur **largeur** adulte est connue, pour voir où ils se recouvrent, sinon par une pastille. Une espèce
+moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan : par un disque de
+leur **largeur** adulte quand elle est connue, pour voir où ils se recouvrent — borné à deux fois leur espacement,
+puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance libre —, sinon par une pastille. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
 bordures, les plants se recomptent quand le plan est de nouveau enregistré. Tant que les bordures externe et
 interne sont vides, vous pouvez aussi **répartir une liste de plantes sur toutes les bordures** d'un coup : vous
