@@ -643,6 +643,7 @@
             // le plan qui vient d'être écrit — la page se recharge pour les montrer.
             if (plantsPerimes){ location.href = location.pathname + '?parcelle=' + encodeURIComponent(document.getElementById('plan-parcelle-id').value) + '&bordure=' + encodeURIComponent('recompte'); return; }
             champVersionPlan.value = j.version;
+            document.dispatchEvent(new Event('plan-enregistre'));
             etatPlan.textContent = 'Plan enregistré.';
             etatPlan.hidden = false;
           } else {
@@ -696,7 +697,48 @@
     });
   }
 
+  /* Annuler et réinitialiser (le porteur, 2026-10-01) : deux gestes, chacun confirmé. ANNULER revient au plan tel
+     qu'il est enregistré — défaire ce qui a changé à l'écran ; RÉINITIALISER repart des valeurs par défaut de l'atelier.
+     Ni l'un ni l'autre n'écrit rien : seul « Enregistrer le plan » écrit. « Ce qui a changé » se lit en comparant les
+     champs du plan (ceux du panneau qui ne sont dans aucun formulaire) à leur état au chargement ou au dernier
+     enregistrement. */
+  var boutonAnnuler = document.getElementById('pied-annuler');
+  function etatDesChamps(){
+    var champs = [];
+    document.querySelectorAll('#panneau-droit input, #panneau-droit select').forEach(function(c){
+      if (c.closest('form') || c.type === 'hidden') return;
+      champs.push(c.type === 'checkbox' || c.type === 'radio' ? (c.checked ? '1' : '0') : c.value);
+    });
+    return champs.join('\u0001');
+  }
+  var etatEnregistre = etatDesChamps();
+  function majAnnuler(){ if (boutonAnnuler) boutonAnnuler.disabled = etatDesChamps() === etatEnregistre; }
+  document.getElementById('panneau-droit').addEventListener('input', majAnnuler);
+  document.getElementById('panneau-droit').addEventListener('change', majAnnuler);
+  document.addEventListener('plan-enregistre', function(){ etatEnregistre = etatDesChamps(); majAnnuler(); });
+
+  Gabarit.onAnnuler(function(){
+    if (etatDesChamps() === etatEnregistre) return;
+    Gabarit.confirmer({
+      titre: 'Annuler les changements ?',
+      texte: 'Le plan revient tel qu’il est enregistré : ce que vous avez modifié depuis, et pas encore enregistré, est perdu.',
+      oui: 'Annuler les changements', non: 'Continuer à modifier'
+    }).then(function(ok){
+      if (ok) location.href = location.pathname + '?parcelle=' + encodeURIComponent(document.getElementById('plan-parcelle-id').value);
+    });
+  });
+
   Gabarit.onReset(function(){
+    Gabarit.confirmer({
+      titre: 'Réinitialiser le plan ?',
+      texte: 'Le plan repart des valeurs par défaut de l’atelier : 12 × 8 m, bordure externe sur les quatre côtés à 0,40 m, '
+        + 'sans coche « vent », sans bordure interne, planches nord-sud. Rien n’est écrit tant que vous ne cliquez pas '
+        + '« Enregistrer le plan » — « Annuler les changements » vous ramène sinon au plan enregistré.',
+      oui: 'Réinitialiser', non: 'Garder mon plan'
+    }).then(function(ok){ if (ok) reinitialiser(); });
+  });
+
+  function reinitialiser(){
     perimerPlants();
     lignesSaisies = {}; naturesSaisies = {}; signatureListe = '';
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
@@ -710,7 +752,11 @@
     document.getElementById('passe-pieds-bords').checked = false;
     if (document.getElementById('in-position-liane')) document.getElementById('in-position-liane').value = 'coeur';
     redessiner();
-  });
+    majAnnuler();
+  }
 
   redessiner();
+  // L'état de référence se prend après le premier dessin, qui crée certains champs (les lignes de chaque planche).
+  etatEnregistre = etatDesChamps();
+  majAnnuler();
 })();

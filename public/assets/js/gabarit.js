@@ -529,11 +529,38 @@ window.Gabarit = (function(){
     });
   }
 
+  /* ---------------------------------------------- la confirmation */
+  /* Une question avant un geste qui défait quelque chose : une fenêtre du bureau (`<dialog>`, sans dépendance), deux
+     boutons, Échap ou un clic à côté répondent « non ». Rend une promesse : vrai si la personne confirme. */
+  function confirmer(o){
+    return new Promise(function(resoudre){
+      var d = document.createElement('dialog');
+      d.className = 'confirmation';
+      var titre = document.createElement('p'); titre.className = 'confirmation-titre'; titre.textContent = o.titre || '';
+      var texte = document.createElement('p'); texte.className = 'confirmation-texte'; texte.textContent = o.texte || '';
+      var boutons = document.createElement('div'); boutons.className = 'confirmation-boutons';
+      var non = document.createElement('button'); non.type = 'button'; non.className = 'confirmation-non'; non.textContent = o.non || 'Annuler';
+      var oui = document.createElement('button'); oui.type = 'button'; oui.className = 'confirmation-oui'; oui.textContent = o.oui || 'Confirmer';
+      boutons.appendChild(non); boutons.appendChild(oui);
+      d.appendChild(titre); d.appendChild(texte); d.appendChild(boutons);
+      document.body.appendChild(d);
+      var reponse = false;
+      oui.addEventListener('click', function(){ reponse = true; d.close(); });
+      non.addEventListener('click', function(){ d.close(); });
+      d.addEventListener('click', function(e){ if (e.target === d) d.close(); });   // un clic sur le fond
+      d.addEventListener('close', function(){ d.remove(); resoudre(reponse); });
+      d.showModal();
+      non.focus();   // le geste prudent par défaut : Entrée ne défait rien
+    });
+  }
+
   var api = {
     init: init,
     bulle: { montrer: bulleMontrer, cacher: bulleCacher },
+    confirmer: confirmer,
     onOutilChange: function(fn){ ecouteursOutil.push(fn); },
-    onReset: function(fn){ var bouton = el('pied-reset'); if (bouton) bouton.addEventListener('click', fn); }
+    onReset: function(fn){ var bouton = el('pied-reset'); if (bouton) bouton.addEventListener('click', fn); },
+    onAnnuler: function(fn){ var bouton = el('pied-annuler'); if (bouton) bouton.addEventListener('click', fn); }
   };
   return api;
 })();

@@ -191,7 +191,10 @@ moyenne de leurs espacements, et à chaque bout la moitié du sien — et les de
 leur **largeur** adulte quand elle est connue, pour voir où ils se recouvrent — borné à deux fois leur espacement,
 puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance libre —, sinon par une pastille. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
-bordures, les plants se recomptent quand le plan est de nouveau enregistré. Tant que les bordures externe et
+bordures, les plants se recomptent quand le plan est de nouveau enregistré. Au bas de la page, **Annuler les
+changements** ramène le plan tel qu'il est enregistré, et **Réinitialiser** le fait repartir des valeurs par défaut
+de l'atelier (12 × 8 m, bordure externe sur les quatre côtés) ; les deux demandent confirmation, et aucun n'écrit
+rien — seul « Enregistrer le plan » écrit. Tant que les bordures externe et
 interne sont vides, vous pouvez aussi **répartir une liste de plantes sur toutes les bordures** d'un coup : vous
 cochez une seule liste pour la parcelle (les plantes sans espacement ou annuelles sont grisées, avec la raison) et,
 si vous le voulez, une **colonne vertébrale** par bordure, qui revient un plant sur deux. L'atelier pose chaque plante

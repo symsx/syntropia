@@ -1258,6 +1258,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à
          jour au relâchement. <strong>Zoom</strong> — la molette, ou « − » et « + » en bas du plan ;
          agrandi, le plan se fait glisser.</p>
+      <p><strong>Annuler les changements</strong> (en bas) ramène le plan tel qu'il est enregistré ;
+         <strong>Réinitialiser</strong> le fait repartir des valeurs par défaut de l'atelier (12 × 8 m…). Les deux
+         demandent confirmation, et aucun n'écrit rien : seul « Enregistrer le plan » écrit.</p>
       <p><strong>Les plantes des bordures</strong> — une fois le plan enregistré, chaque côté actif reçoit une
          ligne de plants : choisissez une espèce, ou plusieurs qui alternent (la diversité est le principe). La
          bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
@@ -1287,7 +1290,11 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endif; ?>
     <span class="pied-spacer"></span>
 <?php if (!$demandeNouvelle): ?>
-    <button class="pied-reset" id="pied-reset" aria-label="Réinitialiser" title="Réinitialiser">
+    <button class="pied-annuler" id="pied-annuler" aria-label="Annuler les changements" title="Revenir au plan enregistré" disabled>
+      <span class="pied-annuler-texte">Annuler les changements</span>
+      <span class="pied-annuler-icone" aria-hidden="true">↶</span>
+    </button>
+    <button class="pied-reset" id="pied-reset" aria-label="Réinitialiser" title="Revenir aux valeurs par défaut de l'atelier">
       <span class="pied-reset-texte">Réinitialiser</span>
       <span class="pied-reset-icone" aria-hidden="true">R</span>
     </button>
