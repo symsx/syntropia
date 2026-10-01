@@ -56,6 +56,9 @@ repondre(200, [
     'csrf' => $auth->jeton(),
     // Le déploiement en ligne : gabarit.js le compare à celui de son chargement, et prévient s'il a changé.
     'deploiement' => Syntropia\Version::marqueDeploiement(),
+    // Le menu du compte d'un administrateur de l'atelier porte le journal des connexions (affichage seulement :
+    // journal-connexions.php garde elle-même son accès, par la base).
+    'administrateur' => $auth->role()?->peutAdministrer() ?? false,
     'actif' => $actif === null ? null : (int) $actif['id'],
     'projets' => array_map(static fn (array $s): array => [
         'id' => (int) $s['id'],

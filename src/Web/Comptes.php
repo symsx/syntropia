@@ -168,6 +168,45 @@ final class Comptes
             ->execute([$compteId]);
     }
 
+    /** Combien de jours le journal des connexions garde ses lignes (décision du porteur, 2026-10-01). */
+    public const JOURNAL_JOURS = 90;
+
+    /**
+     * Une ligne au journal des connexions — une connexion réussie, sans adresse — et l'effacement des lignes de plus de
+     * JOURNAL_JOURS jours. Appelée par `Authentification::connecter()`.
+     */
+    public function noterConnexion(int $compteId): void
+    {
+        $this->pdo()->prepare('INSERT INTO connexion (compte_id, application) VALUES (?, ?)')
+            ->execute([$compteId, self::APPLICATION]);
+        $this->pdo()->prepare('DELETE FROM connexion WHERE application = ? AND le < NOW() - INTERVAL ' . self::JOURNAL_JOURS . ' DAY')
+            ->execute([self::APPLICATION]);
+    }
+
+    /**
+     * Le journal des connexions, la plus récente d'abord : qui (nom affiché, identifiant), et quand.
+     *
+     * @return list<array{compte_id: int, identifiant: string, nom_affiche: string, le: string}>
+     */
+    public function journal(int $limite, int $decalage = 0): array
+    {
+        $req = $this->pdo()->prepare(
+            'SELECT j.compte_id, c.identifiant, c.nom_affiche, j.le FROM connexion j JOIN compte c ON c.id = j.compte_id
+             WHERE j.application = ? ORDER BY j.le DESC, j.id DESC LIMIT ' . max(1, $limite) . ' OFFSET ' . max(0, $decalage));
+        $req->execute([self::APPLICATION]);
+        return array_map(static fn (array $l): array => ['compte_id' => (int) $l['compte_id'], 'identifiant' => (string) $l['identifiant'],
+            'nom_affiche' => (string) $l['nom_affiche'], 'le' => (string) $l['le']], $req->fetchAll());
+    }
+
+    /** @return array{connexions: int, comptes: int} combien de connexions au journal, et de comptes différents */
+    public function journalTotaux(): array
+    {
+        $req = $this->pdo()->prepare('SELECT COUNT(*) n, COUNT(DISTINCT compte_id) c FROM connexion WHERE application = ?');
+        $req->execute([self::APPLICATION]);
+        $l = $req->fetch();
+        return ['connexions' => (int) ($l['n'] ?? 0), 'comptes' => (int) ($l['c'] ?? 0)];
+    }
+
     // ------------------------------------------------------------------
     // Rôle et profil
     // ------------------------------------------------------------------

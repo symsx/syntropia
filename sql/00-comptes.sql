@@ -209,3 +209,25 @@ CREATE TABLE IF NOT EXISTS `invitation` (
   CONSTRAINT `fk_invitation_filleul` FOREIGN KEY (`filleul_id`)
     REFERENCES `compte` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ---------------------------------------------------------------------
+-- LE JOURNAL DES CONNEXIONS — demandé par le porteur le 2026-10-01, pour
+-- qu'un administrateur voie qui utilise l'atelier (journal-connexions.php).
+-- Une ligne par connexion RÉUSSIE, sans adresse IP (décision du porteur :
+-- moins de données personnelles) ; les lignes de plus de 90 jours
+-- s'effacent à chaque nouvelle connexion (Comptes::noterConnexion()).
+-- Une table ajoutée : rien ne change pour ce que Plantae lit de `compte`
+-- et `acces`.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `connexion` (
+  `id`           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `compte_id`    INT UNSIGNED NOT NULL,
+  `application`  VARCHAR(32)  NOT NULL,
+  `le`           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (`id`),
+  KEY `ix_connexion_le`     (`application`, `le`),
+  KEY `ix_connexion_compte` (`compte_id`, `le`),
+  CONSTRAINT `fk_connexion_compte` FOREIGN KEY (`compte_id`)
+    REFERENCES `compte` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;

@@ -131,6 +131,7 @@ final class Authentification
             'doit_changer_mdp' => (int) $compte['doit_changer_mdp'] === 1,
         ];
         $this->comptes->marquerConnexion($id);
+        $this->comptes->noterConnexion($id);
         $this->comptes->oublierTentatives($identifiant, $adresse);
         return null;
     }

@@ -419,6 +419,11 @@ huit caractères, qui se dicte à voix haute. Il n'y a pas de formulaire
 d'inscription ouvert à tous — cela évite au site d'attirer du bruit avant
 d'attirer des porteurs de projet.
 
+Un **administrateur de l'atelier** trouve dans le menu du compte le **journal des connexions** : chaque connexion
+réussie, la plus récente d'abord, avec le nom du compte, son identifiant, le jour et l'heure. Le journal ne note ni
+les tentatives échouées, ni les déconnexions, ni l'adresse d'où l'on se connecte, et ses lignes s'effacent au bout de
+90 jours.
+
 Un compte peut avoir plusieurs projets : le sien, et ceux qu'il a rejoints. Un
 sélecteur, dans le panneau de navigation, change de projet. Le menu du compte, en
 haut à droite, donne accès à votre projet, aux Préférences (le récapitulatif de

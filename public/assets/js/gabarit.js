@@ -326,7 +326,7 @@ window.Gabarit = (function(){
         if (!j || !j.ok) return;
         surveillerDeploiement(j.deploiement);
         var actif = j.projets.filter(function(p){ return p.id === j.actif; })[0];
-        ajouterEntreesDuMenu(menu, !!actif && actif.role === 'porteur');
+        ajouterEntreesDuMenu(menu, !!actif && actif.role === 'porteur', !!j.administrateur);
         if (j.projets.length > 1) ajouterSelecteurProjets(j);
         if (actif && actif.role === 'lecteur' && pageDuParcours) lectureSeule();
       })
@@ -410,7 +410,7 @@ window.Gabarit = (function(){
     if (plan) plan.disabled = true;
   }
 
-  function ajouterEntreesDuMenu(menu, estPorteur){
+  function ajouterEntreesDuMenu(menu, estPorteur, estAdministrateur){
     var sep = menu.querySelector('.compte-menu-separateur');
     var entrees = [['definition-projet.php?nouveau=1', '+', 'Nouveau projet'],
                    ['rejoindre.php', '⇥', 'Rejoindre un projet'],
@@ -423,6 +423,8 @@ window.Gabarit = (function(){
       entrees.push(['membres.php', '☰', 'Participants']);
       entrees.push(['exporter.php', '⇩', 'Exporter le projet']);
     }
+    // Qui se connecte à l'atelier : pour un administrateur de l'atelier seulement.
+    if (estAdministrateur) entrees.push(['journal-connexions.php', '◷', 'Journal des connexions']);
     entrees.forEach(function(e){
       var a = document.createElement('a');
       a.className = 'compte-menu-item';

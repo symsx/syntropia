@@ -260,6 +260,7 @@ public/                racine servable du site en refonte
   rejoindre.php              rejoindre un projet avec un code — pour un compte existant ; menu du compte (gabarit.js), et lien d'invitation ouvert connecté (inscription.php)
   compte.php                 Préférences : récapitulatif du compte et de ses projets, nom affiché, mot de passe — 3 onglets ; `exige()` y renvoie un compte dont le mot de passe doit changer (?mdp=1)
   membres.php                les participants du projet actif, et le retrait d'un accès — réservée au porteur ; menu du compte (gabarit.js)
+  journal-connexions.php     le journal des connexions réussies (table `connexion` de la base des comptes, sans adresse IP, 90 jours) — réservée aux administrateurs de l'atelier ; menu du compte (gabarit.js, drapeau `administrateur` d'api-projets.php)
   exporter.php               exporter le projet en un fichier JSON daté — réservée au porteur ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
   importer.php               importer un projet depuis un fichier d'export — tout compte connecté ; trois temps (vérifier, aperçu, créer) ; menu du compte (gabarit.js) ; hors parcours, sur le gabarit
   especes.php                 le référentiel de végétaux d'un site : voir/éditer une surcharge, importer un CSV (tout ou rien) — hors parcours, menu du compte
