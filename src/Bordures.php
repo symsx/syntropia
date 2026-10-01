@@ -286,7 +286,8 @@ final class Bordures
 
     /**
      * Une espèce remplit-elle la fonction de ce cadre ? D'après son rôle (clés de `Scenario::FONCTIONS`) — et, pour le
-     * bloque-herbe, la case `bloque_herbe` du référentiel, qui le dit aussi.
+     * bloque-herbe, la case `bloque_herbe` du référentiel, qui le dit aussi. Une grimpante (strate `7_liane`) ne convient
+     * qu'à la ligne des lianes.
      *
      * @param array<string, mixed> $espece une ligne de `espece`
      */
@@ -294,6 +295,11 @@ final class Bordures
     {
         if ($cadre === 'liane') {
             return in_array(self::STRATE_LIANE, self::strates($espece), true);
+        }
+        // Une plante grimpante n'est pas une plante de bordure : elle n'est proposée que sur la ligne des lianes d'une
+        // tortue liane (décision du porteur, 2026-10-01). Elle reste ajoutable à la main, parmi « les autres espèces ».
+        if (in_array(self::STRATE_LIANE, self::strates($espece), true)) {
+            return false;
         }
         $roles = array_filter(explode('|', (string) ($espece['role'] ?? '')));
         foreach (self::CADRES[$cadre]['fonctions'] ?? [] as $f) {

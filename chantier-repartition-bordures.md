@@ -190,3 +190,21 @@ lecteur, aucun débordement de 1280×720 à 320×568.
 Aucune. Tranchées le 2026-10-01 : la colonne vertébrale (la personne, une par bordure, un plant sur deux) ; le vent (une
 coche « brise-vent » par côté de l'externe, décochée par défaut ; sur un côté coché, brise-vent et bloque-herbe en
 alternance, au moins une brise-vent) ; la liste incomplète (refus) ; deux espèces au moins par côté (sinon refus).
+
+## Après l'essai du porteur en production (2026-10-01)
+
+Le porteur a essayé la répartition sur La Vadaux P1 (17 × 4 m) et trouvé des espacements trop grands. Trois décisions :
+
+- **Les espacements de Théry (ch. 14) priment** là où ils sont cotés : mûrier sans épines 0,25 m, lavande, romarin,
+  sauge, consoude 0,40 m.
+- **Pour les arbres et arbustes de bordure, la valeur portée était leur envergure, non leur espacement** : tilleul,
+  figuier, cornouiller à gros fruits 0,50 m ; tous les autres (rosiers grimpants, glycine, akébies, févier, érable,
+  catalpa, peuplier, robinier, bouleau, cédrèle, eucalyptus, noisetier, feijoas, mûres sans épines, mûroises, paulownia,
+  argousier, goumi, ragouminier, mûre du Japon) et le lavandin 0,40 m. Les trois cornouillers sans fonction de bordure
+  (officinal, de l'Himalaya, du Japon) gardent leur valeur.
+- **Une plante grimpante n'est pas une plante de bordure** : `Bordures::convient()` l'écarte des bordures externe et
+  interne (ni proposée, ni répartie) ; elle reste proposée sur la ligne des lianes d'une tortue liane, et ajoutable à la
+  main parmi « les autres espèces ».
+
+Et le plan dessinait l'envergure en croissance libre (15 m pour un tilleul) : le disque est borné à **deux fois
+l'espacement**. 98 contrôles purs ; cadre régénéré, 3181 cases égales au CSV.
