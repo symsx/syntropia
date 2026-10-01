@@ -795,7 +795,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php if ($legende !== []): ?>
       <details class="plan-legende" id="plan-legende" open>
         <summary><?= $repApercu !== null && $repApercu['ok'] ? 'Légende de l’aperçu' : 'Légende' ?> · <?= count($legende) ?></summary>
-        <label class="plan-legende-tous"><input type="checkbox" class="case" id="sigles-tous" checked> Sigles sur le plan</label>
+        <label class="plan-legende-tous"><input type="checkbox" class="case" id="sigles-tous" checked aria-label="Tous les sigles sur le plan, ou aucun"> Tout/rien</label>
         <ul>
 <?php foreach ($legende as $e): $nomLegende = $e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''); ?>
           <li><button type="button" class="plan-legende-pastille" data-espece="<?= (int) $e['indice'] ?>" data-nom="<?= htmlspecialchars($nomLegende, ENT_QUOTES, 'UTF-8') ?>"
@@ -1327,8 +1327,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
          d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chaque espèce avec sa
          couleur et son sigle : la <strong>légende</strong> les liste, les sigles s'inscrivent sur le plan quand le zoom
-         le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Sigles sur le plan » les
-         montre ou les retire tous, la pastille d'une espèce les siens ; « Afficher la légende », au bas de la page, la
+         le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Tout/rien » les montre ou
+         les retire tous, la pastille d'une espèce les siens ; « Afficher la légende », au bas de la page, la
          retire.</p>
       <p><strong>Répartir une liste de plantes</strong> — sur des bordures encore vides, cochez une seule liste pour
          toute la parcelle : l'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance,

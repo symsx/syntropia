@@ -476,19 +476,21 @@
       s.setAttribute('font-size', 11 / pixelsParUnite);
       s.setAttribute('stroke-width', 3 / pixelsParUnite);
       // Au premier dessin, les préférences ne sont pas encore lues : tout est montré.
-      var a = affichage || { sigles: true, masques: [] };
-      var voulu = a.sigles && a.masques.indexOf(nomEspece(s.dataset.espece)) < 0;
+      var a = affichage || { masques: [] };
+      var voulu = a.masques.indexOf(nomEspece(s.dataset.espece)) < 0;
       s.style.display = voulu && parseFloat(s.dataset.espacement) * 100 * pixelsParUnite >= 22 ? '' : 'none';
     });
   }
 
-  /* Ce que la légende commande (le porteur, 2026-10-01) : les sigles sur le plan, tous ou aucun (« Sigles sur le
-     plan »), et espèce par espèce (sa pastille) ; et la légende elle-même (« Afficher la légende », au pied). Un
+  /* Ce que la légende commande (le porteur, 2026-10-01) : les sigles sur le plan, espèce par espèce (sa pastille), et
+     tous à la fois (« Tout/rien » : décochée, elle vide toutes les pastilles ; cochée, elle les remplit ; elle n'est
+     cochée que si toutes le sont) ; et la légende elle-même (« Afficher la légende », au pied). Un seul état : la liste
+     des espèces masquées. Un
      confort de lecture, propre à ce navigateur : gardé dans `localStorage` pour chaque parcelle, les espèces repérées
      par leur nom (leur sigle peut changer quand la parcelle en reçoit d'autres). Sans stockage, rien ne se garde. */
   var cleAffichage = 'syntropia_plan_affichage_' + (document.getElementById('plan-parcelle-id') || {}).value;
-  var affichage = { sigles: true, legende: true, masques: [] };
-  try { var lu = JSON.parse(localStorage.getItem(cleAffichage) || 'null'); if (lu) { affichage.sigles = lu.sigles !== false; affichage.legende = lu.legende !== false; affichage.masques = Array.isArray(lu.masques) ? lu.masques : []; } } catch (e) {}
+  var affichage = { legende: true, masques: [] };
+  try { var lu = JSON.parse(localStorage.getItem(cleAffichage) || 'null'); if (lu) { affichage.legende = lu.legende !== false; affichage.masques = Array.isArray(lu.masques) ? lu.masques : []; if (lu.sigles === false) affichage.masques = (cfgPlants.especes || []).map(function(e){ return e.nom; }); } } catch (e) {}
   function garderAffichage(){ try { localStorage.setItem(cleAffichage, JSON.stringify(affichage)); } catch (e) {} }
   function nomEspece(indice){ var e = (cfgPlants.especes || [])[indice]; return e ? e.nom : ''; }
   (function legende(){
@@ -499,8 +501,7 @@
     var pastilles = Array.prototype.slice.call(details.querySelectorAll('.plan-legende-pastille'));
     function majLegende(){
       pastilles.forEach(function(b){ b.setAttribute('aria-pressed', affichage.masques.indexOf(b.dataset.nom) < 0 ? 'true' : 'false'); });
-      var visibles = pastilles.filter(function(b){ return b.getAttribute('aria-pressed') === 'true'; }).length;
-      if (tous){ tous.checked = affichage.sigles && visibles > 0; tous.indeterminate = affichage.sigles && visibles > 0 && visibles < pastilles.length; }
+      if (tous) tous.checked = pastilles.every(function(b){ return b.getAttribute('aria-pressed') === 'true'; });
       details.hidden = !affichage.legende;
       if (montrer) montrer.checked = affichage.legende;
       majSigles();
@@ -509,14 +510,12 @@
       b.addEventListener('click', function(){
         var i = affichage.masques.indexOf(b.dataset.nom);
         if (i < 0) affichage.masques.push(b.dataset.nom); else affichage.masques.splice(i, 1);
-        if (i >= 0) affichage.sigles = true;   // rendre un sigle, c'est vouloir des sigles
         garderAffichage(); majLegende();
       });
     });
     if (tous) tous.addEventListener('change', function(){
-      // Tous, ou aucun : « tous » efface aussi les masques espèce par espèce.
-      affichage.sigles = tous.checked;
-      if (tous.checked) affichage.masques = [];
+      // Tout : aucune espèce masquée ; rien : toutes masquées — les pastilles suivent.
+      affichage.masques = tous.checked ? [] : pastilles.map(function(b){ return b.dataset.nom; });
       garderAffichage(); majLegende();
     });
     if (montrer) montrer.addEventListener('change', function(){
