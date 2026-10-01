@@ -1837,6 +1837,10 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
+000. **Bêta-testeurs en production dès le 2026-10-01** (le porteur les invite ; ils sont prévenus que leurs travaux
+   pourraient être supprimés lors d'une mise à jour, en attendant la version 1). Un déploiement touche désormais de vrais
+   utilisateurs : voir la question du porteur du 2026-10-01 sur la gestion des mises à jour (sauvegarde avant `base`,
+   mode maintenance, ordre `src/` avant `public/`, formulaires ouverts sur l'ancienne version).
 00. **2026-10-01 — déployé (douzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : la répartition d'une liste de
    plantes sur les bordures (`chantier-repartition-bordures.md`, terminé : la règle, la coche « vent », la page), le cadre
    complété par le porteur (119 espacements, 96 strates de service ; chalef Amoroso et Sweet n'Sour à 0,50 m ; service
