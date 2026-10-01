@@ -66,7 +66,10 @@ Puis il compose la série du côté :
 4. **la diversité** : les espèces retenues alternent, et deux plants voisins ne sont jamais de la même espèce ;
 5. **la colonne vertébrale** de la bordure, si elle est désignée et convient au côté, occupe **un plant sur deux** ;
    les autres espèces alternent entre ses plants ;
-6. **l'espacement** : le compte des plants suit `Bordures::compter()`, sans changement.
+6. **l'espacement** : le compte des plants suit `Bordures::compter()`, sans changement ;
+7. **un côté ne garde que les espèces qu'il peut porter** (décision du porteur, 2026-10-01) : une espèce que la
+   longueur du côté n'atteint pas sort de sa série et se dit (« pas de place — le côté est plein avant elle ») ; on
+   recompte, puisque la fin de la série change. S'il reste moins de deux espèces, le côté est refusé (« trop court »).
 
 **Le refus** (décision 5) : l'atelier ne répartit rien tant qu'un côté actif n'a pas **deux espèces au moins** qui lui
 conviennent — par exemple une seule émergente pour la face sud de l'externe, aucune biomasse pour l'interne, aucune
@@ -120,6 +123,11 @@ répartition serve vraiment.
 Performance, Mountain Time Farm, guide verger-maraîcher du GRAB), le cadre est régénéré — **plus aucune espèce de
 bordure sans espacement**. Essai sur le cadre réel (15 × 8 m, externe et interne sur les quatre côtés, ouest coché
 « vent ») : la répartition passe ; l'ouest reçoit argousier et miscanthus en alternance avec le bloque-herbe.
+
+**Deux réponses du porteur après cet essai (2026-10-01)** : le **goji reste sans « bloque-herbe »** — il ne bloque pas
+l'herbe et se multiplie mal ; désigné colonne de l'externe, il est donc ignoré là (la note le dit), rien n'est changé
+au cadre. Et **un côté ne garde que les espèces qu'il peut porter** (règle 7) : sur l'essai, les côtés est et ouest de
+l'interne (6,2 m) écartent noisetier, sureau et chalef, que les côtés nord et sud portent. 93 contrôles purs.
 
 ### Phase 2 — La coche « brise-vent »
 

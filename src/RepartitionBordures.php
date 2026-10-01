@@ -23,7 +23,9 @@ namespace Syntropia;
  *    chaque côté dit ce qui lui manque — « la diversité fait partie de la réussite du système » (le porteur).
  *
  * Deux plants voisins ne sont jamais de la même espèce : la série ne répète aucune espèce, sauf la colonne, qui alterne
- * avec les autres. Le compte des plants est celui de `Bordures::compter()`, sans changement.
+ * avec les autres. Le compte des plants est celui de `Bordures::compter()`, sans changement. **Un côté ne garde que les
+ * espèces qu'il peut porter** (le porteur, 2026-10-01) : celle que la longueur n'atteint pas sort de sa série et se dit ;
+ * s'il en reste moins de deux, le côté est refusé comme les autres.
  */
 final class RepartitionBordures
 {
@@ -154,13 +156,14 @@ final class RepartitionBordures
      *   ok: bool,
      *   cotes: array<string, array{cadre: string, cote: string, longueur: float, brise_vent: bool,
      *                              serie: list<array<string, mixed>>, colonne: ?int, compte: array<string, mixed>,
-     *                              plants: array<int, int>, refus: ?string}>,
+     *                              plants: array<int, int>, sans_plant: list<array<string, mixed>>, refus: ?string}>,
      *   ecartees: list<array{espece: array<string, mixed>, raison: string}>,
      *   sans_place: list<array{espece: array<string, mixed>, raisons: list<string>}>,
      *   notes: list<string>
      * }
      *   `ok` faux : au moins un côté est refusé (`refus`), et aucune série ne doit être posée. `plants` : le nombre de
-     *   plants de chaque espèce (par id) sur le côté.
+     *   plants de chaque espèce (par id) sur le côté ; `sans_plant` : les espèces qui lui convenaient mais que sa longueur
+     *   n'atteint pas — retirées de sa série (le porteur, 2026-10-01).
      */
     public static function repartir(array $parcelle, array $especes, array $colonnes = []): array
     {
@@ -218,19 +221,50 @@ final class RepartitionBordures
                     : 'une seule espèce de la liste lui convient (' . self::nom(array_values($vont)[0]) . ') — il en faut deux au moins';
             }
             $serie = [];
+            $sansPlant = [];
+            $compte = Bordures::compter($l['longueur'], []);
             if ($refus === null) {
-                if ($colonne !== null) {
-                    foreach ($autres as $a) {
-                        $serie[] = $colonne;
-                        $serie[] = $a;
+                // Un côté ne garde que les espèces qu'il peut porter (le porteur, 2026-10-01) : une espèce que la longueur
+                // n'atteint pas sort de la série, et l'on recompte — la fin de la série change, un plant de plus peut tenir.
+                while (true) {
+                    $serie = self::composer($colonne, $autres);
+                    $compte = Bordures::compter($l['longueur'], array_map(static fn (array $e): float => (float) $e['espacement_retenu_m'], $serie));
+                    $vides = [];
+                    foreach ($autres as $j => $a) {
+                        $n = 0;
+                        foreach ($serie as $k => $e) {
+                            $n += (int) $e['id'] === (int) $a['id'] ? ($compte['comptes'][$k] ?? 0) : 0;
+                        }
+                        if ($n === 0) {
+                            $vides[] = $j;
+                        }
                     }
-                } else {
-                    $serie = $autres;
+                    if ($vides === []) {
+                        break;
+                    }
+                    foreach ($vides as $j) {
+                        $sansPlant[] = $autres[$j];
+                    }
+                    $autres = array_values(array_diff_key($autres, array_flip($vides)));
                 }
-            } else {
+                $restantes = count($autres) + ($colonne !== null ? 1 : 0);
+                if ($restantes < self::MIN_ESPECES) {
+                    $refus = 'trop court : il ne porte ' . ($restantes === 1 ? 'qu’une espèce' : 'aucune espèce')
+                        . ' de la liste — il en faut deux au moins';
+                    $serie = [];
+                    $compte = Bordures::compter($l['longueur'], []);
+                } elseif ($bv && array_filter($colonne !== null ? [$colonne, ...$autres] : $autres, [self::class, 'briseVent']) === []) {
+                    $refus = 'coché « brise-vent », et trop court pour porter une espèce brise-vent de la liste';
+                    $serie = [];
+                    $compte = Bordures::compter($l['longueur'], []);
+                }
+                foreach ($sansPlant as $e) {
+                    $raisonsDe[(int) $e['id']][] = Bordures::libelle($cle) . ' : pas de place — le côté est plein avant elle';
+                }
+            }
+            if ($refus !== null) {
                 $ok = false;
             }
-            $compte = Bordures::compter($l['longueur'], array_map(static fn (array $e): float => (float) $e['espacement_retenu_m'], $serie));
             $plants = [];
             foreach ($serie as $k => $e) {
                 $plants[(int) $e['id']] = ($plants[(int) $e['id']] ?? 0) + ($compte['comptes'][$k] ?? 0);
@@ -241,8 +275,8 @@ final class RepartitionBordures
                     . ') ne lui convient pas — le côté s’en passe.';
             }
             $out['cotes'][$cle] = ['cadre' => $cadre, 'cote' => $cote, 'longueur' => $l['longueur'], 'brise_vent' => $bv,
-                'serie' => $serie, 'colonne' => $colonne !== null ? $colId : null, 'compte' => $compte, 'plants' => $plants,
-                'refus' => $refus];
+                'serie' => $serie, 'colonne' => $colonne !== null && $serie !== [] ? $colId : null, 'compte' => $compte,
+                'plants' => $plants, 'sans_plant' => $refus === null ? $sansPlant : [], 'refus' => $refus];
         }
         foreach ($colonnes as $cadre => $id) {
             if ($id !== null && (int) $id > 0 && !isset($retenues[(int) $id])) {
@@ -259,6 +293,25 @@ final class RepartitionBordures
         }
         $out['ok'] = $ok;
         return $out;
+    }
+
+    /**
+     * La série d'un côté : la colonne un plant sur deux (C, A, C, B…), sinon les autres espèces telles quelles.
+     *
+     * @param list<array<string, mixed>> $autres
+     * @return list<array<string, mixed>>
+     */
+    private static function composer(?array $colonne, array $autres): array
+    {
+        if ($colonne === null) {
+            return $autres;
+        }
+        $serie = [];
+        foreach ($autres as $a) {
+            $serie[] = $colonne;
+            $serie[] = $a;
+        }
+        return $serie;
     }
 
     private static function nom(array $e): string
