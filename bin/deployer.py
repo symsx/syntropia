@@ -77,6 +77,8 @@ DEPOT = RACINE.parent / "syntropia-depot"
 # Les sauvegardes des bases de production, avant chaque `base` (chantier-mises-a-jour.md, Phase 1). Voisin du dépôt,
 # jamais dedans : elles contiennent les comptes (empreintes de mots de passe) et les projets des personnes.
 SAUVEGARDES = RACINE.parent / "syntropia-sauvegardes"
+# On garde les cinq dernières (décision du porteur, 2026-10-01) — une sauvegarde = les deux bases d'un même horodatage.
+SAUVEGARDES_GARDEES = 5
 
 # L'adresse publique de l'atelier — le contrôle de fin de `mettre-a-jour` (la page d'accueil répond-elle 200 ?).
 URL_PUBLIQUE = "https://jubile.alwaysdata.net/syntropia/"
@@ -439,8 +441,19 @@ def sauvegarde():
         for f in SAUVEGARDES.glob(f"{horodatage}_*.sql.gz"):
             f.unlink()
     if reussite:
+        _elaguer_sauvegardes()
         note(f"dans {SAUVEGARDES} — restaurer : gunzip -c FICHIER | mysql … NOM_DE_LA_BASE (voir chantier-mises-a-jour.md)")
     return reussite
+
+
+def _elaguer_sauvegardes():
+    """Ne garder que les SAUVEGARDES_GARDEES plus récentes ; appelé seulement après une sauvegarde réussie, pour
+    qu'un échec ne fasse jamais disparaître la dernière bonne."""
+    horodatages = sorted({f.name[:17] for f in SAUVEGARDES.glob("*.sql.gz") if f.name[:17].count("_") == 1}, reverse=True)
+    for ancien in horodatages[SAUVEGARDES_GARDEES:]:
+        for f in SAUVEGARDES.glob(f"{ancien}_*.sql.gz"):
+            f.unlink()
+        note(f"sauvegarde du {ancien} retirée (on garde les {SAUVEGARDES_GARDEES} dernières)")
 
 
 def _sauvegarde_complete(chemin):

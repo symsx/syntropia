@@ -112,4 +112,5 @@ Une page « Quoi de neuf » avec le numéro de version ; les maintenances longue
 
 ## Questions ouvertes
 
-1. **Combien de sauvegardes garder ?** Proposition : toutes, le porteur fait le ménage ; ou les dix dernières.
+Aucune. **Sauvegardes gardées : les cinq dernières** (décision du porteur, 2026-10-01) — `SAUVEGARDES_GARDEES` ; l'élagage
+ne se fait qu'après une sauvegarde réussie, pour qu'un échec ne retire jamais la dernière bonne.
