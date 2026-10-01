@@ -1,7 +1,7 @@
 # Chantier — répartir une liste de plantes sur les bordures d'une parcelle
 
-*Proposé le 2026-10-01, à la demande du porteur. **Pas commencé.** Toutes les questions sont tranchées le même jour : la
-Phase 1 peut commencer.*
+*Proposé le 2026-10-01, à la demande du porteur. Toutes les questions sont tranchées le même jour. **Phase 1 faite le
+2026-10-01** (la règle, `src/RepartitionBordures.php`) ; Phases 2 à 4 pas commencées.*
 
 ## L'intention
 
@@ -94,6 +94,27 @@ Une classe pure `RepartitionBordures` : en entrée, la liste d'espèces, les cô
 colonne vertébrale éventuelle, les côtés exposés au vent (ou « inconnu ») ; en sortie, la série de chaque côté, le
 compte des plants par espèce, et ce qui n'a pas trouvé de place, avec la raison. Le contrôle de couverture
 (décision 5) en fait partie. Des contrôles purs, comme pour `PlanDeCulture`.
+
+**Faite le 2026-10-01.** `src/RepartitionBordures.php` : `repartir($parcelle, $especes, $colonnes)` rend, pour chaque
+côté actif de l'externe et de l'interne, la série, la colonne, le compte (`Bordures::compter()`), les plants par espèce,
+et le refus éventuel ; `ok` est faux dès qu'un côté est refusé (rien ne doit alors être posé). À part : les espèces
+écartées (et pourquoi), celles qui n'ont trouvé place sur aucun côté (une raison par côté), des notes (colonne qui ne
+convient pas à un côté, colonne hors liste). `cotesBriseVent()` lit déjà la coche dans `parcelle.plan` — la Phase 2 n'a
+plus qu'à l'écrire. Sur un côté coché, la série prend une brise-vent, puis une autre espèce, et ainsi de suite ; la
+colonne vertébrale se glisse entre chacune (C, A, C, B…). **Aucun changement de schéma.** 77 contrôles purs (écartées,
+deux bordures, faces exposées, refus, brise-vent, colonne, voisins jamais identiques, sans place, compte de 21 plants
+sur 12 m recalculé à la main), dans le dossier temporaire de la session — non conservés, comme ceux de `PlanDeCulture`.
+
+**Écart tranché en codant** : sur les faces sud et ouest de l'externe, une espèce **dont la strate n'est pas notée** est
+exclue (« sa strate n'est pas notée ») — la règle demande des émergentes, et l'atelier ne devine pas. `Bordures::
+proposer()` ne la signalait pas ; la répartition, qui décide, ne peut pas la laisser passer.
+
+**Constat, essayé sur le cadre réel (base locale, lecture seule)** : sur les **64 espèces de bordure** du cadre (pérennes,
+avec une fonction de bordure), **46 n'ont pas d'espacement** au référentiel — dont la plupart des ligneux de biomasse
+(saule, noisetier, aubépine, peuplier…) et presque tous les brise-vent (argousier, miscanthus, feijoa, ragouminier ; seuls
+le chalef et le topinambour en ont un). Avec la décision 6, elles sont écartées : **un côté coché « brise-vent » sera
+le plus souvent refusé** tant que ces espacements manquent. À compléter dans Espèces (ou au CSV du cadre) avant que la
+répartition serve vraiment.
 
 ### Phase 2 — La coche « brise-vent »
 

@@ -122,8 +122,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   et à l'ouest de l'externe, brise-vent sur les côtés de l'externe que la personne coche, alternance, une espèce
   « colonne vertébrale » par bordure un plant sur deux, espacement), sur des bordures toutes vides ; une plante sans
   espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
-  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01, **pas
-  commencé** — la Phase 1 peut commencer.
+  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **Phase 1
+  faite** (la règle, `src/RepartitionBordures.php`, pure) ; **46 des 64 espèces de bordure du cadre n'ont pas
+  d'espacement** — écartées, dont presque tous les brise-vent.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -160,6 +161,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   LignesDeService.php     propose les plantes de service des lignes d'une planche — biomasse au centre, strates vides en pyramide, une espèce par ligne ; pur
   Bordures.php            les lignes de plants des bordures — géométrie (une ligne au milieu de chaque bande), compte par espèce (moyenne des espacements voisins, demi-espacement aux bouts), l'espèce convient-elle à la bordure ; pur
   Temps.php               le temps d'une plante — la semaine (lundi ISO), la fenêtre d'une culture (mise en place → récolte, levée), les périodes du scénario rapportées à la date de plantation, l'échelle (semaine, mois, année) ; pur
+  RepartitionBordures.php répartit une liste de plantes sur les bordures externe et interne d'une parcelle — fonction, émergentes au sud et à l'ouest de l'externe, brise-vent sur les côtés cochés, colonne vertébrale un plant sur deux, deux espèces au moins par côté sinon refus ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
