@@ -1,7 +1,7 @@
 # Chantier — répartir une liste de plantes sur les bordures d'une parcelle
 
-*Proposé le 2026-10-01, à la demande du porteur. Toutes les questions sont tranchées le même jour. **Phase 1 faite le
-2026-10-01** (la règle, `src/RepartitionBordures.php`) ; Phases 2 à 4 pas commencées.*
+*Proposé le 2026-10-01, à la demande du porteur. Toutes les questions sont tranchées le même jour. **Phases 1 (la règle,
+`src/RepartitionBordures.php`) et 2 (la coche « brise-vent ») faites le 2026-10-01** ; Phases 3 et 4 pas commencées.*
 
 ## L'intention
 
@@ -121,6 +121,17 @@ répartition serve vraiment.
 Sur `conception-parcelles.php`, une case « brise-vent » à chaque côté de la bordure externe, décochée par défaut,
 enregistrée avec le plan (`Parcelles::enregistrerPlan()`, même verrou), relue au rechargement ; un côté inactif garde
 sa coche sans qu'elle compte. Vérifié en CDP, `verifier-export` identique.
+
+**Faite le 2026-10-01.** `Parcelles::litBordures()` lit `brise_vent` pour l'externe seulement ; la page la préremplit (un
+plan ancien, sans la clé : décochée) ; une case « vent » entre le nom du côté et sa largeur, grisée quand le côté est
+inactif ; le côté coché se dessine **en tirets** sur le plan, et sa bulle dit « Bordure brise-vent » ; la coche redessine
+sans périmer les plants (elle ne change pas la géométrie) ; « Réinitialiser » la décoche. Une phrase dans la note de la
+bordure externe et dans le livret (« Concevoir : les parcelles et le scénario »). Vérifié en local, en CDP, sur un projet
+de test supprimé ensuite : quatre cases, aucune cochée au départ ; cocher l'ouest, enregistrer, recharger — cochée, et
+seulement elle, en base `"brise_vent":true` ; côté désactivé puis réenregistré — la coche reste ; `RepartitionBordures::
+cotesBriseVent()` lit `["ouest"]` sur la vraie ligne ; lecteur — cases explorables comme le reste du plan (bouton
+d'enregistrement grisé), POST à jeton valide refusé (403) ; à 320×568, les quatre lignes tiennent dans le panneau
+(capture) ; `verifier-export` identique.
 
 ### Phase 3 — La page
 

@@ -243,6 +243,9 @@
     var bn = b.nord * ECH, bs = b.sud * ECH, bo = b.ouest * ECH, be = b.est * ECH;
     var rn = document.getElementById('bordure-nord'), rs = document.getElementById('bordure-sud');
     var ro = document.getElementById('bordure-ouest'), re = document.getElementById('bordure-est');
+    document.querySelectorAll('.bordure-brise-vent').forEach(function(c){
+      document.getElementById('bordure-' + c.dataset.cote).classList.toggle('brise-vent', c.checked);
+    });
     rn.setAttribute('width', L); rn.setAttribute('height', bn); rn.style.display = b.nord ? '' : 'none';
     rs.setAttribute('y', H - bs); rs.setAttribute('width', L); rs.setAttribute('height', bs); rs.style.display = b.sud ? '' : 'none';
     ro.setAttribute('height', H); ro.setAttribute('width', bo); ro.style.display = b.ouest ? '' : 'none';
@@ -437,6 +440,8 @@
     }
   }
 
+  // La coche « brise-vent » ne change pas la géométrie : elle redessine, sans périmer les plants.
+  document.querySelectorAll('.bordure-brise-vent').forEach(function(el){ el.addEventListener('change', redessiner); });
   document.querySelectorAll('.bordure-active, .bordure-largeur, .bordure-interne-active, .bordure-interne-largeur, #in-longueur, #in-largeur, input[name="sens-planches"], input[name="rattrapage"], #passe-pieds-bords, #in-position-liane').forEach(function(el){
     el.addEventListener('input', redessiner);
     el.addEventListener('change', redessiner);
@@ -452,7 +457,8 @@
     var cote = libellesCote[rect.dataset.cote];
     var champ = interne ? champDeInterne(rect.dataset.cote) : champDe(rect.dataset.cote);
     var valeur = champ ? champ.value + ' m' : '';
-    var mot = interne ? 'Bordure interne ' : 'Bordure ';
+    var vent = interne ? null : document.querySelector('.bordure-brise-vent[data-cote="' + rect.dataset.cote + '"]');
+    var mot = interne ? 'Bordure interne ' : (vent && vent.checked ? 'Bordure brise-vent ' : 'Bordure ');
     if (!interne && document.getElementById('outil-deplacer').checked){
       return enCours ? mot + cote + ' — ' + valeur : 'Tirez pour changer la largeur — ' + cote + ', ' + valeur;
     }
@@ -611,6 +617,8 @@
         var cote = c.dataset.cote;
         corps.set('bordures[' + cote + '][actif]', c.checked ? '1' : '');
         corps.set('bordures[' + cote + '][largeur_m]', champDe(cote).value);
+        var vent = document.querySelector('.bordure-brise-vent[data-cote="' + cote + '"]');
+        corps.set('bordures[' + cote + '][brise_vent]', vent && vent.checked ? '1' : '');
       });
       document.querySelectorAll('.bordure-interne-active').forEach(function(c){
         var cote = c.dataset.cote;
@@ -689,6 +697,7 @@
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });
+    document.querySelectorAll('.bordure-brise-vent').forEach(function(c){ c.checked = false; });
     document.querySelectorAll('.bordure-interne-active').forEach(function(c){ c.checked = false; });
     document.querySelectorAll('.bordure-interne-largeur').forEach(function(c){ c.value = '0,40'; });
     document.getElementById('sens-nord-sud').checked = true;

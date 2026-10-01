@@ -177,8 +177,9 @@ bordures et leurs perturbations prévues. La strate d'une production se lit dans
 inconnue, elle ne compte pas.
 
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au milieu de
-sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent,
-l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste, et « Proposer les
+sa bande : une espèce, ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine le vent —
+cochez « vent » le côté d'où vient le vent dominant, celui qui devra l'arrêter (décoché par défaut, il se
+dessine en tirets sur le plan) —, l'interne apporte de la biomasse : les espèces qui le font viennent en tête de la liste, et « Proposer les
 espèces de cette bordure » les montre toutes — sauf les annuelles, une bordure étant pérenne — avec, sur une
 face sud ou ouest exposée, la réserve de Théry (n'y mettre que des plantes émergentes) ; vous gardez celles
 que vous voulez, elles alternent dans cet ordre. Une plante que les pépiniéristes destinent à la bordure

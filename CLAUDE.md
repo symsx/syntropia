@@ -122,8 +122,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   et à l'ouest de l'externe, brise-vent sur les côtés de l'externe que la personne coche, alternance, une espèce
   « colonne vertébrale » par bordure un plant sur deux, espacement), sur des bordures toutes vides ; une plante sans
   espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
-  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **Phase 1
-  faite** (la règle, `src/RepartitionBordures.php`, pure) ; **46 des 64 espèces de bordure du cadre n'ont pas
+  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **Phases 1
+  (la règle, `src/RepartitionBordures.php`, pure) et 2 (la coche « vent » par côté de l'externe, `parcelle.plan`) faites** ; **46 des 64 espèces de bordure du cadre n'ont pas
   d'espacement** — écartées, dont presque tous les brise-vent.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de

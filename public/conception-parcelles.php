@@ -202,10 +202,10 @@ $planOrientation = 'nord-sud';
 $planRattrapage = 'passe-pieds';
 $planPassePiedsBords = false;
 $planBordures = [
-    'nord'  => ['actif' => true, 'largeur_m' => 0.40],
-    'sud'   => ['actif' => true, 'largeur_m' => 0.40],
-    'ouest' => ['actif' => true, 'largeur_m' => 0.40],
-    'est'   => ['actif' => true, 'largeur_m' => 0.40],
+    'nord'  => ['actif' => true, 'largeur_m' => 0.40, 'brise_vent' => false],
+    'sud'   => ['actif' => true, 'largeur_m' => 0.40, 'brise_vent' => false],
+    'ouest' => ['actif' => true, 'largeur_m' => 0.40, 'brise_vent' => false],
+    'est'   => ['actif' => true, 'largeur_m' => 0.40, 'brise_vent' => false],
 ];
 // Inactive par défaut — contrairement à l'externe, une bordure interne
 // (les fournisseurs de biomasse) ne s'impose pas. Chantier « plan de
@@ -225,7 +225,7 @@ $litBordures = static function (array $defaut, mixed $enregistre): array {
             $defaut[$cote] = [
                 'actif' => !empty($enregistre[$cote]['actif']),
                 'largeur_m' => (float) $enregistre[$cote]['largeur_m'],
-            ];
+            ] + (array_key_exists('brise_vent', $defaut[$cote]) ? ['brise_vent' => !empty($enregistre[$cote]['brise_vent'])] : []);
         }
     }
     return $defaut;
@@ -334,6 +334,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   /* Bordure interne — la biomasse, distincte de l'externe (bloque-herbe,
      coupe-vent, défense) : vert plutôt qu'or, même palette que les
      planches (--socle-accent). Chantier « plan de parcelle », Phase 4. */
+  /* Un côté de l'externe coché « brise-vent » (chantier-repartition-bordures.md, Phase 2). */
+  .pd-ligne-vent{ grid-template-columns:1fr auto 4.6rem; }
+  .pd-vent{ display:flex; align-items:center; gap:.35rem; font:400 .8rem var(--texte); color:var(--muted); }
+  .pd-ligne-vent:has(.bordure-active:not(:checked)) .pd-vent{ opacity:.45; }
+  .plan-bordure.brise-vent{ stroke:var(--accent); stroke-width:4; stroke-dasharray:14 8; }
   .plan-bordure-interne{ fill:var(--socle-accent-doux); fill-opacity:.6; stroke:var(--socle-accent); stroke-width:2; }
   #in-conduite{
     grid-column:1 / -1; width:100%; padding:.4rem .5rem; font:400 .86rem var(--texte); color:var(--ink);
@@ -748,10 +753,12 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
         <p class="pd-note">Bloque-herbe, coupe-vent, défense contre les animaux — une haie
-           défensive en bord de parcelle.</p>
+           défensive en bord de parcelle. Cochez « vent » le côté d'où vient le vent dominant :
+           c'est lui qui devra l'arrêter, avec des plantes brise-vent.</p>
 <?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
-        <div class="pd-ligne">
+        <div class="pd-ligne pd-ligne-vent">
           <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordures[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-active"><?= $libelle ?></label>
+          <label class="pd-vent" title="Ce côté arrête le vent dominant"><input type="checkbox"<?= $planBordures[$cote]['brise_vent'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-brise-vent" aria-label="Côté <?= $cote ?> : brise-vent">vent</label>
           <input type="text" class="bordure-largeur" data-cote="<?= $cote ?>" value="<?= htmlspecialchars($fr($planBordures[$cote]['largeur_m']), ENT_QUOTES, 'UTF-8') ?>" inputmode="decimal">
         </div>
 <?php endforeach; ?>

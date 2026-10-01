@@ -334,7 +334,7 @@ final class Parcelles
             }
         }
 
-        $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_');
+        $bordures = $this->litBordures($valeurs['bordures'] ?? [], $erreurs, 'bordure_', true);
         $bordureInterne = $this->litBordures($valeurs['bordures_interne'] ?? [], $erreurs, 'bordure_interne_');
 
         if ($erreurs !== []) {
@@ -435,15 +435,18 @@ final class Parcelles
 
     /**
      * Une bordure (externe ou interne) — quatre côtés, chacun actif ou
-     * non et sa largeur bornée à 0,05–5 m. Les erreurs de validation
+     * non et sa largeur bornée à 0,05–5 m ; pour l'externe, la coche
+     * « brise-vent » de chaque côté (`chantier-repartition-bordures.md`,
+     * Phase 2 : décochée par défaut, gardée sur un côté inactif sans
+     * qu'elle compte). Les erreurs de validation
      * s'ajoutent à `$erreurs` (passé par référence, clés préfixées pour
      * distinguer externe/interne) plutôt que d'être retournées à part.
      *
      * @param array<string, mixed> $brutes
      * @param array<string, string> $erreurs
-     * @return array<string, array{actif: bool, largeur_m: float}>
+     * @return array<string, array{actif: bool, largeur_m: float, brise_vent?: bool}>
      */
-    private function litBordures(array $brutes, array &$erreurs, string $prefixeErreur): array
+    private function litBordures(array $brutes, array &$erreurs, string $prefixeErreur, bool $briseVent = false): array
     {
         $bordures = [];
         foreach (['nord', 'sud', 'ouest', 'est'] as $cote) {
@@ -455,6 +458,9 @@ final class Parcelles
                 continue;
             }
             $bordures[$cote] = ['actif' => $actif, 'largeur_m' => max(0.05, min(5.0, round((float) $brutLargeur, 2)))];
+            if ($briseVent) {
+                $bordures[$cote]['brise_vent'] = !empty($brute['brise_vent']);
+            }
         }
         return $bordures;
     }
