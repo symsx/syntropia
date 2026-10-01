@@ -116,6 +116,11 @@ le chalef et le topinambour en ont un). Avec la décision 6, elles sont écarté
 le plus souvent refusé** tant que ces espacements manquent. À compléter dans Espèces (ou au CSV du cadre) avant que la
 répartition serve vraiment.
 
+**Complété le 2026-10-01** : le porteur a rempli 119 espacements et 96 strates de service (Agroforesterie.ch, Triple
+Performance, Mountain Time Farm, guide verger-maraîcher du GRAB), le cadre est régénéré — **plus aucune espèce de
+bordure sans espacement**. Essai sur le cadre réel (15 × 8 m, externe et interne sur les quatre côtés, ouest coché
+« vent ») : la répartition passe ; l'ouest reçoit argousier et miscanthus en alternance avec le bloque-herbe.
+
 ### Phase 2 — La coche « brise-vent »
 
 Sur `conception-parcelles.php`, une case « brise-vent » à chaque côté de la bordure externe, décochée par défaut,

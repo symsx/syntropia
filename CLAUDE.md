@@ -124,7 +124,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
   côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **Phases 1
   (la règle, `src/RepartitionBordures.php`, pure) et 2 (la coche « vent » par côté de l'externe, `parcelle.plan`) faites** ; **46 des 64 espèces de bordure du cadre n'ont pas
-  d'espacement** — écartées, dont presque tous les brise-vent.
+  d'espacement** — complétés par le porteur le 2026-10-01 (cadre régénéré, plus aucune espèce de bordure sans
+  espacement ; **pas encore déployé** : `deployer.py base`).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -196,7 +197,7 @@ contenu/
   .htaccess              refuse tout accès web
   calendrier-lopez.csv      le tableau « des semis et repiquages » de Lopez (17 cultures d'automne et d'hiver), recopié de connaissances/maraichage-naturel/lopez-plan-de-culture.md ; deux cellules « à vérifier » vides et marquées
   especes-modele-import.csv la fiche d'espèces du porteur (21 espèces, par variété, hauteur et largeur) — modèle téléchargeable depuis especes.php
-  especes-cadre.csv         LE CADRE COMPLET (143 espèces, 34 colonnes), complété par une session de recherche Claude et relu par le porteur le 2026-09-30 — source du dernier bloc généré de sql/02-especes-seed.sql, qui prime sur la fiche ci-dessus ; pour changer le cadre : changer ce CSV, régénérer le bloc (chaque valeur par Especes::valider(), une case vide ne touche à rien)
+  especes-cadre.csv         LE CADRE COMPLET (143 espèces, 34 colonnes), complété par une session de recherche Claude et relu par le porteur le 2026-09-30, puis le 2026-10-01 (119 espacements, 96 strates de service) — source du dernier bloc généré de sql/02-especes-seed.sql, qui prime sur la fiche ci-dessus ; pour changer le cadre : changer ce CSV, régénérer le bloc (chaque valeur par Especes::valider(), une case vide ne touche à rien)
   guildes-plantae.json      instantané de `guilde.csv` de Plantae (179 plantes, 564 lignes) — écrit par bin/catalogue-plantae.py, jamais à la main ; vieillit, à réexporter
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
