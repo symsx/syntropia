@@ -497,10 +497,21 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-legende ul{ list-style:none; margin:.3rem 0 .1rem; padding:0; }
   .plan-legende li{ display:flex; align-items:center; gap:.35rem; break-inside:avoid; padding:.08rem 0; }
   .plan-legende b{ font:600 .74rem var(--titre); min-width:1.9rem; }
+  .plan-legende-tous{ display:flex; align-items:center; gap:.4rem; margin:.35rem 0 .1rem; font:400 .76rem var(--texte); color:var(--muted); cursor:pointer; }
+  /* Une pastille par espèce : pleine, son sigle s'inscrit sur le plan ; vide, il est masqué. */
+  .plan-legende-pastille{ flex:none; width:.8rem; height:.8rem; padding:0; border-radius:50%; border:2px solid var(--c);
+    background:var(--c); cursor:pointer; }
+  .plan-legende-pastille[aria-pressed="false"]{ background:transparent; }
+  .plan-legende-pastille[aria-pressed="false"] ~ b, .plan-legende-pastille[aria-pressed="false"] ~ span{ opacity:.5; }
+  .plan-legende-pastille:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
   .plan-legende small{ color:var(--muted); }
   .bl-sigle{ font:600 .74rem var(--titre); min-width:1.9rem; }
   /* Légende ouverte sur un écran assez large : le plan lui laisse sa colonne au lieu d'être recouvert (il se recadre). */
-  @media (min-width:40.01rem){ #bureau:has(#plan-legende[open]) .bureau-carte{ margin-left:14.5rem; width:calc(100% - 14.5rem); } }
+  @media (min-width:40.01rem){
+    #bureau:has(#plan-legende[open]:not([hidden])) .bureau-carte{ margin-left:14.5rem; width:calc(100% - 14.5rem); }
+    /* les boutons de zoom passent à droite de la colonne : une longue légende ne les recouvre pas */
+    #bureau:has(#plan-legende[open]:not([hidden])) .plan-reglures{ left:15.5rem; }
+  }
   .plan-planche-perenne{ fill:var(--accent); fill-opacity:.28; }
   .plan-bande-perenne{ fill:var(--accent); fill-opacity:.28; }
   #in-position-liane,
@@ -784,9 +795,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php if ($legende !== []): ?>
       <details class="plan-legende" id="plan-legende" open>
         <summary><?= $repApercu !== null && $repApercu['ok'] ? 'Légende de l’aperçu' : 'Légende' ?> · <?= count($legende) ?></summary>
+        <label class="plan-legende-tous"><input type="checkbox" class="case" id="sigles-tous" checked> Sigles sur le plan</label>
         <ul>
-<?php foreach ($legende as $e): ?>
-          <li><span class="bl-pastille" style="background:<?= $couleursPlants[$e['couleur']] ?>"></span><b><?= htmlspecialchars($e['sigle'], ENT_QUOTES, 'UTF-8') ?></b>
+<?php foreach ($legende as $e): $nomLegende = $e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''); ?>
+          <li><button type="button" class="plan-legende-pastille" data-espece="<?= (int) $e['indice'] ?>" data-nom="<?= htmlspecialchars($nomLegende, ENT_QUOTES, 'UTF-8') ?>"
+                aria-pressed="true" aria-label="Sigle de <?= htmlspecialchars($nomLegende, ENT_QUOTES, 'UTF-8') ?> sur le plan"
+                title="Afficher ou masquer son sigle sur le plan" style="--c:<?= $couleursPlants[$e['couleur']] ?>"></button><b><?= htmlspecialchars($e['sigle'], ENT_QUOTES, 'UTF-8') ?></b>
             <span><?= htmlspecialchars($e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?> <small><?= (int) $e['n'] ?></small></span></li>
 <?php endforeach; ?>
         </ul>
@@ -1313,7 +1327,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
          d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chaque espèce avec sa
          couleur et son sigle : la <strong>légende</strong> les liste, les sigles s'inscrivent sur le plan quand le zoom
-         le permet, et le survol d'un point donne le nom de la plante.</p>
+         le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Sigles sur le plan » les
+         montre ou les retire tous, la pastille d'une espèce les siens ; « Afficher la légende », au bas de la page, la
+         retire.</p>
       <p><strong>Répartir une liste de plantes</strong> — sur des bordures encore vides, cochez une seule liste pour
          toute la parcelle : l'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance,
          des émergentes seules au sud et à l'ouest de l'externe, des brise-vent sur les côtés cochés « vent », et la
@@ -1334,6 +1350,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     </form>
 <?php if (!$demandeNouvelle): ?>
     <label class="pied-option"><input type="checkbox" id="afficher-cotes" class="case" checked> Afficher les côtes</label>
+<?php if ($legende !== []): ?>
+    <label class="pied-option"><input type="checkbox" id="afficher-legende" class="case" checked> Afficher la légende</label>
+<?php endif; ?>
 <?php endif; ?>
     <span class="pied-spacer"></span>
 <?php if (!$demandeNouvelle): ?>

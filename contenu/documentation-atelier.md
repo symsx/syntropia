@@ -192,7 +192,10 @@ leur **largeur** adulte quand elle est connue, pour voir où ils se recouvrent �
 puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance libre —, sinon par une pastille. Chaque espèce a sa couleur et un **sigle** de deux ou trois lettres (« La » pour la lavande, « FeA » et « FeC »
 pour deux variétés de feijoa), calculé pour que deux espèces de la parcelle ne se confondent jamais. Une **légende**
 les liste avec le nombre de plants ; les sigles s'inscrivent sur le plan dès que le zoom laisse la place de les lire,
-et le nom complet d'une plante s'affiche au survol de son point. Une espèce
+et le nom complet d'une plante s'affiche au survol de son point. Dans la légende, « Sigles sur le plan » les montre ou
+les retire tous, et la pastille de chaque espèce montre ou retire les siens ; au bas de la page, « Afficher la
+légende » la retire pour laisser toute la place au plan. Ces choix restent ceux de votre navigateur, parcelle par
+parcelle. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
 bordures, les plants se recomptent quand le plan est de nouveau enregistré. Au bas de la page, **Annuler les
 changements** ramène le plan tel qu'il est enregistré, et **Réinitialiser** le fait repartir des valeurs par défaut

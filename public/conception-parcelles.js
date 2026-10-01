@@ -438,6 +438,7 @@
       s.setAttribute('class', 'plan-sigle');
       s.setAttribute('x', p[0] * 100); s.setAttribute('y', p[1] * 100);
       s.dataset.espacement = p[5] || p[3];
+      s.dataset.espece = p[2];
       s.textContent = e.sigle;
       g.appendChild(s);
     });
@@ -474,9 +475,55 @@
     g.querySelectorAll('.plan-sigle').forEach(function(s){
       s.setAttribute('font-size', 11 / pixelsParUnite);
       s.setAttribute('stroke-width', 3 / pixelsParUnite);
-      s.style.display = parseFloat(s.dataset.espacement) * 100 * pixelsParUnite >= 22 ? '' : 'none';
+      // Au premier dessin, les préférences ne sont pas encore lues : tout est montré.
+      var a = affichage || { sigles: true, masques: [] };
+      var voulu = a.sigles && a.masques.indexOf(nomEspece(s.dataset.espece)) < 0;
+      s.style.display = voulu && parseFloat(s.dataset.espacement) * 100 * pixelsParUnite >= 22 ? '' : 'none';
     });
   }
+
+  /* Ce que la légende commande (le porteur, 2026-10-01) : les sigles sur le plan, tous ou aucun (« Sigles sur le
+     plan »), et espèce par espèce (sa pastille) ; et la légende elle-même (« Afficher la légende », au pied). Un
+     confort de lecture, propre à ce navigateur : gardé dans `localStorage` pour chaque parcelle, les espèces repérées
+     par leur nom (leur sigle peut changer quand la parcelle en reçoit d'autres). Sans stockage, rien ne se garde. */
+  var cleAffichage = 'syntropia_plan_affichage_' + (document.getElementById('plan-parcelle-id') || {}).value;
+  var affichage = { sigles: true, legende: true, masques: [] };
+  try { var lu = JSON.parse(localStorage.getItem(cleAffichage) || 'null'); if (lu) { affichage.sigles = lu.sigles !== false; affichage.legende = lu.legende !== false; affichage.masques = Array.isArray(lu.masques) ? lu.masques : []; } } catch (e) {}
+  function garderAffichage(){ try { localStorage.setItem(cleAffichage, JSON.stringify(affichage)); } catch (e) {} }
+  function nomEspece(indice){ var e = (cfgPlants.especes || [])[indice]; return e ? e.nom : ''; }
+  (function legende(){
+    var details = document.getElementById('plan-legende');
+    var tous = document.getElementById('sigles-tous');
+    var montrer = document.getElementById('afficher-legende');
+    if (!details) return;
+    var pastilles = Array.prototype.slice.call(details.querySelectorAll('.plan-legende-pastille'));
+    function majLegende(){
+      pastilles.forEach(function(b){ b.setAttribute('aria-pressed', affichage.masques.indexOf(b.dataset.nom) < 0 ? 'true' : 'false'); });
+      var visibles = pastilles.filter(function(b){ return b.getAttribute('aria-pressed') === 'true'; }).length;
+      if (tous){ tous.checked = affichage.sigles && visibles > 0; tous.indeterminate = affichage.sigles && visibles > 0 && visibles < pastilles.length; }
+      details.hidden = !affichage.legende;
+      if (montrer) montrer.checked = affichage.legende;
+      majSigles();
+    }
+    pastilles.forEach(function(b){
+      b.addEventListener('click', function(){
+        var i = affichage.masques.indexOf(b.dataset.nom);
+        if (i < 0) affichage.masques.push(b.dataset.nom); else affichage.masques.splice(i, 1);
+        if (i >= 0) affichage.sigles = true;   // rendre un sigle, c'est vouloir des sigles
+        garderAffichage(); majLegende();
+      });
+    });
+    if (tous) tous.addEventListener('change', function(){
+      // Tous, ou aucun : « tous » efface aussi les masques espèce par espèce.
+      affichage.sigles = tous.checked;
+      if (tous.checked) affichage.masques = [];
+      garderAffichage(); majLegende();
+    });
+    if (montrer) montrer.addEventListener('change', function(){
+      affichage.legende = montrer.checked; garderAffichage(); majLegende(); appliquerVue();
+    });
+    majLegende();
+  })();
   function perimerPlants(){
     if (plantsPerimes) return;
     plantsPerimes = true;
