@@ -1839,21 +1839,48 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
-000. **Bêta-testeurs en production dès le 2026-10-01** (le porteur les invite ; ils sont prévenus que leurs travaux
-   pourraient être supprimés lors d'une mise à jour, en attendant la version 1). Un déploiement touche désormais de vrais
-   utilisateurs : voir la question du porteur du 2026-10-01 sur la gestion des mises à jour (sauvegarde avant `base`,
-   mode maintenance, ordre `src/` avant `public/`, formulaires ouverts sur l'ancienne version).
-00. **2026-10-01 — déployé (douzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : la répartition d'une liste de
-   plantes sur les bordures (`chantier-repartition-bordures.md`, terminé : la règle, la coche « vent », la page), le cadre
-   complété par le porteur (119 espacements, 96 strates de service ; chalef Amoroso et Sweet n'Sour à 0,50 m ; service
-   « haute » pour fève, artichaut, chalef), la pomme de terre produisant en moyenne, la fiche Joala des strates corrigée.
-   **Avant** : production lue sans rien changer (2 projets, 1 parcelle, 12 réponses, 3 tracés, aucune ligne de plants, 143
-   espèces au cadre dont 29 avec un espacement, aucune surcharge). **Après** : les 3152 cases remplies du cadre égales au CSV,
-   plus aucune espèce de bordure sans espacement, données du projet inchangées, aucun écart de contenu `rsync`, syntaxe PHP
-   distante sans erreur, page 302 pour un anonyme (POST compris), `src/`, `sql/`, `contenu/`, `bin/`, `config/base.php`
-   403 ; les deux projets réels exportés et examinés (lecture seule). Le parcours reste à essayer avec le vrai compte :
-   cocher « vent » sur un côté, répartir une liste sur des bordures vides, poser. **Ouvert** : la question du changement de
-   strate (fève, pomme de terre) est à poser en formation (`chantier-film-de-la-parcelle.md`, question n° 1).
+00. **État au 2026-10-01, fin de journée — pour la reprise.** Tout est commité ; **la production est à jour** (dernier
+   déploiement 22 h 44, commit `f2f2939`, schéma 18) ; `origin` (GitHub) **n'a pas été poussé** de la journée.
+   **Des bêta-testeurs travaillent en production** depuis ce jour (3 comptes, 3 projets au soir) : ils sont prévenus que
+   leurs travaux pourraient être supprimés avant la version 1 — une tolérance, pas une licence : aucune mise à jour ne
+   doit effacer leurs données.
+   **Déployer, désormais : `python3 bin/deployer.py mettre-a-jour`** (`chantier-mises-a-jour.md`, phases 1 à 4 faites et
+   essayées en production) — personnes connectées comptées (traces `contenu/actifs/`), maintenance « Mise à jour en
+   cours » (503), sauvegarde des deux bases dans `../syntropia-sauvegardes/` (les 5 dernières), `base`, `fichiers`
+   (`src/` avant `public/`, puis la marque de déploiement `contenu/deploiement.txt`), réouverture et contrôle. **Une page
+   ouverte avant une mise à jour n'enregistre plus rien** (le jeton porte la marque du déploiement) et `gabarit.js`
+   propose de recharger. Tous les fichiers partagés (`gabarit.css/js`, `etapes.js`, `carte.js`, `livret.js`) sont
+   chargés avec `?v=filemtime` — sans cela, un navigateur gardait l'ancien `gabarit.js` et le plan s'arrêtait (vu en
+   production : P1 dessinée à 12 × 8 m, la base intacte).
+   **Fait ce jour** :
+   - Strates : fiche Joala corrigée (mélisse, consoude, menthe en basse) ; la pomme de terre produit en **moyenne** ; le
+     changement de strate au fil du cycle (fève, pomme de terre) est une **question à poser en formation**
+     (`chantier-film-de-la-parcelle.md`, question n° 1 — piste du porteur : à la maturité, à l'entrée en production).
+   - **Répartir une liste de plantes sur les bordures** (`chantier-repartition-bordures.md`, terminé) : `src/Repartition
+     Bordures.php`, coche « vent » par côté de l'externe, bloc `#rb` de `conception-parcelles.php`.
+   - **Le cadre des espèces** : complété par le porteur (espacements, strates de service) ; espacements de Théry ch. 14
+     là où il les cote ; pour les arbres et arbustes de bordure, la valeur portée était **l'envergure** — 0,50 m (tilleul,
+     figuier, cornouiller à gros fruits) ou 0,40 m (les autres, lavandin compris) ; **les grimpantes ne sont plus
+     proposées sur les bordures** (seulement sur la ligne des lianes). Pour recompléter le cadre : modifier
+     `contenu/especes-cadre.csv`, puis régénérer le dernier bloc de `sql/02-especes-seed.sql` (le générateur n'est pas
+     conservé : une INSERT … ON DUPLICATE KEY UPDATE par ligne, valeurs passées par `Especes::valider()`, cases vides
+     omises — vérifier qu'il redonne d'abord le bloc existant), rejouer, comparer case à case.
+   - **Plan de parcelle** : envergure dessinée bornée à deux fois l'espacement ; **« Annuler les changements »** et
+     **« Réinitialiser »**, chacun confirmé (`Gabarit.confirmer`) ; **sigles** (`src/Sigles.php`), **légende** (toute la
+     parcelle, « Tout/rien », une pastille-bouton par espèce, « Afficher la légende » au pied — réglages gardés dans le
+     navigateur) et **nom au survol**, pour les plantes des bordures.
+   - **Journal des connexions** (`journal-connexions.php`, administrateurs seulement ; table `connexion` de la base des
+     comptes, connexions réussies, sans IP, 90 jours ; heures à l'heure de Paris — la base écrit en UTC).
+   - `dossier-qualification.md` et `qualif_syntropia.py` supprimés (campagne close).
+   **Ouvert, pour la suite** :
+   - **Repérer les végétaux des planches** comme ceux des bordures (sigles, légende, survol) — demandé par le porteur,
+     « dans le plan des planches il faudra repérer les végétaux de la même façon » ; rien n'y est encore dessiné en cercles.
+   - Les trois cornouillers sans fonction de bordure (officinal, de l'Himalaya, du Japon) gardent leur espacement de
+     verger : à confirmer avec le porteur.
+   - La légende tient jusqu'à ~16-18 espèces sur un écran de 600 px de haut ; au-delà, la passer sur deux colonnes.
+   - `chantier-mises-a-jour.md` : phases 5 (déploiement atomique), 6 (site d'essai — et **une vraie restauration de
+     sauvegarde, jamais essayée**), 7 (« Quoi de neuf ») avant la version 1.
+   - Plantae lit la base des comptes : la nouvelle table `connexion` ne change rien à `compte`/`acces`.
 
 0. **2026-09-30, fin de journée — commité, déployé (onzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : avant,
    production lue sans rien changer (65 espèces au cadre, aucune surcharge, 2 projets, 1 parcelle, 12 réponses, 3 tracés) ;
