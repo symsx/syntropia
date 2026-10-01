@@ -224,6 +224,16 @@ final class RepartitionBordures
             $sansPlant = [];
             $compte = Bordures::compter($l['longueur'], []);
             if ($refus === null) {
+                // Une ligne compte au plus MAX_SERIE places (la colonne en prend une sur deux) : au-delà, les dernières
+                // espèces de la liste n'y entrent pas — et le disent.
+                $max = $colonne !== null ? intdiv(Bordures::MAX_SERIE, 2) : Bordures::MAX_SERIE;
+                foreach (array_slice($autres, $max) as $e) {
+                    $raisonsDe[(int) $e['id']][] = Bordures::libelle($cle) . ' : la série d’un côté compte au plus '
+                        . Bordures::MAX_SERIE . ' places';
+                    $sansPlant[] = $e;
+                }
+                $autres = array_slice($autres, 0, $max);
+                $horsSerie = count($sansPlant);
                 // Un côté ne garde que les espèces qu'il peut porter (le porteur, 2026-10-01) : une espèce que la longueur
                 // n'atteint pas sort de la série, et l'on recompte — la fin de la série change, un plant de plus peut tenir.
                 while (true) {
@@ -258,7 +268,7 @@ final class RepartitionBordures
                     $serie = [];
                     $compte = Bordures::compter($l['longueur'], []);
                 }
-                foreach ($sansPlant as $e) {
+                foreach (array_slice($sansPlant, $horsSerie) as $e) {
                     $raisonsDe[(int) $e['id']][] = Bordures::libelle($cle) . ' : pas de place — le côté est plein avant elle';
                 }
             }

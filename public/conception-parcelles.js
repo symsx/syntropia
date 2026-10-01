@@ -405,6 +405,8 @@
   (function dessinerPlants(){
     var g = document.getElementById('plantations');
     if (!g) return;
+    // Un aperçu de répartition (rien d'enregistré) se dessine pâli.
+    if (cfgPlants.apercu) g.classList.add('plan-apercu');
     function disque(p, classe, r){
       var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       c.setAttribute('class', classe);
@@ -436,7 +438,7 @@
     var tirette = document.getElementById('tirette');
     if (aOuvrir && tirette){
       tirette.click();
-      setTimeout(function(){ aOuvrir.scrollIntoView({ block: 'center' }); }, 350);
+      setTimeout(function(){ aOuvrir.scrollIntoView({ block: aOuvrir.id === 'rb' ? 'start' : 'center' }); }, 350);
     }
   }
 

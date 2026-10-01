@@ -96,6 +96,71 @@ final class LignesPlantation
         return ['ok' => true, 'erreurs' => []];
     }
 
+    /**
+     * Pose d'un bloc les séries d'une répartition (`RepartitionBordures`, `chantier-repartition-bordures.md`, Phase 3) :
+     * tous les côtés des bordures externe et interne, **en une transaction**. Refusé si le plan a changé depuis l'aperçu
+     * (sa version), ou si une bordure externe ou interne porte déjà une ligne — la répartition part de bordures vides.
+     *
+     * @param array<string, list<array<string, mixed>>> $series emplacement (`externe:nord`…) → espèces de la série
+     * @return array{ok: bool, erreurs: array<string, string>}
+     */
+    public function poserRepartition(int $parcelleId, int $siteId, array $series, string $versionPlan): array
+    {
+        $places = [];
+        foreach ($series as $emplacement => $serie) {
+            $c = Bordures::depuisCle((string) $emplacement);
+            if ($c === null || !in_array($c[0], \Syntropia\RepartitionBordures::CADRES, true)) {
+                return ['ok' => false, 'erreurs' => ['emplacement' => 'Cette bordure n’existe pas.']];
+            }
+            if ($serie === [] || count($serie) > Bordures::MAX_SERIE) {
+                return ['ok' => false, 'erreurs' => ['serie' => 'Une ligne compte d’une à ' . Bordures::MAX_SERIE . ' places.']];
+            }
+            foreach ($serie as $e) {
+                if (!in_array((int) ($e['site_id'] ?? -1), [0, $siteId], true)) {
+                    return ['ok' => false, 'erreurs' => ['serie' => 'Une espèce de la série n’est pas dans le référentiel de ce projet.']];
+                }
+                $places[(string) $emplacement][] = [(string) $e['nom_scientifique'], (string) $e['variete']];
+            }
+        }
+        if ($places === []) {
+            return ['ok' => false, 'erreurs' => ['serie' => 'Rien à poser.']];
+        }
+
+        $pdo = $this->pdo();
+        $pdo->beginTransaction();
+        try {
+            $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ? FOR UPDATE');
+            $req->execute([$parcelleId, $siteId]);
+            $parcelle = $req->fetch();
+            if ($parcelle === false) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['parcelle' => 'Cette parcelle n’appartient pas à ce projet.']];
+            }
+            if (!hash_equals(Parcelles::versionPlan($parcelle), $versionPlan)) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['version' => 'Le plan a changé depuis l’aperçu : recalculez la répartition.']];
+            }
+            $req = $pdo->prepare("SELECT COUNT(*) FROM ligne_plantation WHERE parcelle_id = ?
+                AND (emplacement LIKE 'externe:%' OR emplacement LIKE 'interne:%') FOR UPDATE");
+            $req->execute([$parcelleId]);
+            if ((int) $req->fetchColumn() > 0) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['version' => 'Une bordure a reçu des plantes depuis l’aperçu : la répartition part de bordures vides.']];
+            }
+            $ins = $pdo->prepare('INSERT INTO ligne_plantation (parcelle_id, emplacement, rang, nom_scientifique, variete) VALUES (?, ?, ?, ?, ?)');
+            foreach ($places as $emplacement => $serie) {
+                foreach ($serie as $k => [$nom, $variete]) {
+                    $ins->execute([$parcelleId, $emplacement, $k + 1, $nom, $variete]);
+                }
+            }
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+        return ['ok' => true, 'erreurs' => []];
+    }
+
     /** La clé d'une ligne de planche : `planche:3:2` — planche 3, deuxième ligne (d'ouest en est, ou du nord au sud). */
     public static function clePlanche(int $numero, int $ligne): string
     {

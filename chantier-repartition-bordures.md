@@ -1,7 +1,8 @@
 # Chantier — répartir une liste de plantes sur les bordures d'une parcelle
 
 *Proposé le 2026-10-01, à la demande du porteur. Toutes les questions sont tranchées le même jour. **Phases 1 (la règle,
-`src/RepartitionBordures.php`) et 2 (la coche « brise-vent ») faites le 2026-10-01** ; Phases 3 et 4 pas commencées.*
+`src/RepartitionBordures.php`), 2 (la coche « brise-vent ») et 3 (la page) faites le 2026-10-01** ; la Phase 4 (livret
+et vérifications) faite avec la 3. **Pas déployé.***
 
 ## L'intention
 
@@ -157,7 +158,27 @@ n'est écrit avant l'accord** ; « Poser ces bordures » écrit tous les côtés
 bordure a été remplie entretemps (« les bordures ont changé, recalculez »). Lecteur : rien de visible, POST forgé 403.
 La liste elle-même n'est pas enregistrée : seules les séries posées le sont (aucun changement de schéma).
 
+**Faite le 2026-10-01.** Sur `conception-parcelles.php`, sous « Les plantes des bordures », un bloc `#rb` : un lien
+« Répartir une liste de plantes sur toutes les bordures » tant que les bordures externe et interne sont vides (sinon une
+phrase dit pourquoi le geste n'est pas offert) ; la liste (`?repartir=1`) — les espèces qui remplissent une fonction de
+bordure, cochables si `RepartitionBordures::ecartee()` ne dit rien, grisées sinon avec la raison — et une colonne
+vertébrale par bordure (un choix parmi celles qui lui conviennent) ; l'aperçu (`&apercu=1`, un GET : rien d'écrit)
+s'affiche **au-dessus** de la liste, côté par côté, avec le refus de chaque côté s'il y en a, les espèces sans place,
+les notes ; ses plants se dessinent **pâlis** sur le plan. « Poser ces bordures » (POST `repartir_bordures`) **recalcule**
+la répartition sur l'état présent, puis `LignesPlantation::poserRepartition()` écrit tous les côtés **en une
+transaction**, refusée si la version du plan a changé ou si une bordure externe ou interne porte déjà une ligne. Un
+garde-fou ajouté à la règle : **une série compte au plus 30 places** (`Bordures::MAX_SERIE`, 15 espèces avec une colonne) —
+au-delà, les dernières espèces de la liste n'entrent pas sur ce côté, et c'est dit. Vérifié en local (CDP, projet de
+test supprimé ensuite) : bordures déjà remplies (geste absent, phrase), liste (64 cochables, 9 grisées sur le cadre
+réel), refus (deux espèces : chaque côté dit ce qui lui manque, pas de bouton), aperçu de 13 espèces avec le goji en
+colonne de l'interne (138 plants dessinés, base inchangée), plan modifié entre l'aperçu et la pose (refus, rien écrit,
+aperçu recalculé), pose (8 côtés écrits, goji un plant sur deux), POST forgé sur des bordures remplies (rien écrit),
+lecteur (bloc absent, POST refusé, rien écrit), 320×568 sans débordement, `verifier-export` identique ; 96 contrôles purs.
+
 ### Phase 4 — Le livret et les vérifications
+
+*Faite avec la Phase 3 (2026-10-01) : un paragraphe dans « Concevoir : les parcelles et le scénario », un autre dans le
+panneau Informations de la page.*
 
 Le chapitre du livret « L'atelier » qui décrit les bordures, mis à jour dans la même vague. Vérifié en local (CDP) :
 répartition sur une parcelle à externe et interne, côtés sud/ouest seuls, côté brise-vent coché ou non, colonne

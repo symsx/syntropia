@@ -122,10 +122,11 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   et à l'ouest de l'externe, brise-vent sur les côtés de l'externe que la personne coche, alternance, une espèce
   « colonne vertébrale » par bordure un plant sur deux, espacement), sur des bordures toutes vides ; une plante sans
   espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
-  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **Phases 1
-  (la règle, `src/RepartitionBordures.php`, pure) et 2 (la coche « vent » par côté de l'externe, `parcelle.plan`) faites** ; **46 des 64 espèces de bordure du cadre n'ont pas
-  d'espacement** — complétés par le porteur le 2026-10-01 (cadre régénéré, plus aucune espèce de bordure sans
-  espacement ; **pas encore déployé** : `deployer.py base`).
+  côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **chantier
+  terminé le 2026-10-01, pas déployé** — la règle (`src/RepartitionBordures.php`, pure), la coche « vent » par côté de
+  l'externe (`parcelle.plan`), la page (`conception-parcelles.php`, bloc `#rb`, `LignesPlantation::poserRepartition()`) ; les espacements qui manquaient
+  (46 des 64 espèces de bordure) complétés par le porteur le même jour — cadre régénéré, **pas encore déployé**
+  (`deployer.py base`, puis `fichiers` pour la page).
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.

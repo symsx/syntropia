@@ -10,6 +10,7 @@ use Syntropia\Bordures;
 use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\Planches;
+use Syntropia\RepartitionBordures;
 use Syntropia\Role;
 use Syntropia\Stade;
 use Syntropia\Tortue;
@@ -43,6 +44,29 @@ $lignesService = new LignesPlantation();
 $codeSaisi = '';
 $nomSaisi = '';
 $typeSaisi = 'perenne';
+// Répartir une liste de plantes sur les bordures (chantier-repartition-bordures.md, Phase 3) : les choix lus d'un aperçu
+// (GET) ou d'un envoi refusé (POST), et le message du refus.
+$paramsRepartition = null;
+$erreurRepartition = null;
+// La liste choisie, résolue au référentiel du site, dans l'ordre reçu ; et la colonne vertébrale de chaque bordure.
+$lireRepartition = static function (array $source, array $especes): array {
+    $parId = [];
+    foreach ($especes as $e) {
+        $parId[(int) $e['id']] = $e;
+    }
+    $liste = [];
+    foreach (is_array($source['choix'] ?? null) ? $source['choix'] : [] as $id) {
+        if (isset($parId[(int) $id])) {
+            $liste[(int) $id] = $parId[(int) $id];
+        }
+    }
+    $colonnes = [];
+    foreach (RepartitionBordures::CADRES as $cadre) {
+        $id = (int) ($source['colonne_' . $cadre] ?? 0);
+        $colonnes[$cadre] = $id > 0 ? $id : null;
+    }
+    return [array_values($liste), $colonnes];
+};
 
 // Un lecteur regarde le projet : rien ne s'écrit d'ici — chantier
 // `chantier-inscription-parrainage.md`, Phase 3.
@@ -164,6 +188,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
             $message = implode(' ', $r['erreurs']);
         }
         $erreursLigne[$emplacement] = $message;
+    } elseif ($action === 'repartir_bordures') {
+        // La répartition acceptée : recalculée sur l'état présent, puis posée d'un bloc (Phase 3) — rien n'est écrit si
+        // le plan ou les bordures ont changé depuis l'aperçu.
+        $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
+        $parcelleRep = $parcellesService->parId($parcelleId, $siteId);
+        if ($parcelleRep === null) {
+            $erreurRepartition = 'Cette parcelle n’appartient pas à ce projet.';
+        } else {
+            [$liste, $colonnes] = $lireRepartition($_POST, (new Especes())->toutes($siteId));
+            $rep = RepartitionBordures::repartir($parcelleRep, $liste, $colonnes);
+            if (!$rep['ok']) {
+                $erreurRepartition = 'Cette liste ne se répartit pas sur les bordures actuelles : voyez l’aperçu.';
+            } else {
+                $w = $lignesService->poserRepartition($parcelleId, $siteId, array_map(static fn (array $c): array => $c['serie'], $rep['cotes']),
+                    (string) ($_POST['version_plan'] ?? ''));
+                if ($w['ok']) {
+                    header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $parcelleId . '&bordure=recompte');
+                    exit;
+                }
+                $erreurRepartition = implode(' ', $w['erreurs']);
+            }
+        }
+        $paramsRepartition = $_POST + ['apercu' => '1'];
     }
 }
 
@@ -264,6 +311,44 @@ if ($parcelleActive !== null && !$demandeNouvelle) {
     $especesSite = (new Especes())->toutes($siteId);
     $calendrierBordures = (new CalendrierLignes())->dUneParcelle((int) $parcelleActive['id']);
 }
+
+// Répartir une liste de plantes (Phase 3) : seulement sur des bordures externe et interne toutes vides, et s'il y en a.
+$repGeometrie = [];
+$repRemplies = false;
+$repOuverte = false;
+$repEligibles = [];
+$repGrisees = [];
+$repChoix = [];
+$repColonnes = ['externe' => null, 'interne' => null];
+$repApercu = null;
+if ($parcelleActive !== null && !$demandeNouvelle) {
+    $repGeometrie = array_filter(Bordures::lignes($parcelleActive), static fn (array $l): bool => in_array($l['cadre'], RepartitionBordures::CADRES, true));
+    foreach ($lignesBordures as $cle => $lb) {
+        if (in_array(Bordures::depuisCle($cle)[0], RepartitionBordures::CADRES, true) && $lb['places'] !== []) {
+            $repRemplies = true;
+        }
+    }
+    foreach ($especesSite as $e) {
+        if (!Bordures::convient('externe', $e) && !Bordures::convient('interne', $e)) {
+            continue;
+        }
+        $raison = RepartitionBordures::ecartee($e);
+        if ($raison === null) {
+            $repEligibles[] = $e;
+        } else {
+            $repGrisees[] = ['espece' => $e, 'raison' => $raison];
+        }
+    }
+    $paramsRepartition ??= ($_GET['repartir'] ?? '') === '1' ? $_GET : null;
+    $repOuverte = $peutEcrire && $paramsRepartition !== null && $repGeometrie !== [] && !$repRemplies;
+    if ($repOuverte) {
+        [$repListe, $repColonnes] = $lireRepartition($paramsRepartition, $especesSite);
+        $repChoix = array_map(static fn (array $e): int => (int) $e['id'], $repListe);
+        if (($paramsRepartition['apercu'] ?? '') === '1') {
+            $repApercu = $repListe === [] ? null : RepartitionBordures::repartir($parcelleActive, $repListe, $repColonnes);
+        }
+    }
+}
 $couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53', '#1f6f78', '#b36b00', '#556b2f', '#7a3b3b'];
 // Une couleur par espèce (nom scientifique + variété), la même sur toutes les bordures de la parcelle — dans l'ordre où
 // les espèces apparaissent. Au-delà de dix espèces, les couleurs reviennent.
@@ -286,6 +371,24 @@ foreach ($lignesBordures as $cle => $lb) {
         // [x, y, couleur, largeur de la bande, envergure de l'espèce (m, ou null si inconnue)]
         $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $couleurDe($lb['places'][$k]), round($g['bande'], 3),
             $lb['places'][$k]['largeur'] ?? null];
+    }
+}
+if ($repApercu !== null && $repApercu['ok']) {
+    // L'aperçu sur le plan : les bordures externe et interne sont vides, leurs plants ne sont que ceux de l'aperçu.
+    $indicesApercu = [];
+    foreach ($repApercu['cotes'] as $cle => $c) {
+        $g = $repGeometrie[$cle] ?? null;
+        if ($g === null || !$c['compte']['ok']) {
+            continue;
+        }
+        $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
+        $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
+        foreach ($c['compte']['positions'] as [$k, $d]) {
+            $e = $c['serie'][$k];
+            $indice = $indicesApercu[(int) $e['id']] ??= count($indicesApercu);
+            $plantsDessin[] = [round($g['x1'] + $d * $dx, 3), round($g['y1'] + $d * $dy, 3), $indice % count($couleursPlants),
+                round($g['bande'], 3), ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null];
+        }
     }
 }
 $nombreFr = static fn (float $v): string => rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
@@ -396,6 +499,15 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .bl-choix label{ display:flex; gap:.4rem; align-items:flex-start; font:400 .8rem/1.35 var(--texte); color:var(--ink); }
   .bl-reserve{ display:block; color:var(--alerte); }
   .bl-cote.bl-suspendu .bl-proposer{ opacity:.45; pointer-events:none; }
+  /* Répartir une liste de plantes (chantier-repartition-bordures.md, Phase 3). */
+  .rb-bloc{ border:1px dashed var(--line); border-radius:.5rem; padding:.35rem .55rem; margin:.35rem 0 .6rem; }
+  .rb-grisee{ opacity:.5; }
+  .rb-colonne{ grid-template-columns:1fr minmax(0, 9rem); }
+  .rb-colonne select{ min-width:0; max-width:100%; }
+  .rb-cotes{ margin:.3rem 0; padding-left:1rem; font:400 .8rem/1.4 var(--texte); color:var(--ink); }
+  .rb-cotes li{ margin:.2rem 0; }
+  .rb-cotes small{ display:block; }
+  #plantations.plan-apercu{ opacity:.75; }
   .plan-passe-pied{ fill:transparent; }
   .plan-cote{ font:500 15px var(--titre); fill:var(--muted); }
   .plan-mesure{ font:600 13px var(--texte); fill:var(--ink); font-variant-numeric:tabular-nums; }
@@ -785,6 +897,115 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
            garde la moitié du sien. Les espacements viennent de <a href="especes.php">Espèces</a>.</p>
         <p class="pd-note" id="bl-suspendu" hidden>Le plan a changé : enregistrez-le d'abord — les plants se
            comptent sur le plan enregistré.</p>
+<?php if ($peutEcrire && $repGeometrie !== []):
+    $nomEsp = static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
+    $fonctionsEsp = static function (array $e): string {
+        $f = [];
+        if (RepartitionBordures::bloqueHerbe($e)) { $f[] = 'bloque-herbe'; }
+        if (RepartitionBordures::briseVent($e)) { $f[] = 'brise-vent'; }
+        if (Bordures::convient('interne', $e)) { $f[] = 'biomasse'; }
+        return implode(', ', $f);
+    };
+    $strateEsp = static function (array $e): string {
+        $s = \Syntropia\LignesDeService::stratesService($e);
+        return $s === [] ? 'strate non notée' : implode(', ', array_map(static fn (string $x): string => mb_strtolower(\Syntropia\Strates::REPERES[$x]['libelle'] ?? $x), $s));
+    }; ?>
+        <div class="rb-bloc" id="rb">
+<?php if ($repRemplies): ?>
+          <p class="pd-note"><b>Répartir une liste de plantes</b> se fait sur des bordures vides : des côtés portent déjà
+            des plantes. Composez les autres côté par côté, ou videz d'abord toutes les lignes des bordures.</p>
+<?php elseif (!$repOuverte): ?>
+          <a class="bl-proposer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;repartir=1">Répartir une liste de plantes sur toutes les bordures</a>
+<?php else: ?>
+          <p class="pd-titre" style="margin-top:.4rem">Répartir une liste de plantes</p>
+          <p class="pd-note">Cochez les plantes de vos bordures : l'atelier les dispose sur chaque côté dont elles
+            remplissent la fonction, en alternance, à leur espacement. Au sud et à l'ouest de l'externe, des émergentes
+            seulement ; sur un côté coché « vent », des brise-vent entre les bloque-herbe. Il faut deux espèces au
+            moins par côté — la diversité fait la réussite du système. Rien n'est écrit avant « Poser ces bordures ».</p>
+<?php if ($erreurRepartition !== null): ?>
+          <p class="bl-alerte" role="alert"><?= htmlspecialchars($erreurRepartition, ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+<?php if (($paramsRepartition['apercu'] ?? '') === '1' && $repChoix === []): ?>
+          <p class="bl-alerte">Cochez d'abord les plantes de la liste.</p>
+<?php elseif ($repApercu !== null): ?>
+          <div class="rb-apercu">
+<?php if (!$repApercu['ok']): ?>
+            <p class="bl-alerte"><b>Rien n'est réparti</b> : chaque côté doit recevoir deux espèces au moins de la liste.</p>
+            <ul class="rb-cotes">
+<?php foreach ($repApercu['cotes'] as $cle => $c): if ($c['refus'] === null) { continue; } ?>
+              <li><b><?= htmlspecialchars(Bordures::libelle($cle), ENT_QUOTES, 'UTF-8') ?></b> : <?= htmlspecialchars($c['refus'], ENT_QUOTES, 'UTF-8') ?>.</li>
+<?php endforeach; ?>
+            </ul>
+<?php else: ?>
+            <p class="pd-note"><b>Aperçu</b>, dessiné sur le plan :</p>
+            <ul class="rb-cotes">
+<?php foreach ($repApercu['cotes'] as $cle => $c):
+    $vus = [];
+    foreach ($c['serie'] as $e) { $vus[(int) $e['id']] ??= $nomEsp($e) . ' ' . ($c['plants'][(int) $e['id']] ?? 0); } ?>
+              <li><b><?= htmlspecialchars(Bordures::libelle($cle) . ($c['brise_vent'] ? ' (vent)' : ''), ENT_QUOTES, 'UTF-8') ?></b>
+                — <?= htmlspecialchars($nombreFr($c['longueur']) . ' m, ' . $c['compte']['total'] . ' plants : ' . implode(', ', $vus), ENT_QUOTES, 'UTF-8') ?><?php if ($c['sans_plant'] !== []): ?>
+                <small class="bl-reserve">Pas de place pour <?= htmlspecialchars(implode(', ', array_map($nomEsp, $c['sans_plant'])), ENT_QUOTES, 'UTF-8') ?>.</small><?php endif; ?></li>
+<?php endforeach; ?>
+            </ul>
+<?php endif; ?>
+<?php foreach ($repApercu['notes'] as $m): ?>
+            <p class="pd-note"><?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?></p>
+<?php endforeach; ?>
+<?php if ($repApercu['sans_place'] !== []): ?>
+            <p class="pd-note">Sans place sur aucun côté : <?= htmlspecialchars(implode(' ; ', array_map(static fn (array $s): string => $nomEsp($s['espece']) . ' (' . implode(', ', $s['raisons']) . ')', $repApercu['sans_place'])), ENT_QUOTES, 'UTF-8') ?>.</p>
+<?php endif; ?>
+<?php if ($repApercu['ok']): ?>
+            <form method="post" action="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
+              <input type="hidden" name="action" value="repartir_bordures">
+              <input type="hidden" name="parcelle_id" value="<?= (int) $parcelleActive['id'] ?>">
+              <input type="hidden" name="version_plan" value="<?= htmlspecialchars($versionPlan, ENT_QUOTES, 'UTF-8') ?>">
+<?php foreach ($repChoix as $id): ?>
+              <input type="hidden" name="choix[]" value="<?= $id ?>">
+<?php endforeach; ?>
+<?php foreach ($repColonnes as $cadre => $id): if ($id === null) { continue; } ?>
+              <input type="hidden" name="colonne_<?= $cadre ?>" value="<?= $id ?>">
+<?php endforeach; ?>
+              <button type="submit" class="bl-bouton">Poser ces bordures</button>
+            </form>
+<?php endif; ?>
+          </div>
+<?php endif; ?>
+          <form method="get" action="conception-parcelles.php" class="rb-form">
+            <input type="hidden" name="parcelle" value="<?= (int) $parcelleActive['id'] ?>">
+            <input type="hidden" name="repartir" value="1">
+            <input type="hidden" name="apercu" value="1">
+            <ul class="bl-choix">
+<?php foreach ($repEligibles as $e): ?>
+              <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= in_array((int) $e['id'], $repChoix, true) ? ' checked' : '' ?>>
+                <span><b><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></b> — <?= htmlspecialchars($fonctionsEsp($e), ENT_QUOTES, 'UTF-8') ?> ;
+                  <?= htmlspecialchars($strateEsp($e) . ' ; ' . $nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') ?></span></label></li>
+<?php endforeach; ?>
+<?php foreach ($repGrisees as $g): ?>
+              <li class="rb-grisee"><label><input type="checkbox" class="case" disabled>
+                <span><b><?= htmlspecialchars($nomEsp($g['espece']), ENT_QUOTES, 'UTF-8') ?></b> — <?= htmlspecialchars($g['raison'], ENT_QUOTES, 'UTF-8') ?></span></label></li>
+<?php endforeach; ?>
+            </ul>
+<?php foreach (RepartitionBordures::CADRES as $cadre): ?>
+            <div class="pd-ligne rb-colonne">
+              <span class="pd-ligne-nom">Colonne vertébrale — <?= $cadre ?></span>
+              <select name="colonne_<?= $cadre ?>" aria-label="Colonne vertébrale de la bordure <?= $cadre ?> : une plante sur deux">
+                <option value="">aucune</option>
+<?php foreach ($repEligibles as $e): if (!Bordures::convient($cadre, $e)) { continue; } ?>
+                <option value="<?= (int) $e['id'] ?>"<?= $repColonnes[$cadre] === (int) $e['id'] ? ' selected' : '' ?>><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+              </select>
+            </div>
+<?php endforeach; ?>
+            <p class="pd-note">La colonne vertébrale revient un plant sur deux ; cochez-la aussi dans la liste.</p>
+            <div class="bl-ajout">
+              <button type="submit" class="bl-bouton">Voir l'aperçu</button>
+              <a class="bl-retirer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>">Fermer</a>
+            </div>
+          </form>
+<?php endif; ?>
+        </div>
+<?php endif; ?>
 <?php foreach (array_diff_key($erreursLigne, $lignesBordures) as $message): ?>
         <p class="bl-alerte" role="alert"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endforeach; ?>
@@ -1032,6 +1253,12 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          font viennent en tête de la liste. « Proposer les espèces de cette bordure » les montre toutes (hors annuelles :
          une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
          d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan.</p>
+      <p><strong>Répartir une liste de plantes</strong> — sur des bordures encore vides, cochez une seule liste pour
+         toute la parcelle : l'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance,
+         des émergentes seules au sud et à l'ouest de l'externe, des brise-vent sur les côtés cochés « vent », et la
+         colonne vertébrale choisie un plant sur deux. Un côté ne garde que les plantes qu'il peut porter ; s'il en
+         reste moins de deux, rien n'est réparti et l'atelier dit pourquoi. Vous voyez l'aperçu sur le plan avant de
+         poser, puis vous retouchez chaque côté à la main si vous le voulez.</p>
 <?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
@@ -1085,7 +1312,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
   // Les plants des bordures, sur le plan enregistré : [x, y, couleur, largeur de bande] en mètres (chantier
   // « peuplement de la parcelle », Phase 2). Et la bordure à rouvrir après un geste.
   var PLANTS_BORDURES = <?= json_encode(['plants' => $plantsDessin, 'couleurs' => $couleursPlants,
-      'ouvrir' => $bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte))], JSON_UNESCAPED_UNICODE) ?>;
+      'apercu' => $repApercu !== null && $repApercu['ok'],
+      'ouvrir' => $repOuverte ? 'rb' : ($bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte)))], JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="conception-parcelles.js?v=<?= (int) @filemtime(__DIR__ . '/conception-parcelles.js') ?>"></script>
 <?php endif; ?>

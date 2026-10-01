@@ -189,7 +189,15 @@ les plants de chaque espèce d'après leur espacement, pris dans **Espèces** �
 moyenne de leurs espacements, et à chaque bout la moitié du sien — et les dessine sur le plan : à leur taille
 réelle quand leur **largeur** adulte est connue, pour voir où ils se recouvrent, sinon par une pastille. Une espèce
 sans espacement empêche le compte de sa ligne, et la page le dit. Si vous changez les dimensions ou les
-bordures, les plants se recomptent quand le plan est de nouveau enregistré. Dans le scénario, une plante
+bordures, les plants se recomptent quand le plan est de nouveau enregistré. Tant que les bordures externe et
+interne sont vides, vous pouvez aussi **répartir une liste de plantes sur toutes les bordures** d'un coup : vous
+cochez une seule liste pour la parcelle (les plantes sans espacement ou annuelles sont grisées, avec la raison) et,
+si vous le voulez, une **colonne vertébrale** par bordure, qui revient un plant sur deux. L'atelier pose chaque plante
+sur les côtés dont elle remplit la fonction, en alternance, des émergentes seules au sud et à l'ouest de l'externe,
+des brise-vent entre les bloque-herbe sur un côté coché « vent » ; un côté ne garde que les plantes qu'il peut
+porter, et dit lesquelles n'ont pas de place. Il faut deux espèces au moins par côté — la diversité fait la réussite
+du système : sinon, rien n'est réparti, et l'atelier dit quel côté manque de quoi. Vous voyez l'aperçu sur le plan,
+puis « Poser ces bordures » écrit tous les côtés à la fois ; chaque côté se retouche ensuite à la main. Dans le scénario, une plante
 déclarée « en bordure » renvoie à ces lignes : c'est leur compte qui fait foi.
 
 Chaque bordure a aussi son **calendrier prévu** : la date de plantation (l'atelier la propose d'après le
