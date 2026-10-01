@@ -41,6 +41,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   (plutôt que XML) ; toutes les spécifications sont tranchées. **Phases 1 (exporter), 2
   (importer) et 3 (aller-retour, script `bin/verifier-export-import.php`) faites le 2026-09-20** ;
   Phase 4 (GeoJSON, facultative) pas commencée — voir § Point de reprise.
+- `chantier-mises-a-jour.md` — le plan (7 phases) pour mettre l'atelier à jour sans gêner ceux qui l'utilisent :
+  sauvegarde avant `base`, mode maintenance, ordre des envois, pages restées ouvertes, déploiement atomique, site
+  d'essai, « Quoi de neuf ». Demandé le 2026-10-01 (bêta-testeurs en production) ; **Phases 1 et 2 faites le jour même**.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
@@ -311,9 +314,12 @@ décrit ci-dessous. Détail des décisions et de ce qui reste à porter dans
   chaque changement de schéma**. **Jamais `php bin/verifier-export-import.php` en direct**
   (même piège que `compte.php` ; le script refuse hors de ce poste). Voir
   `chantier-export-import-projet.md` § Phase 3.
-- Déployer vers alwaysdata : `python3 bin/deployer.py` — `etat`
+- Déployer vers alwaysdata : **`python3 bin/deployer.py mettre-a-jour`** — la voie normale depuis le 2026-10-01
+  (des bêta-testeurs en production) : maintenance (« Mise à jour en cours », 503), sauvegarde des bases dans
+  `../syntropia-sauvegardes/`, `base`, `fichiers`, réouverture ; une étape en échec laisse l'atelier fermé. Voir
+  `chantier-mises-a-jour.md`. Actions séparées : `sauvegarde`, `maintenance on|off|etat`, `etat`
   (connectivité), `fichiers` (`--dry-run` pour prévisualiser, sinon
-  envoie), `config` (pousse `config/base.php` seul), `base` (rejoue le
+  envoie), `config` (pousse `config/base.php` seul), `base` (sauvegarde, puis rejoue le
   schéma sur le serveur distant), `preparer` (assemble un dépôt manuel
   dans `../syntropia-depot` pour qui préfère FileZilla).
 - Ouvrir la maquette de référence : `le-bureau/index.html` directement

@@ -12,8 +12,15 @@ alwaysdata, à la main, une fois. Voir `config` ci-dessous pour la suite.
     python3 bin/deployer.py fichiers --dry-run   montre ce qui serait envoyé, n'envoie rien
     python3 bin/deployer.py config      envoie config/base.php (séparé de `fichiers` — jamais
                                         écrasé sans le demander explicitement)
-    python3 bin/deployer.py base        rejoue le schéma SQL sur les bases distantes
-                                        (nécessite config/base.php, local et déjà envoyé)
+    python3 bin/deployer.py base        rejoue le schéma SQL sur les bases distantes, après une
+                                        sauvegarde (nécessite config/base.php, local et déjà envoyé)
+    python3 bin/deployer.py sauvegarde  sauvegarde les deux bases de production dans
+                                        ../syntropia-sauvegardes (mysqldump, daté, compressé)
+    python3 bin/deployer.py maintenance on|off|etat
+                                        ferme l'atelier (« Mise à jour en cours », 503) ou le rouvre
+    python3 bin/deployer.py mettre-a-jour
+                                        tout dans l'ordre : vérifications, maintenance, sauvegarde,
+                                        schéma, fichiers, réouverture — la voie normale d'une mise à jour
     python3 bin/deployer.py preparer    assemble l'arborescence servable dans un dossier à
                                         part (../syntropia-depot), pour qui préfère déposer
                                         à la main (FileZilla…) plutôt que `fichiers`
@@ -27,10 +34,13 @@ ailleurs. L'accès SSH vient de `~/.ssh/config` (alias `jubile`), pas
 d'ici — voir architecture-technique.md § Hébergement.
 """
 
+import gzip
 import json
+import os
 import shutil
 import subprocess
 import sys
+from datetime import datetime
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -63,6 +73,16 @@ EXCLUSIONS = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db", "*.tmp", "~$*"]
 # du projet, jamais dedans (un `rglob` un peu large ne le ramasserait
 # pas par erreur).
 DEPOT = RACINE.parent / "syntropia-depot"
+
+# Les sauvegardes des bases de production, avant chaque `base` (chantier-mises-a-jour.md, Phase 1). Voisin du dépôt,
+# jamais dedans : elles contiennent les comptes (empreintes de mots de passe) et les projets des personnes.
+SAUVEGARDES = RACINE.parent / "syntropia-sauvegardes"
+
+# L'adresse publique de l'atelier — le contrôle de fin de `mettre-a-jour` (la page d'accueil répond-elle 200 ?).
+URL_PUBLIQUE = "https://jubile.alwaysdata.net/syntropia/"
+
+# La première ligne du .htaccess de maintenance : c'est elle qui dit qu'une maintenance est en cours.
+MARQUE_MAINTENANCE = "# MAINTENANCE SYNTROPIA"
 
 # Un piège classique de FTP en mode ASCII : les fins de ligne se font
 # réécrire. Sur un `.woff2`, cela le détruit — et une fonte cassée ne se
@@ -203,6 +223,9 @@ def fichiers(dry_run):
     avertir_documentation()
     if not verifier_ssh():
         return False
+    # Pendant une maintenance, le .htaccess de la racine est celui de la maintenance : ne pas le remplacer, sans quoi
+    # l'atelier rouvrirait au milieu de la mise à jour. `maintenance off` remet le vrai.
+    en_maintenance = maintenance_active()
     if not _dossiers_parents():
         souci("impossible de préparer les dossiers distants")
         return False
@@ -211,6 +234,9 @@ def fichiers(dry_run):
         source = RACINE / element
         if not source.exists():
             note(f"{element} absent, ignoré")
+            continue
+        if element == ".htaccess" and en_maintenance:
+            note(".htaccess — gardé tel quel : maintenance en cours (rétabli par `maintenance off`)")
             continue
         cmd = ["rsync", "-azv"]
         if dry_run:
@@ -240,6 +266,121 @@ def fichiers(dry_run):
     return reussite
 
 
+# ------------------------------------------------------------ maintenance
+
+def _rewrite_base():
+    """Le chemin de l'atelier sur le serveur (`/syntropia/`), lu dans le .htaccess normal — la même source que la
+    réécriture, pour que la maintenance ne puisse pas viser un autre chemin."""
+    for ligne in (RACINE / ".htaccess").read_text(encoding="utf-8").splitlines():
+        morceaux = ligne.split()
+        if len(morceaux) == 2 and morceaux[0] == "RewriteBase":
+            return morceaux[1] if morceaux[1].endswith("/") else morceaux[1] + "/"
+    raise RuntimeError("RewriteBase introuvable dans .htaccess")
+
+
+def htaccess_maintenance(base=None):
+    """Le .htaccess de la racine pendant une mise à jour (chantier-mises-a-jour.md, Phase 2) : tout répond 503 avec
+    `public/maintenance.html`, sauf cette page et ses feuilles de style et fontes. `Retry-After` dit aux navigateurs et
+    aux robots de revenir ; `no-store`, qu'aucune réponse de ce moment ne soit gardée en cache."""
+    base = base or _rewrite_base()
+    motif = "^" + base.replace(".", "\\.")
+    return f"""{MARQUE_MAINTENANCE} — posé par bin/deployer.py le temps d'une mise à jour (chantier-mises-a-jour.md).
+# Le .htaccess normal est rétabli par `python3 bin/deployer.py maintenance off`. Ne pas modifier à la main.
+ErrorDocument 503 {base}public/maintenance.html
+<IfModule mod_headers.c>
+    Header always set Retry-After "300"
+    Header always set Cache-Control "no-store"
+</IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase {base}
+    # La page de maintenance, et ce dont elle a besoin, restent servies.
+    RewriteCond %{{REQUEST_URI}} {motif}public/(maintenance\\.html|assets/)
+    RewriteRule ^ - [L]
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+    # Tout le reste : 503.
+    RewriteRule ^ - [R=503,L]
+</IfModule>
+"""
+
+
+def maintenance_active():
+    resultat = subprocess.run(["ssh", HOTE_SSH, f"head -n 1 {WWW_DISTANT}/.htaccess"], capture_output=True, text=True)
+    return resultat.returncode == 0 and resultat.stdout.startswith(MARQUE_MAINTENANCE)
+
+
+def maintenance(geste):
+    """`on` : pose le .htaccess de maintenance (et la page qu'il sert) ; `off` : remet le .htaccess normal ; `etat` : le dit.
+    Chaque pose passe par un fichier temporaire renommé — le .htaccess n'est jamais à moitié écrit."""
+    titre(f"Maintenance — {geste}")
+    if geste not in ("on", "off", "etat"):
+        souci("geste attendu : on, off ou etat")
+        return False
+    if not verifier_ssh():
+        return False
+    active = maintenance_active()
+    if geste == "etat":
+        (note if active else ok)("maintenance EN COURS — l'atelier répond 503" if active else "pas de maintenance — l'atelier est ouvert")
+        return True
+    if geste == "on":
+        page = RACINE / "public" / "maintenance.html"
+        envoi = subprocess.run(["rsync", "-az", str(page), f"{HOTE_SSH}:{WWW_DISTANT}/public/maintenance.html"],
+                               capture_output=True, text=True)
+        if envoi.returncode != 0:
+            souci("page de maintenance non envoyée — rien n'est fermé")
+            return False
+        contenu = htaccess_maintenance()
+    else:
+        contenu = (RACINE / ".htaccess").read_text(encoding="utf-8")
+    pose = subprocess.run(
+        ["ssh", HOTE_SSH, f"cat > {WWW_DISTANT}/.htaccess.nouveau && mv {WWW_DISTANT}/.htaccess.nouveau {WWW_DISTANT}/.htaccess"],
+        input=contenu, capture_output=True, text=True)
+    if pose.returncode != 0:
+        souci(".htaccess non posé : " + (pose.stderr.strip().splitlines()[-1] if pose.stderr.strip() else "échec"))
+        return False
+    if geste == "on":
+        ok("maintenance posée — toute page répond « Mise à jour en cours » (503)")
+    else:
+        ok("maintenance levée — .htaccess normal rétabli")
+    return True
+
+
+def repond(url):
+    """Le code HTTP d'une adresse, sans suivre les redirections — `None` si elle ne répond pas."""
+    r = subprocess.run(["curl", "-s", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "15", url],
+                       capture_output=True, text=True)
+    return int(r.stdout) if r.returncode == 0 and r.stdout.isdigit() else None
+
+
+def mettre_a_jour():
+    """Tout, dans l'ordre (chantier-mises-a-jour.md, Phase 2) : vérifications, maintenance, sauvegarde et schéma,
+    fichiers, fin de maintenance, contrôle. Une étape qui échoue laisse l'atelier EN MAINTENANCE — mieux vaut fermé
+    qu'à moitié à jour — et dit quoi faire."""
+    if not etat():
+        souci("vérifications en échec — rien n'a été touché")
+        return False
+    if not maintenance("on"):
+        return False
+    code = repond(URL_PUBLIQUE)
+    if code != 503:
+        souci(f"l'accueil répond {code}, pas 503 — la maintenance ne prend pas ; on la lève, rien d'autre n'est fait")
+        maintenance("off")
+        return False
+    ok("l'accueil répond 503 : personne ne voit la mise à jour en cours")
+    for etape, faire in (("schéma", base), ("fichiers", lambda: fichiers(False))):
+        if not faire():
+            titre("Arrêt")
+            souci(f"étape « {etape} » en échec — l'atelier RESTE EN MAINTENANCE")
+            note("corriger, relancer l'étape (`deployer.py base` ou `fichiers`), puis `deployer.py maintenance off`")
+            return False
+    if not maintenance("off"):
+        souci("maintenance non levée — relancer `deployer.py maintenance off`")
+        return False
+    code = repond(URL_PUBLIQUE)
+    (ok if code == 200 else souci)(f"l'accueil répond {code}")
+    return code == 200
+
+
 def config():
     titre("Configuration")
     chemin = RACINE / "config" / "base.php"
@@ -259,6 +400,63 @@ def config():
     return True
 
 
+def sauvegarde():
+    """Un `mysqldump` des deux bases de production, compressé sur le serveur, rapatrié dans `SAUVEGARDES` (chantier-
+    mises-a-jour.md, Phase 1). Une sauvegarde n'est réputée faite que si elle se décompresse et se termine par la ligne
+    de fin de `mysqldump` ; sinon le fichier est retiré et l'on rend False. Restaurer reste un geste à la main."""
+    titre("Sauvegarde des bases de production")
+    cfg = config_prod()
+    if cfg is None:
+        souci("config/base.php absent — voir config/base.php.exemple")
+        return False
+    if not verifier_ssh():
+        return False
+    SAUVEGARDES.mkdir(mode=0o700, exist_ok=True)
+    horodatage = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    reussite = True
+    for cle in ("base_comptes", "base_syntropia"):
+        base_nom = cfg[cle]
+        cible = SAUVEGARDES / f"{horodatage}_{base_nom}.sql.gz"
+        # `pipefail` : un échec de mysqldump ne doit pas se cacher derrière un gzip qui, lui, réussit.
+        commande = (
+            f"set -o pipefail; MYSQL_PWD={_echappe(cfg['mot_de_passe'])} mysqldump -h{cfg['hote']} -P{cfg['port']} "
+            f"-u{cfg['utilisateur']} --single-transaction --no-tablespaces --default-character-set=utf8mb4 "
+            f"{base_nom} | gzip -c"
+        )
+        fd = os.open(cible, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "wb") as sortie:
+            resultat = subprocess.run(["ssh", HOTE_SSH, f"bash -c {_echappe(commande)}"], stdout=sortie,
+                                      stderr=subprocess.PIPE)
+        if resultat.returncode != 0 or not _sauvegarde_complete(cible):
+            erreur = resultat.stderr.decode("utf-8", "replace").strip().splitlines()
+            souci(f"{base_nom} — sauvegarde manquée : " + (erreur[-1] if erreur else "fichier incomplet"))
+            cible.unlink(missing_ok=True)
+            reussite = False
+            continue
+        ok(f"{base_nom} — {cible.name} ({cible.stat().st_size // 1024} Ko)")
+    if not reussite:
+        # Un jeu incomplet ne sert à rien et prête à confusion : on ne garde que des jeux entiers.
+        for f in SAUVEGARDES.glob(f"{horodatage}_*.sql.gz"):
+            f.unlink()
+    if reussite:
+        note(f"dans {SAUVEGARDES} — restaurer : gunzip -c FICHIER | mysql … NOM_DE_LA_BASE (voir chantier-mises-a-jour.md)")
+    return reussite
+
+
+def _sauvegarde_complete(chemin):
+    """Le fichier se décompresse en entier et se termine par « -- Dump completed », la dernière ligne qu'écrit
+    mysqldump quand il est allé au bout."""
+    try:
+        derniere = b""
+        with gzip.open(chemin, "rb") as f:
+            for ligne in f:
+                if ligne.strip():
+                    derniere = ligne
+        return derniere.startswith(b"-- Dump completed")
+    except (OSError, EOFError):
+        return False
+
+
 def base():
     titre("Schéma, sur les bases distantes")
     cfg = config_prod()
@@ -267,6 +465,11 @@ def base():
         return False
     if not verifier_ssh():
         return False
+    # Jamais sans sauvegarde : des personnes travaillent en production (chantier-mises-a-jour.md, Phase 1).
+    if not sauvegarde():
+        souci("schéma non rejoué : la sauvegarde a échoué")
+        return False
+    titre("Schéma, sur les bases distantes")
     # `02-especes-seed.sql` : du DML (INSERT IGNORE), rejoué comme le
     # schéma — voir bin/dev.py § SCHEMAS, tenu assorti à cette liste.
     schemas = [("base_comptes", "00-comptes.sql"), ("base_syntropia", "01-syntropia.sql"),
@@ -356,6 +559,12 @@ def main():
         return 0 if config() else 1
     if action == "base":
         return 0 if base() else 1
+    if action == "sauvegarde":
+        return 0 if sauvegarde() else 1
+    if action == "maintenance":
+        return 0 if maintenance(sys.argv[2] if len(sys.argv) > 2 else "etat") else 1
+    if action == "mettre-a-jour":
+        return 0 if mettre_a_jour() else 1
     if action == "preparer":
         return 0 if preparer_depot() else 1
 

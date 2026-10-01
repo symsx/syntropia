@@ -1,0 +1,60 @@
+<!doctype html>
+<!--
+  La page « Mise à jour en cours » — servie (code 503) par le .htaccess de maintenance que pose bin/deployer.py le temps
+  d'un déploiement (chantier-mises-a-jour.md, Phase 2). Statique, sans PHP ni JS : elle ne doit dépendre de rien qui
+  soit en train d'être remplacé. Sur le gabarit du bureau (gabarit.css seulement), sans panneaux : rien à y faire
+  qu'attendre. Ses liens sont relatifs — elle est servie à l'adresse demandée, quelle qu'elle soit.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Syntropia — mise à jour en cours</title>
+<link rel="stylesheet" href="assets/css/gabarit.css">
+<style>
+  :root{ --haut-bandeaux: 3.4rem; }
+  .maj-corps{ text-align:center; max-width:32rem; padding:0 1rem; }
+  .maj-titre{ font:600 2rem var(--titre); color:var(--accent-titre); margin:0 0 .8rem; line-height:1.15; }
+  .maj-texte{ font:400 1rem/1.5 var(--texte); color:var(--ink); margin:0 0 .7rem; }
+  .maj-note{ font:400 .88rem/1.45 var(--texte); color:var(--muted); margin:0; }
+  .maj-lien{ color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="bandeau-general">
+    <div class="bg-gauche">
+      <span class="logo-espace" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M12 3C8 5 6 8 6 12M12 3c4 2 6 5 6 9M6 12c0 4 2.5 7 6 8M18 12c0 4-2.5 7-6 8"/></svg>
+      </span>
+      <div class="marque"><span class="marque-nom">Syntropia</span></div>
+    </div>
+    <div class="bg-centre"><span class="bg-centre-titre">Mise à jour en cours</span></div>
+    <div class="bg-droite"></div>
+  </header>
+
+  <div class="corps">
+    <main class="bureau" id="bureau">
+      <div class="maj-corps">
+        <h1 class="maj-titre">L'atelier se met à jour</h1>
+        <p class="maj-texte">Une nouvelle version de Syntropia est en train d'être installée. Cela prend
+           d'ordinaire quelques minutes.</p>
+        <p class="maj-texte">Votre travail déjà enregistré est conservé. Si vous veniez d'envoyer un
+           formulaire, il n'a pas été reçu : revenez à la page précédente — vos saisies y sont le plus
+           souvent encore — et renvoyez-le dans quelques minutes. Sinon,
+           <a class="maj-lien" href="">rechargez cette page</a> dans un instant.</p>
+        <p class="maj-note">Merci de votre patience.</p>
+      </div>
+    </main>
+  </div>
+
+  <footer class="pied">
+    <span class="pied-mention">Syntropia — mise à jour en cours</span>
+    <span class="pied-spacer"></span>
+  </footer>
+
+</div>
+</body>
+</html>
