@@ -46,7 +46,7 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Objectifs — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette étape : pas de bandeau d'outils (la saisie est le
      seul geste de la page) — recaler la tirette/panneau Informations
@@ -209,8 +209,8 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({ etape: 'definition-objectifs' });
 </script>

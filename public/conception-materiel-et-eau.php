@@ -252,7 +252,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Matériel et eau — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* pas de bandeau d'outils sur cette page : les tirettes se calent sur le seul bandeau général */
   :root{ --haut-bandeaux: 3.4rem; }
@@ -812,8 +812,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,

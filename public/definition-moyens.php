@@ -47,7 +47,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Moyens — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette étape : pas de bandeau d'outils (la saisie est le
      seul geste de la page) — recaler la tirette/panneau Informations
@@ -219,8 +219,8 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({ etape: 'definition-moyens' });
 </script>

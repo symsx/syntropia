@@ -33,7 +33,7 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-saf.m
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Documentation SAF — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette page : pas de bandeau d'outils (rien à choisir en
      haut) — recaler la tirette/panneau Informations sur un seul
@@ -286,9 +286,9 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-saf.m
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
-<script src="assets/js/livret.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
+<script src="assets/js/livret.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/livret.js') ?>"></script>
 <script>
   Gabarit.init({});
 </script>

@@ -119,7 +119,7 @@ const PROJETS_VISIBLES = 3;
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Préférences — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   :root{ --haut-bandeaux: 3.4rem; }
 
@@ -363,8 +363,8 @@ const PROJETS_VISIBLES = 3;
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({});
 </script>

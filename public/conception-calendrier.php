@@ -45,7 +45,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calendrier — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette étape : pas de bandeau d'outils (la saisie est le
      seul geste de la page) — recaler la tirette/panneau Informations
@@ -198,8 +198,8 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({ etape: 'conception-calendrier' });
 </script>

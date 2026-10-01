@@ -419,7 +419,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Parcelles — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette étape : la géométrie de la parcelle, en SVG */
   .bureau-carte{ width:100%; height:100%; filter:drop-shadow(0 10px 24px var(--ombre)); }
@@ -1303,8 +1303,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 
 </div>
 
-<script src="assets/js/etapes.js"></script>
-<script src="assets/js/gabarit.js"></script>
+<script src="assets/js/etapes.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/etapes.js') ?>"></script>
+<script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,

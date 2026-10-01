@@ -159,7 +159,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Étude du site — Syntropia</title>
-<link rel="stylesheet" href="assets/css/gabarit.css">
+<link rel="stylesheet" href="assets/css/gabarit.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/gabarit.css') ?>">
 <style>
   /* propre à cette étape : la carte occupe tout le bureau, sans la
      marge habituelle — un terrain regardé de près a besoin de place. */
