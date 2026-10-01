@@ -2,8 +2,8 @@
 
 *Proposé le 2026-10-01, à la demande du porteur, au moment où il invite des bêta-testeurs en production. **Phases 1
 (la sauvegarde) et 2 (le mode maintenance) faites le 2026-10-01**, **vérifiées sur le serveur réel le
-même jour** ; **Phases 3 (l'ordre des envois, les personnes connectées) et 4 (les pages restées ouvertes) faites le
-même jour**, la 4 pas encore déployée ; les suivantes au fil de l'eau, avant la version 1.*
+même jour** ; **Phases 3 (l'ordre des envois, les personnes connectées) et 4 (les pages restées ouvertes) faites,
+déployées et essayées en production le même jour**, le porteur connecté ; les suivantes au fil de l'eau, avant la version 1.*
 
 ## L'intention
 
@@ -103,7 +103,8 @@ connecté » des vérifications précédentes étaient donc **faux**. Désormais
 exige()`) touche une **trace d'activité** : un fichier vide par compte dans `contenu/actifs/`, nommé d'une empreinte du
 compte (16 caractères de SHA-256), au plus une fois par minute ; le déployeur ne fait que **lister** les traces des
 30 dernières minutes. `contenu/actifs/` est hors du dépôt (`.gitignore`) et des envois (`EXCLUSIONS`), et `contenu/`
-reste fermé au web.
+reste fermé au web. **Vérifié en production avec le porteur** : après le déploiement du correctif, il recharge et navigue — une
+trace apparaît (`contenu/actifs/`, dossier 755, fichier vide), et `deployer.py etat` dit « 1 personne connectée ».
 
 ### Phase 4 — Les pages restées ouvertes
 
@@ -140,6 +141,10 @@ suivante, cookie effacé) puis accepté une fois la page à jour ; plan périmé
 préventif au retour sur l'onglet, absent au chargement, disparu après « Recharger la page », tenu dans l'écran à
 1280×720 et 320×568 ; sans marque de déploiement (local), tout écrit comme avant. La page de maintenance dit
 maintenant de recharger la page d'avant avant de refaire l'envoi. Livret : un paragraphe dans « Le bureau ».
+
+**Essayé en production le 2026-10-01, le porteur connecté** : deux `mettre-a-jour` successifs. Après le premier, un
+envoi depuis sa page d'avant a été refusé et **l'avis s'est affiché** ; après le second, sa page (chargée avec le nouveau
+script) a proposé de se recharger, et il l'a rechargée.
 
 ### Phase 5 — Le déploiement atomique
 
