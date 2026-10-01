@@ -217,12 +217,33 @@ final class Authentification
                 }
                 exit;
             }
+            self::noterActivite((int) $id);
             return;
         }
         if (!headers_sent()) {
             header('Location: ' . Configuration::base() . $versOu);
         }
         exit;
+    }
+
+    /**
+     * Une trace d'activité : un fichier vide par compte (`contenu/actifs/`, nommé d'une empreinte du compte), touché au
+     * plus une fois par minute à chaque page connectée. Le déployeur compte les traces récentes avant de fermer
+     * l'atelier (chantier-mises-a-jour.md, Phase 3) — il ne peut pas lire les fichiers de session, qui appartiennent à
+     * l'utilisateur sous lequel tourne PHP, mais il peut lister ce dossier. Rien d'autre n'y est écrit ; un échec ne
+     * gêne jamais la page.
+     */
+    private static function noterActivite(int $compteId): void
+    {
+        $dossier = __DIR__ . '/../../contenu/actifs';
+        $trace = $dossier . '/' . substr(hash('sha256', 'syntropia-actif-' . $compteId), 0, 16);
+        if (is_file($trace) && filemtime($trace) > time() - 60) {
+            return;
+        }
+        if (!is_dir($dossier)) {
+            @mkdir($dossier, 0755);
+        }
+        @touch($trace);
     }
 
     /** Le nom affiché a changé : la session en garde une copie pour l'affichage. */

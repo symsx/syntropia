@@ -93,9 +93,17 @@ local. Puis **`mettre-a-jour` de bout en bout** (35 s, une vingtaine fermé) : 5
 **Faite le 2026-10-01.** `ELEMENTS` envoie `sql/`, `src/`, `contenu/` avant `public/`. `sessions_actives()` compte les
 sessions de Syntropia (marque `syntropia|`, le dossier est partagé avec Plantae) qui portent un compte (`compte_id`) et
 ont bougé dans les 30 dernières minutes — rien d'autre n'est lu de ces fichiers ; `etat` le dit, et `mettre-a-jour`
-demande confirmation au clavier s'il y a quelqu'un (lancé par un autre programme, il le dit et continue). Vérifié : en
-production, personne (exact à ce moment) ; sur cinq faux fichiers de session (Syntropia connectée, Plantae, anonyme,
-ancienne, vide), seule la première est comptée.
+demande confirmation au clavier s'il y a quelqu'un (lancé par un autre programme, il le dit et continue). Vérifié : sur
+cinq faux fichiers de session (Syntropia connectée, Plantae, anonyme, ancienne, vide), seule la première est comptée.
+
+**Corrigé le même jour, en production avec le porteur connecté** : le comptage annonçait « personne », et l'avait
+annoncé à chaque fois. Les fichiers de session appartiennent à l'utilisateur sous lequel tourne PHP ; le compte SSH du
+déploiement peut les lister, pas les lire — et le `grep` échouait en silence (`2>/dev/null`). Les « personne de
+connecté » des vérifications précédentes étaient donc **faux**. Désormais chaque page connectée (`Authentification::
+exige()`) touche une **trace d'activité** : un fichier vide par compte dans `contenu/actifs/`, nommé d'une empreinte du
+compte (16 caractères de SHA-256), au plus une fois par minute ; le déployeur ne fait que **lister** les traces des
+30 dernières minutes. `contenu/actifs/` est hors du dépôt (`.gitignore`) et des envois (`EXCLUSIONS`), et `contenu/`
+reste fermé au web.
 
 ### Phase 4 — Les pages restées ouvertes
 

@@ -71,7 +71,7 @@ ELEMENTS = [
 ]
 
 # Jamais envoyé, même à l'intérieur d'un dossier de la liste ci-dessus.
-EXCLUSIONS = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db", "*.tmp", "~$*", "deploiement.txt"]
+EXCLUSIONS = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db", "*.tmp", "~$*", "deploiement.txt", "actifs/"]
 
 # Pour qui dépose à la main plutôt qu'avec `fichiers` — voisin du dépôt
 # du projet, jamais dedans (un `rglob` un peu large ne le ramasserait
@@ -188,14 +188,12 @@ def _echappe(valeur):
 
 def sessions_actives():
     """Le nombre de personnes connectées à Syntropia depuis MINUTES_ACTIVITE minutes (chantier-mises-a-jour.md,
-    Phase 3) : les fichiers de session récents qui portent la partie propre à Syntropia (`syntropia|`) ET un compte
-    (`compte_id`). Le dossier des sessions est partagé avec Plantae, d'où la première marque. `None` si on ne sait pas.
-    On ne lit rien d'autre de ces fichiers."""
-    commande = (
-        "d=$(php -r 'echo ini_get(\"session.save_path\");'); d=${d:-/tmp}; "
-        f"find \"$d\" -maxdepth 1 -name 'sess_*' -mmin -{MINUTES_ACTIVITE} -size +0 -print0 2>/dev/null "
-        "| xargs -0 -r grep -l -Z 'syntropia|' 2>/dev/null | xargs -0 -r grep -l 'compte_id' 2>/dev/null | wc -l"
-    )
+    Phase 3) : les traces d'activité récentes de `contenu/actifs/` (un fichier vide par compte, touché par chaque page
+    connectée — `Authentification::noterActivite()`). On ne fait que les lister. Les fichiers de session, eux, ne sont
+    pas lisibles depuis le compte SSH (ils appartiennent à l'utilisateur de PHP) : les lire donnait toujours zéro, en
+    silence — corrigé le 2026-10-01. `None` si on ne sait pas."""
+    commande = (f"d={WWW_DISTANT}/contenu/actifs; if [ -d \"$d\" ]; then find \"$d\" -maxdepth 1 -type f "
+                f"-mmin -{MINUTES_ACTIVITE} | wc -l; else echo 0; fi")
     r = subprocess.run(["ssh", HOTE_SSH, commande], capture_output=True, text=True)
     return int(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip().isdigit() else None
 

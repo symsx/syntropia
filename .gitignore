@@ -21,3 +21,5 @@ config/base.php
 # Le déploiement en ligne — écrit sur le serveur par bin/deployer.py fichiers, jamais dans le dépôt
 # (chantier-mises-a-jour.md, Phase 4). Un fichier local ne sert qu'aux essais.
 contenu/deploiement.txt
+# Les traces d'activité des comptes (Authentification::noterActivite) — propres à chaque serveur.
+contenu/actifs/
