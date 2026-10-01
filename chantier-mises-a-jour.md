@@ -89,6 +89,13 @@ local. Puis **`mettre-a-jour` de bout en bout** (35 s, une vingtaine fermé) : 5
 - Avant `mettre-a-jour`, compter les **sessions actives** (fichiers de session modifiés dans les 30 dernières minutes)
   et le dire — on choisit un moment calme, ou l'on prévient.
 
+**Faite le 2026-10-01.** `ELEMENTS` envoie `sql/`, `src/`, `contenu/` avant `public/`. `sessions_actives()` compte les
+sessions de Syntropia (marque `syntropia|`, le dossier est partagé avec Plantae) qui portent un compte (`compte_id`) et
+ont bougé dans les 30 dernières minutes — rien d'autre n'est lu de ces fichiers ; `etat` le dit, et `mettre-a-jour`
+demande confirmation au clavier s'il y a quelqu'un (lancé par un autre programme, il le dit et continue). Vérifié : en
+production, personne (exact à ce moment) ; sur cinq faux fichiers de session (Syntropia connectée, Plantae, anonyme,
+ancienne, vide), seule la première est comptée.
+
 ### Phase 4 — Les pages restées ouvertes
 
 - **Un champ absent ne remet rien à zéro** : quand un formulaire n'envoie pas un champ, le serveur garde la valeur

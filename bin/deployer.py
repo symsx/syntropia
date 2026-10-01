@@ -55,15 +55,19 @@ WWW_DISTANT = "www/syntropia"
 # Ce qui part vers le serveur — une liste explicite, pas une exclusion :
 # plus sûr de dire ce qui part que d'espérer avoir exclu tout ce qui ne
 # doit pas partir. `config/base.php` n'y est PAS : voir l'action `config`.
+#
+# L'ORDRE COMPTE (chantier-mises-a-jour.md, Phase 3) : ce dont les pages dépendent (`src/`, `contenu/`) part avant
+# les pages (`public/`) — sans quoi, hors maintenance, une page nouvelle peut appeler quelques secondes une classe
+# pas encore arrivée.
 ELEMENTS = [
     ".htaccess",
     "bin",
     "config/.htaccess",
     "config/base.php.exemple",
+    "sql",
+    "src",
     "contenu",
     "public",
-    "src",
-    "sql",
 ]
 
 # Jamais envoyé, même à l'intérieur d'un dossier de la liste ci-dessus.
@@ -82,6 +86,9 @@ SAUVEGARDES_GARDEES = 5
 
 # L'adresse publique de l'atelier — le contrôle de fin de `mettre-a-jour` (la page d'accueil répond-elle 200 ?).
 URL_PUBLIQUE = "https://jubile.alwaysdata.net/syntropia/"
+
+# Une personne est « connectée » si sa session de Syntropia porte un compte et a bougé depuis ce nombre de minutes.
+MINUTES_ACTIVITE = 30
 
 # La première ligne du .htaccess de maintenance : c'est elle qui dit qu'une maintenance est en cours.
 MARQUE_MAINTENANCE = "# MAINTENANCE SYNTROPIA"
@@ -179,6 +186,31 @@ def _echappe(valeur):
     return "'" + valeur.replace("'", "'\\''") + "'"
 
 
+def sessions_actives():
+    """Le nombre de personnes connectées à Syntropia depuis MINUTES_ACTIVITE minutes (chantier-mises-a-jour.md,
+    Phase 3) : les fichiers de session récents qui portent la partie propre à Syntropia (`syntropia|`) ET un compte
+    (`compte_id`). Le dossier des sessions est partagé avec Plantae, d'où la première marque. `None` si on ne sait pas.
+    On ne lit rien d'autre de ces fichiers."""
+    commande = (
+        "d=$(php -r 'echo ini_get(\"session.save_path\");'); d=${d:-/tmp}; "
+        f"find \"$d\" -maxdepth 1 -name 'sess_*' -mmin -{MINUTES_ACTIVITE} -size +0 -print0 2>/dev/null "
+        "| xargs -0 -r grep -l -Z 'syntropia|' 2>/dev/null | xargs -0 -r grep -l 'compte_id' 2>/dev/null | wc -l"
+    )
+    r = subprocess.run(["ssh", HOTE_SSH, commande], capture_output=True, text=True)
+    return int(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip().isdigit() else None
+
+
+def dire_sessions():
+    n = sessions_actives()
+    if n is None:
+        note("personnes connectées : inconnu (lecture des sessions impossible)")
+    elif n == 0:
+        ok(f"personne de connecté depuis {MINUTES_ACTIVITE} minutes")
+    else:
+        note(f"{n} personne(s) connectée(s) dans les {MINUTES_ACTIVITE} dernières minutes")
+    return n
+
+
 def etat():
     titre("SSH")
     ssh_ok = verifier_ssh()
@@ -194,6 +226,8 @@ def etat():
         ok("config/base.php lu")
     titre("Bases distantes")
     base_ok = verifier_base_distante(cfg)
+    titre("Personnes connectées")
+    dire_sessions()
     return ssh_ok and php_ok and base_ok
 
 
@@ -361,6 +395,14 @@ def mettre_a_jour():
     if not etat():
         souci("vérifications en échec — rien n'a été touché")
         return False
+    # Des personnes connectées verront « Mise à jour en cours » quelques instants : on choisit un moment calme, ou on
+    # les prévient. Au clavier, on demande ; lancé par un autre programme, on le dit et l'on continue.
+    n = sessions_actives()
+    if n and sys.stdin.isatty():
+        reponse = input(f"  {n} personne(s) connectée(s) récemment. Fermer l'atelier quand même ? [o/N] ").strip().lower()
+        if reponse not in ("o", "oui"):
+            note("rien n'a été touché")
+            return False
     if not maintenance("on"):
         return False
     code = repond(URL_PUBLIQUE)
