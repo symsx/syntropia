@@ -2,7 +2,7 @@
 
 *Proposé le 2026-10-01, à la demande du porteur. Toutes les questions sont tranchées le même jour. **Phases 1 (la règle,
 `src/RepartitionBordures.php`), 2 (la coche « brise-vent ») et 3 (la page) faites le 2026-10-01** ; la Phase 4 (livret
-et vérifications) faite avec la 3. **Pas déployé.***
+et vérifications) faite avec la 3. **Déployé le 2026-10-01** (douzième vague, avec le cadre complété).*
 
 ## L'intention
 

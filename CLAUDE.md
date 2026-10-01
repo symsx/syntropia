@@ -123,10 +123,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   « colonne vertébrale » par bordure un plant sur deux, espacement), sur des bordures toutes vides ; une plante sans
   espacement est écartée ; une liste qui ne couvre pas toutes les fonctions est refusée. Deux espèces au moins par
   côté ; sur un côté brise-vent, brise-vent et bloque-herbe en alternance. Proposé et tranché le 2026-10-01 ; **chantier
-  terminé le 2026-10-01, pas déployé** — la règle (`src/RepartitionBordures.php`, pure), la coche « vent » par côté de
+  terminé et déployé le 2026-10-01** (douzième vague) — la règle (`src/RepartitionBordures.php`, pure), la coche « vent » par côté de
   l'externe (`parcelle.plan`), la page (`conception-parcelles.php`, bloc `#rb`, `LignesPlantation::poserRepartition()`) ; les espacements qui manquaient
-  (46 des 64 espèces de bordure) complétés par le porteur le même jour — cadre régénéré, **pas encore déployé**
-  (`deployer.py base`, puis `fichiers` pour la page).
+  (46 des 64 espèces de bordure) complétés par le porteur le même jour — cadre régénéré et déployé.
 - `dossier-qualification.md` — le brief transmis à un tiers (cgpt) tenant
   le rôle de responsable qualification, pour produire des scénarios de
   test à partir de l'état réel du dépôt.
@@ -1837,6 +1836,18 @@ apparaît — jamais partout où le mot existe dans l'absolu, seulement où
 il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
+
+00. **2026-10-01 — déployé (douzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : la répartition d'une liste de
+   plantes sur les bordures (`chantier-repartition-bordures.md`, terminé : la règle, la coche « vent », la page), le cadre
+   complété par le porteur (119 espacements, 96 strates de service ; chalef Amoroso et Sweet n'Sour à 0,50 m ; service
+   « haute » pour fève, artichaut, chalef), la pomme de terre produisant en moyenne, la fiche Joala des strates corrigée.
+   **Avant** : production lue sans rien changer (2 projets, 1 parcelle, 12 réponses, 3 tracés, aucune ligne de plants, 143
+   espèces au cadre dont 29 avec un espacement, aucune surcharge). **Après** : les 3152 cases remplies du cadre égales au CSV,
+   plus aucune espèce de bordure sans espacement, données du projet inchangées, aucun écart de contenu `rsync`, syntaxe PHP
+   distante sans erreur, page 302 pour un anonyme (POST compris), `src/`, `sql/`, `contenu/`, `bin/`, `config/base.php`
+   403 ; les deux projets réels exportés et examinés (lecture seule). Le parcours reste à essayer avec le vrai compte :
+   cocher « vent » sur un côté, répartir une liste sur des bordures vides, poser. **Ouvert** : la question du changement de
+   strate (fève, pomme de terre) est à poser en formation (`chantier-film-de-la-parcelle.md`, question n° 1).
 
 0. **2026-09-30, fin de journée — commité, déployé (onzième vague, `base` puis `fichiers`, schéma 18 inchangé)** : avant,
    production lue sans rien changer (65 espèces au cadre, aucune surcharge, 2 projets, 1 parcelle, 12 réponses, 3 tracés) ;
