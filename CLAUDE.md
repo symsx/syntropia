@@ -1877,12 +1877,13 @@ il apparaît réellement, pour ne pas noyer le motif.
      à 74 fichiers) : cinq questions ouvertes du saut du chat documentées, aucune fermée (`chantier-saut-du-chat.md`, mise à jour
      du 2026-10-02) ; la face sud de l'externe **rouverte pour le jardin-forêt** (`chantier-repartition-bordures.md`) ; notes de
      l'eucalyptus (proscrit avec le recul), de l'artichaut et du topinambour complétées au cadre (CSV et seed, rejoué en local —
-     **`deployer.py mettre-a-jour` à faire** pour la production). **Joala est la structure d'Anaëlle Théry** : `[Joala]` et
+     **déployé le 2026-10-02**, avec le schéma 19). **Joala est la structure d'Anaëlle Théry** : `[Joala]` et
      `[Théry]` ne sont pas deux sources indépendantes.
    - **Trois stades du terrain, schéma 19 (2026-10-02)** : le porteur fait correspondre les états du sol de Joala 6-8 aux stades
      (pauvre = colonisation, intermédiaire = accumulation, vers le climax = abondance) — `parcelle.stade` gagne `abondance`,
-     `Stade::repere()` dit densité et taille par stade (question n° 4 fermée, sans chiffre). Au déploiement : `mettre-a-jour`
-     (qui rejoue `base` avant `fichiers`).
+     `Stade::repere()` dit densité et taille par stade (question n° 4 fermée, sans chiffre). **Déployé le 2026-10-02 à 23 h 10**
+     (`mettre-a-jour`, personne de connecté, sauvegarde faite) : production au schéma 19, ses deux parcelles gardent leur stade
+     (une en colonisation, une en accumulation), fichiers identiques. `origin` (GitHub) pas poussé.
    - **Repérer les végétaux des planches** comme ceux des bordures (sigles, légende, survol) — demandé par le porteur,
      « dans le plan des planches il faudra repérer les végétaux de la même façon » ; rien n'y est encore dessiné en cercles.
    - Les trois cornouillers sans fonction de bordure (officinal, de l'Himalaya, du Japon) gardent leur espacement de
