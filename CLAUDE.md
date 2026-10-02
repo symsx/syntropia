@@ -1888,7 +1888,12 @@ il apparaît réellement, pour ne pas noyer le motif.
      (pauvre = colonisation, intermédiaire = accumulation, vers le climax = abondance) — `parcelle.stade` gagne `abondance`,
      `Stade::repere()` dit densité et taille par stade (question n° 4 fermée, sans chiffre). **Déployé le 2026-10-02 à 23 h 10**
      (`mettre-a-jour`, personne de connecté, sauvegarde faite) : production au schéma 19, ses deux parcelles gardent leur stade
-     (une en colonisation, une en accumulation), fichiers identiques. `origin` (GitHub) pas poussé.
+     (une en colonisation, une en accumulation), fichiers identiques.
+   - **Déployés le 2026-10-02 à 23 h 58 et poussés sur GitHub** : le Dossier Projet (Phase 1), le livret « Les sources »
+     (`contenu/sources-de-l-atelier.md`, quatrième entrée de la section Documentation) et le livret « L'atelier » redécoupé
+     (paragraphes coupés, mots inchangés : il débordait de 868 px sur téléphone). À essayer avec le vrai compte : imprimer
+     le Dossier Projet. Le chapitre « Concevoir : les parcelles et le scénario » fait 70 sous-pages à 320 px — à couper un
+     jour en plusieurs chapitres.
    - **Repérer les végétaux des planches** comme ceux des bordures (sigles, légende, survol) — demandé par le porteur,
      « dans le plan des planches il faudra repérer les végétaux de la même façon » ; rien n'y est encore dessiné en cercles.
    - Les trois cornouillers sans fonction de bordure (officinal, de l'Himalaya, du Japon) gardent leur espacement de
