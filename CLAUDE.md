@@ -1844,6 +1844,51 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
+000. **État au 2026-10-02, fin de journée — pour la reprise.** Tout est commité **et poussé sur GitHub** (`origin/main` à
+   jour) ; **la production est à jour** (dernier déploiement 23 h 58, commit `bf3d846`, **schéma 19**), par
+   `deployer.py mettre-a-jour`, personne de connecté, sauvegardes faites. Les parcours restent à essayer avec le vrai
+   compte : choisir un stade (dont « Abondance ») et lire son conseil ; ouvrir « Dossier Projet › Imprimer le dossier »
+   et en tirer un PDF ; lire « Les sources » sur téléphone.
+   **Fait ce jour** :
+   - **Module 6 de la formation Joala versé** (`connaissances/formation-joala/printemps-mini-foret-et-sol.md`, inventaire à
+     74 fichiers, README : quatrième versement) — cinq questions ouvertes du saut du chat documentées
+     (`chantier-saut-du-chat.md`, mise à jour du 2026-10-02). **Joala est la structure d'Anaëlle Théry** : `[Joala]` et
+     `[Théry]` ne sont jamais deux sources indépendantes ; un écart entre eux est une pratique qui a évolué. Notes du cadre :
+     l'eucalyptus (proscrit avec le recul, il bloque les champignons du sol — gardé au cadre, réserve dite), l'artichaut, le
+     topinambour (ils étaient déjà au cadre).
+   - **Trois stades du terrain (schéma 19)** : le porteur fait correspondre les états du sol de Joala 6-8 aux stades (pauvre =
+     colonisation, intermédiaire = accumulation, vers le climax = abondance) ; `Stade::repere()` dit densité et taille par
+     stade, sans chiffre ; **question n° 4 fermée**. Production : ses deux parcelles ont gardé leur stade.
+   - **Dossier Projet, Phase 1** (`chantier-dossier-projet.md` § Phase 1) : `public/dossier-projet.php`, hors gabarit (seconde
+     exception, inscrite § Directives de travail), couverture + Définition, chapitres à cocher en CSS pur, A4 avec pied de
+     page, saut de page par phase ; section « Dossier Projet » du panneau gauche, avant « Documentation ». Réponses de la
+     personne, à défaut du porteur (`Reponses::definitionDuProjet()`, lecture seule) — choix fait en codant, dit au porteur.
+   - **Livret « Les sources »** (`contenu/sources-de-l-atelier.md`, `public/documentation-sources.php`, quatrième entrée de
+     Documentation) : d'où viennent les règles de l'atelier et à quoi elles servent. Écrit à la demande du porteur ; qui le
+     maintient n'a pas été dit — **à mettre à jour quand une source nouvelle entre dans une règle**, à demander au porteur.
+   - **Livret « L'atelier » redécoupé** pour tenir sur tout écran : il débordait jusqu'à 868 px sur téléphone (un paragraphe
+     plus haut que l'écran — `livret.js` ne coupe qu'entre deux paragraphes). Paragraphes coupés entre deux phrases, mots
+     inchangés, quatre phrases-fleuves récrites ; « L'intention » et « Limites » (du porteur) intacts. **Règle pour écrire un
+     livret : des paragraphes de 300 caractères au plus (220 pour tenir à 320×568), des titres de chapitre courts** (ils
+     deviennent les boutons « précédent / suivant »).
+   **La suite, dans l'ordre que le porteur a choisi** :
+   - **Dossier Projet, Phase 2** — le terrain (tracés de la carte en SVG, échelle et nord, sans fond de carte) et une page par
+     parcelle (dimensions, plan SVG, scénario). Puis Phase 3 (matériel, eau, calendrier, participants), Phase 4 (réalisation,
+     suivi, finitions), **Phase 5 : le feuillet de chantier de chaque parcelle** — c'est elle qui répond à « le plan de
+     parcelle est-il imprimable ? » (le porteur a préféré suivre l'ordre plutôt qu'une impression du plan seul).
+   **Ouvert** :
+   - **Face sud de l'externe en jardin-forêt** (`chantier-repartition-bordures.md`, rouverte) : Joala 6-5 y met une bande de
+     rocaille basse, la règle codée (Théry ch. 14) des émergentes ; le porteur pense que la strate basse peut convenir en
+     jardin-forêt — non tranché, rien changé au code.
+   - Le chapitre « Concevoir : les parcelles et le scénario » du livret fait 70 sous-pages à 320 px : à couper un jour en
+     plusieurs chapitres. Le livret SAF (du porteur) déborde encore de ~50 px à 320×568. La tirette « Informations » recouvre
+     la ligne « Chapitre n sur N » des livrets sur téléphone.
+   - Le panneau gauche défile déjà sur un écran de 800 px de haut ; la section « Dossier Projet » l'allonge d'une entrée.
+   - Le modèle téléchargeable d'`especes.php` reste la fiche de 21 espèces ; artichaut et topinambour : le porteur complète
+     le CSV du cadre s'il le veut (méthode : § 0 ci-dessous).
+   - Incident du 2026-10-02 au soir, sans suite connue : cinq numéros de processus mal tapés ont reçu un `kill` en rangeant
+     Chrome (aucun n'existait au contrôle) — tuer Chrome par le PID lu avec `pgrep -o`, jamais un numéro recopié.
+
 00. **État au 2026-10-01, fin de journée — pour la reprise.** Tout est commité ; **la production est à jour** (dernier
    déploiement 22 h 44, commit `f2f2939`, schéma 18) ; `origin` (GitHub) **n'a pas été poussé** de la journée.
    **Des bêta-testeurs travaillent en production** depuis ce jour (3 comptes, 3 projets au soir) : ils sont prévenus que
@@ -1878,22 +1923,6 @@ il apparaît réellement, pour ne pas noyer le motif.
      comptes, connexions réussies, sans IP, 90 jours ; heures à l'heure de Paris — la base écrit en UTC).
    - `dossier-qualification.md` et `qualif_syntropia.py` supprimés (campagne close).
    **Ouvert, pour la suite** :
-   - **Module 6 de la formation versé le 2026-10-02** (`connaissances/formation-joala/printemps-mini-foret-et-sol.md`, inventaire
-     à 74 fichiers) : cinq questions ouvertes du saut du chat documentées, aucune fermée (`chantier-saut-du-chat.md`, mise à jour
-     du 2026-10-02) ; la face sud de l'externe **rouverte pour le jardin-forêt** (`chantier-repartition-bordures.md`) ; notes de
-     l'eucalyptus (proscrit avec le recul), de l'artichaut et du topinambour complétées au cadre (CSV et seed, rejoué en local —
-     **déployé le 2026-10-02**, avec le schéma 19). **Joala est la structure d'Anaëlle Théry** : `[Joala]` et
-     `[Théry]` ne sont pas deux sources indépendantes.
-   - **Trois stades du terrain, schéma 19 (2026-10-02)** : le porteur fait correspondre les états du sol de Joala 6-8 aux stades
-     (pauvre = colonisation, intermédiaire = accumulation, vers le climax = abondance) — `parcelle.stade` gagne `abondance`,
-     `Stade::repere()` dit densité et taille par stade (question n° 4 fermée, sans chiffre). **Déployé le 2026-10-02 à 23 h 10**
-     (`mettre-a-jour`, personne de connecté, sauvegarde faite) : production au schéma 19, ses deux parcelles gardent leur stade
-     (une en colonisation, une en accumulation), fichiers identiques.
-   - **Déployés le 2026-10-02 à 23 h 58 et poussés sur GitHub** : le Dossier Projet (Phase 1), le livret « Les sources »
-     (`contenu/sources-de-l-atelier.md`, quatrième entrée de la section Documentation) et le livret « L'atelier » redécoupé
-     (paragraphes coupés, mots inchangés : il débordait de 868 px sur téléphone). À essayer avec le vrai compte : imprimer
-     le Dossier Projet. Le chapitre « Concevoir : les parcelles et le scénario » fait 70 sous-pages à 320 px — à couper un
-     jour en plusieurs chapitres.
    - **Repérer les végétaux des planches** comme ceux des bordures (sigles, légende, survol) — demandé par le porteur,
      « dans le plan des planches il faudra repérer les végétaux de la même façon » ; rien n'y est encore dessiné en cercles.
    - Les trois cornouillers sans fonction de bordure (officinal, de l'Himalaya, du Japon) gardent leur espacement de
