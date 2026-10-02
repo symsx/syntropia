@@ -394,6 +394,12 @@ se joint à ce chantier. **Ce chantier a maintenant son plan : `chantier-plan-de
 > « Ce scénario prépare-t-il le saut du chat ? »** : le stade dit, avec ce que la formation en dit, ou une invitation à le dire. **Ce que le stade change aujourd'hui est mince, et l'écran le dit** : *ce qu'il faut réaliser en premier à
 > chaque stade* n'est pas au corpus (question n° 4) — « pas encore de repère ». Plantes repères **selon Joala** (saule, peuplier, bouleau, noisetier, aubépine, prunellier en accumulation ; mousses, lichens en colonisation ; la ronce à la
 > transition vers l'abondance). Ce qu'il reste : la règle « premier geste par stade » et son usage dans l'itinéraire (Phase 4), aux versements de la formation.
+>
+> **Second incrément, 2026-10-02 — trois stades, et ce qu'on fait à chacun.** Après le module 6 (`6-8` : densité de plantation et fréquence de taille réglées sur l'état du sol), le porteur
+> a tranché : **sol pauvre = colonisation, intermédiaire = accumulation, vers le climax = abondance** — l'abondance devient un stade (`parcelle.stade`, **`Version::SCHEMA` passe à 19**, une valeur de
+> plus à l'ENUM, migration qui l'élargit sans toucher aux lignes). `Stade::repere()` remplace « pas encore de repère » : planter très dense et tailler très souvent en colonisation (les trois premières
+> années surtout) ; densité modérée et tailles qui s'espacent en accumulation ; strates stables et peu de taille en abondance. **Un sens, sans chiffre** — la source n'en donne pas. Affiché sous le
+> choix du stade (`conception-parcelles.php`) et dans le panneau du scénario. Glossaire : « Abondance ».
 
 *Texte d'origine du plan, gardé pour mémoire :*
 
@@ -488,10 +494,10 @@ case) et la règle « l'atelier propose l'itinéraire que le stade et les moyens
 | 1 | Fréquence de coupe par plante | Décision 2 : suit le développement, première coupe en juin ; exemples consoude 6/an, mélisse 3-4 | Repères par espèce et par itinéraire |
 | 2 | Quoi planter, quand (rattrapage compris) | Succession de 4-8 (un site) ; annuelles placentaires (ch. 14-15) | Le tableau par itinéraire (Phase 4) |
 | 3 | Quels itinéraires ? | Tortues, pionniers/RNA, lignes ; « autres ? » | La liste complète et les critères de choix |
-| 4 | Stade du terrain → premier geste | La grille de Joala et ses exemples | Ce qu'on fait en premier à chaque stade |
+| 4 | ~~Stade du terrain → premier geste~~ | **Tranché le 2026-10-02** : densité et fréquence de taille par stade (Joala 6-8, correspondance du porteur) | Un chiffre (densité, fréquence) — la source n'en donne pas |
 | 5 | Végétation spontanée : alliée à perturber ou couverture à affaiblir ? | Accumulation (sureau, saule, noisetier) = supports ; 4-3 : ne pas tailler ce qu'on veut planter | Où passe la limite, par stade |
 | 6 | Combien de biomasse suffit ? | Le seuil existe (framboisier écarté, ch. 15) ; le scénario dit 70-80 % | Un repère par itinéraire |
-| 7 | ~~Trois stades ou deux ?~~ | **Tranché le 2026-09-21 : deux, par parcelle** (colonisation, accumulation) | — |
+| 7 | ~~Trois stades ou deux ?~~ | **Deux le 2026-09-21, trois le 2026-10-02** (le porteur ajoute l'abondance), par parcelle | — |
 | 8 | Mesure du saut du chat | Ordres de grandeur de l'entretien de Théry | Protocole simple à proposer (durée, témoin) |
 | 9 | Ce qui compte dans la préparation du sol | Décision 6 : la préparation couvre le sol et la plantation dense dans la période ; repères du corpus affichés | Ce que le porteur juge déterminant, à lire dans ce qu'il note |
 | 10 | À partir de quelle densité une plantation est-elle « dense » ? | Principes : « plante deux fois plus » ; 10 cm² de vide = un désert | Un repère chiffré, par itinéraire |
@@ -506,6 +512,19 @@ semaine », « +5 à 10 cm en trois jours » pour les autres plantes — des rep
 `chantier-plan-de-culture.md`. **Deux points nouveaux** : (a) le module définit le saut du chat comme *le moment où le sol bascule d'un support inerte vers une dynamique de fertilité auto-entretenue* (et
 parle d'un « saut de système »), quand le glossaire de l'atelier suit la formulation de Théry (*l'effet de la perturbation*) — les deux ne se contredisent pas ; **la définition du glossaire est au porteur** ;
 (b) **le journal et le diagnostic ne voient pas les cultures d'un potager** (ils lisent `scenario_ligne`) — voir `chantier-plan-de-culture.md` § « Ce que le module 5 apporte », point 5.
+
+**Mise à jour du 2026-10-02 (versement du module 6 — `connaissances/formation-joala/printemps-mini-foret-et-sol.md`)** — aucune question fermée,
+cinq documentées. **N° 1 (fréquence de coupe)** : cinq tailles depuis la plantation d'hiver sur une mini-forêt de 42 m², la 4e fin juin ; plusieurs
+coupes de l'artichaut avant avril ; et une règle d'ensemble — **perturber fort les trois premières années, puis de moins en moins** (« plus ça va,
+moins on taille ») ; toujours pas de repère par espèce. **N° 4 (stade → premier geste)** : le plus proche d'une réponse — un tableau qui règle la
+**densité** et la **fréquence de taille** sur l'**état du sol** (pauvre : plantation très dense, taille très fréquente ; intermédiaire : modérée, en
+baisse ; vers le climax : stable, faible) ; mais en trois états de sol, non les deux stades de l'atelier : **la correspondance est au porteur**.
+**N° 5 (végétation spontanée)** : alliée, à sa place, matière de la taille ; elle remplace les plantes introduites là où elle s'impose (le lierre
+terrestre à la place de la menthe) ; pour **affaiblir** une plante, la couper à ras, plusieurs fois, sous une couvrante (consoude) — la limite par
+stade n'est toujours pas donnée. **N° 10 (densité)** : topinambour à 15 cm la 1re année, éclairci à 10-12 cm entre tiges ; un plant tous les
+40 cm ajusté ensuite ; « plus le sol est pauvre […] plus on plante » — pas de chiffre par itinéraire. **N° 12 (désherbage)** : l'herbe entre par
+les chemins, pas par le centre dense ; sans gravité dès la 4e année — rejoint la règle des adventices (Phase 2 ter). **Précision du porteur** :
+Joala est la structure d'Anaëlle Théry ; les deux formulations du saut du chat citées plus haut (Théry, Joala 5-1) sont donc d'une même autrice.
 
 ## Documentation, à chaque phase
 

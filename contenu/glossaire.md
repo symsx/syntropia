@@ -68,6 +68,11 @@ Le stade d'un terrain où la croissance est rapide et la biomasse s'accumule —
 bouleaux, noisetiers, aubépines, prunelliers : la friche qui évolue vers le boisement. Ses plantes
 fournissent supports et matière pour installer des productions plus exigeantes.
 
+# Abondance
+
+Le stade d'un terrain mûr, dans la grille de la formation Joala : des réseaux d'interactions complexes, une
+circulation rapide des ressources, un sol riche en champignons — pommier, poirier, noyer, cerisier y trouvent leur place.
+
 # Basitone
 
 Un ligneux qui se ramifie naturellement depuis la base, comme le sureau ou le noisetier : on

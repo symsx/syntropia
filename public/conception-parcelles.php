@@ -847,14 +847,14 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="pd-titre">Le stade du terrain</p>
         <div class="pd-ligne">
           <select id="in-stade" aria-label="Stade du terrain de la parcelle">
-            <option value=""<?= trim((string) ($parcelleActive['stade'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Deux stades, par parcelle.">Pas encore dit</option>
+            <option value=""<?= trim((string) ($parcelleActive['stade'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Trois stades, par parcelle.">Pas encore dit</option>
 <?php foreach (Stade::tous() as $st): ?>
-            <option value="<?= $st->value ?>"<?= trim((string) ($parcelleActive['stade'] ?? '')) === $st->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($st->explication() . ' ' . $st->observe() . ' ' . Stade::premierGeste(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
+            <option value="<?= $st->value ?>"<?= trim((string) ($parcelleActive['stade'] ?? '')) === $st->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($st->explication() . ' ' . $st->observe() . ' ' . $st->repere(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
 <?php endforeach; ?>
           </select>
         </div>
 <?php $stadeActif = Stade::depuis($parcelleActive['stade'] ?? null); ?>
-        <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . Stade::premierGeste() : 'Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Deux stades, par parcelle.', ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . $stadeActif->repere() : 'Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Trois stades, par parcelle.', ENT_QUOTES, 'UTF-8') ?></p>
 
         <p class="pd-titre">Le type de tortue</p>
         <div class="pd-ligne">

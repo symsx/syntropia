@@ -50,8 +50,9 @@ final class Version
      * 16 : `espece.hauteur_m`, la hauteur de la plante adulte (colonne facultative, idem).
      * 17 : `espece.largeur_m`, l'envergure de la plante adulte (colonne facultative, idem).
      * 18 : `espece.strate_production` et `espece.strate_service`, la strate selon l'usage (colonnes facultatives, idem).
+     * 19 : `parcelle.stade` gagne l'abondance (une valeur de plus : un fichier plus ancien se charge tel quel).
      */
-    public const SCHEMA = 18;
+    public const SCHEMA = 19;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

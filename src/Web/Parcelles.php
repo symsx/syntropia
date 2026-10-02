@@ -265,7 +265,7 @@ final class Parcelles
         if (($valeurs['stade'] ?? null) !== null) {
             $stade = trim((string) $valeurs['stade']);
             if ($stade !== '' && \Syntropia\Stade::tryFrom($stade) === null) {
-                $erreurs['stade'] = 'Le stade du terrain est « Colonisation » ou « Accumulation » — ou pas encore dit.';
+                $erreurs['stade'] = 'Le stade du terrain est « Colonisation », « Accumulation » ou « Abondance » — ou pas encore dit.';
             }
         }
 

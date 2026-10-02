@@ -133,10 +133,12 @@ autrement que le site. Le plan se zoome à la molette ou par les boutons « − 
 le ramène entier.
 
 Vous dites aussi, pour chaque parcelle, le **stade du terrain** — d'où vous partez : la
-**colonisation** (des conditions difficiles, faibles ressources) ou l'**accumulation** (une
-croissance rapide de biomasse, la friche qui évolue vers le boisement). Le scénario le rappelle
-avec ce que la formation en dit. Ce qu'il faut réaliser en premier à chaque stade, elle ne le
-donne pas encore : la page le dit plutôt que de l'inventer. Vous y dites enfin le **type de
+**colonisation** (des conditions difficiles, faibles ressources), l'**accumulation** (une
+croissance rapide de biomasse, la friche qui évolue vers le boisement) ou l'**abondance** (un sol
+mûr, des arbres longévifs et exigeants). Le scénario le rappelle avec ce que la formation en dit,
+dont ce qu'elle conseille à ce stade : planter très dense et tailler très souvent en colonisation,
+une densité modérée et des tailles qui s'espacent en accumulation, peu de taille en abondance —
+un sens, sans chiffre. Vous y dites enfin le **type de
 tortue** : classique, **zèbre** (des planches pérennes alternent avec des planches annuelles),
 **abeille** (une bande pérenne et une bande potagère sur chaque planche) ou **liane** (des lianes sur
 une structure, des cultures protégées dessous) — ce qu'en dit Théry s'affiche sous le choix.

@@ -339,16 +339,16 @@ final class SautDuChat
     public static function conception(array $lignes, bool $aDesTemps, ?string $ressourceEau, array $libellesStrates = [], ?Stade $stade = null): array
     {
         $c = [];
-        // Le stade du terrain : d'où l'on part. Dit, on rappelle ce que la formation en dit et — sans détour — qu'elle ne
-        // donne pas encore quoi faire en premier ; pas dit, on le demande. Sans scénario, c'est la seule ligne.
+        // Le stade du terrain : d'où l'on part. Dit, on rappelle ce que la formation en dit, dont la densité et la taille
+        // qu'elle conseille à ce stade (Joala 6-8) ; pas dit, on le demande. Sans scénario, c'est la seule ligne.
         if ($stade !== null) {
             $c[] = ['cle' => 'stade', 'titre' => 'Le stade du terrain : ' . mb_strtolower($stade->libelle()), 'etat' => self::OK,
-                'detail' => $stade->explication() . ' ' . $stade->usage() . ' ' . Stade::premierGeste(),
-                'source' => 'Joala 2-1 et 2-2'];
+                'detail' => $stade->explication() . ' ' . $stade->usage() . ' ' . $stade->repere(),
+                'source' => 'Joala 2-1 à 2-3, et 6-8'];
         } elseif ($lignes !== []) {
             $c[] = ['cle' => 'stade', 'titre' => 'Le stade du terrain est dit', 'etat' => self::VIDE,
-                'detail' => 'Il dit d’où vous partez (plan de la parcelle, panneau Données : colonisation ou accumulation). La formation ne donne pas encore ce qu’il faut réaliser en premier à chaque stade.',
-                'source' => 'Joala 2-1 et 2-2'];
+                'detail' => 'Il dit d’où vous partez (plan de la parcelle, panneau Données : colonisation, accumulation ou abondance), et ce que la formation conseille à ce stade : la densité de plantation et la fréquence de taille.',
+                'source' => 'Joala 2-1 à 2-3, et 6-8'];
         }
         if ($lignes === []) {
             return $c;

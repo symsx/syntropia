@@ -356,10 +356,11 @@ CREATE TABLE IF NOT EXISTS `parcelle` (
   -- (chantier-saut-du-chat.md, décision 6 ; schéma 4).
   `date_plantation` DATE NULL,
   `fin_plantation`  DATE NULL,
-  -- LE STADE DU TERRAIN : d'où l'on part — `colonisation` (conditions difficiles, faibles ressources) ou `accumulation`
-  -- (croissance rapide, biomasse ; la friche qui évolue vers le boisement). Deux stades, par parcelle : décision du
-  -- porteur, 2026-09-21. NULL = pas dit. La grille de Joala en compte un troisième, l'abondance (schéma 9).
-  `stade`           ENUM('colonisation','accumulation') NULL,
+  -- LE STADE DU TERRAIN : d'où l'on part — `colonisation` (conditions difficiles, faibles ressources), `accumulation`
+  -- (croissance rapide, biomasse ; la friche qui évolue vers le boisement) ou `abondance` (sol mûr, plantes exigeantes).
+  -- Par parcelle ; deux stades le 2026-09-21 (schéma 9), l'abondance ajoutée par le porteur le 2026-10-02 (schéma 19).
+  -- NULL = pas dit.
+  `stade`           ENUM('colonisation','accumulation','abondance') NULL,
   -- LE TYPE DE TORTUE : `classique`, `zebre` (planches pérennes et annuelles alternées), `abeille` (une bande
   -- pérenne et une bande annuelle sur chaque planche) ou `liane` (des lianes sur une structure, des cultures dessous)
   -- — Théry, ch. 15 §§ 7 à 9. Il oriente les propositions de peuplement. Décision du porteur, 2026-09-23
@@ -1120,11 +1121,25 @@ SET @stade_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                         AND TABLE_NAME = 'parcelle'
                         AND COLUMN_NAME = 'stade');
 SET @ajout_stade = IF(@stade_existe = 0,
-                      'ALTER TABLE `parcelle` ADD COLUMN `stade` ENUM(''colonisation'',''accumulation'') NULL AFTER `fin_plantation`',
+                      'ALTER TABLE `parcelle` ADD COLUMN `stade` ENUM(''colonisation'',''accumulation'',''abondance'') NULL AFTER `fin_plantation`',
                       'DO 0');
 PREPARE ajout_stade FROM @ajout_stade;
 EXECUTE ajout_stade;
 DEALLOCATE PREPARE ajout_stade;
+
+-- Le troisième stade, l'abondance — schéma 19. Une colonne `stade` posée avec deux valeurs (schéma 9) s'élargit : la
+-- valeur s'ajoute EN FIN de liste, les lignes existantes gardent la leur.
+SET @stade_a_deux = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                      WHERE TABLE_SCHEMA = DATABASE()
+                        AND TABLE_NAME = 'parcelle'
+                        AND COLUMN_NAME = 'stade'
+                        AND COLUMN_TYPE NOT LIKE '%abondance%');
+SET @elargir_stade = IF(@stade_a_deux = 1,
+                      'ALTER TABLE `parcelle` MODIFY COLUMN `stade` ENUM(''colonisation'',''accumulation'',''abondance'') NULL',
+                      'DO 0');
+PREPARE elargir_stade FROM @elargir_stade;
+EXECUTE elargir_stade;
+DEALLOCATE PREPARE elargir_stade;
 
 
 -- Rattrapage d'une table `espece` créée avant `periode_semis`/`periode_repiquage`/`periode_recolte` —
@@ -1352,6 +1367,7 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 15 = `espece.temperature_sol_semis_c` (la température du sol qui permet le semis — colonne facultative, idem) ;
 -- 16 = `espece.hauteur_m` (la hauteur de la plante adulte — colonne facultative, idem) ;
 -- 17 = `espece.largeur_m` (l'envergure de la plante adulte — colonne facultative, idem) ;
--- 18 = `espece.strate_production` et `espece.strate_service` (la strate selon l'usage — colonnes facultatives, idem).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '18')
+-- 18 = `espece.strate_production` et `espece.strate_service` (la strate selon l'usage — colonnes facultatives, idem) ;
+-- 19 = `parcelle.stade` gagne l'abondance (une valeur de plus : un fichier plus ancien se charge tel quel).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '19')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

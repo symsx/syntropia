@@ -167,7 +167,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   RepartitionBordures.php répartit une liste de plantes sur les bordures externe et interne d'une parcelle — fonction, émergentes au sud et à l'ouest de l'externe, brise-vent sur les côtés cochés, colonne vertébrale un plant sur deux, deux espèces au moins par côté sinon refus ; pur
   Sigles.php              les sigles des plantes d'un plan (« La », « FeA ») — calculés, uniques sur le plan, deux sigles qui ne diffèrent que d'un accent comptent pour un ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
-  Stade.php               le stade du terrain — colonisation ou accumulation (deux stades, par parcelle) : ce qui s'observe, ce que le corpus permet d'affirmer, et « pas encore de repère » pour le premier geste ; pur
+  Stade.php               le stade du terrain — colonisation, accumulation ou abondance (trois stades, par parcelle, schéma 19) : ce qui s'observe, ce que le corpus permet d'affirmer, et ce qu'on fait à chaque stade (densité, taille — Joala 6-8, sans chiffre) ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
@@ -1873,6 +1873,16 @@ il apparaît réellement, pour ne pas noyer le motif.
      comptes, connexions réussies, sans IP, 90 jours ; heures à l'heure de Paris — la base écrit en UTC).
    - `dossier-qualification.md` et `qualif_syntropia.py` supprimés (campagne close).
    **Ouvert, pour la suite** :
+   - **Module 6 de la formation versé le 2026-10-02** (`connaissances/formation-joala/printemps-mini-foret-et-sol.md`, inventaire
+     à 74 fichiers) : cinq questions ouvertes du saut du chat documentées, aucune fermée (`chantier-saut-du-chat.md`, mise à jour
+     du 2026-10-02) ; la face sud de l'externe **rouverte pour le jardin-forêt** (`chantier-repartition-bordures.md`) ; notes de
+     l'eucalyptus (proscrit avec le recul), de l'artichaut et du topinambour complétées au cadre (CSV et seed, rejoué en local —
+     **`deployer.py mettre-a-jour` à faire** pour la production). **Joala est la structure d'Anaëlle Théry** : `[Joala]` et
+     `[Théry]` ne sont pas deux sources indépendantes.
+   - **Trois stades du terrain, schéma 19 (2026-10-02)** : le porteur fait correspondre les états du sol de Joala 6-8 aux stades
+     (pauvre = colonisation, intermédiaire = accumulation, vers le climax = abondance) — `parcelle.stade` gagne `abondance`,
+     `Stade::repere()` dit densité et taille par stade (question n° 4 fermée, sans chiffre). Au déploiement : `mettre-a-jour`
+     (qui rejoue `base` avant `fichiers`).
    - **Repérer les végétaux des planches** comme ceux des bordures (sigles, légende, survol) — demandé par le porteur,
      « dans le plan des planches il faudra repérer les végétaux de la même façon » ; rien n'y est encore dessiné en cercles.
    - Les trois cornouillers sans fonction de bordure (officinal, de l'Himalaya, du Japon) gardent leur espacement de
