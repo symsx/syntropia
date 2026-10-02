@@ -191,6 +191,13 @@ Aucune. Tranchées le 2026-10-01 : la colonne vertébrale (la personne, une par 
 coche « brise-vent » par côté de l'externe, décochée par défaut ; sur un côté coché, brise-vent et bloque-herbe en
 alternance, au moins une brise-vent) ; la liste incomplète (refus) ; deux espèces au moins par côté (sinon refus).
 
+**Rouverte le 2026-10-02 — la face sud de l'externe en jardin-forêt.** Le module 6 de la formation (`6-5`, une mini-forêt
+de 42 m² — `connaissances/formation-joala/printemps-mini-foret-et-sol.md`) réserve la bordure extérieure plein sud à une
+**bande de plantes de rocaille basses** (sauges, romarins, hélichryses, lavandes), là où la règle codée (Théry, ch. 14
+§ 4.2, pour une tortue) n'y met que des émergentes. Même autrice, deux contextes. Le porteur : « il est possible que la
+strate basse soit appropriée au sud pour un jardin-forêt » — **non tranché**. Si elle l'est, la règle dépendrait de la
+conduite de la parcelle (`Heritage`, syntropie ou jardin-forêt). Rien n'est changé dans le code.
+
 ## Après l'essai du porteur en production (2026-10-01)
 
 Le porteur a essayé la répartition sur La Vadaux P1 (17 × 4 m) et trouvé des espacements trop grands. Trois décisions :

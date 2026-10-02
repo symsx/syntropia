@@ -32,6 +32,15 @@ sur l'eau de ce même versement (`4-6`, `4-7`) est allé rejoindre
 [[cycles-de-l-eau]] plutôt que ce dossier, le sujet y ayant déjà sa
 place.
 
+Troisième et quatrième versements (2026-09-20, 2026-10-02) : le
+module 5, le potager (`potager-syntropique.md`), et le module 6
+(`printemps-mini-foret-et-sol.md`) — perturbation de printemps,
+végétation spontanée alliée, chemins « usines à biomasse », mini-forêt
+de 42 m², densité et fréquence de taille selon l'état du sol,
+l'eucalyptus proscrit avec le recul, maïs population. **Joala est la
+structure d'Anaëlle Théry** : `[Joala]` et `[Théry]` (le livre) sont
+deux supports d'une même autrice, pas deux sources indépendantes.
+
 **Ce que ce n'est pas** : une validation scientifique des propos, ni
 une relecture intégrale des enregistrements — voir le README du
 dossier pour la méthode et les réserves par fiche. Les fichiers du

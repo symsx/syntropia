@@ -557,6 +557,86 @@
       "octets": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "fiche": null
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-1-perturbation_fin_mai_1.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 13315,
+      "sha256": "c87335236c16508da84ce58d6c73eb40cc90d8e02e8c9798e1d51220c578ebed",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-2-mais_population.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 52410,
+      "sha256": "bb427c5615e84d34334e2abc54d9a144e79125c478c4ae39d1d0597f8cd73235",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-3-perturbation_fin_mai_2.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 11944,
+      "sha256": "0365a698c300264856a739cb7cb83bbc2725499523596656ceb89ecd7a069520",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-4-le_super_meta_organisme.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 17455,
+      "sha256": "27e8dd8d1078616835e1f8a65b47d437fb9d1c3ae85a5c1e9f55af68e8a13129",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-5-evolution_de_la_msf.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 13296,
+      "sha256": "3b84ff470e5123659438f4a5c283ad9bad832935fa2dd808d1c459aa78425db5",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-6-MSF_visite_en_mai.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 11529,
+      "sha256": "e48ee56ffefa24bd49a03009ab8a3687def4e532a45be41ed0886b56e6d8bd53",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-7-ravageur_et_invasif.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 19693,
+      "sha256": "470203516461a1ffedb39e4314308b65dec6fbfd18b45bba72e057291993674e",
+      "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-02",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "6-8-eucalyptus_printemps.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 15317,
+      "sha256": "7a8c499e7ba391d7a34ab19a00e27f79cc36b566f69d861782678d7a7af3f61d",
+      "fiche": "printemps-mini-foret-et-sol.md"
     }
   ]
 }

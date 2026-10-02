@@ -37,6 +37,17 @@ Dossier source : `/home/sylvain/Bureau/Projets/input/` (le même que le second v
 fiche (`5-4` et `5-5`, dont le texte parlé, sans ce mot, a été lu). L'inventaire JSON porte, pour chaque fichier, ce qui a été lu (`lecture`). Le versement continue : d'autres
 modules sont attendus.
 
+### Quatrième versement — 2026-10-02
+
+Même dossier source, qui reçoit le **module 6** : huit fichiers texte (`6-1` à `6-8`) — la perturbation de printemps, le maïs population, le vivant
+comme systèmes emboîtés, une mini-forêt syntropique de 42 m², les ravageurs, l'eucalyptus et la microbiologie du sol. Synthèses générées, **lues
+jusqu'à la ligne « transcription : » seulement**, à la demande de Sylvain. Une fiche : [printemps, mini-forêt et sol](printemps-mini-foret-et-sol.md).
+
+**Joala et Théry** (précision de Sylvain, 2026-10-02) : Joala est la structure, c'est **Anaëlle Théry** qui parle dans les cours — l'autrice de
+*Bienvenue en syntropie*. `[Joala]` et `[Théry]` marquent deux supports d'une même personne, non deux sources indépendantes ; un écart entre eux
+se lit comme une pratique qui a évolué (l'eucalyptus, module 6), non comme un désaccord. Les webinaires Destination Syntropie invitent, eux,
+d'autres intervenants.
+
 ## Fiches de lecture
 
 | Fiche | Provenance | Ce qu'elle apporte |
@@ -48,6 +59,7 @@ modules sont attendus.
 | [Perturbation et cascade trophique](perturbation-et-cascade-trophique.md) | `[Joala]` | Mécanismes de la perturbation, mégafaune, loups de Yellowstone, baleines, management holistique |
 | [Strates et lumière](strates-et-lumiere.md) | `[Joala]` | Trois mousquetaires, tableau des besoins en lumière par strate — utile à un futur scénario |
 | [Le potager syntropique](potager-syntropique.md) | `[Joala]` | La planche, ses strates, les successions (maïs, courges, courgettes, tomates, poivrons, haricots, choux, fenouil), la perturbation rapportée et les divergences à garder visibles |
+| [Printemps, mini-forêt et sol](printemps-mini-foret-et-sol.md) | `[Joala]` | Perturbation de printemps, végétation spontanée, chemins, mini-forêt de 42 m², densité et taille selon le sol, eucalyptus à proscrire, maïs population, ravageurs comme indicateurs |
 | [Autonomie — Molino](molino-autonomie.md) | `[Molino]` | Biomasse, occultation, sécheresse et organisation d'un jardin normand |
 | [Pépinière et bilan — Andru](andru-pepiniere-et-bilan.md) | `[Andru]` | Temps, eau, apports et observations d'un massif ariégeois |
 | [Production de bourgeons](production-de-bourgeons.md) | `[DS-bourgeons]` | Destination du système, plants disponibles et conflits de calendrier |
