@@ -46,6 +46,44 @@ final class Reponses
     }
 
     /**
+     * Les réponses de Définition à imprimer dans le Dossier Projet — celles de la personne si elle en a donné, à défaut
+     * celles du porteur (même règle que `preparationDuSite()`). Lecture seule : contrairement à
+     * `Sites::participantDuCompte()`, ne crée jamais de participant. `nom` : le participant dont viennent les réponses,
+     * `null` s'il n'y en a aucune.
+     *
+     * @return array{reponses: array<string, string>, nom: ?string}
+     */
+    public function definitionDuProjet(int $siteId, int $compteId): array
+    {
+        $lire = function (string $sql, array $params): ?array {
+            $req = $this->pdo()->prepare($sql);
+            $req->execute($params);
+            $p = $req->fetch(PDO::FETCH_ASSOC);
+            return is_array($p) ? $p : null;
+        };
+        $candidats = [
+            $lire('SELECT id, nom FROM participant WHERE site_id = ? AND compte_id = ?', [$siteId, $compteId]),
+            $lire("SELECT p.id, p.nom FROM participant p
+                     JOIN membre_site m ON m.site_id = p.site_id AND m.compte_id = p.compte_id
+                    WHERE p.site_id = ? AND m.role = 'porteur'
+                    ORDER BY p.id LIMIT 1", [$siteId]),
+        ];
+        foreach ($candidats as $p) {
+            if ($p === null) {
+                continue;
+            }
+            $req = $this->pdo()->prepare(
+                "SELECT question, texte FROM reponse WHERE participant_id = ? AND phase = 'definition' AND texte <> ''");
+            $req->execute([(int) $p['id']]);
+            $reponses = $req->fetchAll(PDO::FETCH_KEY_PAIR);
+            if (is_array($reponses) && $reponses !== []) {
+                return ['reponses' => $reponses, 'nom' => (string) $p['nom']];
+            }
+        }
+        return ['reponses' => [], 'nom' => null];
+    }
+
+    /**
      * Ce que la Réalisation a noté de la préparation du sol — celui de la personne, à défaut celui du porteur
      * (même règle que `Scenarios::souhaitsDuSite()`) : la préparation est un geste du projet, et un lecteur
      * n'a rien écrit lui-même. Clés : `technique`, `realisee`.

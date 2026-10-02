@@ -1,6 +1,6 @@
 # Le Dossier Projet — un document imprimable du projet
 
-**Demandé par le porteur le 2026-09-19. Noté, pas commencé — mais les six
+**Demandé par le porteur le 2026-09-19 ; Phase 1 faite le 2026-10-02. Les six
 questions ont reçu leur réponse le jour même (§ Décisions du porteur).** Le porteur l'a
 formulé ainsi : « créer la fonctionnalité de création d'un Dossier Projet. Un
 document imprimable pour que l'utilisateur puisse avoir son projet au format
@@ -153,6 +153,38 @@ de carte ; le fond IGN/OSM est une amélioration à décider (§ Questions).
   qu'aplats seuls).
 - **Lecteur** : peut lire donc imprimer (rien ne s'écrit). Le dossier n'écrit rien.
 - **Un projet vide** ne plante pas : couverture et chapitres « pas encore renseigné ».
+
+## Phase 1 — faite le 2026-10-02
+
+Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impression du plan seul).
+- **`public/dossier-projet.php`**, hors gabarit (en-tête : la seconde exception), polices et couleurs du
+  bureau ; barre d'action (« Retour à l'atelier », « Imprimer / Enregistrer en PDF »), masquée au papier.
+- **Le choix des chapitres** : une case par chapitre (couverture, vision, objectifs, moyens, site), toutes
+  cochées à l'ouverture, **en CSS pur** (`body:has(#imprimer-x:not(:checked)) #chapitre-x{display:none}`) —
+  ce qu'on voit est ce qui s'imprime, rien n'est enregistré, aucun aller-retour au serveur.
+- **La couverture** : nom du projet, porteur(s) (nom affiché, à défaut identifiant), commune, conduite,
+  date d'édition (en mots, heure de Paris). **La Définition** : chaque question avec son libellé de l'étape
+  et sa réponse, les choix dits par leur libellé (« Moyen — 5 à 10 ans »), la superficie en m², la position
+  du site en coordonnées ; une question sans réponse : « pas encore renseigné » ; un chapitre sans aucune
+  réponse le dit et nomme l'étape où il se remplit.
+- **Les réponses de qui ?** — tranché en codant, sur la règle déjà suivie (`preparationDuSite()`,
+  `Scenarios::souhaitsDuSite()`) : celles de la personne si elle en a donné, à défaut celles du porteur ;
+  le dossier écrit « Réponses de … ». `Reponses::definitionDuProjet()` — **lecture seule**, ne crée jamais
+  de participant (vérifié : un lecteur sans participant ouvre le dossier, aucune ligne créée).
+- **Le papier** : A4 portrait, marges 15 mm, pied de page « projet — Dossier Projet — page n sur N »
+  (`@page` + `@bottom-center`, sans pied sur la couverture) ; **un saut de page après la couverture et
+  avant chaque phase**, les chapitres d'une même phase s'enchaînent (un chapitre ne se coupe pas s'il tient
+  sur une page) — une page par chapitre gaspillait le papier. Le titre de phase (« Définition ») n'apparaît
+  qu'au papier, et disparaît si aucun de ses chapitres n'est coché.
+- **Le menu** : `gabarit.js` ajoute la section « Dossier Projet » (« Imprimer le dossier ») juste avant
+  « Documentation », quand `api-projets.php` répond un projet actif ; une page publique ne l'a pas.
+- **Vérifié en local** (compte lecteur de passage sur un projet réel, supprimé ensuite) : section du menu,
+  contenu fidèle aux réponses en base, PDF produit par `Page.printToPDF` et relu page par page (3 pages,
+  2 avec deux chapitres décochés), « aucun chapitre coché », 360 px (marges de 16 px), anonyme renvoyé à
+  la connexion. **Trouvé en testant** : le nom du porteur (un tableau, non une chaîne), la superficie sans
+  unité, le nom du projet dans le pied de page — une chaîne CSS, échappée à la manière du CSS (dans
+  `<style>`, une entité HTML ne se décode pas).
+- **Non fait** : le chapitre « Participants » (Phase 3) — la couverture ne nomme que le porteur.
 
 ## Phases proposées
 
