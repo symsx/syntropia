@@ -59,7 +59,8 @@ window.Gabarit = (function(){
   var DOCUMENTATION = [
     { id: 'documentation-saf',  titre: "L'agroforesterie syntropique", pret: true },
     { id: 'documentation-site', titre: "L'atelier",                    pret: true },
-    { id: 'glossaire',          titre: "Glossaire",                    pret: true }
+    { id: 'glossaire',          titre: "Glossaire",                    pret: true },
+    { id: 'documentation-sources', titre: "Les sources",               pret: true }
   ];
 
   function remplirSectionDocumentation(){
@@ -69,6 +70,7 @@ window.Gabarit = (function(){
 
     var section = document.createElement('div');
     section.className = 'pg-section';
+    section.id = 'pg-section-documentation';
     var titre = document.createElement('p');
     titre.className = 'pg-titre';
     titre.textContent = 'Documentation';
@@ -317,6 +319,31 @@ window.Gabarit = (function(){
      « Rejoindre un projet », « Espèces », « Inviter » et, pour un porteur, « Participants » dans le menu du compte, et, seulement s'il y en a plusieurs, la section « Mes
      projets » en tête du panneau gauche. Une page publique (pas de menu de
      compte) n'appelle rien. */
+  /* La section « Dossier Projet », juste avant « Documentation » (chantier-dossier-projet.md) : le projet de la
+     personne à imprimer. Elle n'a de sens que connecté, avec un projet ouvert — initProjets() le sait. Le dossier
+     lui-même est hors gabarit (un document papier, comme releve-vierge.php). */
+  function ajouterSectionDossier(){
+    var doc = el('pg-section-documentation');
+    if (!doc || el('pg-section-dossier')) return;
+    var section = document.createElement('div');
+    section.className = 'pg-section';
+    section.id = 'pg-section-dossier';
+    var titre = document.createElement('p');
+    titre.className = 'pg-titre';
+    titre.textContent = 'Dossier Projet';
+    section.appendChild(titre);
+    var liste = document.createElement('ul');
+    liste.className = 'pg-liste';
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = 'dossier-projet.php';
+    a.innerHTML = '<span class="pg-puce">⎙</span><span class="pg-libelle">Imprimer le dossier</span>';
+    li.appendChild(a);
+    liste.appendChild(li);
+    section.appendChild(liste);
+    doc.parentNode.insertBefore(section, doc);
+  }
+
   function initProjets(){
     var menu = el('compte-menu');
     if (!menu || !window.fetch) return;
@@ -327,6 +354,7 @@ window.Gabarit = (function(){
         surveillerDeploiement(j.deploiement);
         var actif = j.projets.filter(function(p){ return p.id === j.actif; })[0];
         ajouterEntreesDuMenu(menu, !!actif && actif.role === 'porteur', !!j.administrateur);
+        if (actif) ajouterSectionDossier();
         if (j.projets.length > 1) ajouterSelecteurProjets(j);
         if (actif && actif.role === 'lecteur' && pageDuParcours) lectureSeule();
       })

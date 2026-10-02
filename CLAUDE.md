@@ -65,7 +65,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   tracés seuls sans carte de tiers, entrée de menu « Dossier Projet » dans une section
   placée avant « Documentation », puis un **sous-dossier par parcelle** qui sert de
   document de chantier pour l'implantation. Demandé et **cadré le 2026-09-19** (les six
-  questions sont tranchées), **pas commencé**.
+  questions sont tranchées) ; **Phase 1 faite le 2026-10-02** (la page, la couverture, la Définition, le
+  choix des chapitres, le menu) — Phases 2 à 5 à suivre dans l'ordre (décision du porteur).
 - `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la
@@ -205,6 +206,7 @@ contenu/
   associations/             trois tables CSV de Weinrich (potager, verger, succession), importées telles quelles de `syntropie` le 2026-09-20 — voir Associations.php
   documentation-atelier.md  livret « L'atelier » — un chapitre par ligne « # », voir Documentation.php
   documentation-saf.md      livret « L'agroforesterie syntropique » — modèle à remplacer
+  sources-de-l-atelier.md   livret « Les sources » — d'où viennent les règles de l'atelier et à quoi elles servent ; écrit à la demande du porteur le 2026-10-02
   glossaire.md              un mot technique = un chapitre, une phrase — alimente glossaire.php ET la bulle des `.terme` ailleurs sur le site
 config/
   .htaccess              refuse tout accès web — identifiants en clair dans base.php
@@ -242,6 +244,7 @@ public/                racine servable du site en refonte
   conception-materiel-et-eau.php  étape 5 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
+  dossier-projet.php         le Dossier Projet à imprimer (couverture, Définition ; chapitres cochés en CSS pur) — HORS GABARIT, seconde exception ; section « Dossier Projet » de gabarit.js, avant « Documentation »
   realisation-preparation-parcelle.php  étape 1 (Réalisation)
   realisation-materiel-vegetal.php      étape 2 (Réalisation)
   realisation-outils-et-plans.php       étape 3 (Réalisation)
@@ -253,6 +256,7 @@ public/                racine servable du site en refonte
   inscription.php            inscription sur invitation — code de 8 caractères, voir Invitations.php
   documentation-site.php     livret « L'atelier » — lit contenu/documentation-atelier.md, pagine ses chapitres trop longs
   documentation-saf.php      livret « L'agroforesterie syntropique » — lit contenu/documentation-saf.md, même mécanique
+  documentation-sources.php  livret « Les sources » — lit contenu/sources-de-l-atelier.md (d'où viennent les règles, à quoi elles servent), même mécanique
   glossaire.php              les mots techniques, un par un — recherche filtrée, lit contenu/glossaire.md
   api-calques.php            POST ajouter/modifier/retirer un tracé — appelée par conception-etude-site.php (assets/js/calques.js)
   api-cadastre.php           POST parcelles cadastrales IGN d'une emprise — lecture seule, rien n'est enregistré
@@ -480,9 +484,10 @@ Sans mesure d'usage réelle, « le plus utilisé » se raisonne au départ —
 - Définir par ce que sont les choses et taire ce qu'elles ne sont pas
 - **Construis toute page sur le gabarit « le bureau ». Aucune exception,
   aucune page publique à part.** Voir § Architecture.
-  **Seule exception posée, le 2026-09-14 :** `releve-vierge.php`, un
-  document à imprimer, pas une page à visiter — voir son en-tête. Ne pas
-  s'en servir de précédent pour autre chose qu'un document destiné au
+  **Deux exceptions posées, toutes deux des documents à imprimer :**
+  `releve-vierge.php` (le 2026-09-14) et `dossier-projet.php` (admise par
+  le porteur le 2026-09-19, faite le 2026-10-02) — voir leur en-tête. Ne
+  pas s'en servir de précédent pour autre chose qu'un document destiné au
   papier.
 
 ## Point de reprise — 2026-09-15
@@ -2000,9 +2005,10 @@ il apparaît réellement, pour ne pas noyer le motif.
 7. **Dossier Projet imprimable** — cadré le 2026-09-19, plan dans
    `chantier-dossier-projet.md`, **les six questions sont tranchées** (seconde exception au
    gabarit admise, tracés seuls, chapitres au choix, nom « Dossier Projet », réalisation et
-   suivi à voir à l'impression, sous-dossier de parcelle = document de chantier). **À
-   reprendre sur demande du porteur** ; à la Phase 1, ajouter au CLAUDE.md la seconde
-   exception (§ Directives de travail).
+   suivi à voir à l'impression, sous-dossier de parcelle = document de chantier). **Phase 1
+   faite le 2026-10-02** (seconde exception inscrite § Directives de travail) ; le porteur veut
+   suivre l'ordre du chantier — la Phase 2 (le terrain et les parcelles) est la suivante, le
+   feuillet de parcelle à imprimer viendra en Phase 5.
 8. **`autres-documentations.php`** — page publique restante, non
    commencée.
 9. **`compte.php` / Préférences** — faite et déployée le 2026-09-18 (voir plus haut) ;

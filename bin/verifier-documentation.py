@@ -38,6 +38,7 @@ COUVERTURE = {
     "Où trouver quoi": [
         "public/index.php", "public/connexion.php", "public/glossaire.php",
         "public/documentation-site.php", "public/documentation-saf.php",
+        "public/dossier-projet.php", "src/Web/Reponses.php", "public/documentation-sources.php",
     ],
     "Le parcours en quatre phases": ["public/assets/js/etapes.js"],
     "Définir son projet": [
