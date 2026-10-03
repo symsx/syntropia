@@ -269,7 +269,7 @@ final class Sites
             return "Cette personne n'a plus accès à ce projet.";
         }
         if ($role === 'porteur') {
-            return 'Un porteur ne se retire pas : le projet garde toujours le sien.';
+            return 'Le porteur garde toujours son accès au projet.';
         }
         $this->pdo()->prepare('DELETE FROM membre_site WHERE site_id = ? AND compte_id = ?')
             ->execute([$siteId, $compteCible]);

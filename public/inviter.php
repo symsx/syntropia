@@ -228,9 +228,9 @@ $ouvertes = $invitations->nombreOuvertes($compteId);
       <div class="inv-centre">
         <div class="inv-cadre">
           <h1>Inviter</h1>
-          <p class="inv-chapeau">On entre dans Syntropia parce que quelqu'un l'a proposé. Un code de
-             huit caractères, valable <?= Invitations::JOURS ?> jours, qui ne sert qu'une fois — à donner
-             de vive voix ou par écrit.</p>
+          <p class="inv-chapeau">L'inscription se fait sur invitation, avec un code de huit caractères.
+             Le code est valable <?= Invitations::JOURS ?> jours et sert une seule fois. Il se donne de vive
+             voix ou par écrit.</p>
 
 <?php if ($codeOuvert !== null): ?>
           <div class="inv-code" id="inv-code">
@@ -258,15 +258,14 @@ $ouvertes = $invitations->nombreOuvertes($compteId);
               </div>
 <?php if ($estPorteur): ?>
               <div class="inv-champ inv-role" id="inv-role" hidden>
-                <label for="role_site">Avec le droit de</label>
+                <label for="role_site">Avec le rôle</label>
                 <select id="role_site" name="role_site">
-                  <option value="contributeur">contribuer — écrire dans le projet</option>
-                  <option value="lecteur">lire — regarder seulement</option>
+                  <option value="contributeur">Contributeur : répond aux questions et dessine</option>
+                  <option value="lecteur">Lecteur : consulte sans modifier</option>
                 </select>
               </div>
 <?php elseif ($site !== null): ?>
-              <p class="inv-vide">Vous n'êtes pas porteur de « <?= $h($site['nom']) ?> » : seul le porteur
-                 y invite.</p>
+              <p class="inv-vide">Seul le porteur de « <?= $h($site['nom']) ?> » peut y inviter.</p>
 <?php endif; ?>
             </fieldset>
             <div class="inv-champ">
@@ -288,7 +287,7 @@ $ouvertes = $invitations->nombreOuvertes($compteId);
               <span class="inv-ligne-code"><?= $h($i['code']) ?></span>
               <span class="inv-ligne-texte">
                 <?= $i['site_id'] !== null ? 'Projet « ' . $h($sitesParId[(int) $i['site_id']] ?? 'un projet') . ' », ' . $h($i['role_site'] ?? '') : 'Compte seul' ?>
-                <small><?= $h($i['intention'] ?? '') ?><?= $etat === 'utilisée' && $i['filleul'] !== null ? ' — ' . $h($i['filleul']) : '' ?></small>
+                <small><?= $h($i['intention'] ?? '') ?><?= $etat === 'utilisée' && $i['filleul'] !== null ? ', ' . $h($i['filleul']) : '' ?></small>
               </span>
 <?php if ($etat === 'ouverte'): ?>
               <form method="post">
@@ -324,12 +323,13 @@ $ouvertes = $invitations->nombreOuvertes($compteId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p><strong>Créer un compte</strong> : la personne s'inscrit avec le code et ouvre
-         ensuite son propre projet. <strong>Rejoindre un projet</strong> : elle rejoint aussi le
-         vôtre — en contribuant (elle peut écrire) ou en lisant (elle regarde seulement) ; seul le
-         porteur d'un projet y invite. Dans les deux cas elle peut ouvrir son projet à elle.</p>
-      <p>Un code sert une fois, expire après <?= Invitations::JOURS ?> jours, et se retire tant
-         qu'il n'a pas servi. Le lien porte le code : le donner, c'est donner la clé.</p>
+      <p>Avec <strong>Créer un compte</strong>, la personne s'inscrit avec le code, puis ouvre son
+         propre projet. Avec <strong>Rejoindre un projet</strong>, elle rejoint aussi le vôtre, comme
+         contributeur ou comme lecteur. Le contributeur répond aux questions et dessine avec le porteur.
+         Le lecteur consulte le projet sans le modifier. Seul le porteur d'un projet peut y inviter. Dans
+         les deux cas, la personne peut ouvrir son propre projet.</p>
+      <p>Un code sert une seule fois, expire après <?= Invitations::JOURS ?> jours, et peut être retiré
+         tant qu'il n'a pas servi. Le lien contient le code : le donner revient à donner la clé.</p>
     </div>
   </aside>
 

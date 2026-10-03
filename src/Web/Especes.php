@@ -327,7 +327,7 @@ final class Especes
         // vegetaux.md) : revient sur le choix de la Phase 1 de le laisser libre — « production » manquait alors à ce
         // vocabulaire, il y est désormais explicitement ajouté. Le seed curé (`sql/02-especes-seed.sql`) a été
         // vérifié conforme (une valeur « bordure », hors vocabulaire, corrigée à cette occasion).
-        $liste('role', self::roles(), 'Une valeur de la liste — production, ou une fonction de service du scénario.');
+        $liste('role', self::roles(), 'Une valeur de la liste : la production, ou une fonction de service du scénario.');
         $liste('strates_possibles', Conduite::toutesLesStrates(), 'Une strate proposée par la conduite syntropique ou jardin-forêt.');
         $enum('systeme', ['colonisation', 'accumulation', 'abondance'], 'Colonisation, accumulation ou abondance.');
         $enum('cycle', array_keys(self::CYCLES), 'Annuelle, bisannuelle, vivace ou ligneuse.');
@@ -396,7 +396,7 @@ final class Especes
         $variete = trim($variete);
         $erreurs = [];
         if ($nom === '') {
-            $erreurs['nom_scientifique'] = 'Le nom scientifique est obligatoire — c\'est la clé vers Plantae.';
+            $erreurs['nom_scientifique'] = 'Le nom scientifique est obligatoire : c\'est le lien avec Plantae.';
         } elseif (mb_strlen($nom) > 160) {
             $erreurs['nom_scientifique'] = 'Le nom scientifique est trop long (160 caractères au plus).';
         }
@@ -404,7 +404,7 @@ final class Especes
             $erreurs['variete'] = 'Le nom de variété est trop long (120 caractères au plus).';
         }
         if ($siteId <= 0) {
-            $erreurs['site_id'] = 'Une surcharge se pose toujours sur un site précis, jamais sur le cadre.';
+            $erreurs['site_id'] = 'Une surcharge se pose toujours sur un projet précis, jamais sur le cadre.';
         }
         ['valeurs' => $propres, 'erreurs' => $erreursColonnes] = self::valider($valeurs);
         $erreurs += $erreursColonnes;

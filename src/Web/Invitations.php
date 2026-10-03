@@ -140,7 +140,7 @@ final class Invitations
         $code = strtoupper(trim($code));
         if (preg_match('/^[A-Z2-9]{8}$/', $code) !== 1) {
             return ['invitation' => null,
-                    'souci' => "Ce code n'a pas la bonne forme : huit lettres "
+                    'souci' => "Ce code n'a pas la bonne forme. Il compte huit lettres "
                         . "ou chiffres, sans I, O, 0 ni 1."];
         }
         $req = $this->pdo()->prepare(
@@ -152,7 +152,7 @@ final class Invitations
         $invitation = $req->fetch();
 
         if ($invitation === false) {
-            return ['invitation' => null, 'souci' => "Ce code n'ouvre rien."];
+            return ['invitation' => null, 'souci' => "Ce code ne correspond à aucune invitation."];
         }
         if ($invitation['utilise_le'] !== null) {
             return ['invitation' => null,

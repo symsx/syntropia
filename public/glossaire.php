@@ -134,8 +134,8 @@ usort($chapitres, static fn (array $a, array $b): int => strcoll($a['titre'], $b
 
     <main class="bureau" id="bureau">
       <div class="gloss-cadre">
-        <p class="gloss-annonce">Les mots techniques rencontrés dans l'atelier, en une
-           phrase chacun. Les mêmes bulles qu'au survol d'un mot souligné, ailleurs
+        <p class="gloss-annonce">Les mots techniques de l'atelier, expliqués en une phrase
+           chacun. Ce sont les mêmes définitions qu'au survol d'un mot souligné, ailleurs
            sur le site.</p>
 
         <input type="search" id="gloss-chercher" class="gloss-champ"
@@ -169,14 +169,12 @@ usort($chapitres, static fn (array $a, array $b): int => strcoll($a['titre'], $b
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Tapez un mot pour chercher — dans le titre ou dans la définition. Sans
-         rien taper, quelques mots au hasard de l'alphabet, pour montrer que la
-         liste existe. <strong>Aucun défilement ici non plus</strong> : si votre
-         recherche donne plus de résultats que la place n'en montre, affinez-la
-         plutôt que de faire défiler.</p>
-      <p>Ce glossaire est la même source que les bulles posées sur les mots
-         soulignés en pointillés, ailleurs dans l'atelier — survolez ou touchez
-         un de ces mots pour voir sa définition sans quitter la page.</p>
+      <p>Tapez un mot pour le chercher dans les titres et dans les définitions. Sans
+         recherche, la page montre quelques mots pris dans l'alphabet. Si la recherche
+         donne plus de résultats que la page n'en montre, précisez-la.</p>
+      <p>Les mots soulignés en pointillés, ailleurs dans l'atelier, ont la même
+         définition. Survolez ou touchez un de ces mots pour la voir sans quitter la
+         page.</p>
     </div>
   </aside>
 

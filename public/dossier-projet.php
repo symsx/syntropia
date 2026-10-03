@@ -492,7 +492,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <p class="provenance">Réponses de <?= htmlspecialchars($definition['nom'], ENT_QUOTES, 'UTF-8') ?>.</p>
 <?php endif; ?>
 <?php if ($renseignees === []): ?>
-    <p class="vide">Pas encore renseigné — cela se fait à l’étape « <?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?> » de la Définition.</p>
+    <p class="vide">Pas encore renseigné. Cela se fait à l’étape « <?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?> » de la Définition.</p>
     <p class="a-faire lien-etape"><a href="<?= $etape ?>">Aller à cette étape →</a></p>
 <?php else: ?>
     <dl class="reponses">
@@ -512,7 +512,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <p class="phase">Conception</p>
     <h2>Le terrain</h2>
 <?php if ($dessinTerrain === null): ?>
-    <p class="vide">Pas encore tracé — cela se fait à l’étape « Étude du site » de la Conception.</p>
+    <p class="vide">Pas encore tracé. Cela se fait à l’étape « Étude du site » de la Conception.</p>
     <p class="a-faire lien-etape"><a href="conception-etude-site.php">Aller à cette étape →</a></p>
 <?php else: ?>
     <p class="sous-titre">Les tracés de la carte, sur fond blanc, le nord en haut.</p>
@@ -546,7 +546,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   <section class="feuille" id="chapitre-parcelles">
     <p class="phase">Conception</p>
     <h2>Les parcelles</h2>
-    <p class="vide">Pas encore de parcelle — cela se fait à l’étape « Parcelles » de la Conception.</p>
+    <p class="vide">Pas encore de parcelle. Cela se fait à l’étape « Parcelles » de la Conception.</p>
     <p class="a-faire lien-etape"><a href="conception-parcelles.php">Aller à cette étape →</a></p>
   </section>
 <?php endif; ?>
@@ -566,7 +566,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <div class="bloc">
     <h3>Le plan</h3>
 <?php if ($pc['plan'] === null): ?>
-    <p class="vide">Pas encore dessiné — les dimensions se donnent à l’étape « Parcelles » de la Conception.</p>
+    <p class="vide">Pas encore dessiné. Les dimensions se donnent à l’étape « Parcelles » de la Conception.</p>
     <p class="a-faire lien-etape"><a href="conception-parcelles.php?parcelle=<?= $pc['id'] ?>">Aller à cette étape →</a></p>
 <?php else: ?>
     <figure>
@@ -575,7 +575,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
       <ul class="legende">
 <?php foreach ($pc['legende'] as $e): ?>
         <li><i style="background:<?= $e['couleur'] ?>"></i><b><?= htmlspecialchars($e['sigle'], ENT_QUOTES, 'UTF-8') ?></b>
-          <?= htmlspecialchars($e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?> — <?= (int) $e['n'] ?></li>
+          <?= htmlspecialchars($e['nom'] . ($e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?> : <?= (int) $e['n'] ?> plants</li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
@@ -608,10 +608,10 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
       <tbody>
 <?php foreach ($pc['planches'] as $pl): ?>
         <tr>
-          <td><?= $pl['numero'] ?><?= $pl['nature'] !== null ? ' — ' . htmlspecialchars($pl['nature'], ENT_QUOTES, 'UTF-8') : '' ?></td>
+          <td><?= $pl['numero'] ?><?= $pl['nature'] !== null ? ', ' . htmlspecialchars($pl['nature'], ENT_QUOTES, 'UTF-8') : '' ?></td>
           <td><?php if ($pl['lignes'] === []): ?><span class="vide">aucune plante de service</span><?php else: ?>
 <?= implode('<br>', array_map(static fn (int $n, array $li): string => 'Ligne ' . $n . ($n === $pl['centrale'] ? ' (centrale)' : '') . ' : '
-    . htmlspecialchars($li['nom'], ENT_QUOTES, 'UTF-8') . ($li['compte'] !== null ? ' — ' . $li['compte'] . ' plants' : ''), array_keys($pl['lignes']), $pl['lignes'])) ?>
+    . htmlspecialchars($li['nom'], ENT_QUOTES, 'UTF-8') . ($li['compte'] !== null ? ', ' . $li['compte'] . ' plants' : ''), array_keys($pl['lignes']), $pl['lignes'])) ?>
 <?php endif; ?></td>
         </tr>
 <?php endforeach; ?>
@@ -624,7 +624,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <div class="bloc">
     <h3>Le plan de culture</h3>
 <?php if ($pc['cultures'] === []): ?>
-    <p class="vide">Pas encore renseigné — cela se fait à l’étape « Potager » de la Conception.</p>
+    <p class="vide">Pas encore renseigné. Cela se fait à l’étape « Potager » de la Conception.</p>
     <p class="a-faire lien-etape"><a href="conception-potager.php?parcelle=<?= $pc['id'] ?>">Aller à cette étape →</a></p>
 <?php else: ?>
     <table class="liste">
@@ -648,7 +648,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <div class="bloc">
     <h3>Le scénario</h3>
 <?php if ($pc['scenario'] === null): ?>
-    <p class="vide">Pas encore renseigné — cela se fait à l’étape « Scénario » de la Conception.</p>
+    <p class="vide">Pas encore renseigné. Cela se fait à l’étape « Scénario » de la Conception.</p>
     <p class="a-faire lien-etape"><a href="conception-scenario.php?parcelle=<?= $pc['id'] ?>">Aller à cette étape →</a></p>
 <?php elseif (isset($pc['scenario']['frise'])): ?>
     <figure>

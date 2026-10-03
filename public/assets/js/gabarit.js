@@ -213,7 +213,7 @@ window.Gabarit = (function(){
       else document.documentElement.removeAttribute('data-theme');
       if (icone) icone.textContent = GLYPHES_THEME[valeur] || GLYPHES_THEME.systeme;
       var libelle = LIBELLES_THEME[valeur] || LIBELLES_THEME.systeme;
-      bascule.title = 'Thème ' + libelle + ' — cliquer pour changer';
+      bascule.title = 'Thème ' + libelle + '. Cliquez pour changer.';
       bascule.setAttribute('aria-label', 'Thème ' + libelle + ', changer de thème');
     }
     var depart = 'systeme';
@@ -395,7 +395,7 @@ window.Gabarit = (function(){
     if (!/(?:^|;\s*)syntropia_perime=1(?:;|$)/.test(document.cookie)) return;
     document.cookie = COOKIE_PERIME + '=; max-age=0; path=' + location.pathname.replace(/[^\/]*$/, '');
     avisVersion("Votre dernier envoi venait d'une page ouverte avant une mise à jour de l'atelier : il n'a pas été "
-      + "enregistré. Cette page est à jour — refaites votre saisie.", false);
+      + "enregistré. Cette page est à jour : refaites votre saisie.", false);
   }
 
   function surveillerDeploiement(marque){

@@ -121,7 +121,7 @@ $examinerCsv = static function (string $texte): array {
         return ['ok' => false, 'lignes' => [], 'erreurs' => ['Aucune ligne à importer sous l’en-tête.'], 'ignorees' => $ignorees, 'total' => 0];
     }
     if (count($brutes) > MAX_LIGNES_CSV) {
-        return ['ok' => false, 'lignes' => [], 'erreurs' => [MAX_LIGNES_CSV . ' lignes au plus par import — divisez le fichier.'], 'ignorees' => $ignorees, 'total' => count($brutes)];
+        return ['ok' => false, 'lignes' => [], 'erreurs' => [MAX_LIGNES_CSV . ' lignes au plus par import. Divisez le fichier.'], 'ignorees' => $ignorees, 'total' => count($brutes)];
     }
 
     $pretes = [];
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erreurs = $res['erreurs'];
     } elseif ($action === 'retirer') {
         $especesService->retirer((int) ($_POST['espece_id'] ?? 0), $siteId);
-        $_SESSION['syntropia_flash_especes'] = ['ok', 'La surcharge est retirée : ce site retrouve la version du cadre, si elle existe.'];
+        $_SESSION['syntropia_flash_especes'] = ['ok', 'La surcharge est retirée : ce projet retrouve la version du cadre, si elle existe.'];
         header('Location: ' . $retour);
         exit;
     } elseif ($action === 'verifier') {
@@ -228,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header('Location: ' . $retour);
                     exit;
                 }
-                $erreurs['import'] = ['Ligne ' . $res['ligne'] . ' : ' . implode(' ; ', $res['erreurs']) . ' (rien n’a été écrit).'];
+                $erreurs['import'] = ['Ligne ' . $res['ligne'] . ' : ' . implode(' ; ', $res['erreurs']) . ' Rien n’a été enregistré.'];
             }
         }
     } else {
@@ -448,7 +448,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
           <span class="es-actions"><a class="es-bouton" href="<?= $h($retour) ?>?nouvelle=1" id="es-ajouter">Ajouter une espèce</a></span>
 <?php endif; ?>
         </div>
-        <p class="es-annonce">Le cadre partagé de l'atelier, et les vôtres : ce qui nourrit le calendrier de
+        <p class="es-annonce">Le cadre partagé de l'atelier, et vos espèces. Elles nourrissent le calendrier de
            plantation d'un potager (semis, repiquage, récolte) et les suggestions du scénario.</p>
 <?php if ($flash !== null): ?>
         <p class="es-message" role="status"><?= $h($flash[1]) ?></p>
@@ -474,7 +474,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
                   <?php if (($e['cycle'] ?? null) !== null): ?><small class="es-cycle"><?= $h(mb_strtolower(explode(' (', Especes::CYCLES[$e['cycle']] ?? $e['cycle'])[0])) ?></small><?php endif; ?></td>
                 <td><?= $h(implode(' · ', array_map(static fn (string $c): string => $labelsRoles[$c] ?? $c, array_filter(explode('|', (string) ($e['role'] ?? '')))))) ?></td>
                 <td><?= $cal !== [] ? $h(implode(' · ', $cal)) : '' ?></td>
-                <td><?= $local ? '<span class="es-surcharge-puce">votre surcharge</span>' : '<span class="es-cadre-puce">cadre</span>' ?></td>
+                <td><?= $local ? '<span class="es-surcharge-puce">Votre surcharge</span>' : '<span class="es-cadre-puce">Cadre</span>' ?></td>
               </tr>
 <?php endforeach; ?>
             </tbody>
@@ -511,45 +511,46 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
       <section class="es-panneau es-p-esp">
         <p class="pd-titre"><?= $edition !== null ? 'Modifier : ' . $h((string) ($edition['nom_usuel'] ?: $edition['nom_scientifique'])) : 'Ajouter une espèce' ?></p>
 <?php if ($edition !== null && !$estSurcharge): ?>
-        <p class="es-note">Cette espèce vient du cadre partagé. L'enregistrer pose une <strong>surcharge</strong> propre à
-           ce site — le cadre lui-même ne change pas, et les autres sites gardent sa version.</p>
+        <p class="es-note">Cette espèce vient du cadre partagé. L'enregistrer crée une <strong>surcharge</strong> propre à
+           ce projet. Le cadre reste inchangé, et les autres projets gardent sa version.</p>
 <?php endif; ?>
         <form method="post" action="<?= $h($retour) ?>" class="es-form">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
           <input type="hidden" name="action" value="enregistrer">
-          <label class="es-champ">Nom scientifique <small>la clé vers Plantae</small>
+          <label class="es-champ">Nom scientifique <small>Le lien avec Plantae</small>
             <input type="text" name="nom_scientifique" maxlength="160" required value="<?= $h($f['nom_scientifique']) ?>" placeholder="Ex. Symphytum officinale">
           </label>
           <div class="es-deux">
-            <label class="es-champ">Variété <small>facultatif</small>
+            <label class="es-champ">Variété <small>Facultatif</small>
               <input type="text" name="variete" maxlength="120" value="<?= $h($f['variete']) ?>">
             </label>
             <label class="es-champ">Nom usuel
               <input type="text" name="nom_usuel" maxlength="160" value="<?= $h($f['nom_usuel']) ?>" placeholder="Ex. Consoude">
             </label>
           </div>
-          <label class="es-champ">Cycle <small>annuelle ou pérenne — les bordures retiennent les vivaces et les ligneuses</small>
+          <label class="es-champ">Cycle <small>Annuelle ou pérenne. Les bordures retiennent les vivaces et les ligneuses.</small>
             <select name="cycle">
-              <option value="">—</option>
+              <option value="">Non dit</option>
 <?php foreach (Especes::CYCLES as $cle => $lib): ?>
               <option value="<?= $cle ?>"<?= $f['cycle'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
             </select>
           </label>
-          <label class="es-champ">Hauteur adulte (m) <small>une moyenne — servira à estimer l'ombre portée vers le nord</small>
+          <label class="es-champ">Hauteur adulte (m) <small>Une moyenne</small>
             <input type="number" name="hauteur_m" min="0.01" max="60" step="0.01" inputmode="decimal" value="<?= $h($f['hauteur_m']) ?>">
           </label>
-          <label class="es-champ">Largeur adulte (m) <small>l'envergure — les plants des bordures se dessinent à cette taille sur le plan</small>
+          <label class="es-champ">Largeur adulte (m) <small>L'envergure. Les plants des bordures se dessinent à cette taille sur le plan.</small>
             <input type="number" name="largeur_m" min="0.01" max="60" step="0.01" inputmode="decimal" value="<?= $h($f['largeur_m']) ?>">
           </label>
-          <p class="es-note" style="margin:.5rem 0 .2rem">La strate dépend de l'usage (Théry, ch. 05) : celle où la plante se
-            déploie le mieux pour sa récolte, et celle où elle rend son service — biomasse, bloque-herbe (émergente 80 à 100 % de
-            lumière, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 %). Le scénario et le potager la proposent d'après ces deux choix.</p>
+          <p class="es-note" style="margin:.5rem 0 .2rem">La strate dépend de l'usage (Théry, ch. 05). La strate de production est
+            celle où la plante se déploie le mieux pour sa récolte. La strate de service est celle où elle rend son service, comme
+            la biomasse ou le bloque-herbe. Repères de lumière : émergente 80 à 100 %, haute 60 à 80 %, moyenne 40 à 60 %, basse
+            20 à 40 %. Le scénario et le potager proposent la strate d'après ces deux choix.</p>
           <div class="es-deux">
 <?php foreach (['strate_production' => 'Strate de production', 'strate_service' => 'Strate de service'] as $champ => $titre): ?>
             <label class="es-champ"><?= $titre ?>
               <select name="<?= $champ ?>">
-                <option value="">—</option>
+                <option value="">Non dit</option>
 <?php foreach (\Syntropia\Strates::REPERES as $cle => $r): ?>
                 <option value="<?= $cle ?>"<?= $f[$champ] === $cle ? ' selected' : '' ?>><?= $h($r['libelle']) ?></option>
 <?php endforeach; ?>
@@ -557,17 +558,17 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
             </label>
 <?php endforeach; ?>
           </div>
-          <label class="es-champ">Délai de germination (jours) <small>annuelle ou bisannuelle semée en place : la levée le suit</small>
+          <label class="es-champ">Délai de germination (jours) <small>Pour une annuelle ou une bisannuelle semée en place : la levée le suit</small>
             <input type="number" name="delai_germination_j" min="1" max="365" step="1" inputmode="numeric" value="<?= $h($f['delai_germination_j']) ?>">
           </label>
-          <label class="es-champ">Température du sol pour semer (°C) <small>« le critère n'est pas la date mais la température du sol » (Théry)</small>
+          <label class="es-champ">Température du sol pour semer (°C) <small>« Le critère n'est pas la date mais la température du sol » (Théry)</small>
             <input type="number" name="temperature_sol_semis_c" min="0" max="40" step="0.5" inputmode="decimal" value="<?= $h($f['temperature_sol_semis_c']) ?>">
           </label>
-          <p class="pd-titre" style="margin-top:.6rem">Calendrier <small style="font-weight:400">— en mots, comme « fin avril » ou « mi à fin juillet »</small></p>
+          <p class="pd-titre" style="margin-top:.6rem">Calendrier <small style="font-weight:400">En mots, comme « fin avril » ou « mi à fin juillet »</small></p>
           <label class="es-champ">Semis à l'abri
             <input type="text" name="periode_semis" maxlength="60" value="<?= $h($f['periode_semis']) ?>" placeholder="Ex. mars-avril">
           </label>
-          <label class="es-champ">Repiquage <small>semis en place, ou repiquage</small>
+          <label class="es-champ">Repiquage <small>Semis en place ou repiquage</small>
             <input type="text" name="periode_repiquage" maxlength="60" value="<?= $h($f['periode_repiquage']) ?>" placeholder="Ex. mai">
           </label>
           <label class="es-champ">Récolte
@@ -575,8 +576,8 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
           </label>
           <details class="es-fonctions-detail"<?= $roleSaisi !== [] ? ' open' : '' ?>>
             <summary>Rôle (<?= count($roleSaisi) ?>)</summary>
-            <p class="es-note">Ce à quoi sert l'espèce, une ou plusieurs à la fois — production, ou une fonction de
-              service comme le scénario et le plan de culture les connaissent déjà.</p>
+            <p class="es-note">Ce à quoi sert l'espèce, un ou plusieurs rôles à la fois : la production, ou une fonction
+              de service du scénario et du plan de culture.</p>
             <div class="es-fonctions">
 <?php foreach ($labelsRoles as $cle => $lib): ?>
               <label><input type="checkbox" class="case" name="role[]" value="<?= $h($cle) ?>"<?= in_array($cle, $roleSaisi, true) ? ' checked' : '' ?>> <?= $h($lib) ?></label>
@@ -602,7 +603,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
             <div class="es-deux" style="margin-top:.5rem">
               <label class="es-champ">Système
                 <select name="systeme">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (['colonisation' => 'Colonisation', 'accumulation' => 'Accumulation', 'abondance' => 'Abondance'] as $cle => $lib): ?>
                   <option value="<?= $cle ?>"<?= $f['systeme'] === $cle ? ' selected' : '' ?>><?= $lib ?></option>
 <?php endforeach; ?>
@@ -610,7 +611,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               </label>
               <label class="es-champ">Biomasse
                 <select name="biomasse">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (['+', '++', '+++'] as $b): ?>
                   <option value="<?= $b ?>"<?= $f['biomasse'] === $b ? ' selected' : '' ?>><?= $b ?></option>
 <?php endforeach; ?>
@@ -620,7 +621,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
             <div class="es-deux">
               <label class="es-champ">Entrée du scénario
                 <select name="entree_scenario">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (Scenario::PERIODES as $cle => [$lib, ]): ?>
                   <option value="<?= $cle ?>"<?= $f['entree_scenario'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
@@ -628,7 +629,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               </label>
               <label class="es-champ">Sortie du scénario
                 <select name="sortie_scenario">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (Scenario::PERIODES as $cle => [$lib, ]): ?>
                   <option value="<?= $cle ?>"<?= $f['sortie_scenario'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
@@ -653,7 +654,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
               </label>
               <label class="es-champ">Origine
                 <select name="origine">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (['achat' => 'Achat', 'multiplication' => 'Multiplication', 'rna' => 'RNA', 'mixte' => 'Mixte'] as $cle => $lib): ?>
                   <option value="<?= $cle ?>"<?= $f['origine'] === $cle ? ' selected' : '' ?>><?= $lib ?></option>
 <?php endforeach; ?>
@@ -669,7 +670,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
             <label class="es-champ">Orientation de bordure
               <input type="text" name="orientation_bordure" maxlength="60" value="<?= $h($f['orientation_bordure']) ?>">
             </label>
-            <label class="es-champ">Source <small>d'où vient cette information</small>
+            <label class="es-champ">Source <small>D'où vient cette information</small>
               <input type="text" name="source" maxlength="120" value="<?= $h($f['source']) ?>">
             </label>
             <label class="es-champ">Statut local
@@ -686,7 +687,7 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
         </form>
 <?php if ($estSurcharge): ?>
         <div class="es-retrait">
-          <form method="post" action="<?= $h($retour) ?>" onsubmit="return confirm('Retirer votre surcharge de cette espèce ? Ce site retrouvera la version du cadre, si elle existe.');">
+          <form method="post" action="<?= $h($retour) ?>" onsubmit="return confirm('Retirer votre surcharge de cette espèce ? Ce projet retrouvera la version du cadre, si elle existe.');">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="retirer">
             <input type="hidden" name="espece_id" value="<?= (int) $edition['id'] ?>">
@@ -700,12 +701,12 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
         <p class="pd-titre">Importer un fichier</p>
 <?php if ($apercuImport !== null): ?>
         <div class="es-apercu">
-          <p><strong><?= $h($apercuImport['fichier']) ?></strong> — <?= $apercuImport['total'] ?> espèce<?= $apercuImport['total'] > 1 ? 's' : '' ?> prête<?= $apercuImport['total'] > 1 ? 's' : '' ?> à écrire.</p>
+          <p><strong><?= $h($apercuImport['fichier']) ?></strong> : <?= $apercuImport['total'] ?> espèce<?= $apercuImport['total'] > 1 ? 's' : '' ?> prête<?= $apercuImport['total'] > 1 ? 's' : '' ?> à enregistrer.</p>
           <ul><?php foreach ($apercuImport['noms'] as $n): ?><li><?= $h($n) ?></li><?php endforeach; ?><?php if ($apercuImport['total'] > count($apercuImport['noms'])): ?><li>… et <?= $apercuImport['total'] - count($apercuImport['noms']) ?> autre<?= $apercuImport['total'] - count($apercuImport['noms']) > 1 ? 's' : '' ?></li><?php endif; ?></ul>
 <?php if ($apercuImport['ignorees'] !== []): ?>
           <p class="es-note">Colonne<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> ignorée<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> (pas lue<?= count($apercuImport['ignorees']) > 1 ? 's' : '' ?> par l'atelier) : <?= $h(implode(', ', $apercuImport['ignorees'])) ?>.</p>
 <?php endif; ?>
-          <p class="es-note">Une espèce déjà connue de ce site (cadre ou surcharge) verra sa surcharge mise à jour ; les autres deviennent des surcharges nouvelles. Rien n'est écrit avant confirmation.</p>
+          <p class="es-note">Une espèce déjà connue de ce projet, du cadre ou en surcharge, verra sa surcharge mise à jour. Les autres deviennent de nouvelles surcharges. Rien n'est enregistré avant confirmation.</p>
         </div>
         <form method="post" action="<?= $h($retour) ?>">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -718,14 +719,14 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
           <button type="submit" class="es-lien" style="background:none;border:0;cursor:pointer;padding:0">Annuler</button>
         </form>
 <?php else: ?>
-        <p class="es-note">Un fichier CSV (séparateur <code>;</code>), une ligne d'en-tête avec les noms de colonnes
-           attendus, une ligne par espèce. Seule <code>nom_scientifique</code> est obligatoire ; les autres colonnes
-           peuvent manquer, une case peut rester vide. Une colonne que l'atelier ne connaît pas n'empêche pas
-           l'import : elle est simplement ignorée, et dite à l'aperçu. Le fichier est vérifié en entier avant
-           d'écrire quoi que ce soit : s'il y a une erreur sur une ligne attendue, rien n'est écrit.</p>
+        <p class="es-note">Le fichier est un CSV, avec le séparateur <code>;</code>, une ligne d'en-tête qui donne les noms
+           de colonnes attendus, et une ligne par espèce. Seule la colonne <code>nom_scientifique</code> est obligatoire. Les
+           autres colonnes peuvent manquer, et une case peut rester vide. Une colonne inconnue de l'atelier est ignorée, et
+           l'aperçu la signale. Le fichier est vérifié en entier avant tout enregistrement : une erreur sur une ligne
+           attendue bloque tout l'import.</p>
         <p class="es-cols">Colonnes reconnues : nom_scientifique, variete, <?= $h(implode(', ', Especes::COLONNES)) ?>.</p>
-        <p class="es-note"><a class="es-lien" href="?telecharger=modele">Télécharger un modèle</a> — un fichier déjà
-           valide, à remplir ou à faire remplir, plutôt que de partir de la seule liste des colonnes.</p>
+        <p class="es-note"><a class="es-lien" href="?telecharger=modele">Télécharger un modèle</a> : un fichier déjà
+           valide, à remplir ou à faire remplir.</p>
         <form method="post" action="<?= $h($retour) ?>" enctype="multipart/form-data" class="es-form">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
           <input type="hidden" name="action" value="verifier">
@@ -748,17 +749,17 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Le référentiel d'espèces sert à deux choses : proposer, dans le plan de culture d'un potager, le
-         calendrier d'une culture connue (comme le fait déjà le tableau de Yann Lopez, pour dix-sept d'entre
-         elles) ; et suggérer, dans le scénario d'une parcelle pérenne, l'espacement et le rôle d'un végétal.</p>
-      <p><strong>Le cadre</strong> est partagé par tous les sites — 46 espèces curatées au départ. <strong>Une
-         surcharge</strong> est propre à ce site : elle prime sur le cadre pour la même espèce, sans le changer
-         pour les autres. La retirer rend au site la version du cadre, si elle existe.</p>
-      <p><strong>Le calendrier</strong> se dit en mots, comme le tableau de Lopez (« fin avril », « mi à fin
-         juillet ») — des repères indicatifs, pas des dates : c'est vous qui les corrigez à l'usage.</p>
-      <p><strong>Le rôle</strong> se choisit dans une liste fermée, une ou plusieurs valeurs à la fois — production,
-         ou une fonction de service, le même vocabulaire que le scénario pérenne et le plan de culture du
-         potager (biomasse, bloque-herbe, tuteur…) : pour ne pas en tenir deux.</p>
+      <p>Le référentiel d'espèces sert à deux choses. Dans le plan de culture d'un potager, il propose le
+         calendrier d'une culture connue, comme le tableau de Yann Lopez pour dix-sept d'entre elles. Dans le
+         scénario d'une parcelle pérenne, il suggère l'espacement et le rôle d'un végétal.</p>
+      <p><strong>Le cadre</strong> est partagé par tous les projets. <strong>Une surcharge</strong> est propre à ce
+         projet : elle prime sur le cadre pour la même espèce, sans le changer pour les autres. La retirer rend au
+         projet la version du cadre, si elle existe.</p>
+      <p><strong>Le calendrier</strong> s'écrit en mots, comme le tableau de Lopez (« fin avril », « mi à fin
+         juillet »). Ce sont des repères indicatifs, que vous corrigez à l'usage.</p>
+      <p><strong>Le rôle</strong> se choisit dans une liste fermée, avec une ou plusieurs valeurs à la fois : la
+         production, ou une fonction de service. C'est le même vocabulaire que le scénario pérenne et le plan de
+         culture du potager (biomasse, bloque-herbe, tuteur…).</p>
     </div>
   </aside>
 

@@ -236,11 +236,11 @@ $nomAffiche = $auth->nomAffiche() ?? '';
         <div class="ex-cadre">
           <h1>Exporter le projet</h1>
 <?php if (!$estPorteur): ?>
-          <p class="ex-vide">L'export de « <?= $h($site['nom']) ?> » se demande à son porteur :
-             le fichier porte les réponses de tous les participants.</p>
+          <p class="ex-vide">L'export de « <?= $h($site['nom']) ?> » se demande à son porteur, car
+             le fichier contient les réponses de tous les participants.</p>
 <?php else: ?>
-          <p class="ex-chapeau">Une copie de « <?= $h($site['nom']) ?> » dans un fichier daté, à garder ou à
-             redonner. Vous la téléchargez ici ; elle ne change rien au projet.</p>
+          <p class="ex-chapeau">Le porteur peut exporter « <?= $h($site['nom']) ?> » dans un fichier daté, à
+             garder ou à transmettre. Le téléchargement laisse le projet inchangé.</p>
 
           <div class="ex-bloc">
             <h2>Le fichier contiendra</h2>
@@ -251,17 +251,17 @@ $nomAffiche = $auth->nomAffiche() ?? '';
             </ul>
           </div>
           <div class="ex-bloc">
-            <h2>Il ne contiendra jamais</h2>
+            <h2>Ce qu'il ne contient pas</h2>
             <p class="ex-pas">Aucun compte (ni identifiant, ni courriel, ni mot de passe), aucun accès au projet, aucune
-               invitation. Les participants n'y figurent que par leur nom.</p>
+               invitation. Les participants y figurent seulement par leur nom.</p>
           </div>
 
 <?php if ($desaccord !== null): ?>
           <p class="ex-message ex-message--erreur" role="alert"><?= $h($desaccord) ?></p>
 <?php endif; ?>
 <?php if ($trop !== null): ?>
-          <p class="ex-message ex-message--erreur" role="alert">Ce projet dépasse ce qu'un fichier d'export peut porter
-             (1 Mo) : il ne pourrait pas être réimporté, il n'est donc pas produit. Ce qui pèse le plus :
+          <p class="ex-message ex-message--erreur" role="alert">Ce projet dépasse la taille d'un fichier d'export (1 Mo).
+             Il ne pourrait pas être réimporté : le fichier n'est donc pas produit. Ce qui pèse le plus :
              <?= $h($trop) ?>.</p>
 <?php endif; ?>
           <div class="ex-actions">
@@ -283,18 +283,18 @@ $nomAffiche = $auth->nomAffiche() ?? '';
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Le fichier <strong>.syntropia.json</strong> est une copie du projet à l'instant où vous le demandez :
-         sa <strong>date d'export</strong> est dans le nom du fichier et dans son contenu. Il garde le projet tel
-         que vous le voyez — définition, terrain, parcelles et leur plan, scénarios, relevés, tracés de la carte —
-         et les réponses de <strong>tous</strong> les participants, d'où la réserve au porteur.</p>
-      <p>Il ne porte <strong>aucun compte ni aucun accès</strong> : qui peut voir le projet se décide là où le
-         fichier arrive, pas dans le fichier. Le fichier se lit dans un éditeur de texte ; ne le modifiez pas à la main.</p>
-      <p>Le fichier <strong>dit d'où il vient</strong> : la forme du fichier, celle des données (le « schéma ») et le
-         numéro de l'atelier qui l'a écrit. Il porte aussi une <strong>somme de contrôle</strong> : un fichier dont une
-         seule lettre a changé depuis son export ne se recharge pas, et un fichier venu d'un atelier dont les données
-         n'ont pas la même forme non plus.</p>
-      <p>Un projet qui dépasserait 1 Mo n'est pas exporté : le fichier ne pourrait pas être réimporté, et
-         une sauvegarde qu'on ne peut pas rouvrir n'en est pas une. La page dit alors ce qui pèse.</p>
+      <p>Le fichier <strong>.syntropia.json</strong> est une copie du projet au moment où vous la demandez. Sa
+         <strong>date d'export</strong> figure dans le nom du fichier et dans son contenu. Il garde le projet tel que
+         vous le voyez (définition, terrain, parcelles et leur plan, scénarios, relevés, tracés de la carte) et les
+         réponses de <strong>tous</strong> les participants. C'est pourquoi l'export est réservé au porteur.</p>
+      <p>Il ne contient <strong>aucun compte ni aucun accès</strong> : les accès se décident là où le fichier arrive.
+         Le fichier se lit dans un éditeur de texte. Ne le modifiez pas à la main.</p>
+      <p>Le fichier <strong>indique d'où il vient</strong> : la forme du fichier, celle des données (le « schéma ») et le
+         numéro de l'atelier qui l'a écrit. Il contient aussi une <strong>somme de contrôle</strong>. Un fichier modifié
+         depuis son export, même d'une lettre, ne se recharge pas. Un fichier venu d'un atelier dont les données ont une
+         autre forme ne se recharge pas non plus.</p>
+      <p>Un projet de plus de 1 Mo ne s'exporte pas, car le fichier ne pourrait pas être réimporté. La page indique
+         alors ce qui pèse le plus.</p>
     </div>
   </aside>
 

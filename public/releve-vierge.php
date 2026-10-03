@@ -54,7 +54,7 @@ $g = static function (string $texte): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fiches de relevé de sol — Syntropia</title>
+<title>Fiches de relevé de sol, Syntropia</title>
 <style>
   @font-face{ font-family:'Clash Display'; src:url('assets/polices/ClashDisplay-Semibold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
   @font-face{ font-family:'Archivo'; src:url('assets/polices/Archivo-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
@@ -129,20 +129,20 @@ $g = static function (string $texte): string {
 
 <div class="page">
   <header>
-    <h1>Relevé de sol — fiches à remplir</h1>
+    <h1>Relevé de sol, fiches à remplir</h1>
     <p class="chapeau">
-      <strong>Ce qui va se passer.</strong> Sept mesures, à faire au même endroit et
-      dans la journée pour les cinq premières. Comptez une demi-journée,
-      beaucoup à genoux, les mains dans la terre — et un long moment à attendre que
-      l'eau descende. Chaque fiche annonce son geste et sa durée avant sa grille.
-      Si votre expérience diffère de ce qui est annoncé, notez-le : ce n'est pas
-      un échec, c'est ce qui fera corriger la fiche.
+      <strong>Ce qui va se passer.</strong> Sept mesures sont à faire au même endroit,
+      et dans la journée pour les cinq premières. Comptez une demi-journée, souvent à
+      genoux, les mains dans la terre, avec un long moment à attendre que l'eau
+      descende. Chaque fiche annonce son geste et sa durée avant sa grille. Si votre
+      expérience diffère de ce qui est annoncé, notez-le : c'est ce qui fera corriger
+      la fiche.
     </p>
     <p class="chapeau">
-      Les cinq premiers relevés se prennent sur chaque parcelle, avant de l'ouvrir —
-      un relevé fait ailleurs sur le site ne dit rien de celle-ci. Et les mesures
-      « avant » se prennent avant le bâchage et avant tout travail du sol :
-      une fois la prairie décomposée, le point zéro est perdu définitivement.
+      Les cinq premiers relevés se prennent sur chaque parcelle, avant de l'ouvrir :
+      un relevé fait ailleurs sur le site ne dit rien de celle-ci. Les mesures
+      « avant » se prennent avant le bâchage et avant tout travail du sol. Une fois
+      la prairie décomposée, le point zéro est perdu.
     </p>
   </header>
 
@@ -217,7 +217,7 @@ $g = static function (string $texte): string {
 
   <section class="saut-avant">
     <h2>Ce qu'on a vu, et qui n'entre dans aucune case</h2>
-    <p class="chapeau">La ligne la plus utile du relevé, souvent. Une odeur, une
+    <p class="chapeau">C'est souvent la ligne la plus utile du relevé : une odeur, une
        racine qui contourne, un changement de couleur, un doute sur un geste.</p>
     <div class="grille">
       <div class="champ-releve large">
@@ -228,9 +228,9 @@ $g = static function (string $texte): string {
   </section>
 
   <footer class="pied-dossier">
-    <p><strong>Au retour</strong> — reporter dans le carnet du site. Les protocoles
-       complets, avec le geste et les pièges, restent hors de cette fiche : elle
-       aide à exécuter un protocole qu'on connaît, elle ne l'enseigne pas.</p>
+    <p><strong>Au retour</strong>, notez le test d'infiltration dans l'atelier, à l'étape
+       « Matériel et eau ». Cette fiche aide à exécuter un protocole déjà connu. Les
+       protocoles complets, avec le geste et les pièges, n'y figurent pas.</p>
   </footer>
 </div>
 

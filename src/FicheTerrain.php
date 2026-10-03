@@ -57,35 +57,35 @@ final class FicheTerrain
              'sens' => null],
             ['libelle' => 'Parcelle', 'unite' => null, 'champ' => null,
              'sens' => "Le sol appartient à la parcelle, non au site : "
-                 . "un bas-fond argileux et un haut de coteau sableux sont deux mondes."],
+                 . "un bas-fond argileux et un haut de coteau sableux sont très différents."],
             ['libelle' => 'Point de relevé', 'unite' => 'un repère qu\'on retrouvera',
              'champ' => 'point',
              'sens' => "Un piquet, des coordonnées GPS, un repère fixe. "
-                 . "**On reviendra mesurer ici même dans cinq ans** — sans cela, "
-                 . "la comparaison ne vaut rien."],
+                 . "**On reviendra mesurer ici même dans cinq ans** : c'est la "
+                 . "condition de la comparaison."],
             ['libelle' => 'Campagne', 'unite' => 'point zéro · N+1 · N+3…',
              'champ' => 'campagne',
-             'sens' => "Quel passage est-ce. Le **point zéro** se prend avant "
+             'sens' => "Le numéro du passage. Le **point zéro** se prend avant "
                  . "le bâchage et avant tout travail du sol : une fois la prairie "
                  . "décomposée, on ne peut plus savoir d'où l'on partait."],
             ['libelle' => 'Est-ce le témoin ?', 'unite' => 'oui / non',
              'champ' => 'temoin',
              'sens' => "Le **témoin** est un point de comparaison laissé tel quel, "
-                 . "à quelques mètres, sur le même sol — prairie voisine, zone non "
-                 . "ouverte, ou parcelle conduite classiquement. **Chaque relevé se "
+                 . "à quelques mètres, sur le même sol : prairie voisine, zone non "
+                 . "ouverte, ou parcelle conduite de façon classique. **Chaque relevé se "
                  . "fait en double** : un point dans la parcelle, un dans le témoin."],
             ['libelle' => "État d'humidité", 'unite' => 'détrempé · ressuyé · sec dur',
              'champ' => 'etat_humidite',
-             'sens' => "**Ressuyé** = l'eau de la dernière pluie a fini de "
-                 . "s'égoutter, la terre est fraîche sans coller. C'est l'état où "
-                 . "l'on mesure — et il faut **toujours le même** d'une campagne "
+             'sens' => "Un sol est **ressuyé** quand l'eau de la dernière pluie a fini de "
+                 . "s'égoutter : la terre est fraîche sans coller. C'est l'état où "
+                 . "l'on mesure, et il doit être **toujours le même** d'une campagne "
                  . "à l'autre."],
             ['libelle' => 'Jours depuis la dernière pluie', 'unite' => 'j',
              'champ' => 'jours_depuis_pluie',
              'sens' => "Avec l'état d'humidité, il dit **à quelle vitesse ce sol "
                  . "se ressuie**."],
             ['libelle' => 'Relevé par', 'unite' => null, 'champ' => 'saisi_par',
-             'sens' => "Le geste varie d'une personne à l'autre — la profondeur "
+             'sens' => "Le geste varie d'une personne à l'autre : la profondeur "
                  . "d'un coup de bêche, la lecture d'un agrégat."],
         ];
     }
@@ -97,11 +97,10 @@ final class FicheTerrain
      */
     public static function sertLesConditions(): string
     {
-        return "Ces huit lignes ne mesurent rien — **elles rendent les mesures "
-            . "comparables**. Sans le point, on ne revient pas au même endroit ; "
-            . "sans le témoin, on ne sait pas distinguer l'effet du système de "
-            . "celui d'une année pluvieuse ; sans l'état d'humidité, deux "
-            . "densités ne se comparent pas.";
+        return "Ces huit lignes **rendent les mesures comparables**. Le point "
+            . "permet de revenir au même endroit. Le témoin distingue l'effet du "
+            . "système de celui d'une année pluvieuse. L'état d'humidité permet "
+            . "de comparer deux densités.";
     }
 
     /**
@@ -125,14 +124,14 @@ final class FicheTerrain
                 'note' => "Avant de piétiner quoi que ce soit. Une plante n'est "
                     . "jamais indicatrice seule : on raisonne par groupes, et sur "
                     . "une pratique répétée, non sur un événement.",
-                'avant' => 'Vous allez marcher lentement sur la zone, vous accroupir quatre fois, et regarder longtemps la même chose. **Comptez une heure. Rien à porter** — une fiche et un crayon. C\'est l\'exercice qui demande le plus de patience et le moins d\'effort : l\'œil met un moment à séparer les espèces, puis elles se détachent d\'un coup.',
-                'sert' => '**Choisir des espèces adaptées** : ce qui pousse déjà spontanément dit ce qui poussera, et c\'est la seule méthode de régionalisation que le corpus autorise. Le relevé sert aussi à lire le sol — mais jamais par une plante seule : on raisonne par groupes, et sur une pratique répétée depuis plus de dix ans.',
+                'avant' => 'Vous allez marcher lentement sur la zone, vous accroupir quatre fois, et regarder longtemps la même chose. **Comptez une heure. Il suffit d\'une fiche et d\'un crayon.** C\'est l\'exercice qui demande le plus de patience et le moins d\'effort : l\'œil met un moment à séparer les espèces, puis elles se détachent d\'un coup.',
+                'sert' => '**Choisir des espèces adaptées** : ce qui pousse déjà spontanément dit ce qui poussera, et c\'est la seule méthode de régionalisation que le corpus autorise. Le relevé sert aussi à lire le sol, toujours par groupes de plantes et sur une pratique répétée depuis plus de dix ans.',
                 'champs' => [
                     ['libelle' => 'Pente et exposition', 'unite' => null, 'champ' => null],
                     ['libelle' => 'Nombre de strates', 'unite' => '1 · 2 · 3 · > 3', 'champ' => null],
                     ['libelle' => 'Densité du couvert', 'unite' => 'faible · moyenne · forte',
                      'champ' => null],
-                    ['libelle' => 'Carré 1 — espèces et points', 'unite' => 'total = 6',
+                    ['libelle' => 'Carré 1 : espèces et points', 'unite' => 'total = 6',
                      'champ' => null, 'lignes' => 3],
                     ['libelle' => 'Carré 2', 'unite' => 'total = 6', 'champ' => null, 'lignes' => 3],
                     ['libelle' => 'Carré 3', 'unite' => 'total = 6', 'champ' => null, 'lignes' => 3],
@@ -150,7 +149,7 @@ final class FicheTerrain
                 'quand' => 'Sol ressuyé. Ni détrempé, ni sec',
                 'note' => "Le trou sert ensuite à l'infiltration et au comptage : "
                     . "on ne le rebouche qu'à la fin.",
-                'avant' => 'Vous allez ouvrir un trou de 30 cm à la bêche et regarder la tranche. **Une demi-heure, à genoux.** Vous verrez des couches de couleur et de texture différentes, et peut-être des racines qui s\'arrêtent net à une profondeur : c\'est ce qu\'on cherche. **Ce trou servira aussi aux deux mesures suivantes** — on ne le rebouche qu\'à la fin.',
+                'avant' => 'Vous allez ouvrir un trou de 30 cm à la bêche et regarder la tranche. **Une demi-heure, à genoux.** Vous verrez des couches de couleur et de texture différentes, et peut-être des racines qui s\'arrêtent net à une profondeur : c\'est ce qu\'on cherche. **Ce trou servira aussi aux deux mesures suivantes**, et on ne le rebouche qu\'à la fin.',
                 'sert' => '**Savoir s\'il faut décompacter avant de planter, et jusqu\'où.** Une semelle de labour au-delà de 30 cm est le seul cas où le corpus admet une machine. Et l\'endroit où les racines s\'arrêtent dit la profondeur réellement disponible.',
                 'champs' => [
                     ['libelle' => 'Profondeur ouverte', 'unite' => 'cm', 'champ' => 'profondeur_cm'],
@@ -158,12 +157,12 @@ final class FicheTerrain
                      'champ' => null, 'lignes' => 3],
                     ['libelle' => 'Structure dominante', 'unite' => null,
                      'champ' => 'structure_dominante'],
-                    ['libelle' => 'Test du couteau — résistance nette à', 'unite' => 'cm',
+                    ['libelle' => 'Test du couteau : résistance nette à', 'unite' => 'cm',
                      'champ' => 'semelle_profondeur_cm'],
-                    ['libelle' => 'Racines — arrêt ou coude horizontal à', 'unite' => 'cm',
+                    ['libelle' => 'Racines : arrêt ou coude horizontal à', 'unite' => 'cm',
                      'champ' => 'racines_arret_cm'],
                     ['libelle' => 'Porosité, galeries', 'unite' => null, 'champ' => 'porosite'],
-                    ['libelle' => 'Hydromorphie — taches rouille ou grises à', 'unite' => 'cm',
+                    ['libelle' => 'Hydromorphie : taches rouille ou grises à', 'unite' => 'cm',
                      'champ' => 'hydromorphie_cm'],
                     ['libelle' => 'Odeur', 'unite' => null, 'champ' => 'odeur'],
                     ['libelle' => 'Photo prise', 'unite' => 'nom du fichier', 'champ' => 'photo'],
@@ -181,20 +180,20 @@ final class FicheTerrain
                 'note' => "Le volume du cylindre se calcule une fois pour toutes, "
                     . "avant de partir.",
                 'avant' => 'Vous allez enfoncer un tube dans la terre, trois fois, et rapporter les carottes à la maison. **20 minutes sur place**, puis un séchage au four et une pesée. C\'est la mesure la moins spectaculaire des sept, et **celle qui se compare le mieux d\'une année à l\'autre**.',
-                'sert' => '**Voir si le sol se décompacte au fil des ans.** C\'est le meilleur candidat pour un avant/après : chiffré, reproductible, matériel dérisoire. Ce qui compte n\'est pas la valeur absolue mais **l\'écart** — un sol argileux et un sol sableux n\'ont pas la même densité de départ.',
+                'sert' => '**Voir si le sol se décompacte au fil des ans.** C\'est le meilleur candidat pour un avant/après : chiffré, reproductible, matériel dérisoire. Ce qui compte est **l\'écart** plus que la valeur absolue, car un sol argileux et un sol sableux n\'ont pas la même densité de départ.',
                 'champs' => [
                     ['libelle' => 'Profondeur du prélèvement', 'unite' => 'cm',
                      'champ' => 'profondeur_cm'],
                     ['libelle' => 'Volume du cylindre', 'unite' => 'cm³', 'champ' => null],
-                    ['libelle' => 'Masses sèches — 1 · 2 · 3', 'unite' => 'g', 'champ' => null],
+                    ['libelle' => 'Masses sèches : 1 · 2 · 3', 'unite' => 'g', 'champ' => null],
                     ['libelle' => 'Mode de séchage', 'unite' => 'four 105 °C, 24 h', 'champ' => null],
-                    ['libelle' => 'Densité apparente — moyenne', 'unite' => 'g/cm³',
+                    ['libelle' => 'Densité apparente moyenne', 'unite' => 'g/cm³',
                      'champ' => 'densite_apparente'],
                 ],
                 'lecture' => [
-                    '≈ 1,0' => 'sol très poreux — ce qu\'on trouve en prairie et en forêt',
+                    '≈ 1,0' => 'sol très poreux, comme en prairie et en forêt',
                     '1,1 à 1,4' => 'intermédiaire',
-                    '1,5 à 1,7' => 'sol tassé — « là ça commence à aller mal »',
+                    '1,5 à 1,7' => 'sol tassé : « là ça commence à aller mal »',
                     '> 1,7' => 'très tassé',
                 ],
             ],
@@ -204,12 +203,12 @@ final class FicheTerrain
                 'quand' => 'Toujours dans les mêmes conditions d\'humidité',
                 'note' => "Deux anneaux : celui du dehors force l'eau du dedans à "
                     . "descendre au lieu de s'étaler.",
-                'avant' => 'Vous allez verser de l\'eau dans un trou et regarder le niveau descendre, montre en main. **De 30 minutes à une heure, dont l\'essentiel à attendre.** C\'est le moment le plus lent du relevé — profitez-en pour remplir les autres lignes.',
-                'sert' => '**Mesurer ce que le sol garde l\'eau, chiffré.** Et c\'est ce qui informe le rythme d\'arrosage des trois premières années — un sol qui boit vite demande des passages plus courts et plus fréquents, un sol qui fait tampon supporte « long et espacé ».',
+                'avant' => 'Vous allez verser de l\'eau dans un trou et regarder le niveau descendre, montre en main. **De 30 minutes à une heure, dont l\'essentiel à attendre.** C\'est le moment le plus lent du relevé : profitez-en pour remplir les autres lignes.',
+                'sert' => '**Mesurer, chiffres à l\'appui, comment le sol garde l\'eau.** Cette mesure informe le rythme d\'arrosage des trois premières années. Un sol qui boit vite demande des passages plus courts et plus fréquents. Un sol qui fait tampon supporte un arrosage long et espacé.',
                 'champs' => [
                     ['libelle' => 'Version', 'unite' => 'flaque · double anneau', 'champ' => null],
                     ['libelle' => "Hauteur d'eau initiale", 'unite' => 'mm', 'champ' => null],
-                    ['libelle' => 'Relevés — 5 min · 10 min · 20 min', 'unite' => 'mm',
+                    ['libelle' => 'Relevés : 5 min · 10 min · 20 min', 'unite' => 'mm',
                      'champ' => null, 'lignes' => 2],
                     ['libelle' => 'Vitesse stabilisée', 'unite' => 'mm/h',
                      'champ' => 'infiltration_mm_h'],
@@ -218,12 +217,12 @@ final class FicheTerrain
             ],
             'slake' => [
                 'numero' => '03',
-                'titre' => 'Slake test — stabilité structurale',
+                'titre' => 'Slake test : stabilité structurale',
                 'quand' => 'Agrégats séchés à l\'air, comparables entre eux',
                 'note' => "**La photo est le vrai relevé de ce test.** Elle se "
                     . "relit dans cinq ans.",
-                'avant' => 'Vous allez poser deux mottes sèches dans deux bocaux d\'eau et les regarder. **Un quart d\'heure.** C\'est le plus frappant des sept tests : en dix minutes, une motte instable se défait en nuage sous vos yeux, l\'autre reste entière. **Photographiez** — c\'est le vrai relevé.',
-                'sert' => '**Savoir si le sol se refermera à la première pluie.** Il mesure la stabilité des agrégats, donc l\'effet cumulé de la biologie et de la matière organique — ce qu\'aucune analyse chimique ne montre.',
+                'avant' => 'Vous allez poser deux mottes sèches dans deux bocaux d\'eau et les regarder. **Un quart d\'heure.** C\'est le plus frappant des sept tests : en dix minutes, une motte instable se défait en nuage sous vos yeux, l\'autre reste entière. **Photographiez** : la photo est le vrai relevé.',
+                'sert' => '**Savoir si le sol se refermera à la première pluie.** Il mesure la stabilité des agrégats, donc l\'effet cumulé de la biologie et de la matière organique, qu\'aucune analyse chimique ne montre.',
                 'champs' => [
                     ['libelle' => 'Points comparés', 'unite' => 'parcelle / témoin', 'champ' => null],
                     ['libelle' => 'Taille des agrégats', 'unite' => 'cm', 'champ' => null],
@@ -234,9 +233,9 @@ final class FicheTerrain
                     ['libelle' => 'Photo prise', 'unite' => 'nom du fichier', 'champ' => 'photo'],
                 ],
                 'lecture' => [
-                    'Garde sa forme, eau claire, peu de dépôt' => 'structure stable — bonne agrégation biologique',
+                    'Garde sa forme, eau claire, peu de dépôt' => 'structure stable, bonne agrégation biologique',
                     'Gonfle, se fissure, quelques fragments tombent' => 'intermédiaire',
-                    'S\'effondre en nuage, eau trouble, dépôt important' => 'structure instable — elle se refermera à la première pluie',
+                    'S\'effondre en nuage, eau trouble, dépôt important' => 'structure instable, qui se refermera à la première pluie',
                 ],
             ],
             'vers' => [
@@ -246,12 +245,12 @@ final class FicheTerrain
                 'note' => "La fenêtre est étroite, et l'heure doit être la même à "
                     . "chaque campagne.",
                 'avant' => 'Vous allez extraire un bloc de terre de 20 cm de côté et le défaire à la main, morceau par morceau, pour compter ce qui bouge. **Une demi-heure, accroupi, les mains dans la terre.** Trois blocs, et on remet tout en place.',
-                'sert' => '**Suivre la vie du sol, et c\'est l\'indicateur qui bouge le plus vite** : mesurable dès la fin de la première année, quand les autres mettent trois ans.',
+                'sert' => '**Suivre la vie du sol.** C\'est l\'indicateur qui change le plus vite : il se mesure dès la fin de la première année, quand les autres mettent trois ans.',
                 'champs' => [
                     ['libelle' => 'Saison', 'unite' => 'automne · printemps', 'champ' => null],
-                    ['libelle' => 'Volume du bloc', 'unite' => 'cm — 20 × 20 × 20',
+                    ['libelle' => 'Volume du bloc', 'unite' => 'cm, 20 × 20 × 20',
                      'champ' => 'volume_bloc_cm'],
-                    ['libelle' => 'Comptages — 1 · 2 · 3', 'unite' => 'vers', 'champ' => null],
+                    ['libelle' => 'Comptages : 1 · 2 · 3', 'unite' => 'vers', 'champ' => null],
                     ['libelle' => 'Moyenne', 'unite' => 'vers / bloc', 'champ' => 'vers_par_bloc'],
                     ['libelle' => 'Dont anéciques', 'unite' => null, 'champ' => 'dont_aneciques'],
                     ['libelle' => 'Turricules sur 50 × 50', 'unite' => null,
@@ -271,10 +270,10 @@ final class FicheTerrain
                 'quand' => 'Sol humide pour le boudin. Le drainage s\'observe après une pluie',
                 'note' => "Un sol peut être drainant en surface et engorgé à 40 cm : "
                     . "c'est le cas le plus trompeur, et le test du trou seul ne le voit pas.",
-                'avant' => 'Vous allez humidifier un peu de terre et la rouler entre vos doigts pour en faire un boudin. **20 minutes, rien à porter.** C\'est le seul test qui se fait entièrement à la main, et le plus facile à refaire ailleurs sur la parcelle — n\'hésitez pas à le répéter à trois endroits.',
+                'avant' => 'Vous allez humidifier un peu de terre et la rouler entre vos doigts pour en faire un boudin. **20 minutes, rien à porter.** C\'est le seul test qui se fait entièrement à la main, et le plus facile à refaire ailleurs sur la parcelle. Répétez-le à trois endroits.',
                 'sert' => '**Deux décisions.** Le drainage commande le choix des espèces de bordure, souvent bien avant le pH. Et avec la texture, il commande la réserve en eau, donc le rythme d\'arrosage.',
                 'champs' => [
-                    ['libelle' => 'Texture — test du boudin', 'unite' => null, 'champ' => 'texture'],
+                    ['libelle' => 'Texture : test du boudin', 'unite' => null, 'champ' => 'texture'],
                     ['libelle' => 'Drainage constaté', 'unite' => null, 'champ' => 'drainage'],
                     ['libelle' => 'Hydromorphie', 'unite' => null, 'champ' => 'hydromorphie'],
                     ['libelle' => 'Profondeur des traces', 'unite' => 'cm', 'champ' => 'hydromorphie_cm'],
@@ -299,7 +298,7 @@ final class FicheTerrain
     public static function avantDePartir(): array
     {
         return [
-            "De l'eau — pour boire, et pour le slake test",
+            "De l'eau, pour boire et pour le slake test",
             'Gants, bêche, couteau, mètre ruban, crayon de papier',
             'Un appareil photo : la photo est le relevé qui se relit dans cinq ans',
             'Repérer les points AVANT de creuser, et les marquer pour les retrouver',

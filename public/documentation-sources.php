@@ -270,11 +270,11 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/sources-de-l-atelie
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Une page à la fois, comme un livret : cliquez un chapitre dans la
-         liste, ou tournez la page avec les boutons en bas. Ce livret dit
-         d'où viennent les règles de l'atelier — les livres, la formation,
-         les bases de données — et à quoi chacune sert ; l'atelier et
-         l'agroforesterie syntropique ont chacun leur livret.</p>
+      <p>Ce livret se lit une page à la fois. Cliquez un chapitre dans la
+         liste, ou tournez la page avec les boutons du bas. Il dit d'où
+         viennent les règles de l'atelier (les livres, la formation, les bases
+         de données) et à quoi chacune sert. L'atelier et l'agroforesterie
+         syntropique ont chacun leur livret.</p>
     </div>
   </aside>
 

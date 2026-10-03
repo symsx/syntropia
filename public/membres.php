@@ -181,11 +181,11 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
         <div class="mb-cadre">
           <h1>Participants</h1>
 <?php if (!$estPorteur): ?>
-          <p class="mb-vide">La liste de ceux qui ont accès à « <?= $h($site['nom']) ?> » se consulte
-             auprès de son porteur.</p>
+          <p class="mb-vide">La liste des personnes qui ont accès à « <?= $h($site['nom']) ?> » se
+             consulte auprès de son porteur.</p>
 <?php else: ?>
-          <p class="mb-chapeau">Ceux qui ont accès à « <?= $h($site['nom']) ?> ». Retirer un accès
-             ferme le projet à cette personne ; ses réponses y restent.</p>
+          <p class="mb-chapeau">Les personnes qui ont accès à « <?= $h($site['nom']) ?> ». Retirer un
+             accès ferme le projet à cette personne, et ses réponses y restent.</p>
 <?php if ($flash !== null): ?>
           <p class="mb-message<?= $flash[0] === 'erreur' ? ' mb-message--erreur' : '' ?>"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
@@ -202,14 +202,14 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
                 <small><?= $h($libelleRole[$m['role']] ?? $m['role']) ?> · depuis le <?= $h($depuis($m['depuis_le'])) ?><?= $identifiant !== '' ? ' · ' . $h($identifiant) : '' ?></small>
               </span>
 <?php if ($m['role'] !== 'porteur'): ?>
-              <form method="post" data-confirmer="Retirer l'accès de <?= $h($nom) ?> au projet « <?= $h($site['nom']) ?> » ? Ses réponses restent dans le projet ; cette personne ne pourra plus l'ouvrir.">
+              <form method="post" data-confirmer="Retirer l'accès de <?= $h($nom) ?> au projet « <?= $h($site['nom']) ?> » ? Ses réponses restent dans le projet, mais cette personne ne pourra plus l'ouvrir.">
                 <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
                 <input type="hidden" name="action" value="retirer">
                 <input type="hidden" name="compte_id" value="<?= (int) $m['compte_id'] ?>">
                 <button type="submit" class="mb-retirer">Retirer l'accès</button>
               </form>
 <?php else: ?>
-              <span class="mb-etat">porteur</span>
+              <span class="mb-etat">Porteur</span>
 <?php endif; ?>
             </li>
 <?php endforeach; ?>
@@ -222,7 +222,7 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
           </p>
 <?php endif; ?>
 <?php if (count($membres) <= 1): ?>
-          <p class="mb-vide" style="margin-top:.6rem">Personne d'autre pour l'instant.</p>
+          <p class="mb-vide" style="margin-top:.6rem">Aucune autre personne pour l'instant.</p>
 <?php endif; ?>
           <p class="mb-lien"><a href="inviter.php">Inviter quelqu'un →</a></p>
 <?php endif; ?>
@@ -239,12 +239,11 @@ $depuis = static fn (string $d): string => date('d/m/Y', (int) strtotime($d));
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Vous voyez ici ceux qui ont accès au projet actif : le porteur (vous), ceux qui
-         contribuent et ceux qui lisent seulement. Seul le porteur voit cette liste.</p>
-      <p><strong>Retirer l'accès</strong> ferme le projet à cette personne : il n'apparaît plus
-         dans ses projets. Ses réponses aux étapes restent dans le projet, et elle les retrouve
-         si vous l'invitez de nouveau. Un porteur ne se retire pas : le projet garde toujours
-         le sien.</p>
+      <p>Cette page montre les personnes qui ont accès au projet actif : le porteur (vous), les
+         contributeurs et les lecteurs. Seul le porteur voit cette liste.</p>
+      <p><strong>Retirer l'accès</strong> ferme le projet à cette personne : il disparaît de ses
+         projets. Ses réponses aux étapes restent dans le projet, et elle les retrouve si vous
+         l'invitez de nouveau. Le porteur garde toujours son accès.</p>
     </div>
   </aside>
 

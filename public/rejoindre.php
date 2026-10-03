@@ -32,7 +32,7 @@ $invitations = new Invitations();
 $sites = new Sites();
 
 $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
-$dit = ['contributeur' => 'en contribuant', 'lecteur' => 'en lisant'];
+$dit = ['contributeur' => 'avec le rôle de contributeur', 'lecteur' => 'avec le rôle de lecteur'];
 
 $code = strtoupper(trim((string) ($_POST['code'] ?? $_GET['code'] ?? '')));
 $message = null;      // ce qu'on dit à la personne
@@ -48,8 +48,8 @@ if ($code !== '') {
 }
 if ($invitation !== null) {
     if ($invitation['site_id'] === null) {
-        $message = "Ce code ouvre un compte, pas un projet : il attend quelqu'un qui n'en a pas "
-            . 'encore. Il reste valable — rien n\'a été utilisé.';
+        $message = "Ce code sert à créer un compte, pour une personne qui n'en a pas encore. "
+            . 'Il reste valable, car rien n\'a été utilisé.';
         $invitation = null;
     } else {
         $projet = $sites->parId((int) $invitation['site_id']);
@@ -58,7 +58,7 @@ if ($invitation !== null) {
             $invitation = null;
         } elseif (($role = $sites->roleSur((int) $projet['id'], $compteId)) !== null) {
             // Vérifié AVANT de consommer : un code ne se brûle pas pour rien.
-            $message = sprintf('Vous avez déjà accès à « %s » (%s). Le code reste valable, rien n\'a été utilisé.',
+            $message = sprintf('Vous avez déjà accès à « %s » (%s). Le code reste valable, car rien n\'a été utilisé.',
                 $projet['nom'], $role);
             $classe = 'info';
             $invitation = null;
@@ -87,11 +87,11 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
             $sites->activer((int) $projet['id'], $compteId);
             $classe = 'succes';
             $fait = true;
-            $message = sprintf('Vous êtes dans « %s », %s.', $projet['nom'],
-                $dit[$invitation['role_site']] ?? 'dans le projet');
+            $message = sprintf('Vous avez rejoint le projet « %s » %s.', $projet['nom'],
+                $dit[$invitation['role_site']] ?? '');
         } else {
             $message = "L'invitation a servi, mais le projet n'a pas pu vous être ouvert. "
-                . 'Demandez une nouvelle invitation à qui vous a invité.';
+                . 'Demandez une nouvelle invitation à la personne qui vous a invité.';
             $invitation = null;
         }
     }
@@ -217,14 +217,14 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
 
 <?php if ($fait): ?>
           <p class="rj-lien"><a href="conception-parcelles.php">Ouvrir le projet →</a></p>
-          <p class="rj-note">Vos autres projets restent où ils sont : le sélecteur du panneau de gauche
-             permet de passer de l'un à l'autre.</p>
+          <p class="rj-note">Vos autres projets sont conservés. Le sélecteur du panneau de gauche permet de
+             passer de l'un à l'autre.</p>
 
 <?php elseif ($invitation !== null): ?>
           <div class="rj-projet">
             <strong>« <?= $h($projet['nom']) ?> »</strong>
-            <span>Invitation de <?= $h($invitation['parrain']) ?><?= ($invitation['intention'] ?? null) !== null ? ' — ' . $h($invitation['intention']) : '' ?>.<br>
-              Vous le rejoindriez <?= $h($dit[$invitation['role_site']] ?? 'dans le projet') ?>.</span>
+            <span>Invitation de <?= $h($invitation['parrain']) ?><?= ($invitation['intention'] ?? null) !== null ? ' : « ' . $h($invitation['intention']) . ' »' : '' ?>.<br>
+              Vous le rejoindrez <?= $h($dit[$invitation['role_site']] ?? '') ?>.</span>
           </div>
           <form method="post">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -232,11 +232,11 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
             <input type="hidden" name="code" value="<?= $h($code) ?>">
             <button type="submit" class="rj-bouton">Rejoindre ce projet</button>
           </form>
-          <p class="rj-note">Le code ne sert qu'une fois. Vos autres projets ne changent pas.</p>
+          <p class="rj-note">Le code sert une seule fois. Vos autres projets sont conservés.</p>
 
 <?php else: ?>
-          <p class="rj-chapeau">Quelqu'un vous a donné un code de huit caractères pour entrer dans son
-             projet. Il se dicte à voix haute : sans I, ni O, ni zéro, ni un.</p>
+          <p class="rj-chapeau">Saisissez le code de huit caractères qu'une personne vous a donné pour
+             rejoindre son projet. Il ne contient ni I, ni O, ni zéro, ni un, pour se dicter sans erreur.</p>
           <form method="get">
             <div class="rj-champ">
               <label for="code">Le code</label>
@@ -259,11 +259,11 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Un code reçu d'un porteur de projet vous y donne accès — en contribuant (vous
-         pouvez écrire) ou en lisant (vous regardez seulement), selon ce qu'il ou elle a choisi.
-         Le projet s'ajoute aux vôtres.</p>
-      <p>On vous montre le projet et votre rôle avant de confirmer. Un code qui ouvre seulement
-         un compte, ou un projet auquel vous avez déjà accès, n'est pas utilisé.</p>
+      <p>Un code reçu d'un porteur vous donne accès à son projet, avec le rôle qu'il a choisi.
+         Le <strong>contributeur</strong> répond aux questions et dessine avec le porteur. Le
+         <strong>lecteur</strong> consulte le projet sans le modifier. Le projet s'ajoute aux vôtres.</p>
+      <p>Le projet et votre rôle s'affichent avant de confirmer. Un code qui sert à créer un compte,
+         ou qui mène à un projet auquel vous avez déjà accès, reste inutilisé.</p>
     </div>
   </aside>
 

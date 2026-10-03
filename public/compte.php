@@ -62,13 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $onglet = 'nom';
         $nom = trim((string) ($_POST['nom_affiche'] ?? ''));
         if ($nom === '') {
-            $message = ['nom', 'erreur', "Le nom affiché est nécessaire : c'est ce que les autres verront."];
+            $message = ['nom', 'erreur', 'Le nom affiché est nécessaire. C\'est le nom que voient les autres personnes du projet.'];
         } elseif (mb_strlen($nom) > 120) {
-            $message = ['nom', 'erreur', 'Le nom affiché fait 120 caractères au plus.'];
+            $message = ['nom', 'erreur', 'Le nom affiché compte 120 caractères au plus.'];
         } else {
             $comptes->changerNomAffiche($compteId, $nom);
             $auth->rafraichirNomAffiche($nom);
-            $_SESSION['syntropia_flash_compte'] = ['nom', 'ok', 'Nom affiché mis à jour.'];
+            $_SESSION['syntropia_flash_compte'] = ['nom', 'ok', 'Le nom affiché est mis à jour.'];
             header('Location: ' . Configuration::base() . 'compte.php');
             exit;
         }
@@ -87,9 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $comptes->enregistrerEchec($identifiant, $adresse);
             $message = ['mdp', 'erreur', "Le mot de passe actuel n'est pas le bon."];
         } elseif (mb_strlen($nouveau) < 12) {
-            $message = ['mdp', 'erreur', "Le nouveau mot de passe fait au moins 12 caractères. Une phrase vaut mieux qu'un mot."];
+            $message = ['mdp', 'erreur', "Le nouveau mot de passe compte au moins 12 caractères. Une phrase est plus sûre qu'un mot."];
         } elseif ($nouveau !== (string) ($_POST['confirmer'] ?? '')) {
-            $message = ['mdp', 'erreur', 'Les deux saisies du nouveau mot de passe diffèrent.'];
+            $message = ['mdp', 'erreur', 'Les deux saisies du nouveau mot de passe sont différentes.'];
         } elseif ($nouveau === $actuel) {
             $message = ['mdp', 'erreur', "Le nouveau mot de passe est le même que l'actuel."];
         } else {
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $comptes->oublierTentatives($identifiant, $adresse);
             $auth->motDePasseChange();
             session_regenerate_id(true);
-            $_SESSION['syntropia_flash_compte'] = ['mdp', 'ok', 'Mot de passe changé.'];
+            $_SESSION['syntropia_flash_compte'] = ['mdp', 'ok', 'Le mot de passe est changé.'];
             header('Location: ' . Configuration::base() . ($doitChanger ? 'conception-parcelles.php' : 'compte.php'));
             exit;
         }
@@ -283,7 +283,7 @@ const PROJETS_VISIBLES = 3;
                   <small><?= $h($libelleRole[$p['role']] ?? $p['role']) ?></small></li>
 <?php endforeach; ?>
 <?php if (count($projets) > PROJETS_VISIBLES): ?>
-              <li><span class="cp-note">et <?= count($projets) - PROJETS_VISIBLES ?> autre<?= count($projets) - PROJETS_VISIBLES > 1 ? 's' : '' ?> — dans « Mes projets », panneau de gauche.</span></li>
+              <li><span class="cp-note">Et <?= count($projets) - PROJETS_VISIBLES ?> autre<?= count($projets) - PROJETS_VISIBLES > 1 ? 's' : '' ?>, dans « Mes projets », au panneau de gauche.</span></li>
 <?php endif; ?>
             </ul>
 <?php endif; ?>
@@ -299,14 +299,14 @@ const PROJETS_VISIBLES = 3;
               <input type="hidden" name="action" value="nom">
               <div class="cp-champ">
                 <label for="nom_affiche">Nom affiché</label>
-                <small>C'est ce que les autres voient — dans la liste des participants, par exemple.</small>
+                <small>C'est le nom que voient les autres personnes, dans la liste des participants par exemple.</small>
                 <input id="nom_affiche" name="nom_affiche" required maxlength="120" autocomplete="name"
                        value="<?= $h($_POST['nom_affiche'] ?? $compte['nom_affiche']) ?>">
               </div>
               <button type="submit" class="cp-bouton">Enregistrer le nom</button>
             </form>
-            <p class="cp-note">Dans un projet déjà rejoint, le nom que vous portiez en y entrant reste celui de vos
-               réponses ; c'est le nom affiché qui apparaît dans la liste des participants.</p>
+            <p class="cp-note">Dans un projet déjà rejoint, vos réponses gardent le nom que vous portiez en y entrant.
+               La liste des participants montre le nom affiché.</p>
           </section>
 
           <section class="cp-panneau cp-mdp">
@@ -325,7 +325,7 @@ const PROJETS_VISIBLES = 3;
               </div>
               <div class="cp-champ">
                 <label for="nouveau">Nouveau mot de passe</label>
-                <small>Douze caractères au minimum — une phrase vaut mieux qu'un mot.</small>
+                <small>Douze caractères au minimum. Une phrase est plus sûre qu'un mot.</small>
                 <input id="nouveau" name="nouveau" type="password" required minlength="12" autocomplete="new-password">
               </div>
               <div class="cp-champ">
@@ -348,11 +348,12 @@ const PROJETS_VISIBLES = 3;
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p><strong>Mon compte</strong> réunit ce que l'atelier sait de vous : qui vous êtes, par qui vous
-         êtes arrivé, et les projets auxquels vous avez accès, avec votre rôle sur chacun.</p>
-      <p>Le <strong>nom affiché</strong> est celui que les autres voient. Le <strong>mot de passe</strong>
-         se change en donnant l'actuel : une session ouverte par quelqu'un d'autre ne suffit pas à vous
-         en fermer l'accès. Le courriel n'est pas modifiable ici : rien ne l'envoie ni ne le vérifie.</p>
+      <p><strong>Mon compte</strong> réunit ce que l'atelier sait de vous : qui vous êtes, par quelle
+         invitation vous êtes arrivé, et les projets auxquels vous avez accès, avec votre rôle sur chacun.</p>
+      <p>Le <strong>nom affiché</strong> est celui que voient les autres personnes. Le <strong>mot de passe</strong>
+         se change en donnant l'actuel : une session ouverte par quelqu'un d'autre ne suffit pas à vous en
+         fermer l'accès. L'adresse de courriel ne se modifie pas ici. L'atelier ne l'utilise pas pour écrire,
+         et ne la vérifie pas.</p>
     </div>
   </aside>
 

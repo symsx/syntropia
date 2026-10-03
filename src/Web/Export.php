@@ -353,8 +353,8 @@ final class Export
                 . $schemaCible . ') : mettez d’abord cet atelier à jour.', $v);
         }
         if ($v['schema'] < Version::SCHEMA_IMPORTABLE_DEPUIS) {
-            return $refus('Ce fichier vient d’un schéma trop ancien (' . $v['schema'] . ') pour se charger tel quel ; '
-                . 'les fichiers de schéma ' . Version::SCHEMA_IMPORTABLE_DEPUIS . ' et plus se chargent.', $v);
+            return $refus('Ce fichier vient d’un schéma trop ancien (' . $v['schema'] . ') pour se charger tel quel. '
+                . 'Seuls les fichiers de schéma ' . Version::SCHEMA_IMPORTABLE_DEPUIS . ' et plus se chargent.', $v);
         }
         return ['ok' => true, 'erreurs' => [], 'doc' => $doc, 'versions' => $v];
     }

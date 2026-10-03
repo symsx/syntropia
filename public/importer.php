@@ -312,7 +312,7 @@ if ($apercu !== null) {
             <h2>Ce que ce fichier contient</h2>
             <ul class="im-puces"><?= $puces($apercu['inventaire']) ?></ul>
             <p>Exporté le <?= $h($dateFr($apercu['exporte_le'])) ?> · Syntropia <?= $h($apercu['versions']['application'] ?? '?') ?>, schéma <?= $h($apercu['versions']['schema'] ?? '?') ?>.
-               Les dates d’origine sont gardées. Ni compte ni accès : les participants entrent sans compte.</p>
+               Les dates d’origine sont gardées. Le fichier ne contient ni compte ni accès : les participants entrent sans compte.</p>
           </div>
           <form method="post" action="importer.php">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -322,7 +322,7 @@ if ($apercu !== null) {
             </label>
             <label class="im-champ">Dans ce fichier, vous êtes…
               <select name="participant">
-                <option value="">Personne de la liste — un nouveau participant</option>
+                <option value="">Personne de la liste : un nouveau participant</option>
 <?php foreach ($apercu['participants'] as $ref => $nom): ?>
                 <option value="<?= $h($ref) ?>"<?= $participantPropose === (string) $ref ? ' selected' : '' ?>><?= $h($nom) ?></option>
 <?php endforeach; ?>
@@ -339,12 +339,12 @@ if ($apercu !== null) {
           </form>
 <?php else: ?>
           <p class="im-chapeau">Un fichier <strong>.syntropia.json</strong>, exporté depuis l’atelier, devient un projet neuf dont vous
-             êtes le porteur. Il est vérifié en entier avant que rien ne soit écrit.</p>
+             êtes le porteur. Il est vérifié en entier avant tout enregistrement.</p>
 <?php if (is_array($flash) && $flash[0] === 'erreur'): ?>
           <div class="im-message im-message--erreur" role="alert">
             <strong>Ce fichier n’a pas été chargé.</strong>
             <ul><?php foreach (array_slice($flash[1], 0, 6) as $e): ?><li><?= $h($e) ?></li><?php endforeach; ?>
-<?php if (count($flash[1]) > 6): ?><li>… et <?= count($flash[1]) - 6 ?> autre<?= count($flash[1]) - 6 > 1 ? 's' : '' ?> — corrigez ceux-ci d’abord, ou exportez de nouveau le projet.</li><?php endif; ?></ul>
+<?php if (count($flash[1]) > 6): ?><li>… et <?= count($flash[1]) - 6 ?> autre<?= count($flash[1]) - 6 > 1 ? 's' : '' ?>. Corrigez d’abord ceux-ci, ou exportez de nouveau le projet.</li><?php endif; ?></ul>
           </div>
 <?php endif; ?>
           <form method="post" action="importer.php" enctype="multipart/form-data">
@@ -370,18 +370,18 @@ if ($apercu !== null) {
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>L’import crée <strong>toujours un projet neuf</strong> : il ne fusionne avec rien et n’écrase rien. Vous en
-         devenez le porteur. Le fichier vient de la page « Exporter le projet » ; on l’envoie ici, on regarde ce qu’il
-         contient, puis on crée le projet.</p>
-      <p><strong>Le fichier est vérifié en entier avant que rien ne soit écrit.</strong> Il ne se charge pas s’il a été
-         modifié depuis son export (même d’une lettre), s’il vient d’un atelier dont les données n’ont pas la même
-         forme, ou si une valeur n’est pas ce que l’atelier accepte — la page dit alors laquelle. Et si l’écriture
-         échoue en route, rien n’est laissé à moitié.</p>
-      <p><strong>Les participants entrent sans compte</strong> : le fichier n’en porte aucun. Vous dites lequel d’entre eux
-         vous êtes, et le projet retrouve alors vos réponses ; sinon vous arrivez comme un nouveau participant. Pour donner
-         accès à d’autres, invitez-les ensuite, comme pour n’importe quel projet.</p>
-      <p>Les dates d’origine — création, réponses, arrivée des participants — sont gardées. La date d’import est
-         notée dans le projet, avec le nom et la date d’export du fichier.</p>
+      <p>L’import crée <strong>toujours un projet neuf</strong>, sans rien fusionner ni écraser. Vous en devenez le
+         porteur. Le fichier vient de la page « Exporter le projet ». Il s’envoie ici, la page montre ce qu’il contient,
+         puis le projet se crée.</p>
+      <p><strong>Le fichier est vérifié en entier avant tout enregistrement.</strong> Il ne se charge pas s’il a été
+         modifié depuis son export, même d’une lettre, s’il vient d’un atelier dont les données ont une autre forme, ou
+         si une valeur sort de ce que l’atelier accepte. La page dit alors laquelle. Si l’enregistrement échoue en
+         route, rien n’est laissé à moitié.</p>
+      <p><strong>Les participants entrent sans compte</strong>, car le fichier n’en contient aucun. Vous indiquez lequel
+         d’entre eux vous êtes, et le projet retrouve alors vos réponses. Sinon, vous arrivez comme un nouveau
+         participant. Pour donner accès à d’autres personnes, invitez-les ensuite, comme pour tout projet.</p>
+      <p>Les dates d’origine (création, réponses, arrivée des participants) sont gardées. La date d’import est notée
+         dans le projet, avec le nom et la date d’export du fichier.</p>
     </div>
   </aside>
 

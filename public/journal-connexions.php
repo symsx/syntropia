@@ -144,9 +144,9 @@ $quand = static function (string $le) use ($paris, $aujourdhui, $hier): string {
           <h1>Journal des connexions</h1>
           <p class="jc-chapeau"><?= $totaux['connexions'] ?> connexion<?= $totaux['connexions'] > 1 ? 's' : '' ?>
              de <?= $totaux['comptes'] ?> compte<?= $totaux['comptes'] > 1 ? 's' : '' ?> sur les
-             <?= Comptes::JOURNAL_JOURS ?> derniers jours — la plus récente d'abord.</p>
+             <?= Comptes::JOURNAL_JOURS ?> derniers jours, la plus récente d'abord.</p>
 <?php if ($lignes === []): ?>
-          <p class="jc-vide">Aucune connexion notée pour l'instant : le journal commence à la première connexion
+          <p class="jc-vide">Aucune connexion n'est encore notée. Le journal commence à la première connexion
              qui suit sa mise en place.</p>
 <?php else: ?>
           <ul class="jc-liste">
@@ -179,10 +179,10 @@ $quand = static function (string $le) use ($paris, $aujourdhui, $hier): string {
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Chaque connexion réussie à l'atelier, la plus récente d'abord : le nom affiché du compte, son
-         identifiant, le jour et l'heure. Seuls les administrateurs de l'atelier voient ce journal.</p>
-      <p>Le journal ne note ni les tentatives échouées, ni les déconnexions, ni l'adresse d'où l'on se
-         connecte. Ses lignes s'effacent d'elles-mêmes au bout de <?= Comptes::JOURNAL_JOURS ?> jours.</p>
+      <p>Le journal note chaque connexion réussie à l'atelier, la plus récente d'abord : le nom affiché du
+         compte, son identifiant, le jour et l'heure. Seuls les administrateurs de l'atelier le voient.</p>
+      <p>Le journal ne note ni les tentatives échouées, ni les déconnexions, ni l'adresse de connexion. Ses
+         lignes s'effacent au bout de <?= Comptes::JOURNAL_JOURS ?> jours.</p>
     </div>
   </aside>
 

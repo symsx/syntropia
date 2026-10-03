@@ -285,11 +285,10 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-ateli
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Une page à la fois, comme un livret : cliquez un chapitre dans la
-         liste, ou tournez la page avec les boutons en bas. Cette page
-         explique le fonctionnement du site lui-même ; la documentation sur
-         l'agroforesterie syntropique a son propre livret, dans le même
-         format.</p>
+      <p>Ce livret se lit une page à la fois. Cliquez un chapitre dans la
+         liste, ou tournez la page avec les boutons du bas. Il explique le
+         fonctionnement de l'atelier. L'agroforesterie syntropique a son
+         propre livret, dans le même format.</p>
     </div>
   </aside>
 
