@@ -54,25 +54,41 @@ COUVERTURE = {
         "src/Web/Cadastre.php", "src/Web/Eau.php", "src/Web/Vents.php",
         "src/Web/Altimetrie.php", "src/Relief.php", "src/ShadeMap.php", "src/Geojson.php",
     ],
-    "Concevoir : les parcelles et le scénario": [
-        "public/conception-etude-sol.php", "public/releve-vierge.php",
-        "public/conception-parcelles.php", "public/assets/js/conception-parcelles.js",
-        "public/conception-scenario.php", "public/conception-calendrier.php",
-        "src/Web/Parcelles.php", "src/Web/Scenarios.php", "src/Scenario.php",
-        "public/conception-potager.php", "src/Web/Cultures.php", "src/Associations.php", "src/PlanDeCulture.php", "src/CalendrierLopez.php", "src/Succession.php", "src/Stade.php", "src/Tortue.php", "src/Bordures.php", "src/Planches.php", "src/LignesDeService.php", "src/Temps.php", "src/Web/CalendrierLignes.php", "src/Web/LignesPlantation.php",
-        "public/especes.php", "src/Web/Especes.php", "public/assets/js/gabarit.js",
+    "Concevoir : l'étude du sol": ["public/conception-etude-sol.php", "public/releve-vierge.php", "src/FicheTerrain.php"],
+    "Concevoir : le plan de la parcelle": [
+        "public/conception-parcelles.php", "public/conception-parcelles.js", "src/Web/Parcelles.php",
+        "src/Planches.php", "src/Stade.php", "src/Tortue.php", "public/assets/js/gabarit.js",
+    ],
+    "Concevoir : les bordures": [
+        "public/conception-parcelles.php", "public/conception-parcelles.js", "src/Bordures.php",
+        "src/RepartitionBordures.php", "src/Sigles.php", "src/Web/LignesPlantation.php", "src/Web/CalendrierLignes.php",
+    ],
+    "Concevoir : la tortue liane": ["public/conception-parcelles.php", "src/Planches.php", "src/Bordures.php", "src/LignesDeService.php"],
+    "Concevoir : le scénario": [
+        "public/conception-scenario.php", "public/conception-calendrier.php", "src/Web/Scenarios.php",
+        "src/Scenario.php", "src/Strates.php", "src/Web/Occupation.php", "src/SautDuChat.php",
+        "public/assets/js/strates.js",
+    ],
+    "Concevoir : les espèces": ["public/especes.php", "src/Web/Especes.php"],
+    "Concevoir : le potager": [
+        "public/conception-potager.php", "src/Web/Cultures.php", "src/Associations.php", "src/PlanDeCulture.php",
+        "src/CalendrierLopez.php", "src/Succession.php", "src/LignesDeService.php", "src/Temps.php",
+        "src/Web/CalendrierLignes.php",
     ],
     "Concevoir : le matériel et l'eau": [
         "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php",
         "src/Web/ReleveSol.php",
     ],
-    "Réaliser et suivre": [
+    "Réaliser": [
         "public/realisation-preparation-parcelle.php", "public/realisation-materiel-vegetal.php",
         "public/realisation-outils-et-plans.php", "public/realisation-consignation.php",
+    ],
+    "Suivre": [
         "public/suivi-arrosage-germination.php", "public/suivi-perturbation.php",
         "public/suivi-saut-du-chat.php", "public/suivi-consignation.php",
         "src/Perturbation.php", "src/Web/Interventions.php", "src/SautDuChat.php", "src/Web/Constats.php",
     ],
+    "Le Dossier Projet": ["public/dossier-projet.php", "src/DessinsDossier.php", "src/Web/Reponses.php"],
     "Le bureau": ["public/assets/css/gabarit.css", "public/assets/js/gabarit.js"],
     "Comptes, projets et rôles": [
         "public/compte.php", "public/inscription.php", "public/deconnexion.php",
