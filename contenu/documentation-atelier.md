@@ -46,609 +46,464 @@ ce site merci d'envoyer un mail à jubile@alwaysdata.net en décrivant précisé
 
 # Où trouver quoi
 
-Une partie du site est **publique**, sans connexion : l'accueil, la page de
-connexion, cette documentation, la documentation sur l'agroforesterie syntropique, le
-glossaire, qui explique les mots techniques un par un, et « Les sources », qui dit
-d'où viennent les règles de l'atelier — les livres, la formation, les bases de
-données — et à quoi chacune sert.
+Une partie du site est **publique**, sans connexion : l'accueil, la connexion, cette
+documentation, celle sur l'agroforesterie syntropique, le glossaire et « Les sources ».
 
-Un mot souligné en pointillés, dans le site, s'explique en le survolant.
+Le glossaire explique les mots techniques un par un. « Les sources » dit d'où viennent les
+règles de l'atelier (les livres, la formation, les bases de données) et à quoi chacune sert.
 
-Le reste demande un **compte** : c'est là que se trouve votre projet. On ne
-s'inscrit pas librement, il faut le code d'invitation d'une personne qui a déjà
-un compte.
+Un mot souligné en pointillés, dans le site, s'explique quand on le survole.
 
-Le menu ☰, en haut à gauche, ouvre la navigation du site. La section
-« Documentation » y figure sur toutes les pages, connectées ou non.
+Le reste demande un **compte** : c'est là que se trouve votre projet. L'inscription se fait sur
+invitation, avec le code d'une personne qui a déjà un compte.
 
-Juste avant elle, une fois connecté avec un projet ouvert, la section **« Dossier
-Projet »** mène à votre projet mis en forme pour le papier : une couverture (le
-projet, son porteur, sa conduite, la date d'édition), puis la Définition — la vision,
-les objectifs, les moyens et le site, tels que vous les avez dits.
-
-On choisit les chapitres à imprimer en les cochant : ce qui s'affiche est ce qui
-s'imprime, et le choix se refait à chaque ouverture.
-
-Le bouton « Imprimer / Enregistrer en PDF » ouvre l'impression du navigateur, qui
-sait aussi produire un PDF. Les réponses sont les vôtres si vous en avez donné, sinon
-celles du porteur, et le dossier le dit ; une question sans réponse s'y lit « pas
-encore renseigné ».
-
-C'est le seul document de l'atelier qui défile comme une page ordinaire, avec les
-fiches de relevé de sol vierges : tous deux sont faits pour le papier.
+Le menu ☰, en haut à gauche, ouvre la navigation du site. La section « Documentation » y figure
+sur toutes les pages, que l'on soit connecté ou non.
 
 # Le parcours en quatre phases
 
-**Définition** décrit le projet — qui le porte, pour quoi, avec quels moyens, sur
-quel terrain. **Conception** dessine les parcelles et le scénario de plantation, puis
+La **Définition** décrit le projet : qui le porte, pour quoi, avec quels moyens, sur quel
+terrain.
+
+La **Conception** dessine le terrain et les parcelles, compose le scénario de plantation, puis
 compte ce qu'il faudra se procurer et l'eau à donner.
 
-**Réalisation** prépare le terrain, le matériel, et consigne ce qui a été fait.
-**Suivi** accompagne la vie du système une fois en place — arrosage, perturbation,
-observation.
+La **Réalisation** prépare le terrain, le matériel et les outils, et consigne ce qui a été fait.
 
-Les phases se traversent dans l'ordre, mais un projet vivant revient sur le
-suivi bien plus souvent qu'il n'est retourné à la définition, réglée une
-fois. Le panneau de navigation montre toujours où vous en êtes.
+Le **Suivi** accompagne le système une fois en place : l'arrosage, la perturbation, le saut du
+chat et l'observation.
 
-Chaque page a son panneau Informations, qui dit à quoi sert ce qu'elle
-demande : cette documentation donne la vue d'ensemble, ce panneau le détail
-de la page.
+Les phases se suivent dans l'ordre. Un projet vivant revient pourtant au Suivi bien plus souvent
+qu'à la Définition, réglée une fois. Le panneau de navigation montre où vous en êtes.
+
+Chaque page a son panneau Informations, qui dit à quoi sert ce qu'elle demande. Cette
+documentation donne la vue d'ensemble, et le panneau le détail de la page.
 
 # Définir son projet
 
-Un projet, c'est un site et autant de parcelles qu'il en faudra. On l'ouvre en
-lui donnant un nom, qui pourra changer plus tard : c'est le seul passage
-obligé du parcours.
+Un projet comprend un site et autant de parcelles que nécessaire. Il s'ouvre en lui donnant un
+nom. C'est la seule étape obligatoire du parcours.
 
-Suivent quatre étapes courtes. La **vision** : qui porte le projet, ce qui vous
-motive, l'intention qui dépasse votre seule personne. Les **objectifs** : ce que le
-projet doit produire, pour qui, à quelle échéance.
+Suivent quatre étapes courtes. La **vision** : qui porte le projet, sa motivation, l'intention
+au-delà de soi. Les **objectifs** : ce que le projet doit produire, pour quelle destination, et
+à quel terme.
 
-Les **moyens** : d'où vous partez, sans jugement — peu de moyens n'empêche pas de
-commencer, cela oriente vers d'autres voies. Le **site** : le lieu, ce que vous y
-observez, la manière de le conduire.
+Les **moyens** situent le point de départ. Avec peu de moyens financiers, l'atelier propose la
+régénération naturelle assistée.
 
-La page Site demande la commune, la position (posée d'un clic sur une carte), la
-superficie, la zone climatique (que le site peut estimer pour vous depuis la
-position), l'exposition, la pente, les particularités du climat, et la
-**conduite** : syntropie ou jardin-forêt, qui décide des strates du scénario.
+Le **site** demande la commune, la position (posée d'un clic sur une carte), la superficie, la
+zone climatique USDA, l'exposition, la pente et les conditions climatiques particulières.
 
-Vos réponses s'enregistrent quand vous continuez, et vous les retrouvez en
-revenant.
+La zone climatique peut s'estimer depuis la position. Le site demande aussi la **conduite** :
+syntropie ou jardin-forêt. Elle décide des strates du scénario.
+
+Les réponses sont enregistrées à chaque étape, et peuvent être modifiées en revenant sur la page.
 
 # Concevoir : la carte du terrain
 
-L'étude du site est une carte sur laquelle on dessine son terrain, calque par calque
-: les limites, le relief, l'eau, les vents, les ombres, le sol, les circulations et
-constructions, la végétation existante, votre ressenti, et les parcelles.
+L'étude du site est une carte sur laquelle on dessine son terrain, calque par calque.
 
-On choisit l'outil dans la barre du haut — point, ligne, contour, à main levée — et
-le calque dans le panneau Données.
+Les calques sont les limites, le relief, l'eau, les vents, les ombres, le sol, les circulations et
+constructions, la végétation existante, le ressenti et les parcelles.
 
-Une parcelle se pose par ses dimensions : d'un clic, tournée au curseur, puis
-déplacée à la main avec l'outil Repositionner. L'outil Étiquettes déplace les noms
-qui gênent la lecture.
+On choisit l'outil dans la barre du haut (point, ligne, contour, main levée) et le calque dans
+le panneau Données.
 
-Le fond de carte se change en bas à gauche : carte OpenStreetMap, plan IGN,
-photographie aérienne, infrarouge, ou photos anciennes (de 1950 à 1995) pour voir ce
-qu'était le terrain.
+Une parcelle se pose d'un clic par ses dimensions, se tourne avec un curseur, puis se déplace
+avec l'outil Repositionner. L'outil Étiquettes déplace les noms qui gênent la lecture.
 
-La carte peut aller chercher pour vous le cadastre (un simple repère, jamais
-enregistré), l'eau d'OpenStreetMap autour de vos limites, la rose des vents du lieu
-et les courbes de niveau de l'altimétrie IGN ; pour les ombres, elle donne des liens
-vers ShadeMap.
+Le fond de carte se change en bas à gauche : carte OpenStreetMap, plan IGN, photographie
+aérienne, infrarouge, ou photos anciennes de 1950 à 1995.
 
-Un fichier de tracés au format GeoJSON peut aussi s'importer.
+La carte peut afficher le cadastre, comme repère non enregistré. Elle peut chercher l'eau
+d'OpenStreetMap autour de vos limites, calculer la rose des vents du lieu et relever les courbes
+de niveau de l'IGN.
 
-# Concevoir : les parcelles et le scénario
+Pour les ombres, elle donne des liens vers ShadeMap, ouverts sur votre terrain. Un fichier de
+tracés au format GeoJSON peut aussi s'importer.
 
-L'étude du sol compte sept relevés, à faire sur place avec des fiches à
-imprimer : ils aident à définir comment et combien arroser au départ et
-aide aux choix de l'itinéraire technique de conduite du projet.
+# Concevoir : l'étude du sol
 
-Pour créer une parcelle, un code et un nom suffisent. Son plan se précise ensuite :
-dimensions, bordures externe et interne, planches, sens des planches. Le nombre de
-planches se calcule tout seul.
+L'étude du sol compte sept relevés, à faire sur place avec des fiches à imprimer. Ils aident à
+décider comment et combien arroser au départ, et à choisir l'itinéraire de conduite du projet.
 
-Chaque demi-planche se travaille depuis un passe-pied, sans marcher sur la planche :
-sans passe-pied le long des bords, les planches des deux bords ne font qu'une
-demi-planche ; avec (« Un passe-pied le long des deux bords »), toutes font une
-planche entière.
+Chaque fiche annonce le geste et la durée avant sa grille, et dit ce que la mesure permettra de
+décider. Sur le terrain, on suit l'ordre de la fiche imprimée.
+
+Le test d'infiltration se note aussi dans l'atelier, à l'étape « Matériel et eau ».
+
+# Concevoir : le plan de la parcelle
+
+Pour créer une parcelle, un code et un nom suffisent. Son plan se précise ensuite : dimensions,
+bordures externe et interne, planches et sens des planches. Le nombre de planches se calcule seul.
+
+Chaque demi-planche se travaille depuis un passe-pied. Sans passe-pied le long des bords, les
+planches des deux bords sont des demi-planches. Avec un passe-pied aux deux bords, toutes sont
+entières.
 
 Une planche seule se centre. Une parcelle peut être conduite autrement que le site.
-Le plan se zoome à la molette ou par les boutons « − » et « + » posés en bas à gauche
-; une fois agrandi, il se fait glisser, et « Tout voir » le ramène entier.
-
-Vous dites aussi, pour chaque parcelle, le **stade du terrain** — d'où vous partez :
-la **colonisation** (des conditions difficiles, faibles ressources),
-l'**accumulation** (une croissance rapide de biomasse, la friche qui évolue vers le
-boisement) ou l'**abondance** (un sol mûr, des arbres longévifs et exigeants).
-
-Le scénario le rappelle avec ce que la formation en dit, dont ce qu'elle conseille à
-ce stade : planter très dense et tailler très souvent en colonisation, une densité
-modérée et des tailles qui s'espacent en accumulation, peu de taille en abondance —
-un sens, sans chiffre.
 
-Vous y dites enfin le **type de tortue** : classique, **zèbre** (des planches
-pérennes alternent avec des planches annuelles), **abeille** (une bande pérenne et
-une bande potagère sur chaque planche) ou **liane** (des lianes sur une structure,
-des cultures protégées dessous) — ce qu'en dit Théry s'affiche sous le choix.
-
-Chaque planche a ses **lignes de plantation**, trois par défaut, à intervalles égaux
-dans sa largeur : vous en réglez le nombre planche par planche (de 1 à 12).
+Le plan se zoome avec la molette, ou avec les boutons « − » et « + » en bas à gauche. Agrandi, il
+se fait glisser, et « Tout voir » le ramène entier.
 
-La ligne centrale, en trait plein sur le plan, porte la biomasse et la structure,
-jamais de tuteurs ; les lignes recevront les plantes de service.
+Chaque parcelle a son **stade du terrain** : la **colonisation**, l'**accumulation** ou
+l'**abondance**. Le scénario le rappelle, avec ce que la formation conseille à ce stade pour la
+densité de plantation et la fréquence de taille.
 
-Pour une tortue **zèbre** ou **abeille**, le plan dit aussi quelles planches — ou
-quelles bandes — sont pérennes et lesquelles annuelles : vous choisissez la première
-(la plus à l'ouest, ou au nord selon le sens des planches), les autres alternent, et
-en zèbre chacune se change ensuite une à une ; elles sont teintées sur le plan.
+Chaque parcelle a aussi son **type de tortue** : classique, **zèbre**, **abeille** ou **liane**.
+Ce qu'en dit Théry s'affiche sous le choix.
 
-Dans le plan de culture du potager, chaque planche porte sa nature, et la proposition
-de placement met une plante pérenne sur une planche pérenne, une annuelle sur une
-annuelle — d'après le cycle de son espèce dans **Espèces** ; en abeille, elle la met
-dans la bande de sa nature, que vous pouvez aussi choisir à la main.
-
-Une plante dont le cycle n'est pas noté se place n'importe où.
-
-Pour une tortue **liane** — la tortue d'ombre de Théry, pour les étés secs et les
-pluies violentes —, l'atelier dessine le plan au sol, pas la structure : une **ligne
-des lianes**, en tireté violet, marque où montent les lianes de la pergola.
-
-Vous choisissez où elle court : **au cœur** (dans le passe-pied central, entre les
-poteaux centraux), **côté nord** ou **côté est**.
-
-Elle reçoit, comme une bordure, une série d'espèces qui alternent : les lianes
-émergentes en haut de la structure (glycine, rosiers grimpants), la strate haute à
-leur ombre (vigne, kiwi, kiwaï).
-
-« Proposer les lianes » montre toutes celles de votre référentiel — une liane s'y
-reconnaît à sa strate « Liane / grimpante » dans **Espèces** — et cite les lianes
-annuelles (capucine grimpante, kiwano, achocha) qui les doublent la première année.
-
-Sous la structure, la ligne centrale de chaque planche garde sa biomasse (maïs,
-tournesol) **les deux premières années** après le début de la plantation, le temps
-que les lianes s'installent et pour assurer le saut du chat ; ensuite, l'atelier ne
-propose plus de biomasse annuelle sur les planches.
-
-Une fois les productions placées, **les lignes de chaque planche reçoivent les
-plantes de service** : les productions se plantent de part et d'autre.
-
-Dans le plan de culture du potager, « Les lignes » d'une planche ouvre la proposition
-de l'atelier — la biomasse sur la ligne centrale (émergente de préférence, jamais de
-tuteurs), puis les strates que les productions laissent vides, les plus hautes près
-du centre (la forme pyramidale), une espèce par ligne, celles du cycle qui convient à
-la planche d'abord.
-
-Vous gardez ou changez chaque choix ; l'atelier compte les plants de chaque ligne
-d'après l'espacement de l'espèce, et chaque planche résume ses lignes.
-
-Chaque ligne y reçoit aussi sa **mise en place et sa fin prévues**, proposées d'après
-le calendrier de l'espèce, et ses **perturbations prévues** (le maïs, le tournesol de
-la ligne centrale se coupent eux aussi) ; le calendrier du potager les montre, en
-clair, à côté des cultures, avec les bordures et leurs perturbations prévues.
-
-La strate d'une production se lit dans ce que vous avez saisi, à défaut dans
-**Espèces** ; inconnue, elle ne compte pas.
-
-Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de
-plants**, au milieu de sa bande : une espèce, ou plusieurs qui alternent.
-
-La bordure externe bloque l'herbe et freine le vent : cochez « vent » le côté d'où
-vient le vent dominant, celui qui devra l'arrêter (décoché par défaut, il se dessine
-en tirets sur le plan). L'interne apporte de la biomasse.
-
-Les espèces qui le font viennent en tête de la liste, et « Proposer les espèces de
-cette bordure » les montre toutes — sauf les annuelles, une bordure étant pérenne, et
-les plantes grimpantes, réservées à la ligne des lianes d'une tortue liane.
-
-Sur une face sud ou ouest exposée, la proposition rappelle la réserve de Théry : n'y
-mettre que des plantes émergentes. Vous gardez celles que vous voulez, elles
-alternent dans cet ordre.
-
-Une plante que les pépiniéristes destinent à la bordure peut être notée « bloque
-l'herbe » dans Espèces ; en bordure, une plante couvre-sol compte aussi comme
-bloque-herbe.
-
-L'atelier compte les plants de chaque espèce d'après leur espacement, pris dans
-**Espèces** : entre deux plants voisins, la moyenne de leurs espacements, et à chaque
-bout la moitié du sien.
-
-Il les dessine sur le plan par un disque de leur **largeur** adulte quand elle est
-connue, pour voir où ils se recouvrent — borné à deux fois leur espacement,
-puisqu'une plante de bordure, taillée, n'atteint pas l'envergure d'une croissance
-libre —, sinon par une pastille.
-
-Chaque espèce a sa couleur et un **sigle** de deux ou trois lettres (« La » pour la
-lavande, « FeA » et « FeC » pour deux variétés de feijoa), calculé pour que deux
-espèces de la parcelle ne se confondent jamais.
-
-Une **légende** les liste avec le nombre de plants ; les sigles s'inscrivent sur le
-plan dès que le zoom laisse la place de les lire, et le nom complet d'une plante
-s'affiche au survol de son point.
-
-Dans la légende, « Tout/rien » les montre ou les retire tous, et la pastille de
-chaque espèce montre ou retire les siens ; au bas de la page, « Afficher la légende »
-la retire pour laisser toute la place au plan.
-
-Ces choix restent ceux de votre navigateur, parcelle par parcelle. Une espèce sans
-espacement empêche le compte de sa ligne, et la page le dit.
-
-Si vous changez les dimensions ou les bordures, les plants se recomptent quand le
-plan est de nouveau enregistré.
-
-Au bas de la page, **Annuler les changements** ramène le plan tel qu'il est
-enregistré, et **Réinitialiser** le fait repartir des valeurs par défaut de l'atelier
-(12 × 8 m, bordure externe sur les quatre côtés) ; les deux demandent confirmation,
-et aucun n'écrit rien — seul « Enregistrer le plan » écrit.
-
-Tant que les bordures externe et interne sont vides, vous pouvez aussi **répartir une
-liste de plantes sur toutes les bordures** d'un coup : vous cochez une seule liste
-pour la parcelle (les plantes sans espacement ou annuelles sont grisées, avec la
-raison) et, si vous le voulez, une **colonne vertébrale** par bordure, qui revient un
-plant sur deux.
-
-L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en
-alternance, des émergentes seules au sud et à l'ouest de l'externe, des brise-vent
-entre les bloque-herbe sur un côté coché « vent » ; un côté ne garde que les plantes
-qu'il peut porter, et dit lesquelles n'ont pas de place.
-
-Il faut deux espèces au moins par côté — la diversité fait la réussite du système :
-sinon, rien n'est réparti, et l'atelier dit quel côté manque de quoi.
-
-Vous voyez l'aperçu sur le plan, puis « Poser ces bordures » écrit tous les côtés à
-la fois ; chaque côté se retouche ensuite à la main. Dans le scénario, une plante
-déclarée « en bordure » renvoie à ces lignes : c'est leur compte qui fait foi.
-
-Chaque bordure a aussi son **calendrier prévu** : la date de plantation (l'atelier la
-propose d'après le calendrier de ses espèces dans **Espèces**, quand il le connaît)
-et une liste de **perturbations prévues**, chacune une date et un geste.
-
-Ce sont des prévisions : la date réelle se donnera à la Réalisation, et le jour d'une
-perturbation s'adaptera au temps qu'il fait — le journal gardera ce qui a été fait.
-
-Le **scénario** est le film de la parcelle : ce qui grandira, à quelle strate,
-pendant combien de temps. On compose une frise — le temps en largeur, les
-strates en hauteur — en partant des productions voulues. En jardin-forêt, qui n'a
-pas d'axe du temps, le scénario se lit par strate.
-
-En syntropie, les quatre strates classent les plantes par **besoin en lumière**, non
-par taille (Théry, ch. 05) : émergente 80 à 100 % de lumière, haute 60 à 80 %,
-moyenne 40 à 60 %, basse 20 à 40 %.
-
-Quand vous nommez un végétal, dans le scénario comme dans le plan de culture du
-potager, l'atelier **propose sa strate** d'après **Espèces**, si vous ne l'avez pas
-déjà choisie.
-
-La strate dépend de l'usage : chaque espèce a une **strate de production** et une
-**strate de service** (biomasse, bloque-herbe) — le sureau en haute pour ses baies,
-en moyenne pour la biomasse ; le maïs en émergente pour ses épis, en haute pour la
-biomasse.
-
-Une plante de production prend la première, une plante de service (bordure, ligne de
-service d'une planche) la seconde ; vous pouvez les dire ou les corriger dans
-**Espèces**.
-
-Quand l'usage ne dit rien et que l'espèce a plusieurs strates (la fève, la pomme de
-terre précoce, qui changent de strate au fil de leur cycle), l'atelier ne devine pas
-: il vous laisse choisir.
-
-Le panneau Informations montre aussi **l'occupation au sol** de chaque strate : la
-surface que couvrent les plantes adultes (leur envergure, dans Espèces), rapportée à
-la parcelle, à côté des repères de Théry — émergente 20 %, haute 40 %, moyenne 60 %,
-basse 80 % ; la somme dépasse 100 %, c'est voulu.
-
-Une plante sans envergure ou sans nombre de plants est nommée, et ne compte pas.
-
-Le **calendrier** est un
-premier repère de rythme, saison par saison, écrit à main levée ; son panneau
-Informations rappelle les quatre moments de la taille de perturbation et les trois où l'on
-ne taille pas les ligneux, à recaler sur l'état des bourgeons de votre lieu.
-
-Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos propres
-espèces. Une surcharge locale prime sur le cadre pour la même espèce, sans le changer
-pour les autres ; la retirer rend au site la version du cadre, si elle existe.
-
-Vous y dites, en mots comme le tableau de Lopez (« fin avril », « mi à fin juillet
-»), le calendrier de semis, de repiquage et de récolte d'une espèce, et son **cycle**
-(annuelle, bisannuelle, vivace ou ligneuse).
-
-Vous y dites aussi sa **hauteur** adulte en mètres (une moyenne, que l'atelier ne lit
-pas encore) et sa **largeur** (son envergure, qui dessine les plants des bordures et
-mesure l'occupation au sol), sa **strate de production** et sa **strate de service**.
-
-Pour une annuelle ou une bisannuelle semée en place, vous notez son délai de
-germination en jours, et la température du sol qui permet de la semer (« le critère
-n'est pas la date mais la température du sol », dit Théry).
-
-Enfin, les fonctions de service qu'elle rend — une ou plusieurs à la fois, dans une
-liste fermée (production, biomasse, bloque-herbe, tuteur…, le même vocabulaire que le
-scénario pérenne et le plan de culture). Elles nourrissent, dans le plan de culture
-d'un potager, les mêmes suggestions que le repère de Lopez.
-
-Un fichier CSV peut aussi importer plusieurs espèces d'un coup — un modèle déjà
-valide se télécharge depuis cette page : il est vérifié en entier avant d'écrire quoi
-que ce soit, et s'il y a une erreur sur une colonne attendue, rien n'est écrit ; une
-colonne que l'atelier ne connaît pas n'empêche pas l'import, elle est simplement
-ignorée et dite à l'aperçu.
-
-Le panneau Informations du scénario dit aussi **si le scénario prépare le saut du
-chat** : des plantes à perturber, une large part de biomasse (le repère de Théry est
-de 70 à 80 %), au moins deux espèces par strate, des plantes de démarrage, un geste
-de taille noté, de quoi arroser à la taille.
-
-Ce sont des repères, jamais des refus : chaque ligne dit « en place », « à regarder »
-ou « rien de noté », avec sa source. Pour un ligneux, on note le **geste de taille**
-— basitone, cépée ou trogne, selon l'endroit où l'arbre stocke ses sucres — en plus
-d'une précision libre.
-
-Une parcelle de type **potager** ne se compose pas comme un verger : son **plan de
-culture** se fait **par planche**. Les planches viennent du plan de la parcelle, et
-chacune peut porter plusieurs cultures.
-
-La page dit, planche par planche, ce que l'on sait de leurs voisinages : ce qui
-s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte.
-
-Ce sont des ordres de conduite, non des preuves, tirés de tables d'association
-(Christa Weinrich) : une information de conception, jamais une interdiction ; et une
-culture absente de ces tables n'est pas neutre, on ne sait simplement pas.
-
-Une culture peut aussi porter une ou plusieurs **fonctions de service** — biomasse
-(celle qu'on taille : le maïs ou le tournesol d'une tranchée centrale), bloque-herbe,
-tuteur pour une grimpante… le même vocabulaire que le scénario pérenne.
-
-Une culture marquée biomasse est comptée par le journal des perturbations et par le
-saut du chat, comme celles d'un verger. Une culture peut aussi porter le nombre de
-**plants** que vous voulez : l'étape « Matériel et eau » en tire ce qu'il faut se
-procurer.
-
-L'atelier peut aussi **proposer un placement** : il répartit sur les planches les
-cultures qui n'en ont pas encore, en regroupant ce qui s'entend bien et en écartant
-ce qui s'entend mal ; une culture déjà placée ne bouge jamais.
-
-Si aucune planche n'est sans voisin à éviter, il laisse la culture non placée et le
-dit, plutôt que de forcer un voisinage néfaste. La proposition s'affiche d'abord en
-aperçu, et rien n'est écrit tant que vous n'avez pas accepté, en tout ou en partie.
-
-Chaque culture porte deux dates : le **semis à l'abri** (en pépinière, en godets) et
-la **mise en place** — le semis en place, ou le repiquage —, puis la récolte. Un
-onglet **calendrier** les dispose sur l'année, mois par mois, planche par planche.
-
-Pour dix-sept cultures d'automne et d'hiver (choux, rutabaga, navet, épinard,
-mesclun…), la page rappelle les dates de Yann Lopez, maraîcher en Haute-Vienne, et
-propose de les reprendre : ce sont des dates en mots (« fin avril »), donc
-indicatives, un point de départ à remplacer par vos propres mesures.
-
-Une culture que vous avez décrite dans **Espèces** (menu du compte) propose son
-propre calendrier de la même façon, avec ses fonctions de service à reprendre en un
-clic. Pour toute autre culture, il n'y a pas de repère : la date est à vous.
-
-Sur une planche, les cultures se côtoient, mais elles **se suivent** aussi : quand
-deux cultures ont leurs dates, la page dit si la table de succession de Weinrich cite
-leur enchaînement, l'exclut (l'épinard ne suit ni la bette ni la betterave rouge), ou
-n'en dit rien — ce qui ne veut pas dire que tout va bien.
-
-Sous chaque planche, elle rappelle ce que la table cite pour suite de la culture qui
-la libère en dernier : quoi semer quand la planche se libère. Ce sont des ordres de
-conduite d'Allemagne moyenne, non des preuves ; une culture absente de la table n'a
-pas de repère.
+En zèbre, des planches pérennes alternent avec des planches annuelles. En abeille, chaque planche
+porte une bande pérenne et une bande potagère. Vous choisissez la première, et les autres
+alternent.
+
+En zèbre, chaque planche se change ensuite une à une. Les planches ou les bandes pérennes sont
+teintées sur le plan.
+
+Chaque planche a ses **lignes de plantation**, trois par défaut, à intervalles égaux dans sa
+largeur. Leur nombre se règle planche par planche, de 1 à 12.
+
+La ligne centrale, en trait plein sur le plan, porte la biomasse et la structure, jamais de
+tuteurs. Dans la demi-planche du bord est (ou sud), elle est du côté de la bordure.
+
+Au bas de la page, « Annuler les changements » ramène le plan tel qu'il est enregistré.
+« Réinitialiser » le fait repartir des valeurs par défaut de l'atelier (12 × 8 m).
+
+Les deux demandent confirmation et n'enregistrent rien : seul « Enregistrer le plan » enregistre.
+
+# Concevoir : les bordures
+
+Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au
+milieu de sa bande, avec une espèce ou plusieurs qui alternent.
+
+La bordure externe bloque l'herbe et freine le vent. Cochez « vent » sur le côté d'où vient le vent
+dominant : ce côté se dessine en tirets épais et recevra des brise-vent. La bordure interne apporte
+de la biomasse.
+
+« Proposer les espèces de cette bordure » montre les espèces qui remplissent sa fonction, sauf les
+annuelles, car une bordure est pérenne, et les plantes grimpantes, réservées à la ligne des lianes.
+
+Sur une face sud ou ouest exposée, la proposition rappelle la réserve de Théry : n'y mettre que
+des plantes émergentes. Vous gardez celles que vous voulez, et elles alternent dans cet ordre.
+
+Une plante peut être notée « bloque l'herbe » dans Espèces. En bordure, une plante couvre-sol
+compte aussi comme bloque-herbe.
+
+L'atelier compte les plants de chaque espèce d'après leur espacement, pris dans **Espèces**. Entre
+deux plants voisins, l'écart est la moyenne de leurs espacements. À chaque bout, il garde la moitié
+du sien.
+
+Il dessine chaque plant par un disque de sa **largeur** adulte quand elle est connue, borné à deux
+fois son espacement, puisqu'une plante de bordure est taillée. Sinon, il dessine une pastille.
+
+Chaque espèce a sa couleur et un **sigle** de deux ou trois lettres, calculé pour que deux espèces
+de la parcelle ne se confondent pas.
+
+Une **légende** liste les espèces avec leur nombre de plants. Les sigles s'inscrivent sur le plan
+quand le zoom le permet, et le survol d'un point donne le nom de la plante.
+
+Dans la légende, « Tout/rien » affiche ou masque tous les sigles, et la pastille d'une espèce ceux
+de cette espèce. Ces choix restent dans votre navigateur, parcelle par parcelle.
+
+Une espèce sans espacement empêche le compte de sa ligne, et la page le dit. Après un changement
+de dimensions ou de bordures, les plants se recomptent quand le plan est de nouveau enregistré.
+
+Tant que les bordures externe et interne sont vides, vous pouvez **répartir une liste de plantes
+sur toutes les bordures** d'un coup. Vous cochez une seule liste pour la parcelle.
+
+Les plantes sans espacement ou annuelles sont grisées, avec la raison. Vous pouvez choisir une
+**colonne vertébrale** par bordure, qui revient un plant sur deux.
+
+L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance. Il pose
+seulement des émergentes au sud et à l'ouest de l'externe, et des brise-vent sur les côtés cochés
+« vent ».
+
+Il faut au moins deux espèces par côté. Sinon, rien n'est réparti, et l'atelier dit quel côté
+manque de quoi.
+
+L'aperçu s'affiche sur le plan. « Poser ces bordures » enregistre tous les côtés à la fois, et
+chaque côté se retouche ensuite à la main.
+
+Chaque bordure a aussi son **calendrier prévu** : une date de plantation, proposée d'après le
+calendrier de ses espèces, et des **perturbations prévues**, chacune avec une date et un geste.
+
+Ce sont des prévisions. La date réelle se donne à la Réalisation, et le jour d'une perturbation
+s'adapte au temps qu'il fait.
+
+# Concevoir : la tortue liane
+
+Pour une tortue **liane**, la tortue d'ombre de Théry pour les étés secs et les pluies violentes,
+l'atelier dessine le plan au sol, sans la structure.
+
+Une **ligne des lianes**, en tirets violets, marque où montent les lianes. Elle court **au cœur**,
+dans le passe-pied central, **côté nord** ou **côté est**.
+
+Elle reçoit, comme une bordure, une série d'espèces qui alternent : les lianes émergentes en haut
+de la structure, et la strate haute à leur ombre (vigne, kiwi, kiwaï).
+
+« Proposer les lianes » montre les lianes de votre référentiel, reconnues à leur strate « Liane /
+grimpante » dans Espèces. La proposition cite aussi les lianes annuelles qui les doublent la
+première année.
+
+Sous la structure, la ligne centrale de chaque planche garde sa biomasse (maïs, tournesol) **les
+deux premières années**, le temps que les lianes s'installent.
+
+# Concevoir : le scénario
+
+Le **scénario** est le déroulement de la succession dans les strates, défini à partir des
+productions voulues.
+
+En syntropie, il se compose sur une frise : le temps en largeur, les strates en hauteur. En
+jardin-forêt, qui n'a pas d'axe du temps, il se lit par strate.
+
+En syntropie, les quatre strates classent les plantes par **besoin en lumière**, et non par
+hauteur (Théry, ch. 05) : émergente 80 à 100 %, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 %.
+
+Quand vous nommez un végétal, l'atelier **propose sa strate** d'après Espèces. Une espèce a une
+**strate de production** et une **strate de service**, et l'atelier prend celle de l'usage.
+
+Quand une espèce a plusieurs strates possibles, comme la fève ou la pomme de terre précoce,
+l'atelier vous laisse choisir.
+
+Le panneau Informations montre **l'occupation au sol** de chaque strate : la surface des plantes
+adultes, rapportée à la parcelle. Les repères de Théry sont de 20, 40, 60 et 80 % de la plus haute
+à la plus basse.
+
+Le même panneau dit si **le saut du chat est préparé** : des plantes à perturber, 70 à 80 % de
+biomasse, au moins deux espèces par strate, des plantes de démarrage, un geste de taille noté.
+
+Chaque repère dit « en place », « à regarder » ou « rien de noté », avec sa source. L'atelier
+conseille, il n'interdit rien.
+
+Pour un ligneux, on note le **geste de taille** : basitone, cépée ou trogne, selon l'endroit où
+l'arbre stocke ses sucres.
+
+Une plante déclarée « en bordure » renvoie aux lignes des bordures : c'est leur compte qui fait foi.
+
+Le **calendrier** de la Conception est un premier repère de rythme, saison par saison, écrit à main
+levée. Son panneau Informations rappelle les moments de la taille de perturbation.
+
+# Concevoir : les espèces
+
+Le menu du compte ouvre **Espèces** : le cadre partagé de l'atelier, et vos propres espèces. Une
+surcharge prime sur le cadre pour la même espèce, sans le changer pour les autres projets.
+
+Une espèce porte son calendrier de semis, de repiquage et de récolte, écrit en mots comme le
+tableau de Lopez (« fin avril », « mi à fin juillet »), et son **cycle** : annuelle, bisannuelle,
+vivace ou ligneuse.
+
+Elle porte aussi sa **hauteur** adulte, sa **largeur**, qui dessine les plants des bordures et
+mesure l'occupation au sol, et ses strates de production et de service.
+
+Pour une annuelle semée en place, elle porte son délai de germination et la température du sol
+pour semer : « le critère n'est pas la date mais la température du sol », dit Théry.
+
+Elle porte enfin ses rôles : la production, ou une fonction de service (biomasse, bloque-herbe,
+tuteur…). C'est le même vocabulaire que le scénario et le plan de culture du potager.
+
+Un fichier CSV importe plusieurs espèces d'un coup, à partir d'un modèle à télécharger. Il est
+vérifié en entier avant tout enregistrement.
+
+# Concevoir : le potager
+
+Une parcelle de type **potager** se compose **par planche**, dans son plan de culture. Les planches
+viennent du plan de la parcelle, et chacune peut porter plusieurs cultures.
+
+Chaque planche dit ce que les tables d'association de Christa Weinrich savent de ses voisinages :
+ce qui s'entend bien, et ce qu'il vaut mieux éviter de placer côte à côte.
+
+Ce sont des ordres de conduite, à éprouver chez soi. Une culture absente des tables n'est pas
+neutre pour autant.
+
+L'atelier peut **proposer un placement** des cultures qui n'ont pas de planche. Il regroupe ce qui
+s'entend bien, écarte ce qui s'entend mal, et laisse à leur place les cultures déjà placées.
+
+S'il ne trouve aucune planche sans voisin à éviter, il laisse la culture non placée et le dit. La
+proposition s'affiche d'abord, et rien n'est enregistré avant votre accord.
+
+Chaque planche porte sa nature, en zèbre ou en abeille. Le placement met une plante pérenne sur une
+planche pérenne et une annuelle sur une annuelle, d'après son cycle dans Espèces.
+
+Une culture porte trois dates : le **semis à l'abri**, la **mise en place** (semis en place ou
+repiquage) et la récolte. Un onglet **calendrier** les dispose sur l'année, mois par mois.
+
+Pour dix-sept cultures d'automne et d'hiver, la page rappelle les dates de Yann Lopez, maraîcher en
+Haute-Vienne. Ce sont des dates indicatives, à remplacer par vos propres mesures.
+
+Une culture décrite dans Espèces propose son propre calendrier de la même façon. Pour les autres,
+la date est à vous.
+
+Quand deux cultures d'une planche ont leurs dates, la page dit si la table de succession de
+Weinrich cite leur enchaînement, l'exclut, ou n'en dit rien.
+
+Sous chaque planche, la page rappelle ce que la table cite pour suite de la dernière culture.
+
+Une culture peut porter des **fonctions de service**, comme la biomasse : le journal des
+perturbations et le saut du chat la comptent alors. Elle peut aussi porter son nombre de plants.
+
+Les **lignes** d'une planche reçoivent les plantes de service, et les productions se plantent de
+part et d'autre. « Les lignes » ouvre la proposition de l'atelier.
+
+La biomasse va sur la ligne centrale, émergente de préférence. Les autres lignes complètent les
+strates que les productions laissent vides, les plus hautes près du centre.
+
+Chaque ligne porte une espèce, sa mise en place et sa fin prévues, et ses perturbations prévues.
+Le calendrier du potager les montre en clair, à côté des cultures.
 
 # Concevoir : le matériel et l'eau
 
-Une fois le scénario posé, la page **Matériel et eau** dit ce qu'il faudra
-se procurer et l'eau qu'il faudra donner. Elle se lit parcelle par parcelle, ou
-pour tout le projet d'un coup.
+La page **Matériel et eau** dit ce qu'il faudra se procurer et l'eau qu'il faudra donner. Elle se
+lit parcelle par parcelle, ou pour tout le projet.
 
-Le **matériel végétal** se déduit du scénario : chaque végétal, regroupé selon son
-origine : à acheter, à multiplier soi-même, régénération naturelle.
+Le **matériel végétal** se déduit du scénario et du plan, et se classe par origine : à acheter, à
+multiplier soi-même, régénération naturelle.
 
-La quantité que vous avez saisie l'emporte ; à défaut, elle est estimée à partir de
-l'espacement et du plan de la parcelle, et la page le dit. Un végétal sans origine
-reste à préciser, car c'est elle qui décide de ce qu'on achète.
+La quantité saisie l'emporte. Sinon, elle est estimée d'après l'espacement et le plan, et la page
+le dit. Les plants posés sur les lignes du plan sont comptés tels quels.
 
-Les plants posés sur les **lignes du plan** — les bordures, la ligne des lianes, les
-lignes de service des planches — s'y ajoutent, comptés tels quels à l'espacement de
-chaque espèce, avec l'origine notée dans **Espèces**.
+Pour un potager, la liste vient du plan de culture. Pour une culture semée à l'abri, le nombre de
+graines est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez.
 
-Pour ce qui pousse en bordure, c'est ce compte qui fait foi : un végétal du scénario
-déclaré « en bordure » prend le nombre de plants posés sur le plan, et reste « à
-déterminer » s'il n'y est pas posé.
+Le besoin en **eau** se donne pour trois états du sol : le volume par an, la réserve à prévoir et
+le débit d'une semaine de pointe. Ce sont des ordres de grandeur tirés de Lopez.
 
-Pour un **potager**, la liste se déduit du plan de culture : chaque culture, avec le
-nombre de plants que vous y avez noté. Sans ce nombre, la page estime une ligne de
-plants sur la planche, à l'espacement de la culture, et le dit.
+La ressource en eau du site (réseau, puits ou forage, réserve, ou aucune) dit ce qu'il faut prévoir
+pour le stockage. Sans eau, la régénération naturelle assistée devient la voie la plus sûre.
 
-Pour une culture semée à l'abri, elle ajoute les **graines à démarrer** : le nombre
-de plants divisé par un taux de réussite de 80 %, la convention de planification de
-Yann Lopez — dans son livre, de 91 % pour un poireau à 50 % pour une aubergine, un
-point de départ à remplacer par vos propres levées.
+Un **test de sol** se note sur la parcelle : la vitesse d'infiltration, l'état du sol et le nombre
+de jours depuis la dernière pluie.
 
-Une culture semée en place n'a pas de graines chiffrées.
+La page en déduit la classe d'infiltration du sol, sa vitesse de ressuyage, et les millimètres à
+apporter par semaine en été.
 
-Le besoin en **eau** se donne pour trois états du sol, du plus dégradé au plus
-structuré : le volume par an, la réserve à prévoir, le débit d'une semaine de pointe.
-Ce sont des ordres de grandeur tirés d'un maraîchage d'annuelles, pas une
-consommation attendue.
+Un sol qui boit vite demande des passages plus courts et plus fréquents, un sol lent des cycles
+courts séparés de pauses. Avant chaque arrosage, la main enfoncée dans le sol reste le meilleur juge.
 
-Vous dites aussi d'où vient l'eau du site — réseau, puits ou forage, réserve, ou rien
-— et la page en tire ce qu'il faut prévoir pour la stocker ; sans eau à portée, elle
-rappelle que la régénération naturelle assistée devient la voie la plus sûre.
+# Réaliser
 
-À la taille de perturbation, la page rappelle qu'on coupe avant ou après une pluie et
-qu'on arrose si elle ne vient pas ; elle ne calcule aucun volume pour cela, le corpus
-n'en donnant pas.
+La **réalisation** prépare la parcelle (déchaumer, ou couvrir sans travailler le sol), le
+matériel végétal (bouturage, semis, division) et les outils, puis consigne ce qui a été fait.
 
-Pour la **fréquence d'arrosage**, vous notez un test de sol sur la parcelle : la
-vitesse d'infiltration, l'état du sol (détrempé, ressuyé, sec dur) et le nombre de
-jours depuis la dernière pluie.
+Le sol se prépare avant de semer. Les semis, ceux des tortues en particulier, se font sur un sol
+exempt d'adventices, dont la concurrence freine le saut du chat.
 
-La page en déduit la classe d'infiltration du sol, la vitesse à laquelle il se
-ressuie, et les millimètres à apporter par semaine en été. Un sol qui boit vite
-demande des passages plus courts et plus fréquents, un sol lent des cycles courts
-séparés de pauses.
+La consignation note la date et les conditions du chantier : un même chantier mené sous la pluie
+ou en pleine canicule ne donne pas le même résultat.
 
-Avant chaque arrosage, la main enfoncée dans le sol reste le meilleur juge.
+# Suivre
 
-# Réaliser et suivre
+Le **suivi** commence dès que quelque chose est en terre : l'arrosage et la germination, la
+perturbation, le saut du chat et la consignation.
 
-La **réalisation** prépare le terrain (déchaumer, ou couvrir sans travailler le
-sol), choisit le matériel végétal (bouturage, semis, division, ou ce qui est
-déjà là), rassemble les outils et les personnes, puis consigne ce qui a été
-fait, avec la date et les conditions.
+La consignation du suivi garde une seule observation : chaque enregistrement remplace le précédent.
 
-Le sol se prépare avant de semer : les semis, ceux des tortues en particulier, se
-font sur un sol exempt d'adventices, dont la concurrence freine le saut du chat.
+La **perturbation** consiste à couper, tailler ou faucher les plantes de biomasse pour relancer la
+croissance. Elle se note dans un **journal**, parcelle par parcelle, une ligne par geste.
 
-Le **suivi** commence dès que quelque chose est en terre : l'arrosage et la
-germination, la perturbation, le saut du chat. Sa consignation se répète, saison
-après saison, et se relit mieux qu'elle ne se souvient.
+Chaque ligne porte la date, ce qui a été coupé, l'état des plantes, l'eau autour de la coupe, ce que
+la biomasse est devenue et, plus tard, ce que vous constatez. Seuls la date et le geste sont demandés.
 
-La **perturbation** — couper, tailler, faucher les plantes de biomasse pour relancer
-la croissance — se tient dans un **journal**, parcelle par parcelle : une ligne par
-geste, avec la date, ce qui a été coupé, l'état des plantes (en pleine croissance,
-fleurs fanées, repos d'hiver…), l'eau autour de la coupe, ce que la biomasse est
-devenue et, plus tard, ce que vous constatez.
+Chaque plante de biomasse montre le temps écoulé depuis sa dernière coupe, sans seuil. La première
+perturbation vient en juin, les suivantes quand il y a de quoi couper.
 
-Seuls la date et le geste sont demandés ; on peut rouvrir une ligne pour la
-compléter.
+Affaiblir une couverture en la couchant sous la paille, ou désherber à la main, se note aussi, mais
+ne compte pas comme une perturbation.
 
-Au-dessus du journal, chaque plante de biomasse de votre scénario (ou, pour un
-potager, chaque culture marquée d'une fonction de service biomasse) montre le temps
-écoulé depuis sa dernière coupe, sans seuil : le bon moment se lit sur l'état des
-plantes, la première perturbation vient en juin, les suivantes quand il y a de quoi
-couper — et l'on arrose si la pluie ne vient pas.
+Le **saut du chat** est l'accélération nette de la croissance du système. Il se constate en
+comparant avec un témoin conduit de façon classique.
 
-Le journal n'interdit rien : il dit ce que les sources disent, et pourquoi. Affaiblir
-une couverture sans la couper, en la couchant sous la paille, ou désherber à la main,
-s'y note aussi, mais ne compte pas comme une perturbation.
+Chaque **constat** est daté et dit si le saut du chat est visible. Quand vous l'avez mesurée, il
+donne la pousse d'une plante sur quelques jours, à côté de celle du témoin.
 
-Le **saut du chat** — le moment où le système accélère nettement — est l'effet de la
-perturbation, non de la seule densité : il se reconnaît en comparant.
+La page dit aussi **ce qui le rend possible**, d'après ce que vous avez noté : le sol préparé, la
+plantation faite dans une même période, une perturbation au journal, de quoi couper.
 
-Chaque **constat** est daté, dit s'il est visible et, quand vous l'avez mesuré, donne
-la pousse d'une plante sur quelques jours à côté de celle d'un **témoin** conduit
-classiquement dans le même sol.
+S'y ajoutent l'état des plantes et l'eau à la coupe, la biomasse laissée au sol, les plantes de
+biomasse coupées ensemble et des plantes de démarrage.
 
-La page dit aussi **ce qui le rend possible**, lu dans ce que vous avez déjà noté :
-le sol préparé et la plantation faite dans une même période — les deux moments les
-plus coûteux du projet.
+La **campagne de plantation** se note dans le panneau Données : un début, qui est le point zéro, et
+une fin. Une plantation dense s'étale sur trois saisons, selon les besoins des végétaux.
 
-S'y ajoutent une perturbation au journal, de quoi couper au scénario, l'état des
-plantes et l'eau à la coupe, la biomasse laissée au sol, les plantes de biomasse
-coupées ensemble, des plantes de démarrage.
+Le constat demande aussi si des adventices reviennent. Si elles reviennent, la plantation n'est pas
+assez dense : on désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.
 
-Chaque condition est dite en place, à regarder ou pas encore notée — jamais comme un
-échec. La **campagne de plantation** se note dans le panneau Données : un début, qui
-est le point zéro, et une fin.
+# Le Dossier Projet
 
-Une plantation dense s'étale sur trois saisons — fin d'automne, hiver, printemps —
-selon les besoins des végétaux ; ce qui compte est qu'aucune structurante ne soit
-ajoutée après coup.
+Une fois connecté avec un projet ouvert, la section **« Dossier Projet »** du menu met votre projet
+en forme pour le papier.
 
-Le point zéro dit aussi depuis quand on attend le saut du chat : dans la formation il
-vient d'ordinaire dès les premiers mois, un repère et non une échéance.
+Le dossier commence par une couverture (le projet, son porteur, sa conduite, la date d'édition),
+puis la Définition : la vision, les objectifs, les moyens et le site.
 
-Le constat demande aussi si des adventices reviennent.
+La Conception suit : le terrain, avec les tracés de la carte, l'échelle et le nord, puis une page
+par parcelle, avec son plan, ses bordures, ses planches et son scénario ou son plan de culture.
 
-Le sol se prépare par déchaumage, avec les moyens dont on dispose ; si elles
-reviennent en cours de projet, c'est le signe que la plantation n'est pas assez dense
-— des plantes de colonisation sont encore là : on désherbe à la main, et l'on
-densifie avec des plantes du système d'accumulation.
+Les chapitres à imprimer se cochent. Ce qui s'affiche est ce qui s'imprime, et le choix se refait à
+chaque ouverture.
+
+« Imprimer / Enregistrer en PDF » ouvre l'impression du navigateur, qui sait produire un PDF. Une
+question sans réponse s'y lit « pas encore renseigné ».
+
+Avec les fiches de relevé de sol, c'est le seul document de l'atelier qui défile comme une page
+ordinaire : tous deux sont faits pour le papier.
 
 # Le bureau
 
-Chaque page — publique ou connectée — s'ouvre sur le même espace de
-travail, sans défilement : ce que vous voyez à l'écran est tout ce qu'il y
-a à voir, comme un vrai bureau vu de dessus. Un contenu trop long se
-réduit, il ne s'étale jamais hors de l'écran.
+Chaque page, publique ou connectée, s'ouvre sur le même espace de travail, sans défilement : ce que
+vous voyez à l'écran est tout ce qu'il y a à voir. Un contenu trop long se réduit.
 
-Le menu ☰ ouvre la navigation du site ; une tirette dédiée ouvre, page par
-page, la saisie liée au travail en cours (le panneau Données) ou le mode
-d'emploi de la page (le panneau Informations). Un clic en dehors, ou la touche
-Échap, referme un panneau.
+Le menu ☰ ouvre la navigation du site. Une tirette ouvre la saisie de la page (le panneau Données),
+une autre son mode d'emploi (le panneau Informations).
 
-Sur téléphone, la barre d'outils devient un menu déroulant. Le bouton ◐, en haut,
-change le thème, clair ou sombre.
+Un clic en dehors, ou la touche Échap, referme un panneau. Sur téléphone, la barre d'outils devient
+un menu déroulant. Le bouton ◐ change le thème, clair ou sombre.
 
-**Pendant une mise à jour**, l'atelier se ferme quelques instants : toute page
-affiche « L'atelier se met à jour », et rien n'y est reçu — votre travail déjà
-enregistré est conservé.
+**Pendant une mise à jour**, l'atelier se ferme quelques instants et affiche « L'atelier se met à
+jour ». Le travail déjà enregistré est conservé.
 
-Une fois la mise à jour faite, une page restée ouverte depuis avant ne peut plus rien
-enregistrer, pour qu'un formulaire d'avant n'efface pas un champ nouveau : un avis
-vous propose de la recharger, et si un envoi en part quand même, l'atelier vous dit
-qu'il n'a pas été pris en compte.
-
-Rechargez la page, puis refaites votre saisie.
+Après la mise à jour, une page restée ouverte ne peut plus rien enregistrer. Un avis propose de la
+recharger. Rechargez la page, puis refaites votre saisie.
 
 # Comptes, projets et rôles
 
-On s'inscrit sur invitation : quelqu'un qui a déjà un compte ouvre un code de
-huit caractères, qui se dicte à voix haute. Il n'y a pas de formulaire
-d'inscription ouvert à tous — cela évite au site d'attirer du bruit avant
-d'attirer des porteurs de projet.
+L'inscription se fait sur invitation, avec un code de huit caractères ouvert par une personne qui a
+déjà un compte.
 
-Un **administrateur de l'atelier** trouve dans le menu du compte le **journal des
-connexions** : chaque connexion réussie, la plus récente d'abord, avec le nom du
-compte, son identifiant, le jour et l'heure.
+Un compte peut avoir plusieurs projets : le sien et ceux qu'il a rejoints. Un sélecteur, dans le
+panneau de navigation, change de projet.
 
-Le journal ne note ni les tentatives échouées, ni les déconnexions, ni l'adresse d'où
-l'on se connecte, et ses lignes s'effacent au bout de 90 jours.
+Le menu du compte donne accès à votre projet, aux Préférences (votre compte, votre nom affiché,
+votre mot de passe), à un nouveau projet, à rejoindre ou importer un projet, et à inviter.
 
-Un compte peut avoir plusieurs projets : le sien, et ceux qu'il a rejoints. Un
-sélecteur, dans le panneau de navigation, change de projet.
+Le porteur y trouve aussi les participants et l'export du projet. Un administrateur de l'atelier y
+trouve le journal des connexions, dont les lignes s'effacent au bout de 90 jours.
 
-Le menu du compte, en haut à droite, donne accès à votre projet, aux Préférences (le
-récapitulatif de votre compte, votre nom affiché, votre mot de passe), à un nouveau
-projet, à rejoindre un projet, à importer un projet, à inviter, et — pour le porteur
-— aux participants et à l'export du projet.
+Sur un projet, chacun a l'un de trois rôles. Le **porteur** a créé le projet et peut tout modifier.
+Le **contributeur** répond aux questions et dessine avec le porteur. Le **lecteur** consulte le
+projet sans le modifier.
 
-Ces pages, hors du parcours, gardent aussi « Mon projet » dans le panneau de
-navigation, pour revenir au plan de la parcelle.
+Le porteur peut **exporter le projet** dans un fichier daté, qui garde tout le projet et les
+réponses de tous les participants. Le fichier ne contient aucun compte ni aucun accès.
 
-Sur un projet, on a l'un de trois rôles. Le **porteur**, qui l'a ouvert, peut
-tout. Le **contributeur** répond et dessine avec lui. Le **lecteur** regarde,
-sans rien modifier.
+Le fichier porte une somme de contrôle : il ne se recharge pas s'il a été modifié depuis son
+export. Un projet de plus d'un mégaoctet ne s'exporte pas, et la page dit ce qui pèse.
 
-Le porteur peut **exporter le projet** : un fichier daté, qui garde tout ce que le
-projet contient — la définition, le terrain, les parcelles et leur plan, les
-scénarios, les relevés, le journal des perturbations et les constats du saut du chat,
-les tracés de la carte — et les réponses de tous les participants, d'où la réserve au
-porteur.
+**Importer un projet** est ouvert à tout compte. L'import d'un fichier crée toujours un nouveau
+projet, dont vous êtes le porteur. Le fichier est vérifié en entier avant tout enregistrement.
 
-La page annonce ce que le fichier contiendra avant de le produire. Il ne porte jamais
-de compte ni d'accès : les participants n'y figurent que par leur nom. Un projet qui
-dépasserait un mégaoctet n'est pas exporté, la page dit alors ce qui pèse.
-
-Le fichier dit d'où il vient — la forme du fichier, celle des données, le numéro
-de l'atelier qui l'a écrit — et porte une somme de contrôle : il ne se recharge
-pas s'il a été modifié depuis son export, même d'une lettre, ni s'il vient d'un
-atelier dont les données n'ont pas la même forme.
-
-**Importer un projet** est ouvert à tout compte. Le fichier devient toujours un
-projet neuf, dont vous êtes le porteur : il ne fusionne avec rien et n'écrase rien.
-Il est vérifié en entier avant que rien ne soit écrit, et la page dit ce qui ne va
-pas s'il est refusé.
-
-S'il est valide, elle montre ce qu'il contient, puis vous choisissez le nom du projet
-et lequel des participants du fichier vous êtes : le projet retrouve alors vos
-réponses.
-
-Les participants entrent sans compte, et les dates d'origine sont gardées. Si
-l'écriture échoue en route, rien n'est laissé à moitié.
+Vous choisissez le nom du projet et lequel des participants du fichier vous êtes. Les participants
+entrent sans compte, et les dates d'origine sont gardées.
 
 # Inviter et rejoindre
 
-La page Inviter ouvre un code : soit pour qu'une personne crée son compte, soit
-— si vous êtes porteur — pour qu'elle rejoigne votre projet, en contributeur ou en
-lecteur. Dix codes peuvent être ouverts en même temps, et un code qui n'a pas
-servi se retire.
+La page Inviter ouvre un code. Il permet à une personne de créer son compte ou, si vous êtes
+porteur, de rejoindre votre projet comme contributeur ou comme lecteur.
 
-Avec un compte existant, « Rejoindre un projet » lit le code, montre le projet,
-la personne qui invite et le rôle proposé, puis vous laisse confirmer.
+Dix codes peuvent être ouverts en même temps. Un code est valable 30 jours, sert une seule fois, et
+se retire tant qu'il n'a pas servi.
 
-Le porteur voit les participants de son projet et peut retirer un accès : la
-personne perd l'accès, ses réponses restent, et si elle est réinvitée elle les
-retrouve.
+Avec un compte existant, « Rejoindre un projet » lit le code, montre le projet, la personne qui
+invite et le rôle proposé, puis vous laisse confirmer.
+
+Le porteur voit les participants de son projet et peut retirer un accès. La personne perd l'accès,
+ses réponses restent, et elle les retrouve si elle est invitée de nouveau.

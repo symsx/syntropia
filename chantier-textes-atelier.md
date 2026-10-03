@@ -1,6 +1,6 @@
 # Les textes de l'atelier — réécriture dans le style du porteur
 
-**Demandé par le porteur le 2026-10-03 ; en cours.** Vague 1 faite et commitée le 2026-10-03, vague 2 écrite le même jour. Ce chantier passe avant la Phase 3 du Dossier
+**Demandé par le porteur le 2026-10-03 ; en cours.** Vagues 1 et 2 faites et commitées le 2026-10-03, vagues 3, 4 et 5 écrites le même jour. Ce chantier passe avant la Phase 3 du Dossier
 Projet (décision du porteur, le même jour).
 
 ## La demande
@@ -85,7 +85,21 @@ fonctionnement réel de l'atelier est retiré, ou soumis au porteur (§ Question
   `Eau`, `Cadastre`, `Altimetrie`, `calques.js`, `carte.js`), étude du sol, parcelles (et `Stade`, `Tortue`, `Bordures`,
   `RepartitionBordures`, `conception-parcelles.js`), scénario (et `SautDuChat::conception()`, `Scenario`, `strates.js`), potager (et
   `PlanDeCulture`, `LignesDeService`, `Cultures`), matériel et eau (et `Materiel`, `BesoinEau`), calendrier. Les titres des repères du
-  saut du chat et les origines du matériel reprennent ceux de la présentation du porteur ; le livret suit pour les origines.
+  saut du chat et les origines du matériel reprennent ceux de la présentation du porteur ; le livret suit pour les origines. Commitée après relecture du porteur.
+- **Vague 3** (2026-10-03, écrite, à relire par le porteur) : les quatre étapes de la Réalisation, l'arrosage et la germination, la
+  perturbation (et `Interventions`), le saut du chat (et `SautDuChat::conditions()`, `Constats`), la consignation du Suivi. Le saut du
+  chat se définit par la phrase de la présentation du porteur ; « le film » devient « le scénario ». La consignation du Suivi dit
+  franchement qu'elle ne garde qu'une observation.
+- **Vague 4** (2026-10-03, écrite, à relire par le porteur) : compte, rejoindre, inviter, membres, exporter, importer, espèces, journal
+  des connexions, glossaire, panneaux des livrets, Dossier Projet, relevé vierge (et `FicheTerrain`), et les textes partagés de
+  `gabarit.js`. Les rôles reprennent les définitions de la présentation du porteur (le contributeur répond aux questions et dessine
+  avec le porteur, le lecteur consulte sans modifier). Trois faits corrigés : le cadre compte 143 espèces et non 46 ; la hauteur
+  adulte ne sert pas encore à l'ombre portée ; le relevé vierge renvoyait à un « carnet du site » qui n'existe pas.
+- **Vague 5** (2026-10-03, écrite, à relire par le porteur) : le livret « L'atelier » réécrit à partir de « Où trouver quoi » (les
+  trois premiers chapitres, dans la voix du porteur, restent tels quels), le livret « Les sources », le glossaire. Le chapitre
+  « Concevoir : les parcelles et le scénario » (70 sous-pages à 320 × 568) est découpé en chapitres courts ; le livret passe à 21
+  chapitres, 18 sous-pages au plus, aucun débordement à 320 × 568 (mesuré). Le Dossier Projet a son chapitre, avec la Phase 2.
+  Les titres du glossaire ne changent pas : les identifiants des bulles en dépendent (vérifié, les 15 mots soulignés résolus).
 
 ## Questions au porteur
 

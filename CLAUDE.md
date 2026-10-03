@@ -393,8 +393,7 @@ de chaque parcelle), et la présentation (`chantier-presentation.md`).
   légende, survol) — demandé par le porteur.
 - Le porteur doit cliquer « Enregistrer le plan » de La Vadaux P1 en
   production (9 → 10 planches).
-- Livrets : « Concevoir : les parcelles et le scénario » à couper (70
-  sous-pages à 320 px) ; le livret SAF déborde de ~50 px à 320×568 ; la
+- Livrets : le livret SAF déborde de ~50 px à 320×568 ; la
   tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
   panneau gauche défile déjà à 800 px de haut.
 - `chantier-mises-a-jour.md` Phases 5-7 — dont **une vraie restauration de
