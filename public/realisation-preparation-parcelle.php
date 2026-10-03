@@ -146,7 +146,6 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
           <p class="pg-titre">Réalisation</p>
           <ul class="pg-liste pg-etapes-phase"></ul>
         </div>
-        <p class="pg-pied">Première étape de Réalisation — voir plan-du-site.md.</p>
       </div>
     </nav>
 

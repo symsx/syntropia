@@ -118,7 +118,6 @@ $nomAffiche = $connecte ? ($auth->nomAffiche() ?? '') : '';
             <?php endif; ?>
           </ul>
         </div>
-        <p class="pg-pied">Sur le même gabarit que le reste de l'atelier — voir CLAUDE.md § Architecture.</p>
       </div>
     </nav>
 

@@ -127,7 +127,6 @@ $reponses = $reponsesService->pourParticipant($participantId);
           <p class="pg-titre">Réalisation</p>
           <ul class="pg-liste pg-etapes-phase"></ul>
         </div>
-        <p class="pg-pied">Troisième étape de Réalisation — voir plan-du-site.md.</p>
       </div>
     </nav>
 

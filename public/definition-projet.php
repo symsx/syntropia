@@ -148,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <li><a href="deconnexion.php"><span class="pg-puce">⏻</span><span class="pg-libelle">Se déconnecter</span></a></li>
           </ul>
         </div>
-        <p class="pg-pied">Un site, avant la première question — voir plan-du-site.md.</p>
       </div>
     </nav>
 

@@ -130,7 +130,6 @@ $reponses = $reponsesService->pourParticipant($participantId);
           <p class="pg-titre">Suivi</p>
           <ul class="pg-liste pg-etapes-phase"></ul>
         </div>
-        <p class="pg-pied">Quatrième et dernière étape du parcours construit — voir plan-du-site.md.</p>
       </div>
     </nav>
 

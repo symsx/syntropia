@@ -129,7 +129,6 @@ usort($chapitres, static fn (array $a, array $b): int => strcoll($a['titre'], $b
             <?php endif; ?>
           </ul>
         </div>
-        <p class="pg-pied">Le texte de ce glossaire vit dans contenu/glossaire.md.</p>
       </div>
     </nav>
 
@@ -144,8 +143,7 @@ usort($chapitres, static fn (array $a, array $b): int => strcoll($a['titre'], $b
         <p class="gloss-compte" id="gloss-compte"></p>
 
 <?php if ($chapitres === []): ?>
-        <p class="gloss-vide">Ce glossaire n'a pas encore de mot — voir
-           contenu/glossaire.md.</p>
+        <p class="gloss-vide">Ce glossaire n'a pas encore de mot.</p>
 <?php else: ?>
         <dl class="gloss-liste" id="gloss-liste">
 <?php foreach ($chapitres as $ch):

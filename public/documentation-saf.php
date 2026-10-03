@@ -213,14 +213,12 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-saf.m
             <?php endif; ?>
           </ul>
         </div>
-        <p class="pg-pied">Le texte de ce livret vit dans contenu/documentation-saf.md.</p>
       </div>
     </nav>
 
     <main class="bureau" id="bureau">
 <?php if ($chapitres === []): ?>
-      <p>Ce livret n'a pas encore de chapitre — voir
-         contenu/documentation-saf.md.</p>
+      <p>Ce livret n'a pas encore de chapitre.</p>
 <?php else: ?>
       <div class="doc-corps">
         <div class="doc-chapitres-bloc">

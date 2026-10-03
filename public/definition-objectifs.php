@@ -141,7 +141,6 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
           <!-- rempli par Gabarit.init() à partir de public/assets/js/etapes.js -->
           <ul class="pg-liste pg-etapes-phase"></ul>
         </div>
-        <p class="pg-pied">Deuxième étape du parcours — voir plan-du-site.md.</p>
       </div>
     </nav>
 

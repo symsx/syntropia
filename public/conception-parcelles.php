@@ -719,7 +719,6 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           </ul>
         </div>
 <?php endif; ?>
-        <p class="pg-pied">Les parcelles sont réelles, en base — le plan (planches, bordures) reste un prototype, voir architecture-technique.md.</p>
       </div>
     </nav>
 
@@ -761,7 +760,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php else: ?>
     <main class="bureau" id="bureau">
       <svg class="bureau-carte" id="plan" viewBox="0 0 1240 900" role="img"
-           aria-label="Plan de la parcelle <?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?> — prototype, 12 mètres sur 8">
+           aria-label="Plan de la parcelle <?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?>">
         <g transform="translate(70,40)">
           <rect class="plan-parcelle-fond" x="0" y="0" width="1200" height="800"/>
           <g id="planches"></g>
@@ -1285,7 +1284,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         </dl>
         <p class="pd-note">La planche de bord (la première et la dernière de chaque rang) touche
            la bordure plutôt qu'un passe-pied : elle ne se travaille que d'un seul côté, d'où sa
-           largeur plus étroite — voir chantier-plan-de-parcelle.md § Phase 3.</p>
+           largeur plus étroite.</p>
         <p class="pd-note">« Surface utile » compte tout ce que les bordures laissent, passe-pieds
            compris ; « Surface des planches » ne compte que ce qui se cultive vraiment.</p>
       </div>

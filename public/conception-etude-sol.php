@@ -143,7 +143,6 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
           <p class="pg-titre">Conception</p>
           <ul class="pg-liste pg-etapes-phase"></ul>
         </div>
-        <p class="pg-pied">Sept relevés, à faire sur place — voir plan-du-site.md.</p>
       </div>
     </nav>
 
