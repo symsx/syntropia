@@ -26,8 +26,9 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `scenario-plantation`, `inscription-parrainage` (2026-09-18),
     `plan-de-culture` (2026-09-21), `caracteristiques-vegetaux`,
     `peuplement-parcelle` (2026-09-23), `repartition-bordures` (2026-10-01 —
-    face sud de l'externe en jardin-forêt rouverte, non tranchée).
-  - **En cours** : `dossier-projet` (Phase 1 faite le 2026-10-02, Phase 2
+    face sud de l'externe en jardin-forêt rouverte, non tranchée),
+    `textes-atelier` (2026-10-03).
+  - **En cours** : `dossier-projet` (Phases 1 et 2 faites et déployées, Phase 3
     suivante — ordre du porteur) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
     3, 5 faites ; **Phase 4 bloquée**, attend le porteur et la formation — une
     règle sans réponse sourcée ne se code pas) ; `film-de-la-parcelle`
@@ -38,8 +39,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   - **Planifiés, pas commencés** : `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions
-    tranchées, prête à commencer), `textes-atelier` (2026-10-03, avant la Phase 3 du
-    Dossier Projet).
+    tranchées, prête à commencer).
 - `skills-map/` — carte des compétences métier nécessaires aux étapes de
   l'atelier (skill `organisation-skills`), dont les noeuds citent
   `connaissances/`.
@@ -363,18 +363,20 @@ valeur de `acces.role` ; le moment venu, donner au porteur une ligne `acces`
 `('plantae', 'administrateur')` ; réponse sur `acces.application` **pas
 encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
-### État et prochaine étape — au 2026-10-02 au soir
+### État et prochaine étape — au 2026-10-03 au soir
 
 Tout est commité et poussé (`origin/main`) ; la production est à jour
-(commit `bf3d846`, **schéma 19**). Parcours à essayer par le porteur : choisir
-un stade et lire son conseil, imprimer le Dossier Projet en PDF, lire « Les
-sources » sur téléphone.
+(commit `ef8da1e`, **schéma 19**, inchangé), déployée le 2026-10-03 avec
+sauvegarde. Ce déploiement porte le Dossier Projet Phase 2, la ligne centrale
+de la demi-planche de fin, le retrait des phrases de développement et la
+réécriture de tous les textes de l'atelier (`chantier-textes-atelier.md`,
+terminé). Parcours à essayer par le porteur : imprimer le Dossier Projet
+(terrain, parcelles), relire le livret « L'atelier » sur téléphone.
 
-**La suite, dans l'ordre du porteur** (mise à jour le 2026-10-03) : le
-Dossier Projet, Phase 2, est faite en local, non commitée ni déployée. Puis
-**la réécriture des textes de l'atelier** (`chantier-textes-atelier.md`,
-5 vagues), puis le Dossier Projet, Phases 3 à 5 (la 5 : le feuillet de chantier
-de chaque parcelle), et la présentation (`chantier-presentation.md`).
+**La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 3 à 5 (la 5 :
+le feuillet de chantier de chaque parcelle), puis la présentation
+(`chantier-presentation.md` ; sa Phase 1 corrigera la description des doses
+d'arrosage, retirées).
 
 **En attente du porteur ou de la formation** :
 - Saut du chat, Phase 4 (itinéraire technique) : la liste des itinéraires et

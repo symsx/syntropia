@@ -119,5 +119,5 @@
   le 2026-10-03 ; **planifié, pas commencé** — questions tranchées le jour même : sur le bureau, publique, sans adresse mail,
   datée et mise à jour sur demande, nommée « Présentation ».
 - `chantier-textes-atelier.md` — le plan (5 vagues) pour réécrire les textes de l'atelier dans le style du porteur :
-  pages, textes de `src/`, livrets « L'atelier » et « Les sources », glossaire. Demandé le 2026-10-03 ; **planifié, pas
-  commencé**, passe avant la Phase 3 du Dossier Projet ; le porteur relit directement les pages.
+  pages, textes de `src/`, livrets « L'atelier » et « Les sources », glossaire. Demandé le 2026-10-03 ; **terminé et déployé le
+  même jour**, cinq vagues relues par le porteur.
