@@ -2052,19 +2052,19 @@ il apparaît réellement, pour ne pas noyer le motif.
 11. **Campagne de qualification avec cgpt** — close le 2026-10-01 (fichiers supprimés, à la demande du porteur).
 12. Aucune procédure n'automatise `bin/deployer.py` après chaque
    changement — à relancer à la main.
-13. **Plantae est installé sur le même compte alwaysdata — fait côté `bdd_vg2`, mis à jour depuis (porteur, 2026-09-29).**
+13. **Plantae est installé sur le même compte alwaysdata — fait côté Plantae, mis à jour depuis (porteur, 2026-09-29).**
    `https://jubile.alwaysdata.net/plantae/` **remplace** `tout-emoi.go.yo.fr/plantae/`. **À Plantae, ne jamais toucher d'ici** :
-   `~/www/plantae/` et la base `jubile_plantae` (comme `bdd_vg2` s'interdit `~/www/syntropia/`). La page d'accueil du compte
+   `~/www/plantae/` et la base `jubile_plantae` (comme Plantae s'interdit `~/www/syntropia/`). La page d'accueil du compte
    (`~/www/index.html`) porte les deux boutons. Vérifié le 2026-09-29 : `/syntropia/` et `/plantae/` répondent en 200.
    Syntropia lit toujours Plantae par instantanés CSV (`bin/catalogue-plantae.py`).
    **Plantae lira `jubile_syntropia_comptes`** (décision du porteur, `EV-060` dans `~/projets/plantae/EVOLUTION-DECISIONS.md`, dossier nommé `bdd_vg2` jusqu'au 2026-10-03) —
    les comptes de Syntropia font référence : lecture de `compte` (identifiant, empreinte, `actif`) et d'une ligne `acces`
    `application = 'plantae'`, `role = 'administrateur'` ; **Plantae n'écrit rien** (ni `tentative`, ni `derniere_connexion`) et
    garde son cookie. L'utilisateur MySQL `jubile_plantae` n'a que `SELECT` sur `jubile_syntropia_comptes`. **Ce qui nous engage** :
-   (1) prévenir `bdd_vg2` avant de renommer ou retirer une colonne de `compte`/`acces` ou une valeur de `acces.role` ;
+   (1) prévenir Plantae avant de renommer ou retirer une colonne de `compte`/`acces` ou une valeur de `acces.role` ;
    (2) le moment venu (quand Plantae aura codé le rattachement), donner au porteur une ligne `acces` `('plantae', 'administrateur')` ;
    (3) `acces.application` n'a pas de liste fermée dans le code : `Comptes::APPLICATION = 'syntropia'`, et le schéma
-   (`sql/00-comptes.sql`) documente `'syntropia'`, `'plantae'` — **réponse pas encore transmise à `bdd_vg2`**.
+   (`sql/00-comptes.sql`) documente `'syntropia'`, `'plantae'` — **réponse pas encore transmise à Plantae**.
    **Les erreurs PHP n'apparaissent plus dans les pages — signalé par Plantae, corrigé et déployé le 2026-09-29** :
    `display_errors` n'était réglé nulle part sur le compte (défaut actif, chemins du serveur affichés). `public/.user.ini`
    (`display_errors = Off`, `display_startup_errors = Off`, `log_errors = On` — journal dans `~/admin/logs/php/`), fermé au web par
