@@ -52,7 +52,7 @@ $sitesService = new Sites();
 $projetInvite = $invitation !== null && $invitation['site_id'] !== null
     ? $sitesService->parId((int) $invitation['site_id']) : null;
 $roleInvite = $invitation['role_site'] ?? null;
-$dit = ['contributeur' => 'en contribuant', 'lecteur' => 'en lisant'];
+$dit = ['contributeur' => 'avec le rôle de contributeur', 'lecteur' => 'avec le rôle de lecteur'];
 $message = $lu['souci'];
 $classe = 'erreur';
 $fait = false;
@@ -65,7 +65,7 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
     && ($_POST['action'] ?? '') === 'inscrire') {
 
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $message = 'Jeton de sécurité invalide — réessayez.';
+        $message = 'Le formulaire a expiré. Rechargez la page et réessayez.';
     } else {
         $identifiant = strtolower(trim((string) ($_POST['identifiant'] ?? '')));
         $nomAffiche = trim((string) ($_POST['nom_affiche'] ?? ''));
@@ -74,19 +74,18 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
         $confirme = (string) ($_POST['confirmer'] ?? '');
 
         if (preg_match('/^[a-z0-9._-]{3,64}$/', $identifiant) !== 1) {
-            $message = "L'identifiant prend minuscules, chiffres, point, tiret et "
-                . 'souligné — de 3 à 64 caractères. C\'est ce que vous taperez pour '
-                . 'vous connecter.';
+            $message = "L'identifiant compte de 3 à 64 caractères, en minuscules, chiffres, "
+                . 'point, tiret ou souligné. Il sert à vous connecter.';
         } elseif ($nomAffiche === '') {
-            $message = "Le nom affiché est nécessaire : c'est ce que les autres verront.";
+            $message = 'Le nom affiché est nécessaire. C\'est le nom que voient les autres personnes du projet.';
         } elseif (filter_var($courriel, FILTER_VALIDATE_EMAIL) === false) {
-            $message = 'Une adresse de courriel valide est nécessaire. Sans elle, '
-                . 'un mot de passe perdu serait un compte perdu.';
+            $message = 'Une adresse de courriel valide est nécessaire. Elle est le seul moyen '
+                . 'de retrouver un compte dont le mot de passe est perdu.';
         } elseif (mb_strlen($mot) < 12) {
-            $message = 'Le mot de passe fait au moins 12 caractères. '
-                . "Une phrase vaut mieux qu'un mot.";
+            $message = 'Le mot de passe compte au moins 12 caractères. '
+                . "Une phrase est plus sûre qu'un mot.";
         } elseif ($mot !== $confirme) {
-            $message = 'Les deux saisies diffèrent.';
+            $message = 'Les deux mots de passe saisis sont différents.';
         } else {
             try {
                 $role = Role::tryFrom((string) $invitation['role_accorde']) ?? Role::Utilisateur;
@@ -98,10 +97,10 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
                 if (!$invitations->consommer((int) $invitation['id'], $nouveau)) {
                     // Perdue de justesse : le compte existe, mais le projet
                     // n'est pas à lui — le code a servi à quelqu'un d'autre.
-                    $message = "Cette invitation venait de servir à quelqu'un d'autre. "
-                        . 'Votre compte est créé — vous pouvez vous connecter.';
+                    $message = 'Cette invitation vient de servir à une autre personne. '
+                        . 'Votre compte est tout de même créé, et vous pouvez vous connecter.';
                 } elseif ($invitation['site_id'] === null) {
-                    $message = 'Compte créé. Vous pouvez vous connecter.';
+                    $message = 'Votre compte est créé. Vous pouvez vous connecter.';
                 } else {
                     // Le compte et le projet vivent dans deux bases : pas de
                     // transaction commune. Si le rattachement échoue, le
@@ -113,15 +112,15 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
                         $entre = false;
                     }
                     $message = $entre && $projetInvite !== null
-                        ? sprintf('Compte créé. Vous entrez dans « %s », %s — vous pouvez vous connecter.',
-                            $projetInvite['nom'], $dit[$roleInvite] ?? 'dans le projet')
-                        : "Compte créé, mais le projet n'a pas pu vous être ouvert. "
-                            . 'Demandez une nouvelle invitation à qui vous a invité.';
+                        ? sprintf('Votre compte est créé. Vous rejoignez le projet « %s » %s. Vous pouvez vous connecter.',
+                            $projetInvite['nom'], $dit[$roleInvite] ?? '')
+                        : "Votre compte est créé, mais le projet n'a pas pu vous être ouvert. "
+                            . 'Demandez une nouvelle invitation à la personne qui vous a invité.';
                 }
                 $fait = true;
             } catch (\PDOException $e) {
                 $message = str_contains($e->getMessage(), 'Duplicate')
-                    ? 'Cet identifiant ou ce courriel est déjà pris.'
+                    ? 'Cet identifiant ou cette adresse de courriel est déjà utilisé par un autre compte.'
                     : "Le compte n'a pas pu être créé.";
             }
         }
@@ -233,9 +232,9 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
 
           <?php elseif ($invitation === null): ?>
             <h1>Rejoindre</h1>
-            <p class="inscription-chapeau">On entre ici sur invitation. Quelqu'un qui a
-               déjà un compte vous a donné un code de huit caractères — il se dicte à
-               voix haute, sans I, ni O, ni zéro, ni un.</p>
+            <p class="inscription-chapeau">L'inscription se fait sur invitation, avec un code
+               de huit caractères donné par une personne déjà inscrite. Le code ne contient
+               ni I, ni O, ni zéro, ni un, pour se dicter sans erreur.</p>
             <form method="get" class="inscription-code">
               <div class="inscription-champ">
                 <label for="code">Le code</label>
@@ -244,8 +243,8 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
               </div>
               <button type="submit" class="inscription-bouton">Continuer</button>
             </form>
-            <p class="inscription-note">Pas de code ? Ce site n'est pas ouvert à
-               l'inscription libre — demandez à qui vous en a parlé.</p>
+            <p class="inscription-note">Pour obtenir un code, adressez-vous à la personne
+               qui vous a parlé de l'atelier.</p>
 
           <?php else: ?>
             <h1>Rejoindre</h1>
@@ -254,10 +253,10 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
                — <em><?= htmlspecialchars((string) $invitation['intention'], ENT_QUOTES, 'UTF-8') ?></em>
             <?php endif; ?></p>
 <?php if ($projetInvite !== null): ?>
-            <p class="inscription-invitation">Pour rejoindre le projet
-               <strong>« <?= htmlspecialchars((string) $projetInvite['nom'], ENT_QUOTES, 'UTF-8') ?> »</strong>,
-               <?= htmlspecialchars($dit[$roleInvite] ?? 'dans le projet', ENT_QUOTES, 'UTF-8') ?>.
-               Vous pourrez ouvrir le vôtre ensuite.</p>
+            <p class="inscription-invitation">Cette invitation vous fait rejoindre le projet
+               <strong>« <?= htmlspecialchars((string) $projetInvite['nom'], ENT_QUOTES, 'UTF-8') ?> »</strong>
+               <?= htmlspecialchars($dit[$roleInvite] ?? '', ENT_QUOTES, 'UTF-8') ?>.
+               Vous pourrez ensuite ouvrir votre propre projet.</p>
 <?php endif; ?>
 
             <form method="post">
@@ -266,7 +265,7 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
               <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
               <div class="inscription-champ">
                 <label for="identifiant">Identifiant</label>
-                <small>Minuscules, chiffres, point, tiret, souligné — pour vous connecter.</small>
+                <small>Il sert à vous connecter. Minuscules, chiffres, point, tiret ou souligné.</small>
                 <input id="identifiant" name="identifiant" required pattern="[a-z0-9._-]{3,64}"
                        autocomplete="username" value="<?= htmlspecialchars($identifiant, ENT_QUOTES, 'UTF-8') ?>">
               </div>
@@ -282,7 +281,7 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
               </div>
               <div class="inscription-champ">
                 <label for="mot_de_passe">Mot de passe</label>
-                <small>Douze caractères au minimum — une phrase vaut mieux qu'un mot.</small>
+                <small>Douze caractères au minimum. Une phrase est plus sûre qu'un mot.</small>
                 <input id="mot_de_passe" name="mot_de_passe" type="password" required
                        minlength="12" autocomplete="new-password">
               </div>
@@ -308,12 +307,11 @@ if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p><strong>Pourquoi sur invitation</strong> — un formulaire d'inscription
-         ouvert à tous attire du bruit avant d'attirer des porteurs de projet.
-         Le code, dicté de vive voix, ne demande ni courriel ni service tiers
-         pour circuler.</p>
-      <p><strong>Ce qui n'est pas encore là</strong> — le courriel est demandé
-         mais non confirmé, et le compte est actif aussitôt créé.</p>
+      <p><strong>L'inscription sur invitation.</strong> L'inscription se fait sur
+         invitation, avec un code de huit caractères. Le code se transmet de vive voix ou
+         par écrit.</p>
+      <p><strong>Le compte.</strong> Le compte est actif dès sa création. L'adresse de
+         courriel n'est pas vérifiée.</p>
     </div>
   </aside>
 

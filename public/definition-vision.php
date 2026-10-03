@@ -141,8 +141,8 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
     <main class="bureau" id="bureau">
       <div class="vision-cadre">
-        <p class="vision-annonce">Trois questions courtes, deux minutes. Elles disent où vous
-           allez — elles ne vous évaluent pas.</p>
+        <p class="vision-annonce">Trois questions courtes, environ deux minutes. Vos réponses
+           disent où va le projet, et avec quelle motivation.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -161,11 +161,11 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
           <div class="vision-champ">
             <label for="intention">L'intention, au-delà de vous</label>
-            <textarea id="intention" name="intention" rows="2" placeholder="Ce que ce projet sert, en plus de vous"><?= htmlspecialchars($reponses['vision_intention'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+            <textarea id="intention" name="intention" rows="2" placeholder="Ce à quoi ce projet sert, au-delà de vous"><?= htmlspecialchars($reponses['vision_intention'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <button type="submit" class="vision-bouton">Continuer</button>
-          <p class="vision-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="vision-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -179,11 +179,10 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>C'est la première étape du parcours. Elle demande qui porte le
-         projet — seul ou en groupe —, la motivation qui vous fait commencer,
-         et l'intention qui dépasse votre seule personne. Rien ici ne se
-         juge : c'est un point de départ, à retrouver plus tard pour mesurer
-         le chemin fait.</p>
+      <p>La vision est la première étape du parcours. Elle demande qui porte le
+         projet, seul ou en groupe, la motivation qui vous fait commencer, et
+         l'intention au-delà de vous. Ces réponses forment un point de départ. Vous
+         les retrouverez plus tard pour mesurer le chemin parcouru.</p>
     </div>
   </aside>
 

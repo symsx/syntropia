@@ -124,7 +124,7 @@ $nomAffiche = $connecte ? ($auth->nomAffiche() ?? '') : '';
     <main class="bureau" id="bureau">
       <div class="accueil-corps">
         <h1 class="accueil-marque">Syntropia</h1>
-        <p class="accueil-sous-titre">Atelier pour<br>Système<br>Agroforestier<br>Syntropique</p>
+        <p class="accueil-sous-titre">Atelier<br>d'agroforesterie<br>syntropique</p>
 
         <div class="accueil-cartes">
           <a class="accueil-carte" href="<?= $connecte ? 'conception-parcelles.php' : 'connexion.php' ?>">
@@ -152,18 +152,14 @@ $nomAffiche = $connecte ? ($auth->nomAffiche() ?? '') : '';
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p><strong>Pourquoi, et pour qui</strong> — pour qui a un terrain, ou le
-         projette, et veut y faire pousser un système qui produit sans
-         s'épuiser. L'atelier ne décide pas à votre place : il dit ce qui est
-         recherché, et pourquoi, et laisse ouvertes les voies que le terrain
-         ou vos moyens autorisent.</p>
-      <p><strong>Qu'est-ce que la syntropie</strong> — le vivant, laissé faire,
-         évolue vers toujours plus de diversité, de complexité et d'abondance :
-         c'est la succession végétale naturelle. La syntropie la reproduit en
-         accéléré, en s'y incluant plutôt qu'en la dominant — vous devenez
-         guide, et perturbateur·rice positif·ve. Faire avec, observer,
-         apprendre, et voir un lieu devenir, saison après saison, plus
-         abondant qu'il ne l'était.</p>
+      <p><strong>L'atelier.</strong> Syntropia fournit un accompagnement et des outils
+         pour concevoir, créer et assurer le suivi de cultures en agroforesterie
+         syntropique. Chaque étape demande des informations précises et explique à quoi
+         elles servent. L'atelier conseille, il n'interdit rien.</p>
+      <p><strong>La syntropie.</strong> La succession végétale naturelle conduit un lieu
+         vers plus d'abondance. L'agroforesterie syntropique la reproduit en accéléré.
+         Vous vous y incluez en tant que guide et perturbateur·trice positif·ve. Vous
+         faites avec le vivant, vous observez et vous apprenez.</p>
     </div>
   </aside>
 

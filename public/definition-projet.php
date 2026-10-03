@@ -47,7 +47,7 @@ $erreur = null;
 $nom = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $erreur = 'Jeton de sécurité invalide — réessayez.';
+        $erreur = 'Le formulaire a expiré. Rechargez la page et réessayez.';
     } else {
         $nom = trim((string) ($_POST['nom'] ?? ''));
         if ($nom === '') {
@@ -155,9 +155,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="projet-centre">
         <div class="projet-cadre">
           <h1><?= $dejaUn ? 'Ouvrir un nouveau projet' : 'Ouvrir votre projet' ?></h1>
-          <p class="projet-chapeau">Un nom suffit pour commencer — vous pourrez le
-             préciser à l'étape « Site », dans quelques instants.<?= $dejaUn
-                 ? ' Vos autres projets restent où ils sont : le sélecteur du panneau de gauche permet de passer de l\'un à l\'autre.'
+          <p class="projet-chapeau">Un nom suffit pour commencer. Le lieu du projet se
+             décrit ensuite, à l'étape « Site ».<?= $dejaUn
+                 ? ' Vos autres projets sont conservés. Le sélecteur du panneau de gauche permet de passer de l\'un à l\'autre.'
                  : '' ?></p>
           <?php if ($erreur !== null): ?>
             <p class="projet-erreur"><?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?></p>
@@ -173,8 +173,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="projet-bouton">Commencer</button>
           </form>
 <?php if (!$dejaUn): ?>
-          <p class="projet-chapeau" style="margin:.9rem 0 0;font-size:.82rem">Quelqu'un vous a donné un code ?
-             <a href="rejoindre.php" style="color:var(--accent-titre);font-weight:600">Rejoindre son projet</a></p>
+          <p class="projet-chapeau" style="margin:.9rem 0 0;font-size:.82rem">Vous avez reçu un code d'invitation ?
+             <a href="rejoindre.php" style="color:var(--accent-titre);font-weight:600">Rejoindre le projet</a></p>
 <?php endif; ?>
         </div>
       </div>
@@ -189,12 +189,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Un projet, c'est un site, et autant de parcelles qu'il en faudra.
-         Un compte peut en porter plusieurs, et rejoindre ceux d'autres
-         personnes sur invitation. Le nom peut changer plus tard ; rien
-         d'autre ne se décide ici. Vos réponses aux étapes suivantes
-         s'enregistrent dès que vous les donnez, et vous les retrouverez
-         en y revenant.</p>
+      <p>Un projet comprend un site et autant de parcelles que nécessaire. Un compte
+         peut avoir plusieurs projets : le sien et ceux qu'il a rejoints sur invitation.
+         Les réponses sont enregistrées à chaque étape et peuvent être modifiées en
+         revenant sur la page.</p>
     </div>
   </aside>
 

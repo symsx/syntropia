@@ -43,7 +43,7 @@ if (!$auth->estConnecte()) {
     repondre(403, ['ok' => false, 'message' => 'Non autorisé.']);
 }
 if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-    repondre(403, ['ok' => false, 'message' => 'Formulaire expiré — rechargez la page.']);
+    repondre(403, ['ok' => false, 'message' => 'Le formulaire a expiré. Rechargez la page.']);
 }
 
 $siteId = (int) ($_POST['site_id'] ?? 0);
@@ -56,8 +56,8 @@ $latitude = $brut('latitude');
 $longitude = $brut('longitude');
 if (!is_numeric($latitude) || !is_numeric($longitude)
     || abs((float) $latitude) > 90 || abs((float) $longitude) > 180) {
-    repondre(400, ['ok' => false, 'message' => "Posez d'abord le point du site sur la carte : "
-        . 'la zone se calcule depuis sa position.']);
+    repondre(400, ['ok' => false, 'message' => "Posez d'abord le point du site sur la carte. "
+        . 'La zone se calcule depuis sa position.']);
 }
 
 $resultat = ZoneUsda::estimer((float) $latitude, (float) $longitude);

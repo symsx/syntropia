@@ -120,7 +120,7 @@ final class Authentification
         $id = (int) $compte['id'];
         $role = $this->comptes->role($id);
         if ($role === null) {
-            return "Ce compte n'a pas accès à syntropia.";
+            return "Ce compte n'a pas accès à Syntropia.";
         }
 
         session_regenerate_id(true);

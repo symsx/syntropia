@@ -152,8 +152,8 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 
     <main class="bureau" id="bureau">
       <div class="moyens-cadre">
-        <p class="moyens-annonce">Quatre questions, deux minutes. Elles situent le point de
-           départ — jamais une note.</p>
+        <p class="moyens-annonce">Quatre questions, environ deux minutes. Vos réponses
+           situent le point de départ du projet.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -174,10 +174,11 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
               <label><input type="radio" class="radio" name="financier" value="modere"<?= ($reponses['moyens_financier'] ?? 'modere') === 'modere' ? ' checked' : '' ?>>Modérés</label>
               <label><input type="radio" class="radio" name="financier" value="confortable"<?= ($reponses['moyens_financier'] ?? '') === 'confortable' ? ' checked' : '' ?>>Confortables</label>
             </div>
-            <p class="moyens-suggestion">Une voie existe pour commencer avec peu : la
-               <?= Documentation::terme($termes, 'rna', 'régénération naturelle assistée') ?> —
-               sélectionner et protéger ce qui repousse déjà, semer directement au lieu de
-               transplanter. Environ trois fois moins cher que la plantation.</p>
+            <p class="moyens-suggestion">Avec peu de moyens, la
+               <?= Documentation::terme($termes, 'rna', 'régénération naturelle assistée') ?>
+               permet de commencer. Elle consiste à sélectionner et protéger ce qui repousse
+               déjà, et à semer directement plutôt que transplanter. Le semis direct coûte en
+               moyenne trois fois moins cher que la transplantation.</p>
           </fieldset>
 
           <fieldset class="moyens-champ">
@@ -189,7 +190,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
           </fieldset>
 
           <button type="submit" class="moyens-bouton">Continuer</button>
-          <p class="moyens-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="moyens-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -203,11 +204,10 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Cette étape ne juge rien : elle situe où vous en êtes, pour proposer des
-         chemins adaptés plutôt qu'un seul chemin imposé. Peu de moyens financiers
-         n'empêche pas de commencer — cela oriente vers d'autres voies, moins
-         coûteuses mais tout aussi valables. Pas de terrain encore ? Les étapes
-         suivantes restent utiles pour préparer sa recherche.</p>
+      <p>Les moyens situent votre point de départ. L'atelier s'en sert pour proposer
+         des chemins adaptés. Avec peu de moyens financiers, il propose des voies moins
+         coûteuses, comme la régénération naturelle assistée. Sans terrain, les étapes
+         suivantes servent à préparer sa recherche.</p>
     </div>
   </aside>
 

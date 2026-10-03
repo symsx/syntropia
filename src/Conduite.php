@@ -38,12 +38,12 @@ enum Conduite: string
     public function explication(): string
     {
         return match ($this) {
-            self::Syntropique => 'Planter dense et divers en une seule campagne, en pensant '
-                . 'la succession. La taille est le moteur du système : elle rajeunit, libère '
-                . 'de la lumière et dépose la biomasse au sol. On éclaircit à mesure.',
-            self::JardinForet => 'Un système nourricier, multi-étagé et pérenne, à récolte '
-                . 'manuelle. Chaque plante est posée à sa place définitive, avec sa place '
-                . "adulte. La taille est un soin d'entretien, non un moteur.",
+            self::Syntropique => 'On plante dense et divers en une seule campagne, en pensant '
+                . 'la succession. La taille est le moteur du système. Elle rajeunit les plantes, '
+                . 'libère de la lumière et dépose la biomasse au sol. On éclaircit au fur et à mesure.',
+            self::JardinForet => 'Le jardin-forêt est un système nourricier, sur plusieurs étages, '
+                . 'pérenne et récolté à la main. Chaque plante est posée à sa place définitive, en '
+                . "tenant compte de sa taille adulte. La taille y sert à l'entretien.",
         };
     }
 
@@ -136,8 +136,8 @@ enum Conduite: string
         return match ($this) {
             self::Syntropique => null,
             self::JardinForet => "Les textes d'aide de l'atelier sont écrits pour la syntropie. "
-                . 'En jardin-forêt, les neuf strates et le scénario sont là, mais '
-                . "l'accompagnement ne les suit pas encore.",
+                . 'En jardin-forêt, les neuf strates et le scénario existent, sans '
+                . 'accompagnement écrit.',
         };
     }
 

@@ -91,15 +91,15 @@ final class ZoneUsda
         }
         if (count($parAnnee) < 10) {
             return ['zone' => null, 'minimum_c' => null, 'annees' => count($parAnnee),
-                'message' => 'Trop peu d\'années exploitables — le point est peut-être hors de la '
-                    . 'couverture du modèle.'];
+                'message' => 'Trop peu d\'années sont exploitables. Le point est peut-être hors de la '
+                    . 'couverture du modèle météo.'];
         }
         $moyenne = array_sum($parAnnee) / count($parAnnee);
         $zone = self::zoneDepuisCelsius($moyenne);
 
         return ['zone' => $zone, 'minimum_c' => round($moyenne, 1), 'annees' => count($parAnnee),
             'message' => sprintf(
-                'Zone %s — jour le plus froid : %s °C en moyenne (%d ans, %d-%d).',
+                'Zone %s. Le jour le plus froid de l\'année est à %s °C en moyenne (%d ans, %d-%d).',
                 $zone, str_replace('.', ',', (string) round($moyenne, 1)), count($parAnnee),
                 self::PERIODE_DEBUT, self::PERIODE_FIN)];
     }

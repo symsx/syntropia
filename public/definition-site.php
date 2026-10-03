@@ -279,8 +279,8 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 
     <main class="bureau" id="bureau">
       <div class="site-cadre">
-        <p class="site-annonce">Le terrain, tel qu'il est aujourd'hui — ce que vous savez
-           déjà, ou pouvez observer en une visite.</p>
+        <p class="site-annonce">Décrivez le terrain tel qu'il est aujourd'hui, avec ce que
+           vous savez déjà ou pouvez observer en une visite.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -310,8 +310,8 @@ $ongletOuvert = isset($erreurs['conduite']) ? 'conduite' : 'lieu';
               </div>
               <div class="site-champ site-champ-carte">
                 <label for="latitude">Position</label>
-                <small>Cliquez sur la carte pour poser le point — ou saisissez les
-                   coordonnées, la carte suivra.</small>
+                <small>Cliquez sur la carte pour poser le point, ou saisissez les
+                   coordonnées.</small>
                 <div class="site-carte-champs">
                   <input type="text" id="latitude" name="latitude" placeholder="45.02000"
                          value="<?= htmlspecialchars((string) $latitudeSaisie, ENT_QUOTES, 'UTF-8') ?>">
@@ -330,7 +330,7 @@ $ongletOuvert = isset($erreurs['conduite']) ? 'conduite' : 'lieu';
               </div>
               <div class="site-champ">
                 <label for="usda"><?= Documentation::terme($termes, 'zone-climatique-usda', 'Zone climatique USDA') ?></label>
-                <small id="usda-aide" data-defaut="Le froid hivernal minimal — à saisir, ou à estimer.">Le froid hivernal minimal — à saisir, ou à estimer.</small>
+                <small id="usda-aide" data-defaut="Elle dépend du froid hivernal minimal. Saisissez-la ou estimez-la.">Elle dépend du froid hivernal minimal. Saisissez-la ou estimez-la.</small>
                 <div class="site-unite">
                   <input type="text" id="usda" name="usda" placeholder="Ex. 8b"
                          value="<?= htmlspecialchars($reponses['site_usda'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
@@ -370,7 +370,7 @@ $ongletOuvert = isset($erreurs['conduite']) ? 'conduite' : 'lieu';
           <div class="site-panneau site-conduite">
 <?php
 $conduiteChoisie = Conduite::tryFrom((string) ($_POST['conduite'] ?? $site['conduite'] ?? ''));
-$aideConduite = 'Décide du vocabulaire des strates du scénario : quatre en syntropie, neuf en jardin-forêt.';
+$aideConduite = 'La conduite décide des strates du scénario : quatre en syntropie, neuf en jardin-forêt.';
 $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
     : $c->explication() . ($c->reserve() !== null ? ' ' . $c->reserve() : '');
 ?>
@@ -387,7 +387,7 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
           </div>
 
           <button type="submit" class="site-bouton">Continuer</button>
-          <p class="site-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="site-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -401,25 +401,25 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Cette étape situe le terrain, pas encore le projet dessus : rien ici n'est
-         un diagnostic précis — celui-là vient en phase Conception (étude du site,
-         étude du sol), fiche en main, sur place. Une estimation suffit partout où
-         vous hésitez.</p>
-      <p>La carte est un confort : ses tuiles viennent d'OpenStreetMap, un tiers, et rien ici
-         n'en dépend — les deux coordonnées suffisent.</p>
-      <p>La <strong>conduite</strong> dit dans quel monde vous plantez : en syntropie, on plante dense
-         et on pense la succession, la taille est le moteur ; en jardin-forêt, chaque plante est posée à sa
-         place définitive. Elle décide du vocabulaire des strates du scénario — quatre en syntropie, par le
-         besoin en lumière ; neuf en jardin-forêt, par la place et la hauteur adulte. Une parcelle peut être
-         conduite autrement que le site, et rien n'est gravé.</p>
-      <p>La zone climatique USDA classe les lieux par leur froid hivernal minimal :
-         elle ne dit rien de l'été, mais elle borne ce qui peut passer l'hiver sans
-         protection.</p>
-      <p>« Estimer » la calcule depuis la position posée sur la carte : la moyenne,
+      <p>Le site situe le terrain. Le diagnostic précis se fait en phase Conception, sur
+         place, avec les études du site et du sol. Une estimation suffit partout où vous
+         hésitez.</p>
+      <p>La carte aide à poser le point. Ses fonds viennent d'OpenStreetMap. Les deux
+         coordonnées suffisent si la carte ne s'affiche pas.</p>
+      <p>La <strong>conduite</strong> est la manière de cultiver le site. En syntropie, on plante
+         dense, on pense la succession, et la taille est le moteur du système. En jardin-forêt,
+         chaque plante est posée à sa place définitive. La conduite décide des strates du
+         scénario : quatre en syntropie, définies par le besoin en lumière, et neuf en
+         jardin-forêt, définies par la place et la hauteur adulte. Une parcelle peut être
+         conduite autrement que le site, et la conduite peut changer.</p>
+      <p>La zone climatique USDA classe les lieux selon leur froid hivernal minimal. Elle
+         indique quelles plantes passent l'hiver sans protection. Elle ne dit rien de
+         l'été.</p>
+      <p>Le bouton « Estimer » la calcule depuis la position du site. Il prend la moyenne,
          sur trente ans, du jour le plus froid de chaque année. La maille météo fait
-         quelques kilomètres — une cuvette où le froid s'accumule sera plus froide
-         que l'estimation. Un écart d'une demi-zone est normal ; votre observation
-         sur place prime.</p>
+         quelques kilomètres, et une cuvette où le froid s'accumule sera plus froide que
+         l'estimation. Un écart d'une demi-zone est normal. Votre observation sur place
+         prime.</p>
     </div>
   </aside>
 
@@ -470,14 +470,14 @@ $texteConduite = fn (?Conduite $c): string => $c === null ? $aideConduite
       corps.set('longitude', document.getElementById('longitude').value);
       bouton.disabled = true;
       bouton.textContent = 'Calcul…';
-      aide.textContent = 'Trente ans de relevés météo à lire — quelques secondes.';
+      aide.textContent = 'Lecture de trente ans de relevés météo, quelques secondes.';
       fetch('api-usda.php', { method: 'POST', body: corps, credentials: 'same-origin' })
         .then(function(r){ return r.json(); })
         .then(function(j){
           if (j.ok) { champ.value = j.zone; }
-          aide.textContent = j.message + (j.ok ? ' Corrigez si vous savez mieux.' : '');
+          aide.textContent = j.message + (j.ok ? ' Vous pouvez la corriger.' : '');
         })
-        .catch(function(){ aide.textContent = "Le calcul a échoué — saisissez la zone si vous la connaissez."; })
+        .catch(function(){ aide.textContent = "Le calcul a échoué. Saisissez la zone si vous la connaissez."; })
         .then(function(){ bouton.disabled = false; bouton.textContent = 'Estimer'; });
     });
   })();

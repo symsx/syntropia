@@ -146,8 +146,8 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
 
     <main class="bureau" id="bureau">
       <div class="objectifs-cadre">
-        <p class="objectifs-annonce">Trois questions, deux minutes. Elles guident le
-           « comment » — elles ne figent rien.</p>
+        <p class="objectifs-annonce">Trois questions, environ deux minutes. Vos réponses
+           peuvent changer à tout moment.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -164,7 +164,7 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
               <label><input type="checkbox" class="case" name="destination[]" value="commercial"<?= in_array('commercial', $destinationsChoisies, true) ? ' checked' : '' ?>>Commercial</label>
               <label><input type="checkbox" class="case" name="destination[]" value="social"<?= in_array('social', $destinationsChoisies, true) ? ' checked' : '' ?>>Social</label>
             </div>
-            <p class="objectifs-usage">Guide le « comment » pour atteindre vos objectifs.</p>
+            <p class="objectifs-usage">La destination guide le « comment » pour atteindre vos objectifs.</p>
           </fieldset>
 
           <fieldset class="objectifs-champ">
@@ -174,11 +174,11 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
               <label><input type="radio" class="radio" name="terme" value="moyen"<?= ($reponses['objectifs_terme'] ?? '') === 'moyen' ? ' checked' : '' ?>>Moyen — 5 à 10 ans</label>
               <label><input type="radio" class="radio" name="terme" value="long"<?= ($reponses['objectifs_terme'] ?? '') === 'long' ? ' checked' : '' ?>>Long — plus de 10 ans</label>
             </div>
-            <p class="objectifs-usage">Mesure votre progression et vérifie que le projet reste réaliste.</p>
+            <p class="objectifs-usage">Le terme sert à mesurer la progression, à placer les étapes et à vérifier que le projet reste réaliste.</p>
           </fieldset>
 
           <button type="submit" class="objectifs-bouton">Continuer</button>
-          <p class="objectifs-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="objectifs-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -192,12 +192,10 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Cette étape précise ce que le projet doit produire, pour qui ou
-         pour quoi, et à quelle échéance. Le terme choisi — court, moyen ou
-         long — aide ensuite à mesurer la progression, placer les étapes, et
-         voir si le projet reste réaliste. Une destination peut se cumuler
-         avec une autre : un même lieu peut nourrir un foyer et se vendre au
-         marché.</p>
+      <p>Les objectifs précisent ce que le projet doit produire, pour quelle
+         destination et à quel terme. Le terme, court, moyen ou long, sert ensuite à
+         mesurer la progression, à placer les étapes et à vérifier que le projet reste
+         réaliste. Plusieurs destinations peuvent se cumuler.</p>
     </div>
   </aside>
 

@@ -35,7 +35,7 @@ if ($auth->estConnecte()) {
 $erreur = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $erreur = 'Jeton de sécurité invalide — réessayez.';
+        $erreur = 'Le formulaire a expiré. Rechargez la page et réessayez.';
     } else {
         $erreur = $auth->connecter(
             trim((string) ($_POST['identifiant'] ?? '')),
