@@ -111,7 +111,7 @@ final class Cadastre
         $cote = max(($nord - $sud) * $mLat, ($est - $ouest) * $mLon);
         if ($cote > self::COTE_MAX_M) {
             return ['parcelles' => [], 'message' => sprintf(
-                'Zoomez pour voir le cadastre : je le demande jusqu\'à %d m de côté, '
+                'Zoomez pour voir le cadastre. Il s\'affiche jusqu\'à %d m de côté, '
                 . 'et la vue en fait %d.', (int) self::COTE_MAX_M, (int) $cote)];
         }
         $anneau = [[$ouest, $sud], [$est, $sud], [$est, $nord], [$ouest, $nord], [$ouest, $sud]];
@@ -188,7 +188,7 @@ final class Cadastre
         }
         $json = json_decode($corps, true);
         if (!is_array($json['features'] ?? null)) {
-            return ['parcelles' => [], 'message' => 'Réponse inattendue du service.'];
+            return ['parcelles' => [], 'message' => 'Le service a donné une réponse inattendue.'];
         }
         $parcelles = [];
         foreach ($json['features'] as $entite) {
@@ -198,8 +198,8 @@ final class Cadastre
             }
         }
         if ($parcelles === []) {
-            return ['parcelles' => [], 'message' => "Aucune parcelle cadastrale ici — "
-                . "le service ne couvre que la France, et quelques communes manquent "
+            return ['parcelles' => [], 'message' => "Aucune parcelle cadastrale ici. "
+                . "Le service ne couvre que la France, et quelques communes manquent "
                 . "au plan numérisé."];
         }
         return ['parcelles' => $parcelles, 'message' => count($parcelles) . ' parcelle'

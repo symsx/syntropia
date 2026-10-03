@@ -35,7 +35,7 @@ $pourquoi = [
     'densite'      => 'Voir si le sol se ' . Documentation::terme($termes, 'decompacter', 'décompacte') . ' au fil des ans.',
     'infiltration' => "Déterminer les besoins d'arrosage pendant les trois premières années.",
     'slake'        => 'Savoir si le sol se refermera à la première pluie.',
-    'vers'         => "Suivre la vie du sol — l'indicateur qui bouge le plus vite.",
+    'vers'         => "Suivre la vie du sol : c'est l'indicateur qui change le plus vite.",
     'texture'      => "Choisir les espèces de bordure, régler l'arrosage.",
 ];
 foreach ($fiches as $cle => &$fiche) {
@@ -148,10 +148,10 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
 
     <main class="bureau" id="bureau">
       <div class="sol-cadre">
-        <p class="sol-annonce">Sept relevés déterminent où en est le sol — pas pour
-           juger, pour choisir : <?= Documentation::terme($termes, 'decompacter', 'décompacter') ?>
-           ou non, planter ou semer, arroser court et fréquent ou long et espacé.
-           Comptez une demi-journée sur place, dont l'essentiel à attendre.</p>
+        <p class="sol-annonce">Sept relevés déterminent l'état du sol. Ils servent à choisir :
+           <?= Documentation::terme($termes, 'decompacter', 'décompacter') ?> ou non, planter ou
+           semer, arroser court et souvent ou long et espacé. Comptez une demi-journée sur place,
+           surtout faite d'attente.</p>
 
         <ul class="sol-liste">
 <?php foreach ($fiches as $fiche): ?>
@@ -176,18 +176,16 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Cet aperçu suit l'ordre des numéros, pour s'y repérer facilement.
-         <strong>Sur le terrain, suivez l'ordre de la fiche imprimée</strong>,
-         différent et volontaire : la flore se relève avant de piétiner quoi
-         que ce soit, puis le <?= Documentation::terme($termes, 'profil-de-sol', 'profil') ?>
-         s'ouvre — son trou sert ensuite à l'<?= Documentation::terme($termes, 'infiltration', 'infiltration') ?>
-         et au comptage des vers, on ne le rebouche qu'à la fin. Chaque fiche
-         annonce le geste et la durée avant sa grille, et dit ce que la mesure
-         permettra de décider — jamais quel chemin prendre : un
-         <?= Documentation::terme($termes, 'densimetre', 'densimètre') ?> ne prescrit pas un
-         <?= Documentation::terme($termes, 'labour', 'labour') ?>.</p>
-      <p>La saisie numérique de ces relevés n'existe pas encore ; la fiche
-         papier, elle-même, sert dès aujourd'hui.</p>
+      <p>Cette liste suit l'ordre des numéros. <strong>Sur le terrain, suivez l'ordre de la
+         fiche imprimée</strong>, qui est différent. La flore se relève d'abord, avant de
+         piétiner le terrain. Le <?= Documentation::terme($termes, 'profil-de-sol', 'profil') ?>
+         s'ouvre ensuite. Son trou sert à l'<?= Documentation::terme($termes, 'infiltration', 'infiltration') ?>
+         et au comptage des vers, et ne se rebouche qu'à la fin. Chaque fiche annonce le geste
+         et la durée avant sa grille, et dit ce que la mesure permettra de décider. Le choix
+         reste le vôtre : un <?= Documentation::terme($termes, 'densimetre', 'densimètre') ?> ne
+         prescrit pas un <?= Documentation::terme($termes, 'labour', 'labour') ?>.</p>
+      <p>Les relevés se notent sur les fiches papier. Le test d'infiltration se saisit aussi
+         dans l'atelier, à l'étape « Matériel et eau ».</p>
     </div>
   </aside>
 

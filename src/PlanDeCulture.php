@@ -120,7 +120,7 @@ final class PlanDeCulture
                 $nonPlaces[] = ['id' => $c['id'], 'espece' => $nom, 'raison' => $bloquees !== []
                     ? 'Chaque planche a un voisin à éviter (' . implode(', ', $voisins) . ') : ajoutez une planche, ou décidez vous-même.'
                     : ($autreNature
-                        ? 'Plante ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' : aucune planche ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' n’a de place — changez la nature d’une planche dans le plan, ou décidez vous-même.'
+                        ? 'Plante ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' : aucune planche ' . ($natureC === 'perenne' ? 'pérenne' : 'annuelle') . ' n’a de place. Changez la nature d’une planche dans le plan, ou décidez vous-même.'
                         : 'Toutes les planches sont pleines.')];
                 continue;
             }
@@ -130,7 +130,7 @@ final class PlanDeCulture
             $placements[] = ['id' => $c['id'], 'espece' => $nom, 'planche' => $meilleure['numero'], 'bande' => $bande,
                 'raison' => ($meilleure['bien'] !== []
                     ? 'S’entend bien avec ' . implode(', ', $meilleure['bien']) . '.'
-                    : 'Aucun voisin connu sur cette planche : placée là où il y a de la place.')
+                    : 'Aucun voisinage n’est connu sur cette planche : la culture est placée là où il y a de la place.')
                     . ($bande !== null ? ' Dans la bande ' . ($bande === 'perenne' ? 'pérenne' : 'annuelle') . '.' : '')];
         }
         usort($placements, static fn (array $a, array $b): int => [$a['planche'], mb_strtolower($a['espece'])] <=> [$b['planche'], mb_strtolower($b['espece'])]);

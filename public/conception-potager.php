@@ -10,7 +10,8 @@ declare(strict_types=1);
  * et `chantier-associations.md`.
  *
  * **Le placement se fait par planche**, selon les associations (le porteur, 2026-09-20) : une planche du plan
- * porte plusieurs cultures, c'est le principe même de l'association. Chaque planche dit ce que les tables de
+ * peut porter plusieurs cultures. Le principe des associations de plantes est de permettre un meilleur
+ * développement des plantes regroupées ensemble (le porteur, 2026-10-03). Chaque planche dit ce que les tables de
  * Weinrich savent de ses voisinages (`Associations::entre()`) : ce qui s'entend bien, ce qu'il vaut mieux éviter de
  * placer côte à côte. **Une information de conception, jamais une interdiction** — des ordres de conduite, non des
  * preuves ; rien n'est refusé.
@@ -121,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
         $erreurs['droit'] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';
     } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
         http_response_code(403);
-        $erreurs['jeton'] = 'Formulaire expiré — rechargez la page.';
+        $erreurs['jeton'] = 'Le formulaire a expiré. Rechargez la page.';
     } elseif ($action === 'ajouter') {
         $erreurs = $culturesService->ajouter($idP, $nbPlanches, $_POST);
         if ($erreurs === []) {
@@ -661,13 +662,13 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
     <main class="bureau" id="bureau">
 <?php if ($parcelle === null): ?>
       <div class="pt-centre">
-        <p class="pt-vide-page">Le plan de culture se compose parcelle par parcelle, et ce site n'en a pas encore.
+        <p class="pt-vide-page">Le plan de culture se compose parcelle par parcelle, et ce site n'a pas encore de parcelle.
           <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="pt-centre">
         <div class="pt-entete">
-          <h1 class="pt-titre">Plan de culture — <?= $h($titrePage) ?></h1>
+          <h1 class="pt-titre">Le plan de culture, <?= $h($titrePage) ?></h1>
 <?php if ($cultures !== []): ?>
           <span class="pt-badge"><?= count($cultures) ?> culture<?= count($cultures) > 1 ? 's' : '' ?></span>
 <?php endif; ?>
@@ -684,12 +685,12 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <p class="pt-message" role="status"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
 <?php if ($erreurs !== []): ?>
-        <p class="pt-message pt-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
+        <p class="pt-message pt-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
 <?php if ($nbPlanches < 1): ?>
-        <p class="pt-message">Le plan de cette parcelle n'a pas encore de planches : les cultures se placent par planche, sur le plan. <a href="conception-parcelles.php?parcelle=<?= $idP ?>">Ouvrir le plan →</a></p>
+        <p class="pt-message">Le plan de cette parcelle n'a pas encore de planches, et les cultures se placent par planche. <a href="conception-parcelles.php?parcelle=<?= $idP ?>">Ouvrir le plan →</a></p>
 <?php else: ?>
-        <p class="pt-annonce">Une planche porte plusieurs cultures : c'est le principe de l'association. Chaque planche dit ce que l'on sait de ses voisinages — des ordres de conduite, non des preuves.</p>
+        <p class="pt-annonce">Une planche peut porter plusieurs cultures. Chaque planche dit ce que les tables savent de ses voisinages. Ce sont des ordres de conduite, à éprouver chez soi.</p>
 <?php endif; ?>
 
         <div class="pt-onglets" role="tablist">
@@ -737,13 +738,13 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($r['relation'] === Associations::FAVORABLE): ?>
                 <p class="bien">✓ <?= $h($r['a']) ?> et <?= $h($r['b']) ?> s'entendent bien</p>
 <?php elseif ($r['relation'] === Associations::DEFAVORABLE): ?>
-                <p class="eviter">⚠ <?= $h($r['a']) ?> et <?= $h($r['b']) ?> : à éviter côte à côte</p>
+                <p class="eviter">⚠ <?= $h($r['a']) ?> et <?= $h($r['b']) ?> sont à éviter côte à côte</p>
 <?php else: ?>
-                <p class="eviter">⚠ <?= $h($r['a']) ?> et <?= $h($r['b']) ?> : les tables se contredisent</p>
+                <p class="eviter">⚠ Pour <?= $h($r['a']) ?> et <?= $h($r['b']) ?>, les tables se contredisent</p>
 <?php endif; ?>
 <?php endforeach; ?>
 <?php if ($c['sans_fiche'] !== [] && count($c['cultures']) > 1): ?>
-                <p><small>Pas de voisinage connu pour : <?= $h(implode(', ', $c['sans_fiche'])) ?></small></p>
+                <p><small>Aucun voisinage connu pour <?= $h(implode(', ', $c['sans_fiche'])) ?></small></p>
 <?php endif; ?>
               </div>
 <?php endif; ?>
@@ -751,18 +752,18 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <div class="pt-suite">
 <?php foreach (array_slice($ch['suites'], 0, 3) as $s): ?>
 <?php if ($s['verdict'] === Succession::CONSEILLE): ?>
-                <p class="bien">✓ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table de succession le cite</p>
+                <p class="bien">✓ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table de succession cite cet enchaînement</p>
 <?php elseif ($s['verdict'] === Succession::DECONSEILLE): ?>
-                <p class="eviter">⚠ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table l'exclut</p>
+                <p class="eviter">⚠ <?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table exclut cet enchaînement</p>
 <?php else: ?>
-                <p><small><?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table n'en dit rien</small></p>
+                <p><small><?= $h($s['avant']) ?> puis <?= $h($s['apres']) ?> : la table ne dit rien de cet enchaînement</small></p>
 <?php endif; ?>
 <?php endforeach; ?>
 <?php if (count($ch['suites']) > 3): ?>
                 <p><small>et <?= count($ch['suites']) - 3 ?> autre<?= count($ch['suites']) - 3 > 1 ? 's' : '' ?> enchaînement<?= count($ch['suites']) - 3 > 1 ? 's' : '' ?></small></p>
 <?php endif; ?>
 <?php if ($ch['libere'] !== null): $apres = Succession::apres($ch['libere']['espece']); ?>
-                <p><small>Libérée le <?= $h($dateFr($ch['libere']['date'])) ?> par <?= $h($ch['libere']['espece']) ?> — <?= $apres !== [] ? 'la table cite pour suite : ' . $h(implode(', ', array_slice($apres, 0, 5))) . (count($apres) > 5 ? '…' : '') : 'la table ne cite pas de suite pour elle' ?></small></p>
+                <p><small>Libérée le <?= $h($dateFr($ch['libere']['date'])) ?> par <?= $h($ch['libere']['espece']) ?>. <?= $apres !== [] ? 'La table cite pour suite : ' . $h(implode(', ', array_slice($apres, 0, 5))) . (count($apres) > 5 ? '…' : '') : 'La table ne cite pas de suite pour elle.' ?></small></p>
 <?php endif; ?>
               </div>
 <?php endif; ?>
@@ -791,7 +792,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <section class="pt-vue"<?= $vue === 'calendrier' ? '' : ' hidden' ?>>
           <div class="pt-annees">
             <a href="<?= $h($lienCal($annee - 1)) ?>" aria-label="Année précédente">←</a> <b><?= $annee ?></b> <a href="<?= $h($lienCal($annee + 1)) ?>" aria-label="Année suivante">→</a>
-            <span class="pt-legende"><b>S</b> semis à l'abri · <b>P</b> mise en place (semis en place ou repiquage) · <b>R</b> récolte · en clair, les lignes de service et les bordures : <b>F</b> fin, <b>T</b> perturbation — prévues</span>
+            <span class="pt-legende"><b>S</b> semis à l'abri · <b>P</b> mise en place (semis en place ou repiquage) · <b>R</b> récolte. En clair, les lignes de service et les bordures, avec leurs dates prévues : <b>F</b> fin, <b>T</b> perturbation.</span>
           </div>
 <?php if ($lignesCal === []): ?>
           <p class="pt-vide-page"><?= $datees === [] ? 'Aucune culture n’est encore datée. Notez un semis, une mise en place ou une récolte pour la voir ici.' : 'Aucune culture n’a de date en ' . $annee . '.' ?></p>
@@ -816,7 +817,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           </div>
 <?php endif; ?>
           <p class="pt-note-cal"><?= $horsAnnee > 0 ? $horsAnnee . ' culture' . ($horsAnnee > 1 ? 's' : '') . ' datée' . ($horsAnnee > 1 ? 's' : '') . ' hors de ' . $annee . '. ' : '' ?><?= $sansDate > 0 ? $sansDate . ' sans date.' : '' ?>
-            Les repères de Lopez (Haute-Vienne) se lisent en ouvrant une culture ; son tableau ne couvre que dix-sept cultures d'automne et d'hiver.</p>
+            Les repères de Lopez (Haute-Vienne) se lisent en ouvrant une culture. Son tableau couvre dix-sept cultures d'automne et d'hiver.</p>
         </section>
       </div>
 <?php endif; ?>
@@ -835,10 +836,10 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <ul><?php foreach ($erreurs as $e): ?><li><?= $h($e) ?></li><?php endforeach; ?></ul></div>
 <?php endif; ?>
 <?php if ($proposition !== null): ?>
-        <p class="pd-titre">Un placement proposé — <?= $h($parcelle['code']) ?></p>
-        <p class="pt-note"><b>Comment il se fait</b> : les cultures déjà placées <b>ne bougent pas</b>. Les autres se répartissent sur les planches du plan : on regroupe ce qui s'entend bien, on écarte ce qui s'entend mal, et une paire sans relation connue ne compte ni pour ni contre. Rien n'est écrit avant votre accord ; vous pouvez décocher ce que vous ne voulez pas.</p>
+        <p class="pd-titre">Un placement proposé, <?= $h($parcelle['code']) ?></p>
+        <p class="pt-note"><b>Comment il se fait.</b> Les cultures déjà placées <b>restent à leur place</b>. Les autres se répartissent sur les planches du plan : ce qui s'entend bien est regroupé, ce qui s'entend mal est écarté, et une paire sans relation connue ne compte ni pour ni contre. Rien n'est enregistré avant votre accord, et vous pouvez décocher ce que vous ne voulez pas.</p>
 <?php if ($proposition['placements'] === [] && $proposition['non_places'] === []): ?>
-        <p class="pt-note">Rien à proposer : toutes les cultures sont placées.</p>
+        <p class="pt-note">Toutes les cultures sont placées : il n'y a rien à proposer.</p>
 <?php else: ?>
         <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -850,7 +851,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             <span><b><?= $h($x['espece']) ?></b> → planche <?= (int) $x['planche'] ?><br><small><?= $h($x['raison']) ?></small></span></label>
 <?php endforeach; ?>
 <?php if ($proposition['non_places'] !== []): ?>
-          <p class="pt-note" style="margin-top:.7rem"><b>Pas placées</b> — l'atelier ne force pas un voisinage à éviter :</p>
+          <p class="pt-note" style="margin-top:.7rem"><b>Cultures non placées.</b> L'atelier ne les place pas à côté d'un voisinage à éviter.</p>
 <?php foreach ($proposition['non_places'] as $x): ?>
           <p class="pt-note"><b><?= $h($x['espece']) ?></b><br><?= $h($x['raison']) ?></p>
 <?php endforeach; ?>
@@ -862,16 +863,16 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         </form>
 <?php endif; ?>
 <?php elseif ($panneauLignes !== null): $pl = $panneauLignes; $nL = count($pl['etat']['lignes']); ?>
-        <p class="pd-titre">Les lignes de la planche <?= (int) $pl['numero'] ?> — <?= $h($parcelle['code']) ?></p>
-        <p class="pt-note"><b>À quoi elles servent</b> : les lignes de la planche portent les plantes de service ; les productions se
-          plantent de part et d'autre. La ligne centrale porte la biomasse et la structure, jamais de tuteurs ; les autres complètent
-          les strates que les productions laissent vides, les plus hautes près du centre (la forme pyramidale). Une ligne, une espèce.
-          <?= $pl['strates'] !== [] ? 'Strates déjà tenues par les productions : ' . $h(implode(', ', array_map(static fn (string $x): string => LignesDeService::LIBELLES[$x] ?? $x, $pl['strates']))) . '.' : 'Aucune strate connue pour les productions de cette planche : toutes sont à compléter.' ?>
+        <p class="pd-titre">Les lignes de la planche <?= (int) $pl['numero'] ?>, <?= $h($parcelle['code']) ?></p>
+        <p class="pt-note"><b>À quoi elles servent.</b> Les lignes de la planche portent les plantes de service, et les productions se
+          plantent de part et d'autre. La ligne centrale porte la biomasse et la structure, jamais de tuteurs. Les autres lignes complètent
+          les strates que les productions laissent vides, les plus hautes près du centre, en forme pyramidale. Chaque ligne porte une espèce.
+          <?= $pl['strates'] !== [] ? 'Strates déjà occupées par les productions : ' . $h(implode(', ', array_map(static fn (string $x): string => LignesDeService::LIBELLES[$x] ?? $x, $pl['strates']))) . '.' : 'Les strates des productions de cette planche ne sont pas connues : toutes sont à compléter.' ?>
           Le nombre de lignes se règle sur <a href="conception-parcelles.php?parcelle=<?= $idP ?>">le plan</a>.</p>
 <?php if (!$pl['depuis_proposition']): ?>
-        <p class="pt-note"><a class="pt-lien" href="<?= $h($retour) ?>&amp;lignes=<?= (int) $pl['numero'] ?>&amp;proposer_lignes=1">Reprendre la proposition de l'atelier</a> — rien n'est écrit avant « Enregistrer les lignes ».</p>
+        <p class="pt-note"><a class="pt-lien" href="<?= $h($retour) ?>&amp;lignes=<?= (int) $pl['numero'] ?>&amp;proposer_lignes=1">Reprendre la proposition de l'atelier</a>. Rien n'est enregistré avant « Enregistrer les lignes ».</p>
 <?php else: ?>
-        <p class="pt-note">Les choix ci-dessous partent de la <b>proposition de l'atelier</b> : rien n'est écrit avant « Enregistrer les lignes ».</p>
+        <p class="pt-note">Les choix ci-dessous partent de la <b>proposition de l'atelier</b>. Rien n'est enregistré avant « Enregistrer les lignes ».</p>
 <?php endif; ?>
         <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -882,14 +883,14 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php foreach ($pl['proposition'] as $l): $k = $l['indice'] + 1; $pose = $pl['etat']['lignes'][$k] ?? null;
     $idsCand = array_map(static fn (array $e): int => (int) $e['id'], $l['candidats']); ?>
           <div class="pt-ligne-choix">
-            <label>Ligne <?= $k ?><?= $l['centrale'] ? ' — centrale' : '' ?><?= $l['strate'] !== null ? ' · strate ' . $h(LignesDeService::LIBELLES[$l['strate']] ?? $l['strate']) : '' ?>
+            <label>Ligne <?= $k ?><?= $l['centrale'] ? ', centrale' : '' ?><?= $l['strate'] !== null ? ' · strate ' . $h(LignesDeService::LIBELLES[$l['strate']] ?? $l['strate']) : '' ?>
               <?= $pose !== null && $pose['compte'] !== null ? '<small>(' . (int) $pose['compte'] . ' plants posés)</small>' : '' ?>
               <select name="choix[<?= $k ?>]">
                 <option value="0">Laisser vide</option>
 <?php if ($l['candidats'] !== []): ?>
                 <optgroup label="Proposées pour cette ligne">
 <?php foreach ($l['candidats'] as $e): ?>
-                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ($e['espacement_retenu_m'] !== null ? ' — ' . rtrim(rtrim(number_format((float) $e['espacement_retenu_m'], 2, ',', ''), '0'), ',') . ' m' : ' — sans espacement')) ?></option>
+                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ($e['espacement_retenu_m'] !== null ? ', ' . rtrim(rtrim(number_format((float) $e['espacement_retenu_m'], 2, ',', ''), '0'), ',') . ' m' : ', sans espacement')) ?></option>
 <?php endforeach; ?>
                 </optgroup>
 <?php endif; ?>
@@ -909,7 +910,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
                 <input type="date" name="fin[<?= $k ?>]" value="<?= $h($dl['fin']) ?>"></label>
             </div>
 <?php if ($dl['propose']): ?>
-            <small class="pt-note">Dates proposées d'après le calendrier de <?= $h($dl['repere']['espece']) ?> dans Espèces — une prévision, à corriger.</small>
+            <small class="pt-note">Ces dates sont proposées d'après le calendrier de <?= $h($dl['repere']['espece']) ?> dans Espèces. C'est une prévision, à corriger.</small>
 <?php endif; ?>
           </div>
 <?php endforeach; ?>
@@ -918,9 +919,9 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         </form>
 <?php $prevues = $calendrierService->dUneParcelle($idP)['perturbations']; $posees = array_filter($pl['etat']['lignes']); ?>
         <p class="pd-titre" style="margin-top:1rem">Les perturbations prévues</p>
-        <p class="pt-note">Pour les lignes posées — le maïs, le tournesol de la ligne centrale se coupent eux aussi. Des
-          prévisions : le jour réel s'adapte au temps qu'il fait, et le journal garde ce qui a été fait. Repères de Théry
-          (ch. 12) : la première coupe en vert en juin, les suivantes quand il y a de quoi couper.</p>
+        <p class="pt-note">Les perturbations se prévoient pour les lignes posées. Le maïs et le tournesol de la ligne centrale se
+          coupent eux aussi. Ce sont des prévisions : le jour réel s'adapte au temps qu'il fait, et le journal garde ce qui a été
+          fait. Les repères de Théry (ch. 12) : la première coupe en vert en juin, puis les suivantes quand il y a de quoi couper.</p>
 <?php if ($posees === []): ?>
         <p class="pt-note">Posez d'abord une plante sur une ligne, puis prévoyez ses coupes.</p>
 <?php else: ?>
@@ -928,7 +929,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         <p class="pt-note"><b>Ligne <?= (int) $k ?> · <?= $h($pose['nom']) ?></b></p>
         <ul class="pt-perturbations">
 <?php foreach ($liste as $x): ?>
-          <li><?= $h((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y')) ?> — <?= $h(CalendrierLignes::libelleGeste((string) $x['geste'])) ?>
+          <li><?= $h((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y')) ?> : <?= $h(CalendrierLignes::libelleGeste((string) $x['geste'])) ?>
             <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>" style="display:inline">
               <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
               <input type="hidden" name="action" value="perturbation_retirer">
@@ -962,8 +963,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         </form>
 <?php endif; ?>
 <?php else: ?>
-        <p class="pd-titre"><?= $editionId > 0 ? 'Corriger la culture' : 'Ajouter une culture' ?> — <?= $h($parcelle['code']) ?></p>
-        <p class="pt-note"><b>À quoi elle sert</b> : à placer chaque culture sur une planche, pour que ce qui s'entend bien soit voisin et que l'on évite ce qui s'entend mal. Seul le nom est demandé ; la planche, la strate et les dates viennent quand on les connaît.</p>
+        <p class="pd-titre"><?= $editionId > 0 ? 'Corriger la culture' : 'Ajouter une culture' ?>, <?= $h($parcelle['code']) ?></p>
+        <p class="pt-note"><b>À quoi elle sert.</b> Chaque culture se place sur une planche, pour que ce qui s'entend bien soit voisin et que ce qui s'entend mal soit séparé. Seul le nom est demandé. La planche, la strate et les dates se donnent quand on les connaît.</p>
         <form method="post" action="conception-potager.php?parcelle=<?= $idP ?>">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
           <input type="hidden" name="action" value="<?= $editionId > 0 ? 'modifier' : 'ajouter' ?>">
@@ -985,35 +986,35 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             S'entend bien avec : <?= $ficheEditee['favorables'] !== [] ? $h($listeNoms($ficheEditee['favorables'])) : '<i>rien de noté</i>' ?><br>
             <span class="eviter">À éviter à côté : <?= $ficheEditee['defavorables'] !== [] ? $h($listeNoms($ficheEditee['defavorables'])) : '<i>rien de noté</i>' ?></span></div>
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
-          <p class="pt-note">Cette culture n'est pas dans les tables : <b>pas de voisinage connu</b> — ce qui ne veut pas dire neutre.</p>
+          <p class="pt-note">Cette culture n'est pas dans les tables : <b>aucun voisinage n'est connu</b>, ce qui ne la rend pas neutre pour autant.</p>
 <?php endif; ?>
 <?php if ($suiteEditee !== null): ?>
           <div class="pt-fiche"><b>La succession, selon la table de « <?= $h($f['espece']) ?> »</b> [Weinrich p.115]<br>
             Avant : <?= $suiteEditee['avant'] !== [] ? $h(implode(', ', $suiteEditee['avant'])) : '<i>rien de noté</i>' ?><br>
             Après : <?= $suiteEditee['apres'] !== [] ? $h(implode(', ', $suiteEditee['apres'])) : '<i>rien de noté</i>' ?><br>
-            <small>Des ordres de conduite d'Allemagne moyenne, non des preuves ; ce que la table ne dit pas n'est pas pour autant neutre.</small></div>
+            <small>Ce sont des ordres de conduite d'Allemagne moyenne, à éprouver chez soi. Ce que la table ne dit pas n'est pas neutre pour autant.</small></div>
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
           <p class="pt-note">Cette culture n'est pas dans la table de succession : rien n'est connu de ce qui la précède ou la suit.</p>
 <?php endif; ?>
 <?php if ($repere !== null): ?>
-          <div class="pt-repere"><b>Repère de Lopez</b> <small>[maraîcher en Haute-Vienne — dates lues sans transposition]</small><br>
+          <div class="pt-repere"><b>Repère de Lopez</b> <small>[maraîcher en Haute-Vienne, dates lues sans transposition]</small><br>
             <?= $h($repere['culture']) ?> : semis <b><?= $h($repere['semis'] !== '' ? $repere['semis'] : '—') ?></b> · repiquage <b><?= $h($repere['repiquage'] !== '' ? $repere['repiquage'] : '—') ?></b><?= $repere['a_verifier'] === 'repiquage' ? ' <small>(la source signale ce repiquage « à vérifier » : rien n’est proposé)</small>' : '' ?><br>
-            <small>Des dates en mots, donc indicatives — le milieu de la fenêtre. « Un point de départ à remplacer par sa propre mesure », dit le livre.</small><br>
+            <small>Ces dates en mots sont indicatives : l'atelier prend le milieu de la fenêtre. « Un point de départ à remplacer par sa propre mesure », dit le livre.</small><br>
 <?php if ($indicatives['semis'] !== null || $indicatives['repiquage'] !== null): ?>
             <button type="button" class="pt-bouton pt-bouton--calme pt-reprendre-bouton" data-semis="<?= $h($indicatives['semis'] ?? '') ?>" data-repiquage="<?= $h($indicatives['repiquage'] ?? '') ?>">Reprendre ces dates<?= $indicatives['semis'] !== null ? ' (' . $h($dateFr($indicatives['semis'])) . ($indicatives['repiquage'] !== null ? ' → ' . $h($dateFr($indicatives['repiquage'])) : '') . ')' : '' ?></button>
 <?php endif; ?>
           </div>
 <?php elseif ($f['espece'] !== '' && $editionId > 0): ?>
-          <p class="pt-note">Pas de repère de Lopez pour cette culture : son tableau ne couvre que dix-sept cultures d'automne et d'hiver. Rien n'est proposé — la date est à vous.</p>
+          <p class="pt-note">Lopez ne donne pas de repère pour cette culture : son tableau couvre dix-sept cultures d'automne et d'hiver. Aucune date n'est proposée, et la date est à vous.</p>
 <?php endif; ?>
 <?php if ($especeConnue !== null && ($indicativesEspece['semis'] !== null || $indicativesEspece['repiquage'] !== null || $indicativesEspece['recolte'] !== null || $fonctionsEspece !== [])): ?>
-          <div class="pt-repere"><b>Repère du référentiel</b> <small>[<?= (int) $especeConnue['site_id'] === $siteId ? 'votre surcharge' : 'cadre' ?> — <a href="especes.php?espece=<?= (int) $especeConnue['id'] ?>">voir/corriger →</a>]</small><br>
+          <div class="pt-repere"><b>Repère du référentiel</b> <small>[<?= (int) $especeConnue['site_id'] === $siteId ? 'votre surcharge' : 'cadre' ?>, <a href="especes.php?espece=<?= (int) $especeConnue['id'] ?>">voir/corriger →</a>]</small><br>
 <?php if ($indicativesEspece['semis'] !== null || $indicativesEspece['repiquage'] !== null || $indicativesEspece['recolte'] !== null): ?>
             <?= $h((string) ($especeConnue['nom_usuel'] ?: $especeConnue['nom_scientifique'])) ?> :
             <?= $especeConnue['periode_semis'] !== null ? 'semis <b>' . $h((string) $especeConnue['periode_semis']) . '</b>' : '' ?>
             <?= $especeConnue['periode_repiquage'] !== null ? ' · repiquage <b>' . $h((string) $especeConnue['periode_repiquage']) . '</b>' : '' ?>
             <?= $especeConnue['periode_recolte'] !== null ? ' · récolte <b>' . $h((string) $especeConnue['periode_recolte']) . '</b>' : '' ?><br>
-            <small>Des dates en mots, donc indicatives — le milieu de la fenêtre, comme le repère de Lopez.</small><br>
+            <small>Ces dates en mots sont indicatives : l'atelier prend le milieu de la fenêtre, comme pour le repère de Lopez.</small><br>
             <button type="button" class="pt-bouton pt-bouton--calme pt-reprendre-bouton" data-semis="<?= $h($indicativesEspece['semis'] ?? '') ?>" data-repiquage="<?= $h($indicativesEspece['repiquage'] ?? '') ?>" data-recolte="<?= $h($indicativesEspece['recolte'] ?? '') ?>">Reprendre ces dates<?= $indicativesEspece['semis'] !== null ? ' (' . $h($dateFr($indicativesEspece['semis'])) . ($indicativesEspece['repiquage'] !== null ? ' → ' . $h($dateFr($indicativesEspece['repiquage'])) : '') . ($indicativesEspece['recolte'] !== null ? ' → ' . $h($dateFr($indicativesEspece['recolte'])) : '') . ')' : '' ?></button>
 <?php endif; ?>
 <?php if ($fonctionsEspece !== []): ?>
@@ -1033,7 +1034,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($abeille): ?>
             <label class="pt-champ">La bande
               <select name="demi_planche">
-                <option value="">—</option>
+                <option value="">Non dite</option>
 <?php foreach (Planches::NATURES as $cle => $lib): ?>
                 <option value="<?= $cle ?>"<?= $f['demi_planche'] === $cle ? ' selected' : '' ?>><?= $lib ?></option>
 <?php endforeach; ?>
@@ -1042,7 +1043,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php endif; ?>
             <label class="pt-champ">Sa strate
               <select name="strate">
-                <option value="">—</option>
+                <option value="">Non dite</option>
 <?php foreach (Cultures::STRATES as $cle => $lib): ?>
                 <option value="<?= $h($cle) ?>"<?= $f['strate'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
@@ -1052,8 +1053,8 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <p class="pt-note" id="pt-strate-repere" hidden></p>
           <details class="pt-fonctions-detail"<?= $fonctionsSaisie !== [] ? ' open' : '' ?>>
             <summary>Fonctions de service (<?= count($fonctionsSaisie) ?>)</summary>
-            <p class="pt-note">Ce qu'elle rend au système, au-delà de sa récolte — biomasse (celle qu'on taille : le journal des
-              perturbations et le saut du chat la comptent), bloque-herbe, tuteur pour une grimpante… Même vocabulaire que le scénario pérenne.</p>
+            <p class="pt-note">Ce que la culture rend au système, au-delà de sa récolte : de la biomasse (celle qu'on taille, que le journal
+              des perturbations et le saut du chat comptent), un bloque-herbe, un tuteur pour une grimpante… Le vocabulaire est celui du scénario pérenne.</p>
             <div class="pt-fonctions">
 <?php foreach (Scenario::FONCTIONS as $cle => $lib): ?>
               <label><input type="checkbox" class="case" name="fonctions[]" value="<?= $h($cle) ?>"<?= in_array($cle, $fonctionsSaisie, true) ? ' checked' : '' ?>> <?= $h($lib) ?></label>
@@ -1061,26 +1062,26 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
             </div>
           </details>
           <div class="pt-deux">
-            <label class="pt-champ">Semis à l'abri <small>pépinière, godets — prévu ou fait</small>
+            <label class="pt-champ">Semis à l'abri <small>Pépinière ou godets, prévu ou fait</small>
               <input type="date" name="date_semis" value="<?= $h($f['date_semis']) ?>">
             </label>
-            <label class="pt-champ">Mise en place <small>semis en place, ou repiquage</small>
+            <label class="pt-champ">Mise en place <small>Semis en place ou repiquage</small>
               <input type="date" name="date_semis_repiquage" value="<?= $h($f['date_semis_repiquage']) ?>">
             </label>
           </div>
-          <label class="pt-champ">Récolte <small>prévue</small>
+          <label class="pt-champ">Récolte <small>Prévue</small>
             <input type="date" name="date_recolte" value="<?= $h($f['date_recolte']) ?>">
           </label>
           <div class="pt-deux">
-            <label class="pt-champ">Plants <small>combien, facultatif</small>
+            <label class="pt-champ">Plants <small>Combien, facultatif</small>
               <input type="number" name="nb_plants" min="1" max="100000" step="1" inputmode="numeric" value="<?= $h($f['nb_plants']) ?>">
             </label>
-            <label class="pt-champ">Espacement <small>mètres, facultatif</small>
+            <label class="pt-champ">Espacement <small>En mètres, facultatif</small>
               <input type="number" name="espacement_m" min="0.01" max="20" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_m']) ?>">
             </label>
           </div>
-          <p class="pt-note">Le nombre de plants sert à l'étape suivante, <b>Matériel et eau</b> : il en tire les graines à démarrer, à la marge de semis près. Sans lui, la page estime une ligne de plants sur la planche, d'après l'espacement.</p>
-          <label class="pt-champ">Notes <small>facultatif</small>
+          <p class="pt-note">Le nombre de plants sert à l'étape suivante, <b>Matériel et eau</b>, qui en tire les graines à démarrer. Sans lui, l'atelier estime une ligne de plants sur la planche, d'après l'espacement.</p>
+          <label class="pt-champ">Notes <small>Facultatif</small>
             <textarea name="notes" rows="2" maxlength="2000"><?= $h($f['notes']) ?></textarea>
           </label>
           <button type="submit" class="pt-bouton"><?= $editionId > 0 ? 'Enregistrer' : 'Ajouter cette culture' ?></button>
@@ -1112,30 +1113,39 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
 <?php if ($occupation !== null): ?>
-      <p><strong>L'occupation au sol, par strate</strong> — la surface que couvrent les plantes adultes (l'envergure, dans
-         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Repères de Théry (ch. 05) : émergente 20 %, haute 40 %,
-         moyenne 60 %, basse 80 % — la somme dépasse 100 %, c'est voulu.</p>
+      <p><strong>L'occupation au sol, par strate.</strong> C'est la surface que couvrent les plantes adultes (l'envergure, dans
+         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Les repères de Théry (ch. 05) sont de 20 % pour l'émergente,
+         40 % pour la haute, 60 % pour la moyenne et 80 % pour la basse. La somme dépasse 100 %, car chaque strate prend la lumière
+         que la précédente laisse.</p>
       <ul class="pi-saut">
 <?php foreach ($occupation as $o):
     $manque = array_merge($o['sans_envergure'] !== [] ? ['sans envergure : ' . implode(', ', $o['sans_envergure'])] : [],
         $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
         <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
-          <strong><?= $h($o['libelle']) ?></strong> — <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+          <strong><?= $h($o['libelle']) ?></strong> : <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
-      <p>Un potager se compose <strong>par planche</strong> : les planches viennent du plan de la parcelle, et chacune porte plusieurs cultures — c'est le principe même de l'association.
-         Le potager syntropique recrée sa biomasse chaque année par des annuelles ; les strates sont les quatre de la syntropie.</p>
-      <p><strong>Ce que dit chaque planche.</strong> Les relations viennent de tables d'association (Christa Weinrich, abbaye de Fulda) : ce qui s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte.
-         Savoir ce qu'il ne faut pas associer est une <strong>information de conception, pas une interdiction</strong> : rien n'est refusé.</p>
-      <p><strong>Des ordres de conduite, non des preuves.</strong> Une relation bénéfique peut ne pas se vérifier partout ; elle s'éprouve chez soi — un témoin, à côté, sert à cela. Le contexte de la source est l'Allemagne
-         moyenne (Jura souabe, Hesse), et son itinéraire — un sol ameubli chaque printemps — n'est pas celui de l'atelier : ce qui se transporte, ce sont les couples, jamais la conduite.</p>
-      <p><strong>Le calendrier.</strong> Deux dates disent la vie d'une culture : le <strong>semis à l'abri</strong> (en pépinière, en godets) et la <strong>mise en place</strong> — le semis en place, ou le repiquage —, puis la récolte.
-         Les repères viennent de Yann Lopez, maraîcher en Haute-Vienne : ses dates se lisent sans transposition, mais son tableau ne couvre que <strong>dix-sept cultures d'automne et d'hiver</strong> (choux, rutabaga, navet, épinard, mesclun…),
-         en dates de la forme « fin avril », « mi à fin juillet ». Ce sont donc des dates <strong>indicatives</strong> — le milieu de la fenêtre —, « un point de départ à remplacer par sa propre mesure ». Une culture qui n'y figure pas n'a pas de repère : la date est à vous.</p>
-      <p><strong>Le placement proposé.</strong> Il répartit les cultures non placées sur les planches du plan : il regroupe ce qui s'entend bien, écarte ce qui s'entend mal, et ne bouge jamais une culture déjà placée.
-         S'il ne trouve aucune planche sans voisin à éviter, il laisse la culture non placée et le dit — à vous d'ajouter une planche ou d'en décider autrement. Une proposition n'est qu'une proposition : vous l'acceptez, en tout ou en partie, ou vous la laissez.</p>
-      <p><strong>Une culture absente des tables n'est pas neutre</strong> : « pas de voisinage connu » ne veut pas dire « sans effet ». Les tables ne sont pas non plus symétriques — une relation est connue dès qu'une des deux plantes la cite.</p>
+      <p>Un potager se compose <strong>par planche</strong>. Les planches viennent du plan de la parcelle, et chacune peut porter plusieurs
+         cultures. Le potager syntropique recrée sa biomasse chaque année par des annuelles. Ses
+         strates sont les quatre de la syntropie.</p>
+      <p><strong>Ce que dit chaque planche.</strong> Les relations viennent des tables d'association de Christa Weinrich (abbaye de Fulda) :
+         ce qui s'entend bien, et ce qu'il vaut mieux éviter de placer côte à côte. L'atelier conseille, il n'interdit rien.</p>
+      <p><strong>Des ordres de conduite.</strong> Une relation bénéfique peut ne pas se vérifier partout. Elle s'éprouve chez soi, avec un
+         témoin à côté. La source vient d'Allemagne moyenne (Jura souabe, Hesse), avec un itinéraire où le sol est ameubli chaque printemps.
+         L'atelier en reprend les associations de plantes, et non l'itinéraire.</p>
+      <p><strong>Le calendrier.</strong> Une culture a trois dates : le <strong>semis à l'abri</strong> (en pépinière, en godets), la
+         <strong>mise en place</strong> (le semis en place, ou le repiquage) et la récolte. Les repères viennent de Yann Lopez, maraîcher en
+         Haute-Vienne. Ses dates se lisent sans transposition, et son tableau couvre <strong>dix-sept cultures d'automne et d'hiver</strong>
+         (choux, rutabaga, navet, épinard, mesclun…), en dates de la forme « fin avril » ou « mi à fin juillet ». Ce sont donc des dates
+         <strong>indicatives</strong> : l'atelier prend le milieu de la fenêtre, « un point de départ à remplacer par sa propre mesure ».
+         Une culture absente du tableau n'a pas de repère, et la date est à vous.</p>
+      <p><strong>Le placement proposé.</strong> Il répartit les cultures non placées sur les planches du plan. Il regroupe ce qui s'entend
+         bien, écarte ce qui s'entend mal, et laisse à leur place les cultures déjà placées. S'il ne trouve aucune planche sans voisin à
+         éviter, il laisse la culture non placée et le dit. Vous pouvez alors ajouter une planche ou décider autrement. Vous acceptez la
+         proposition en tout ou en partie, ou vous la laissez.</p>
+      <p><strong>Les cultures absentes des tables.</strong> « Aucun voisinage connu » ne veut pas dire « sans effet ». Les tables ne sont pas
+         symétriques : une relation est connue dès qu'une des deux plantes la cite.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>

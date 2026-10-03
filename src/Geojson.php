@@ -77,12 +77,12 @@ final class Geojson
         self::parcourir($json, $traces, $erreurs, []);
 
         if ($traces === [] && $erreurs === []) {
-            $erreurs[] = "Aucune géométrie trouvée. J'attends du GeoJSON — "
+            $erreurs[] = "Aucune géométrie trouvée. Le fichier doit être en GeoJSON : "
                 . 'un KML ou un DXF se convertit d\'abord.';
         }
         if (count($traces) > self::TRACES_MAX) {
-            $erreurs[] = sprintf('%d tracés trouvés ; je m\'arrête à %d. '
-                . 'Les premiers sont posés, le reste attend un export plus resserré.',
+            $erreurs[] = sprintf('%d tracés trouvés. Seuls les %d premiers sont posés. '
+                . 'Pour le reste, faites un export plus resserré.',
                 count($traces), self::TRACES_MAX);
             $traces = array_slice($traces, 0, self::TRACES_MAX);
         }
@@ -142,7 +142,7 @@ final class Geojson
             default => [],
         };
         if ($morceaux === []) {
-            $erreurs[] = "Géométrie ignorée : « {$type} » n'est pas un type que je sais lire.";
+            $erreurs[] = "Une géométrie de type « {$type} » est ignorée : l'atelier ne sait pas la lire.";
             return;
         }
         $notre = match ($type) {
@@ -184,9 +184,9 @@ final class Geojson
             $lon = (float) $point[0];
             $lat = (float) $point[1];
             if (abs($lat) > 90 || abs($lon) > 180) {
-                $erreurs[] = "Ces coordonnées ne sont pas des degrés — le fichier est "
+                $erreurs[] = "Ces coordonnées ne sont pas des degrés. Le fichier est "
                     . "sans doute en Lambert 93. Réexportez-le en WGS 84, "
-                    . "le système que le GeoJSON suppose.";
+                    . "le système qu'utilise le GeoJSON.";
                 return null;
             }
             // GeoJSON : [longitude, latitude]. Ici : [latitude, longitude].

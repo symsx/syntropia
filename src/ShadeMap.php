@@ -65,11 +65,11 @@ final class ShadeMap
     {
         $annee ??= (int) date('Y');
         $dates = [
-            ['21 décembre — le soleil au plus bas', 12, 21,
+            ['21 décembre, le soleil au plus bas', 12, 21,
              "L'ombre est à son maximum. Si le soleil passe ici ce jour-là, il passera toute l'année."],
-            ['21 juin — le soleil au plus haut', 6, 21,
+            ['21 juin, le soleil au plus haut', 6, 21,
              "L'ombre est à son minimum. Ce qui reste ombragé ce jour-là l'est en permanence."],
-            ["22 septembre — l'équinoxe", 9, 22,
+            ["22 septembre, l'équinoxe", 9, 22,
              "À 45° de latitude, l'ombre égale la hauteur de l'obstacle. C'est la mesure la plus simple à vérifier sur place."],
         ];
         $moments = [];
@@ -78,8 +78,7 @@ final class ShadeMap
                 'url' => self::lien($latitude, $longitude, self::midiSolaire($annee, $m, $j, $longitude))];
         }
         $moments[] = ['titre' => "L'exposition sur l'année",
-            'quoi' => 'Le cumul des heures de soleil, zone par zone — de quoi situer chaque coin '
-                . 'sous les seuils de trois et six heures.',
+            'quoi' => 'Le cumul des heures de soleil, zone par zone.',
             'url' => self::lien($latitude, $longitude, null, self::MODE_ANNUEL)];
         return $moments;
     }

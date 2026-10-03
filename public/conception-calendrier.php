@@ -136,8 +136,8 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
     <main class="bureau" id="bureau">
       <div class="calendrier-cadre">
-        <p class="calendrier-annonce">Saison par saison, ce qu'il y aura à faire. Une idée
-           suffit pour commencer — vous préciserez en avançant.</p>
+        <p class="calendrier-annonce">Notez, saison par saison, ce qu'il y aura à faire. Une idée
+           suffit pour commencer, et vous préciserez en avançant.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -161,7 +161,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
           </div>
 
           <button type="submit" class="calendrier-bouton">Continuer</button>
-          <p class="calendrier-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="calendrier-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -175,18 +175,17 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Un premier calendrier, à main levée : il donne un repère de
-         rythme — ce qui se passe à chaque saison, pour ne rien découvrir
-         au dernier moment.</p>
-      <p><strong>Les quatre moments de la taille de perturbation</strong> [Théry, ch. 12] — des repères à lire avec l'état des bourgeons de votre lieu, non des dates :</p>
+      <p>Ce premier calendrier, à main levée, donne le rythme de chaque saison, pour ne rien
+         découvrir au dernier moment.</p>
+      <p><strong>Les quatre moments de la taille de perturbation</strong> [Théry, ch. 12]. Ce sont des repères à lire avec l'état des bourgeons de votre lieu :</p>
       <ul>
-        <li><em>Avant le début du printemps</em>, idéalement avant le gonflement des bourgeons : ramener au sol les branchages de l'hiver et faire de la place aux productions.</li>
-        <li><em>Au printemps et au début de l'été</em> : tailler quand les plantes de biomasse gênent une production, sinon observer la maturation — au plus tard quand les fleurs se fanent. La première perturbation vient en <strong>juin</strong> ; les suivantes, <strong>quand il y a de quoi couper</strong>, et l'on arrose si la pluie ne vient pas. En été, laisser assez de feuillage pour protéger les plants de la canicule et de la grêle.</li>
-        <li><em>L'arrière-saison</em>, quand les premières pluies reviennent : elle ouvre la canopée aux conditions plus douces. Attention à l'aoûtage du bois.</li>
-        <li><em>L'hiver</em> : les grosses tailles de certains ligneux, hors gel.</li>
+        <li><em>Avant le début du printemps</em>, idéalement avant le gonflement des bourgeons, on ramène au sol les branchages de l'hiver et on fait de la place aux productions.</li>
+        <li><em>Au printemps et au début de l'été</em>, on taille quand les plantes de biomasse gênent une production. Sinon, on observe la maturation, et on taille au plus tard quand les fleurs se fanent. La première perturbation vient en <strong>juin</strong>, les suivantes <strong>quand il y a de quoi couper</strong>, et l'on arrose si la pluie ne vient pas. En été, on laisse assez de feuillage pour protéger les plants de la canicule et de la grêle.</li>
+        <li><em>À l'arrière-saison</em>, quand les premières pluies reviennent, la taille ouvre la canopée aux conditions plus douces. Attention à l'aoûtage du bois.</li>
+        <li><em>L'hiver</em> est le moment des grosses tailles de certains ligneux, hors gel.</li>
       </ul>
-      <p><strong>Trois moments où l'on ne taille pas les ligneux</strong> : à la chute des feuilles, au débourrement, juste avant et pendant le gel. Le noisetier et le <em>Lonicera fragantissima</em> se taillent <strong>avant janvier</strong> : leur floraison démarre tôt.</p>
-      <p><strong>À recaler chez vous</strong> : « la majorité des tailles en vert se termine fin juin » et « les tailles de ligneux, de mi-novembre à fin février » sont des traductions locales du rythme de végétation. Les trois moments à éviter sont phénologiques, non calendaires, et le nombre de tailles dans l'année suit la longueur de votre saison de végétation. Ce calendrier reste à vous : l'atelier n'impose ni date ni intervalle.</p>
+      <p><strong>Trois moments où l'on ne taille pas les ligneux</strong> : à la chute des feuilles, au débourrement, et juste avant et pendant le gel. Le noisetier et le <em>Lonicera fragantissima</em> se taillent <strong>avant janvier</strong>, car leur floraison démarre tôt.</p>
+      <p><strong>À recaler chez vous.</strong> « La majorité des tailles en vert se termine fin juin » et « les tailles de ligneux, de mi-novembre à fin février » traduisent le rythme de végétation d'un lieu. Les trois moments à éviter se lisent sur les plantes, pas sur le calendrier, et le nombre de tailles dans l'année suit la longueur de votre saison de végétation. Ce calendrier reste le vôtre : l'atelier conseille, il n'interdit rien.</p>
     </div>
   </aside>
 

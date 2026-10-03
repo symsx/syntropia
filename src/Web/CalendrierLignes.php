@@ -133,7 +133,7 @@ final class CalendrierLignes
         $d = self::date(trim($date));
         $erreurs = [];
         if ($d === null) {
-            $erreurs['date_prevue'] = 'Dites la date prévue de la perturbation.';
+            $erreurs['date_prevue'] = 'Indiquez la date prévue de la perturbation.';
         }
         if (!in_array($geste, self::GESTES, true)) {
             $erreurs['geste'] = 'Choisissez le geste.';

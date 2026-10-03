@@ -47,7 +47,7 @@ $redirige = static function (string $url): never {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $_SESSION['syntropia_flash_import'] = ['erreur', ['Formulaire expiré — rechargez la page.']];
+        $_SESSION['syntropia_flash_import'] = ['erreur', ['Le formulaire a expiré. Rechargez la page.']];
         $redirige($retour);
     }
     $action = (string) ($_POST['action'] ?? '');

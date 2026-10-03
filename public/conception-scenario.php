@@ -122,7 +122,7 @@ if ($parcelle !== null) {
             $erreurs[] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';
         } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
             http_response_code(403);
-            $erreurs[] = 'Formulaire expiré — rechargez la page.';
+            $erreurs[] = 'Le formulaire a expiré. Rechargez la page.';
         } elseif ($action === 'productions') {
             // Ce qui est proposé : les souhaits de la personne (ou du porteur) et
             // ce que la parcelle a déjà retenu. Rien d'autre ne passe, hormis la
@@ -345,7 +345,7 @@ $frise = static function () use ($strates, $groupes, $decrit, $urlVegetal, $urlS
                 . '<text x="' . ($xL - 16) . '" y="' . ($y + $rangeeH / 2 + 5) . '" text-anchor="middle">＋</text></a>';
         }
         if ($groupes[$code] === []) {
-            $o .= '<text x="' . round($xL + 14 * $u, 1) . '" y="' . ($y + $rangeeH / 2 + 4) . '" class="sc-vide" text-anchor="middle">Une place à imaginer</text>';
+            $o .= '<text x="' . round($xL + 14 * $u, 1) . '" y="' . ($y + $rangeeH / 2 + 4) . '" class="sc-vide" text-anchor="middle">Aucun végétal</text>';
         }
         foreach ($groupes[$code] as $k => $l) {
             $d = $decrit($l);
@@ -589,13 +589,13 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
     <main class="bureau" id="bureau">
 <?php if ($parcelle === null): ?>
       <div class="sc-centre">
-        <p class="sc-vide-page">Le scénario se compose parcelle par parcelle, et ce site n'en a pas encore.
+        <p class="sc-vide-page">Le scénario se compose parcelle par parcelle, et ce site n'a pas encore de parcelle.
           <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="sc-centre<?= $conduite->scenarioADesTemps() ? '' : ' sc-jf' ?>">
         <div class="sc-entete">
-          <h1 class="sc-titre">Le scénario de <?= $h($parcelle['code']) ?> — <?= $h($parcelle['nom']) ?></h1>
+          <h1 class="sc-titre">Le scénario de <?= $h($parcelle['code']) ?>, <?= $h($parcelle['nom']) ?></h1>
           <span class="sc-badge"><?= $h($conduite->libelle()) ?><?= $niveauConduite === 'site' ? ' · comme le site' : ($niveauConduite === 'aucun' ? ' · pas encore choisie' : '') ?></span>
 <?php if ($peutEcrire): ?>
           <span class="sc-actions">
@@ -610,17 +610,17 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
         <p class="sc-message" role="status"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
 <?php if ($erreurs !== []): ?>
-        <p class="sc-message sc-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
+        <p class="sc-message sc-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
 <?php if (!$conduiteDefinie): ?>
-        <p class="sc-message sc-message--alerte">La conduite n'est pas encore choisie — la syntropie s'applique en attendant, mais aucun végétal ne se place avant.
-          Choisissez-la <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour tout le site</a>.</p>
+        <p class="sc-message sc-message--alerte">La conduite n'est pas encore choisie. La syntropie s'applique en attendant, mais aucun
+          végétal ne se place avant ce choix. Choisissez-la <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour tout le site</a>.</p>
 <?php elseif ($peutEcrire && !$aUnePrincipale): ?>
-        <p class="sc-message sc-message--alerte">Avant les végétaux, les productions : ce que cette parcelle doit donner décide de tout le reste.
-          <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;productions=1">Les choisir →</a><?= $proposes === [] ? ' Aucune n\'est encore dite : <a href="definition-objectifs.php">les objectifs</a> les demandent.' : '' ?></p>
+        <p class="sc-message sc-message--alerte">Les productions se choisissent avant les végétaux : ce que la parcelle doit donner décide
+          du reste. <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;productions=1">Les choisir →</a><?= $proposes === [] ? ' Aucune n\'est encore donnée : l\'étape <a href="definition-objectifs.php">Objectifs</a> les demande.' : '' ?></p>
 <?php endif; ?>
 <?php if (!$conduite->scenarioADesTemps()): ?>
-        <p class="sc-message">En jardin-forêt, une plante est posée à sa place et y reste : le tableau se lit par strate, sans axe du temps.</p>
+        <p class="sc-message">En jardin-forêt, une plante est posée à sa place et y reste. Le tableau se lit par strate, sans axe du temps.</p>
 <?php endif; ?>
 
 <?php if ($conduite->scenarioADesTemps()): ?>
@@ -631,11 +631,11 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
           <section class="sc-strate-bloc">
             <h3><?= $h($nom) ?><?php if ($peutAjouter && $code !== '__reclasser'): ?><a href="<?= $h($urlStrate($code)) ?>" aria-label="Ajouter un végétal en strate <?= $h($nom) ?>">＋</a><?php endif; ?></h3>
 <?php if ($groupes[$code] === []): ?>
-            <p class="sc-strate-vide">Une place à imaginer</p>
+            <p class="sc-strate-vide">Aucun végétal</p>
 <?php else: ?>
             <ul class="sc-puces">
 <?php foreach ($groupes[$code] as $l): $d = $decrit($l); ?>
-              <li><a class="sc-puce b-<?= $d['couleur'] ?>" href="<?= $h($urlVegetal((int) $l['id'])) ?>" data-info="<?= $h($d['info'] . ($conduite->scenarioADesTemps() ? ' — ' . $d['periode'] : '')) ?>"><?= $h($l['espece']) ?><?= $d['qte'] !== '' || $conduite->scenarioADesTemps() ? ' <small>' . $h($d['sigle'] . $d['qte']) . '</small>' : '' ?></a></li>
+              <li><a class="sc-puce b-<?= $d['couleur'] ?>" href="<?= $h($urlVegetal((int) $l['id'])) ?>" data-info="<?= $h($d['info'] . ($conduite->scenarioADesTemps() ? ', ' . $d['periode'] : '')) ?>"><?= $h($l['espece']) ?><?= $d['qte'] !== '' || $conduite->scenarioADesTemps() ? ' <small>' . $h($d['sigle'] . $d['qte']) . '</small>' : '' ?></a></li>
 <?php endforeach; ?>
             </ul>
 <?php endif; ?>
@@ -643,11 +643,11 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
 <?php endforeach; ?>
         </div>
         <div class="sc-legende">
-          <span><i style="background:var(--b-rouge)"></i>P · production</span>
-          <span><i style="background:var(--b-vert)"></i>A · accompagnement</span>
-          <span><i style="background:var(--b-orange)"></i>P+A · les deux</span>
+          <span><i style="background:var(--b-rouge)"></i>P : production</span>
+          <span><i style="background:var(--b-vert)"></i>A : accompagnement</span>
+          <span><i style="background:var(--b-orange)"></i>P+A : les deux</span>
 <?php if ($conduite->scenarioADesTemps()): ?>
-          <span><i class="hachure"></i>retrait progressif</span>
+          <span><i class="hachure"></i>Retrait progressif</span>
 <?php endif; ?>
         </div>
       </div>
@@ -677,13 +677,13 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
         <section class="sc-panneau sc-p-veg">
           <p class="pd-titre"><?= $editId > 0 ? 'Modifier : ' . $h($parId[$editId]['espece'] ?? '') : 'Ajouter un végétal' ?></p>
 <?php if (!$conduiteDefinie): ?>
-          <p class="sc-note">Choisissez d'abord la conduite — <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour le site</a>.</p>
+          <p class="sc-note">Choisissez d'abord la conduite, <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour le site</a>.</p>
 <?php elseif (!$aUnePrincipale): ?>
           <p class="sc-note">Choisissez d'abord les productions de la parcelle, dans l'onglet « Productions ».</p>
 <?php elseif ($editId > 0): ?>
-          <p class="sc-note">Vous modifiez <strong><?= $h($parId[$editId]['espece'] ?? '') ?></strong>. Pour une autre implantation, utilisez « Ajouter comme nouveau végétal ». <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;nouveau=1">Un formulaire vide</a>.</p>
+          <p class="sc-note">Vous modifiez <strong><?= $h($parId[$editId]['espece'] ?? '') ?></strong>. Pour une autre implantation, utilisez « Ajouter comme nouveau végétal », ou ouvrez <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;nouveau=1">un formulaire vide</a>.</p>
 <?php else: ?>
-          <p class="sc-note">Une implantation par ligne : la même espèce à deux endroits, ou conduite de deux façons, fait deux entrées.</p>
+          <p class="sc-note">Chaque ligne est une implantation. La même espèce à deux endroits, ou conduite de deux façons, fait deux lignes.</p>
 <?php endif; ?>
           <form method="post" action="conception-scenario.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
@@ -712,11 +712,11 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
               </div>
               <p class="sc-note" id="sc-strate-repere" hidden></p>
               <p class="sc-note">En bordure, les plants se posent et se comptent sur
-                <a href="conception-parcelles.php?parcelle=<?= $idP ?>&amp;bordure=recompte">le plan</a>, côté par côté : c'est ce compte qui fait foi.</p>
+                <a href="conception-parcelles.php?parcelle=<?= $idP ?>&amp;bordure=recompte">le plan</a>, côté par côté. C'est ce compte qui fait foi.</p>
               <label class="sc-champ">Production visée
                 <select name="production">
                   <option value="">Accompagnement uniquement</option>
-<?php foreach ($optionsProduction as $k => $v) { echo '                  ', $option($form, 'production', $k, $v['texte'] . ' — ' . $v['priorite']), "\n"; } ?>
+<?php foreach ($optionsProduction as $k => $v) { echo '                  ', $option($form, 'production', $k, $v['texte'] . ' (' . $v['priorite'] . ')'), "\n"; } ?>
                 </select>
               </label>
               <details<?= ($form['fonctions'] ?? []) !== [] ? ' open' : '' ?>>
@@ -728,7 +728,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
                 </div>
               </details>
 <?php if ($conduite->scenarioADesTemps()): ?>
-              <p class="sc-note" style="margin-bottom:.3rem">Présence dans la strate — les quarts sont des repères, pas des dates.</p>
+              <p class="sc-note" style="margin-bottom:.3rem">La présence dans la strate. Les quarts sont des repères dans chaque période.</p>
               <div class="sc-deux">
                 <label class="sc-champ">Arrivée
                   <select name="debut">
@@ -758,17 +758,17 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
               </div>
               <details>
                 <summary>Plus de détails</summary>
-                <label class="sc-champ" style="margin-top:.5rem">Pour qui ? <small>quels végétaux en bénéficient</small>
+                <label class="sc-champ" style="margin-top:.5rem">Pour qui ? <small>Les végétaux qui en bénéficient</small>
                   <input type="text" name="beneficiaire" maxlength="500" value="<?= $val($form, 'beneficiaire') ?>" placeholder="Ex. les jeunes pommiers de la bordure nord">
                 </label>
                 <label class="sc-champ">Repère sur la parcelle
                   <input type="text" name="repere" maxlength="160" value="<?= $val($form, 'repere') ?>" placeholder="Ex. planche 2, ligne centrale">
                 </label>
-                <label class="sc-champ">Geste de taille <small>où l'arbre stocke ses sucres — facultatif</small>
+                <label class="sc-champ">Geste de taille <small>Où l'arbre stocke ses sucres, facultatif</small>
                   <select name="geste_taille">
                     <option value="">Pas de geste noté</option>
 <?php foreach (Scenario::GESTES as $cle => [$nomGeste, $sens]): ?>
-                    <option value="<?= $h($cle) ?>"<?= ($form['geste_taille'] ?? '') === $cle ? ' selected' : '' ?>><?= $h($nomGeste) ?> — <?= $h($sens) ?></option>
+                    <option value="<?= $h($cle) ?>"<?= ($form['geste_taille'] ?? '') === $cle ? ' selected' : '' ?>><?= $h($nomGeste) ?> : <?= $h($sens) ?></option>
 <?php endforeach; ?>
                   </select>
                 </label>
@@ -821,8 +821,8 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
 
         <section class="sc-panneau sc-p-prod">
           <p class="pd-titre">Les productions de cette parcelle</p>
-          <p class="sc-note">Ce que cette parcelle doit donner : <strong>au moins une production principale</strong> avant tout végétal.
-            <?php if ($souhaitsDuSite['de'] === 'soi'): ?>Vos réponses aux objectifs, à relire dans <a href="definition-objectifs.php">Objectifs</a>.<?php elseif ($souhaitsDuSite['de'] === 'porteur'): ?>Faute de réponse de votre part, celles du porteur du projet.<?php else: ?>Rien n'est encore dit dans <a href="definition-objectifs.php">Objectifs</a> : ajoutez-en une ci-dessous.<?php endif; ?></p>
+          <p class="sc-note">Les productions disent ce que la parcelle doit donner. Il faut <strong>au moins une production principale</strong> avant tout végétal.
+            <?php if ($souhaitsDuSite['de'] === 'soi'): ?>Voici vos réponses de l'étape <a href="definition-objectifs.php">Objectifs</a>.<?php elseif ($souhaitsDuSite['de'] === 'porteur'): ?>Vous n'avez pas répondu aux objectifs : voici les réponses du porteur du projet.<?php else: ?>L'étape <a href="definition-objectifs.php">Objectifs</a> n'a pas encore de réponse. Ajoutez une production ci-dessous.<?php endif; ?></p>
           <form method="post" action="conception-scenario.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="productions">
@@ -832,17 +832,17 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
               <div class="sc-prod-ligne">
                 <span><?= $h($texte) ?><input type="hidden" name="texte[<?= $i ?>]" value="<?= $h($texte) ?>"></span>
                 <select name="niveau[<?= $i ?>]" aria-label="Niveau de « <?= $h($texte) ?> »">
-                  <option value="">— non retenue —</option>
-                  <option value="principale"<?= $courant === 'principale' ? ' selected' : '' ?>>principale</option>
-                  <option value="secondaire"<?= $courant === 'secondaire' ? ' selected' : '' ?>>secondaire</option>
+                  <option value="">Non retenue</option>
+                  <option value="principale"<?= $courant === 'principale' ? ' selected' : '' ?>>Principale</option>
+                  <option value="secondaire"<?= $courant === 'secondaire' ? ' selected' : '' ?>>Secondaire</option>
                 </select>
               </div>
 <?php $i++; endforeach; ?>
               <div class="sc-prod-ligne">
                 <input type="text" name="autre" maxlength="120" placeholder="Une autre production…" aria-label="Une autre production" style="margin:0">
                 <select name="autre_niveau" aria-label="Niveau de l'autre production">
-                  <option value="principale">principale</option>
-                  <option value="secondaire">secondaire</option>
+                  <option value="principale">Principale</option>
+                  <option value="secondaire">Secondaire</option>
                 </select>
               </div>
               <div class="sc-actions-form">
@@ -850,7 +850,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
               </div>
             </fieldset>
           </form>
-          <p class="sc-note" style="margin-top:.6rem">Une production tient en un souhait, sans virgule. Les productions retirées restent lisibles sur les végétaux qui les portent.</p>
+          <p class="sc-note" style="margin-top:.6rem">Chaque production s'écrit sans virgule. Une production retirée reste lisible sur les végétaux qui la portent.</p>
         </section>
       </div>
     </aside>
@@ -867,54 +867,56 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
 <?php if (($prepareSaut ?? []) !== []): ?>
-      <p><strong>Ce scénario prépare-t-il le saut du chat ?</strong> Le saut du chat est l'effet de la perturbation. Des repères, non des refus : l'atelier dit ce que les sources demandent, vous décidez.</p>
+      <p><strong>Le saut du chat est-il préparé ?</strong> Le saut du chat est l'effet de la perturbation. L'atelier dit ce que les sources demandent, et vous décidez : l'atelier conseille, il n'interdit rien.</p>
       <ul class="pi-saut">
 <?php foreach ($prepareSaut as $x): ?>
-        <li class="<?= $h($x['etat']) ?>"><span class="pi-saut-signe"><?= ['ok' => '✓', 'attention' => '⚠', 'vide' => '○'][$x['etat']] ?? '·' ?></span> <strong><?= $h($x['titre']) ?></strong> — <?= $h($x['detail']) ?> <small>[<?= $h($x['source']) ?>]</small></li>
+        <li class="<?= $h($x['etat']) ?>"><span class="pi-saut-signe"><?= ['ok' => '✓', 'attention' => '⚠', 'vide' => '○'][$x['etat']] ?? '·' ?></span> <strong><?= $h($x['titre']) ?></strong> : <?= $h($x['detail']) ?> <small>[<?= $h($x['source']) ?>]</small></li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
 <?php if (($occupation ?? null) !== null): ?>
-      <p><strong>L'occupation au sol, par strate</strong> — la surface que couvrent les houppiers adultes (l'envergure, dans
-         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Les repères de Théry (ch. 05) : émergente 20 %, haute 40 %,
-         moyenne 60 %, basse 80 % — la somme dépasse 100 %, c'est voulu : chaque strate prend la lumière que la précédente laisse.</p>
+      <p><strong>L'occupation au sol, par strate.</strong> C'est la surface que couvrent les houppiers adultes (l'envergure, dans
+         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Les repères de Théry (ch. 05) sont de 20 % pour l'émergente,
+         40 % pour la haute, 60 % pour la moyenne et 80 % pour la basse. La somme dépasse 100 %, car chaque strate prend la lumière
+         que la précédente laisse.</p>
       <ul class="pi-saut">
 <?php foreach ($occupation as $o):
     $manque = array_merge($o['sans_envergure'] !== [] ? ['sans envergure : ' . implode(', ', $o['sans_envergure'])] : [],
         $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
         <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
-          <strong><?= $h($o['libelle']) ?></strong> — <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+          <strong><?= $h($o['libelle']) ?></strong> : <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
-      <p>Vous composez ici <strong>un film</strong> : ce qui grandira sur cette parcelle, à quelle strate, et pendant combien de temps.
-         Le tableau se lit de gauche à droite (le temps) et de haut en bas (de la strate la plus haute à la plus basse).</p>
-      <p><strong>Un chemin pour le remplir</strong> — à suivre librement :</p>
+      <p>Le <strong>scénario</strong> est le déroulement de la succession dans les strates, défini à partir des productions voulues.
+         Le tableau se lit de gauche à droite pour le temps, et de haut en bas, de la strate la plus haute à la plus basse.</p>
+      <p><strong>Un ordre pour le remplir</strong>, à suivre librement :</p>
       <ol>
-        <li><em>Les productions d'abord</em> : ce que la parcelle doit donner. La principale, puis la secondaire.</li>
-        <li><em>Regardez plus loin</em> : qui sera encore là à l'horizon du projet ?</li>
-        <li><em>Revenez vers le démarrage</em> : qui prépare le sol, protège les jeunes plants, fournit la biomasse ?</li>
-        <li><em>Les placentaires en dernier</em> : ils ne se choisissent qu'après avoir pensé les plantes de plus longue durée.</li>
-        <li><em>Relisez le film</em> : qui prend le relais quand une plante est taillée ou retirée ?</li>
+        <li><em>Les productions d'abord</em> : ce que la parcelle doit donner, la principale puis la secondaire.</li>
+        <li><em>Le plus long terme</em> : les plantes encore présentes à l'horizon du projet.</li>
+        <li><em>Le démarrage</em> : les plantes qui préparent le sol, protègent les jeunes plants et fournissent la biomasse.</li>
+        <li><em>Les placentaires en dernier</em>, une fois pensées les plantes de plus longue durée.</li>
+        <li><em>La relecture du scénario</em> : quelle plante prend le relais quand une autre est taillée ou retirée.</li>
       </ol>
 <?php if ($parcelle === null || $conduite->scenarioADesTemps()): ?>
-      <p><strong>Les repères</strong> [Théry, ch. 11] : le stade placentaire dure environ trois ans en plantation, et un arbre laissé
+      <p><strong>Les repères de Théry (ch. 11).</strong> Le stade placentaire dure environ trois ans en plantation. Un arbre laissé
          seul dans l'herbe prend un retard qu'il ne rattrape pas. Dans une plantation, <strong>70 à 80 % des plantes servent la
-         biomasse et la perturbation</strong>. Prévoir <strong>au moins deux espèces par strate</strong> : la réussite d'un plant n'est
-         jamais automatique. Diversifier les familles botaniques — les rosacées sont vite surreprésentées.</p>
-      <p><strong>La strate se choisit par le besoin en lumière</strong>, et par le résultat attendu : un figuier ou un sureau cantonnés
-         en strate moyenne servent la biomasse et fructifient peu. D'après la formation Joala et Théry (ch. 05) : émergente 80 à 100 %
-         de lumière, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 % — établi dans le sud de la Dordogne, « sans lecture absolue » :
-         à éprouver sur votre lieu. Une plante peut aussi changer de strate au fil de son cycle (la fève, la pomme de terre précoce).</p>
-      <p><strong>Les quarts</strong> sont des repères dans chaque période, pas des dates. Les colonnes ont la même largeur mais représentent
-         des durées différentes. Des hachures marquent un retrait progressif prévu.</p>
+         biomasse et la perturbation</strong>. Prévoyez <strong>au moins deux espèces par strate</strong>, car la réussite d'un plant
+         n'est jamais automatique. Diversifiez les familles botaniques : les rosacées sont vite surreprésentées.</p>
+      <p><strong>La strate se choisit par le besoin en lumière</strong>, et par le résultat attendu. Un figuier ou un sureau cantonnés
+         en strate moyenne servent la biomasse et fructifient peu. D'après la formation Joala et Théry (ch. 05), l'émergente reçoit
+         80 à 100 % de la lumière, la haute 60 à 80 %, la moyenne 40 à 60 % et la basse 20 à 40 %. Ces repères ont été établis dans le
+         sud de la Dordogne, « sans lecture absolue », et sont à éprouver sur votre lieu. Une plante peut aussi changer de strate au
+         fil de son cycle, comme la fève ou la pomme de terre précoce.</p>
+      <p><strong>Les quarts</strong> sont des repères dans chaque période. Les colonnes ont la même largeur, mais représentent des
+         durées différentes. Les hachures marquent un retrait progressif prévu.</p>
 <?php else: ?>
-      <p><strong>En jardin-forêt</strong>, les strates disent la place et la hauteur adulte, et une plante est posée à sa place définitive :
-         il n'y a pas de temps à saisir.</p>
+      <p><strong>En jardin-forêt</strong>, les strates disent la place et la hauteur adulte, et une plante est posée à sa place définitive.
+         Il n'y a pas de temps à saisir.</p>
       <p><?= $h(Conduite::JardinForet->reserve()) ?></p>
 <?php endif; ?>
-      <p>La strate attribuée reste <strong>subjective</strong> : elle s'affine avec les connaissances, et change d'un lieu à l'autre. Une plante
-         multifonctionnelle est comptée une seule fois. Le nombre de plants sert plus tard aux commandes et au chantier.</p>
+      <p>La strate attribuée reste <strong>subjective</strong> : elle s'affine avec les connaissances et change d'un lieu à l'autre. Une plante
+         multifonctionnelle est comptée une seule fois. Le nombre de plants sert ensuite aux commandes et au chantier.</p>
     </div>
   </aside>
 

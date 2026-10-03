@@ -1,6 +1,6 @@
 # Les textes de l'atelier — réécriture dans le style du porteur
 
-**Demandé par le porteur le 2026-10-03 ; planifié, pas commencé.** Ce chantier passe avant la Phase 3 du Dossier
+**Demandé par le porteur le 2026-10-03 ; en cours.** Vague 1 faite et commitée le 2026-10-03, vague 2 écrite le même jour. Ce chantier passe avant la Phase 3 du Dossier
 Projet (décision du porteur, le même jour).
 
 ## La demande
@@ -70,3 +70,33 @@ déploiement sur accord du porteur. **Le porteur relit directement les pages**, 
   « L'intention »), pour reprendre son vocabulaire.
 - Relever les libellés qui changent (boutons, titres d'étape, entrées de menu) : ce sont eux que le livret et le
   glossaire doivent suivre.
+
+## Une règle ajoutée en cours de route
+
+**Rien d'inventé.** Le porteur a fait retirer de l'accueil une phrase qui ne venait ni de lui ni d'une source (2026-10-03). Un
+texte écrit auparavant par Claude n'est pas une source à garder. Ce qui ne vient ni du porteur, ni d'une source citée, ni du
+fonctionnement réel de l'atelier est retiré, ou soumis au porteur (§ Questions au porteur).
+
+## L'avancement
+
+- **Vague 1** (2026-10-03, commitée) : accueil, connexion, inscription, création de projet, vision, objectifs, moyens, site, et les
+  textes de `Conduite`, `ZoneUsda`. Deux affirmations fausses retirées : un projet ne se renomme nulle part.
+- **Vague 2** (2026-10-03, écrite, à relire par le porteur) : étude du site (et `Calques`, `Relief`, `ShadeMap`, `Vents`, `Geojson`,
+  `Eau`, `Cadastre`, `Altimetrie`, `calques.js`, `carte.js`), étude du sol, parcelles (et `Stade`, `Tortue`, `Bordures`,
+  `RepartitionBordures`, `conception-parcelles.js`), scénario (et `SautDuChat::conception()`, `Scenario`, `strates.js`), potager (et
+  `PlanDeCulture`, `LignesDeService`, `Cultures`), matériel et eau (et `Materiel`, `BesoinEau`), calendrier. Les titres des repères du
+  saut du chat et les origines du matériel reprennent ceux de la présentation du porteur ; le livret suit pour les origines.
+
+## Questions au porteur
+
+Des contenus qui ne venaient ni du porteur ni d'une source. **Réponse du porteur le 2026-10-03 : les retirer tous.**
+
+1. **Les conseils de pente** (`Relief::ceQuElleCommande()`, étude du site) : retirés, la méthode avec. La pente, son exposition et
+   son dénivelé restent affichés.
+2. **Les seuils de trois et six heures de soleil** (liens ShadeMap) : retirés.
+3. **« Prévoyez un mètre ruban et dix minutes sur place »** (parcelles) : retiré.
+4. **Les doses par passage de 12, 18 ou 25 mm** (`BesoinEau::DOSES`) : elles calculent le nombre de passages par semaine et la
+   quantité par passage du conseil d'arrosage. Le porteur a choisi de retirer le calcul seul : la page garde les millimètres par
+   semaine (Lopez), la classe d'infiltration (FAO), le ressuyage et la règle sourcée (sol rapide, passages courts et fréquents ;
+   sol tampon, long et espacé). Le livret suit. **La présentation du porteur décrit encore « nombre de passages par semaine,
+   quantité en millimètres et durée »** : à corriger à la Phase 1 de `chantier-presentation.md`.

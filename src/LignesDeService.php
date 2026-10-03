@@ -92,17 +92,17 @@ final class LignesDeService
             if ($i === $centrale && $installee) {
                 $out[] = ['indice' => $i, 'centrale' => true, 'strate' => null, 'candidats' => [], 'proposee' => null,
                     'raison' => 'Tortue liane : les deux premières années sont passées' . ($liane['jusqu'] !== null ? ' (depuis le ' . $liane['jusqu'] . ')' : '')
-                        . ' — les lianes de la structure ont pris le relais : plus de maïs ni de tournesol (Théry, ch. 15 § 9).'];
+                        . '. Les lianes de la structure ont pris le relais : le maïs et le tournesol n’y ont plus leur place (Théry, ch. 15 § 9).'];
                 continue;
             }
             if ($i === $centrale) {
                 $raison = $biomasse === []
                     ? 'La ligne centrale porte la biomasse : aucune espèce du référentiel n’a ce rôle.'
-                    : 'La ligne centrale porte la biomasse et la structure — jamais de tuteurs.';
+                    : 'La ligne centrale porte la biomasse et la structure, jamais de tuteurs.';
                 if ($liane !== null) {
                     $raison .= ' Tortue liane : elle assure le saut du chat les deux premières années seulement, le temps que les'
                         . ' lianes s’installent (Théry, ch. 15 § 9)'
-                        . ($liane['jusqu'] !== null ? ' — jusqu’au ' . $liane['jusqu'] . '.' : ' — notez la date de plantation (Suivi, saut du chat) pour que l’atelier sache jusqu’à quand.');
+                        . ($liane['jusqu'] !== null ? ', jusqu’au ' . $liane['jusqu'] . '.' : '. Notez la date de plantation (Suivi, saut du chat) pour que l’atelier sache jusqu’à quand.');
                 }
                 $out[] = ['indice' => $i, 'centrale' => true, 'strate' => $strateCentrale, 'candidats' => $biomasse,
                     'proposee' => self::premiere($biomasse), 'raison' => $raison];

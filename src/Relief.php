@@ -99,37 +99,6 @@ final class Relief
     }
 
     /**
-     * Ce que la pente commande — trois seuils, et ce qu'ils ouvrent.
-     *
-     * ⚠ **Aucun seuil de pente n'est chiffré dans le corpus syntropique.**
-     * Ceux-ci viennent de l'usage agricole courant, et ne servent qu'à
-     * situer : c'est la parcelle, et non la carte, qui décide.
-     */
-    public static function ceQuElleCommande(?float $pentePct): string
-    {
-        if ($pentePct === null) {
-            return "La pente ne se calcule pas ici : trop peu de points connus.";
-        }
-        if ($pentePct < 2.0) {
-            return "Terrain quasi plat. L'orientation des lignes se décide alors "
-                . "par la lumière — nord-sud, pour que l'ombre balaie sans stationner.";
-        }
-        if ($pentePct < 8.0) {
-            return "Pente douce. Deux chemins s'ouvrent, et ils ne se valent pas "
-                . "partout : suivre les courbes retient l'eau et le sol ; nord-sud "
-                . "donne la meilleure lumière. C'est un arbitrage, non une règle.";
-        }
-        if ($pentePct < 15.0) {
-            return "Pente marquée. Suivre les courbes de niveau devient le chemin "
-                . "le plus sûr : sans aménagement, la pluie emporte les nutriments "
-                . "et envase le bas. Les baissières se posent sur ces courbes.";
-        }
-        return "Pente forte. Le travail y est pénible et l'érosion rapide — "
-            . "terrasses, baissières plantées, ou choix d'une autre parcelle. "
-            . "La pénibilité est un symptôme de conception.";
-    }
-
-    /**
      * Les courbes de niveau, par la méthode des carrés marchants.
      *
      * Chaque carré de quatre points est coupé par le niveau cherché ; on

@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
         $erreurs['droit'] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';
     } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
         http_response_code(403);
-        $erreurs['jeton'] = 'Formulaire expiré — rechargez la page.';
+        $erreurs['jeton'] = 'Le formulaire a expiré. Rechargez la page.';
     } elseif ($action === 'ajouter') {
         $erreurs = $constatsService->ajouter($idP, $compteId, $_POST);
         if ($erreurs === []) {

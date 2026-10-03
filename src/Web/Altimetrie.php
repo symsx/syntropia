@@ -66,13 +66,13 @@ final class Altimetrie
         $json = json_decode($corps, true);
         $z = $json['elevations'][0]['z'] ?? null;
         if (!is_numeric($z)) {
-            return ['altitude' => null, 'message' => 'Réponse inattendue du service.'];
+            return ['altitude' => null, 'message' => 'Le service a donné une réponse inattendue.'];
         }
         $z = (float) $z;
         if ($z <= self::HORS_COUVERTURE + 1.0) {
             return ['altitude' => null,
-                'message' => "Hors de la couverture de l'IGN — France seulement. "
-                    . "Saisissez l'altitude à la main."];
+                'message' => "Ce point est hors de la couverture de l'IGN, qui ne couvre que "
+                    . "la France. Saisissez l'altitude à la main."];
         }
         return ['altitude' => (int) round($z),
             'message' => 'Altitude IGN : ' . round($z) . ' m.'];
@@ -123,7 +123,7 @@ final class Altimetrie
         $cote = (int) max(2, min(80, round($coteM / $pasM) + 1));
         if ($cote * $cote > self::POINTS_MAX) {
             return ['grille' => null, 'appels' => 0, 'message' => sprintf(
-                'Ce carré demande %d points ; je m\'arrête à %d. '
+                'Ce carré demande %d points, et le relevé se limite à %d. '
                 . 'Élargissez le pas, ou réduisez l\'emprise.',
                 $cote * $cote, self::POINTS_MAX)];
         }
@@ -175,11 +175,11 @@ final class Altimetrie
         $connus = array_values(array_filter($z, static fn (?float $v): bool => $v !== null));
         if ($connus === []) {
             return ['grille' => null, 'appels' => $appels,
-                'message' => "Aucun point n'est dans la couverture de l'IGN — France seulement."];
+                'message' => "Aucun point n'est dans la couverture de l'IGN, qui ne couvre que la France."];
         }
         return ['grille' => ['cote' => $cote, 'pas' => $pasM, 'sud_ouest' => $sudOuest, 'z' => $z],
             'appels' => $appels,
-            'message' => sprintf('%d points relevés en %d appel(s) — de %s à %s m.',
+            'message' => sprintf('%d points relevés en %d appel(s), de %s à %s m.',
                 count($z), $appels, round(min($connus)), round(max($connus)))];
     }
 

@@ -49,8 +49,8 @@
     var ou = sens === 'nord-sud' ? 'à l’ouest' : 'au nord';
     document.getElementById('premiere-libelle').textContent = t === 'abeille' ? 'La première bande (' + ou + ')' : 'La première planche (' + ou + ')';
     document.getElementById('natures-note').textContent = t === 'abeille'
-      ? 'Tortue abeille : chaque planche porte une bande pérenne et une bande potagère ; choisissez la première, les bandes alternent ensuite. La bande pérenne est teintée sur le plan.'
-      : 'Tortue zèbre : des planches pérennes alternent avec des planches annuelles ; choisissez la première, les autres alternent — chacune se change ensuite ci-dessus. Les planches pérennes sont teintées sur le plan.';
+      ? 'Dans une tortue abeille, chaque planche porte une bande pérenne et une bande potagère. Choisissez la première bande : les autres alternent ensuite. La bande pérenne est teintée sur le plan.'
+      : 'Dans une tortue zèbre, des planches pérennes alternent avec des planches annuelles. Choisissez la première planche : les autres alternent, et chacune se change ensuite ci-dessus. Les planches pérennes sont teintées sur le plan.';
   }
   function listeLignes(largeurs){
     var zone = document.getElementById('lignes-planches');
@@ -563,9 +563,9 @@
     var vent = interne ? null : document.querySelector('.bordure-brise-vent[data-cote="' + rect.dataset.cote + '"]');
     var mot = interne ? 'Bordure interne ' : (vent && vent.checked ? 'Bordure brise-vent ' : 'Bordure ');
     if (!interne && document.getElementById('outil-deplacer').checked){
-      return enCours ? mot + cote + ' — ' + valeur : 'Tirez pour changer la largeur — ' + cote + ', ' + valeur;
+      return enCours ? mot + cote + ', ' + valeur : 'Tirez pour changer la largeur. ' + mot + cote + ', ' + valeur;
     }
-    return mot + cote + ' — ' + valeur;
+    return mot + cote + ', ' + valeur;
   }
   function montrerBulle(rect){
     var horizontal = rect.dataset.cote === 'nord' || rect.dataset.cote === 'sud';
@@ -745,7 +745,7 @@
             etatPlan.textContent = 'Plan enregistré.';
             etatPlan.hidden = false;
           } else {
-            erreurPlan.textContent = Object.values(j.erreurs || {}).join(' ') || 'Erreur inattendue.';
+            erreurPlan.textContent = Object.values(j.erreurs || {}).join(' ') || 'Une erreur inattendue est survenue.';
             erreurPlan.hidden = false;
           }
         })
@@ -830,8 +830,8 @@
     Gabarit.confirmer({
       titre: 'Réinitialiser le plan ?',
       texte: 'Le plan repart des valeurs par défaut de l’atelier : 12 × 8 m, bordure externe sur les quatre côtés à 0,40 m, '
-        + 'sans coche « vent », sans bordure interne, planches nord-sud. Rien n’est écrit tant que vous ne cliquez pas '
-        + '« Enregistrer le plan » — « Annuler les changements » vous ramène sinon au plan enregistré.',
+        + 'sans coche « vent », sans bordure interne, planches nord-sud. Rien n’est enregistré avant « Enregistrer le plan ». '
+        + '« Annuler les changements » ramène au plan enregistré.',
       oui: 'Réinitialiser', non: 'Garder mon plan'
     }).then(function(ok){ if (ok) reinitialiser(); });
   });

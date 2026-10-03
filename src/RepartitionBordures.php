@@ -66,7 +66,7 @@ final class RepartitionBordures
             return 'ne remplit la fonction d’aucune bordure (bloque-herbe, couvre-sol, brise-vent, biomasse)';
         }
         if (($e['espacement_retenu_m'] ?? null) === null || (float) $e['espacement_retenu_m'] <= 0) {
-            return 'pas d’espacement au référentiel — à compléter dans Espèces';
+            return 'pas d’espacement au référentiel, à compléter dans Espèces';
         }
         return null;
     }
@@ -217,8 +217,8 @@ final class RepartitionBordures
                 $refus = 'coché « brise-vent », et aucune espèce brise-vent de la liste ne lui convient';
             } elseif (count($vont) < self::MIN_ESPECES) {
                 $refus = count($vont) === 0
-                    ? 'aucune espèce de la liste ne lui convient — il en faut deux au moins'
-                    : 'une seule espèce de la liste lui convient (' . self::nom(array_values($vont)[0]) . ') — il en faut deux au moins';
+                    ? 'aucune espèce de la liste ne lui convient, alors qu’il en faut au moins deux'
+                    : 'une seule espèce de la liste lui convient (' . self::nom(array_values($vont)[0]) . '), alors qu’il en faut au moins deux';
             }
             $serie = [];
             $sansPlant = [];

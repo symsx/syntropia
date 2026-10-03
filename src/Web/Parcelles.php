@@ -160,7 +160,7 @@ final class Parcelles
         $erreurs = [];
 
         if ($code === '') {
-            $erreurs['code'] = 'Le code est obligatoire — une lettre ou un repère court suffit.';
+            $erreurs['code'] = 'Le code est obligatoire. Une lettre ou un repère court suffit.';
         } elseif (mb_strlen($code) > 32) {
             $erreurs['code'] = 'Le code est trop long (32 caractères au plus).';
         }
@@ -256,7 +256,7 @@ final class Parcelles
         if (($valeurs['conduite'] ?? null) !== null) {
             $conduite = trim((string) $valeurs['conduite']);
             if ($conduite !== '' && \Syntropia\Conduite::tryFrom($conduite) === null) {
-                $erreurs['conduite'] = 'La conduite est « Syntropie » ou « Jardin-forêt » — ou celle du site.';
+                $erreurs['conduite'] = 'La conduite est « Syntropie », « Jardin-forêt » ou celle du site.';
             }
         }
 
@@ -265,7 +265,7 @@ final class Parcelles
         if (($valeurs['stade'] ?? null) !== null) {
             $stade = trim((string) $valeurs['stade']);
             if ($stade !== '' && \Syntropia\Stade::tryFrom($stade) === null) {
-                $erreurs['stade'] = 'Le stade du terrain est « Colonisation », « Accumulation » ou « Abondance » — ou pas encore dit.';
+                $erreurs['stade'] = 'Le stade du terrain est « Colonisation », « Accumulation », « Abondance » ou pas encore dit.';
             }
         }
 
@@ -275,7 +275,7 @@ final class Parcelles
         if (($valeurs['tortue'] ?? null) !== null) {
             $tortue = trim((string) $valeurs['tortue']);
             if ($tortue !== '' && \Syntropia\Tortue::tryFrom($tortue) === null) {
-                $erreurs['tortue'] = 'Le type de tortue est « Classique », « Zèbre », « Abeille » ou « Liane » — ou pas encore dit.';
+                $erreurs['tortue'] = 'Le type de tortue est « Classique », « Zèbre », « Abeille », « Liane » ou pas encore dit.';
             }
         }
 

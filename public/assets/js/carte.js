@@ -118,7 +118,7 @@
       mot.className = 'carte-panne';
       // Une photo ancienne ne couvre pas tout : des tuiles absentes n'y sont pas une panne.
       mot.textContent = fond.partiel
-        ? "Cette photographie ancienne ne couvre pas cet endroit — essayez une autre période, ou la photographie récente."
+        ? "Cette photographie ancienne ne couvre pas cet endroit. Essayez une autre période, ou la photographie récente."
         : 'Les tuiles ne se chargent pas. Saisissez les coordonnées à la main : tout le reste fonctionne.';
       conteneur.appendChild(mot);
     }

@@ -386,7 +386,7 @@ d'une précision libre.
 
 Une parcelle de type **potager** ne se compose pas comme un verger : son **plan de
 culture** se fait **par planche**. Les planches viennent du plan de la parcelle, et
-chacune porte plusieurs cultures — c'est le principe de l'association.
+chacune peut porter plusieurs cultures.
 
 La page dit, planche par planche, ce que l'on sait de leurs voisinages : ce qui
 s'entend bien, ce qu'il vaut mieux éviter de placer côte à côte.
@@ -442,8 +442,7 @@ se procurer et l'eau qu'il faudra donner. Elle se lit parcelle par parcelle, ou
 pour tout le projet d'un coup.
 
 Le **matériel végétal** se déduit du scénario : chaque végétal, regroupé selon son
-origine — à acheter, à multiplier soi-même, à laisser venir par régénération
-naturelle.
+origine : à acheter, à multiplier soi-même, régénération naturelle.
 
 La quantité que vous avez saisie l'emporte ; à défaut, elle est estimée à partir de
 l'espacement et du plan de la parcelle, et la page le dit. Un végétal sans origine
@@ -485,12 +484,12 @@ Pour la **fréquence d'arrosage**, vous notez un test de sol sur la parcelle : l
 vitesse d'infiltration, l'état du sol (détrempé, ressuyé, sec dur) et le nombre de
 jours depuis la dernière pluie.
 
-La page en déduit combien de passages par semaine, de combien de millimètres, et
-pendant combien de temps au moins : un sol qui boit vite demande des passages plus
-courts et plus fréquents, un sol lent des cycles courts séparés de pauses.
+La page en déduit la classe d'infiltration du sol, la vitesse à laquelle il se
+ressuie, et les millimètres à apporter par semaine en été. Un sol qui boit vite
+demande des passages plus courts et plus fréquents, un sol lent des cycles courts
+séparés de pauses.
 
-Ces doses sont des repères, pas des normes : avant chaque arrosage, la main enfoncée
-dans le sol reste le meilleur juge.
+Avant chaque arrosage, la main enfoncée dans le sol reste le meilleur juge.
 
 # Réaliser et suivre
 

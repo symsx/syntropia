@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
         http_response_code(403);
-        $erreurs['jeton'] = 'Formulaire expiré — rechargez la page.';
+        $erreurs['jeton'] = 'Le formulaire a expiré. Rechargez la page.';
     } elseif (!$peutEcrire) {
         http_response_code(403);
         $erreurs['droit'] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';

@@ -87,14 +87,14 @@ final class Vents
 
         if (!is_string($corps) || $code !== 200) {
             return ['rose' => null,
-                'message' => "Le service météo n'a pas répondu. La rose se retrouve aussi "
-                    . "sur les fiches climatologiques de la station la plus proche."];
+                'message' => "Le service météo n'a pas répondu. La rose des vents se trouve aussi "
+                    . "sur les fiches climatologiques de la station météo la plus proche."];
         }
         $json = json_decode($corps, true);
         $directions = $json['hourly']['wind_direction_10m'] ?? null;
         $vitesses = $json['hourly']['wind_speed_10m'] ?? null;
         if (!is_array($directions) || !is_array($vitesses)) {
-            return ['rose' => null, 'message' => 'Réponse inattendue du service.'];
+            return ['rose' => null, 'message' => 'Le service météo a donné une réponse inattendue.'];
         }
         return self::agreger($directions, $vitesses, $debut, $fin, $annees);
     }
@@ -140,8 +140,8 @@ final class Vents
             }
         }
         if ($total === 0) {
-            return ['rose' => null, 'message' => "Aucune heure exploitable — "
-                . "le point est peut-être hors de la couverture du modèle."];
+            return ['rose' => null, 'message' => "Aucune heure n'est exploitable. "
+                . "Le point est peut-être hors de la couverture du modèle météo."];
         }
 
         $secteurs = [];
@@ -171,7 +171,7 @@ final class Vents
             'dominant' => $parPart[0]['nom'],
             'dominant_fort' => $parForce[0]['nom'],
         ], 'message' => sprintf(
-            '%d heures relevées de %d à %d. Vent moyen %s km/h, pointe à %d km/h.',
+            '%d heures relevées de %d à %d. Le vent moyen est de %s km/h, la pointe de %d km/h.',
             $total, $debut, $fin, str_replace('.', ',', (string) round($somme / $total, 1)), (int) $max)];
     }
 

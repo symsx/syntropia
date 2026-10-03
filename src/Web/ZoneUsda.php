@@ -68,7 +68,7 @@ final class ZoneUsda
         $jours = $json['daily']['time'] ?? null;
         $minima = $json['daily']['temperature_2m_min'] ?? null;
         if (!is_array($jours) || !is_array($minima)) {
-            return $vide('Réponse inattendue du service.');
+            return $vide('Le service a donné une réponse inattendue.');
         }
         return self::depuisMinima($jours, $minima);
     }

@@ -347,7 +347,7 @@ final class SautDuChat
                 'source' => 'Joala 2-1 à 2-3, et 6-8'];
         } elseif ($lignes !== []) {
             $c[] = ['cle' => 'stade', 'titre' => 'Le stade du terrain est dit', 'etat' => self::VIDE,
-                'detail' => 'Il dit d’où vous partez (plan de la parcelle, panneau Données : colonisation, accumulation ou abondance), et ce que la formation conseille à ce stade : la densité de plantation et la fréquence de taille.',
+                'detail' => 'Le stade dit d’où part la parcelle : colonisation, accumulation ou abondance. Il se choisit sur le plan de la parcelle, dans le panneau Données. L’atelier donne alors ce que la formation conseille à ce stade : la densité de plantation et la fréquence de taille.',
                 'source' => 'Joala 2-1 à 2-3, et 6-8'];
         }
         if ($lignes === []) {
@@ -362,10 +362,10 @@ final class SautDuChat
 
         // 1. Des alliées à perturber.
         $c[] = $noms === []
-            ? ['cle' => 'allies', 'titre' => 'Des alliées à perturber', 'etat' => self::VIDE,
+            ? ['cle' => 'allies', 'titre' => 'Des plantes à perturber', 'etat' => self::VIDE,
                 'detail' => 'Aucun végétal ne porte « fournir de la biomasse » ni « relancer par la perturbation ». Le saut du chat est l’effet de la perturbation : il lui faut des plantes à tailler.',
                 'source' => 'Théry, ch. 12']
-            : ['cle' => 'allies', 'titre' => 'Des alliées à perturber', 'etat' => self::OK,
+            : ['cle' => 'allies', 'titre' => 'Des plantes à perturber', 'etat' => self::OK,
                 'detail' => count($noms) . ' plante' . (count($noms) > 1 ? 's' : '') . ' : ' . implode(', ', array_slice(array_values($noms), 0, 4)) . (count($noms) > 4 ? '…' : '') . '.',
                 'source' => 'Théry, ch. 12']
         ;
@@ -374,11 +374,11 @@ final class SautDuChat
         $part = count($biomasseLignes) / $total;
         $pct = (int) round($part * 100);
         $c[] = $part >= self::PART_BIOMASSE_MIN
-            ? ['cle' => 'part', 'titre' => 'Une large part de biomasse', 'etat' => self::OK,
+            ? ['cle' => 'part', 'titre' => '70 à 80 % de biomasse', 'etat' => self::OK,
                 'detail' => count($biomasseLignes) . ' végétaux sur ' . $total . ' (' . $pct . ' %) servent la biomasse ou la perturbation. Le repère : 70 à 80 %.',
                 'source' => 'Théry, ch. 11']
-            : ['cle' => 'part', 'titre' => 'Une large part de biomasse', 'etat' => self::ATTENTION,
-                'detail' => count($biomasseLignes) . ' végétaux sur ' . $total . ' (' . $pct . ' %) servent la biomasse ou la perturbation ; le repère est de 70 à 80 %. Un repère, non un seuil : compté en végétaux du scénario, non en nombre de plants.',
+            : ['cle' => 'part', 'titre' => '70 à 80 % de biomasse', 'etat' => self::ATTENTION,
+                'detail' => count($biomasseLignes) . ' végétaux sur ' . $total . ' (' . $pct . ' %) servent la biomasse ou la perturbation. Le repère est de 70 à 80 %. Il se compte en végétaux du scénario, et non en nombre de plants.',
                 'source' => 'Théry, ch. 11'];
 
         // 3. Au moins deux espèces par strate.
@@ -415,9 +415,9 @@ final class SautDuChat
         if ($biomasseLignes !== []) {
             $notes = count(array_filter($biomasseLignes, static fn (array $l): bool => trim((string) ($l['conduite_taille'] ?? '')) !== ''));
             $c[] = $notes === count($biomasseLignes)
-                ? ['cle' => 'geste', 'titre' => 'Le geste de taille est noté', 'etat' => self::OK,
+                ? ['cle' => 'geste', 'titre' => 'Un geste de taille noté', 'etat' => self::OK,
                     'detail' => 'Chaque plante de biomasse a sa conduite de taille.', 'source' => 'Théry, ch. 12']
-                : ['cle' => 'geste', 'titre' => 'Le geste de taille est noté', 'etat' => self::VIDE,
+                : ['cle' => 'geste', 'titre' => 'Un geste de taille noté', 'etat' => self::VIDE,
                     'detail' => 'Conduite de taille notée pour ' . $notes . ' des ' . count($biomasseLignes) . ' végétaux de biomasse (basitone, cépée, trogne). C’est elle qui règle la hauteur de coupe et la fréquence.',
                     'source' => 'Théry, ch. 12 ; fiche des conduites de taille'];
         }

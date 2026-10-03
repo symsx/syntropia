@@ -24,7 +24,7 @@ final class Materiel
         'achat' => 'À acheter',
         'mixte' => 'Acheté et multiplié',
         'multiplication' => 'À multiplier soi-même',
-        'rna' => 'À laisser venir (RNA)',
+        'rna' => 'Régénération naturelle',
         'potager' => 'Cultures du potager',
         '' => 'Origine à préciser',
     ];

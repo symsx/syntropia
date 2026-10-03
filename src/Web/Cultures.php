@@ -13,8 +13,7 @@ use Syntropia\Scenario;
  * planche, à quelles dates.
  *
  * Voir `chantier-plan-de-culture.md`, Phase 1. Le placement se fait **par planche** (le porteur, 2026-09-20) : la
- * planche est un numéro du plan de la parcelle, de 1 à `nb_planches`. Une planche porte plusieurs cultures — c'est
- * le principe même de l'association.
+ * planche est un numéro du plan de la parcelle, de 1 à `nb_planches`. Une planche peut porter plusieurs cultures.
  *
  * Même conduite que `Interventions` et `Constats` : le garde-fou d'appartenance d'une parcelle à un site se fait à
  * l'appel, chaque requête est bornée à la parcelle, la modification se fait sous verrou de version. Ne touche que les
@@ -89,7 +88,7 @@ final class Cultures
 
         $espece = trim((string) ($v['espece'] ?? ''));
         if ($espece === '') {
-            $erreurs['espece'] = 'Dites quelle culture : un nom suffit.';
+            $erreurs['espece'] = 'Indiquez la culture : un nom suffit.';
         } elseif (mb_strlen($espece) > 160) {
             $erreurs['espece'] = 'Le nom est trop long (160 caractères au plus).';
         }
@@ -183,7 +182,7 @@ final class Cultures
 
         $notes = trim((string) ($v['notes'] ?? ''));
         if (mb_strlen($notes) > 2000) {
-            $erreurs['notes'] = 'Les notes : 2000 caractères au plus.';
+            $erreurs['notes'] = 'Les notes comptent 2000 caractères au plus.';
         }
 
         return ['valeurs' => [

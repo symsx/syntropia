@@ -69,7 +69,7 @@ if ($invitation !== null) {
 if ($invitation !== null && $_SERVER['REQUEST_METHOD'] === 'POST'
     && ($_POST['action'] ?? '') === 'rejoindre') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $message = 'Formulaire expiré — rechargez la page.';
+        $message = 'Le formulaire a expiré. Rechargez la page.';
     } elseif (!$invitations->consommer((int) $invitation['id'], $compteId)) {
         $message = "Cette invitation vient de servir à quelqu'un d'autre.";
         $invitation = null;

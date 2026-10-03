@@ -41,7 +41,7 @@ $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, '
 
 if ($estPorteur && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $_SESSION['syntropia_flash_membres'] = ['erreur', 'Formulaire expiré — rechargez la page.'];
+        $_SESSION['syntropia_flash_membres'] = ['erreur', 'Le formulaire a expiré. Rechargez la page.'];
     } elseif (($_POST['action'] ?? '') === 'retirer') {
         $cible = (int) ($_POST['compte_id'] ?? 0);
         $nom = (new Comptes())->nomsParIds([$cible])[$cible]['nom_affiche'] ?? 'Cette personne';

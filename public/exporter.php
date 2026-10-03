@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $refuser(403, 'Seul le porteur du projet peut l’exporter.');
     }
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $refuser(403, 'Formulaire expiré — rechargez la page.');
+        $refuser(403, 'Le formulaire a expiré. Rechargez la page.');
     }
     $doc = $export->construire($siteId);
     if ($doc === null) {

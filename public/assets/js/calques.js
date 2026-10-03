@@ -354,7 +354,7 @@
     var texteEtat = !cadastre.visible ? ''
       : (cadastre.parcelles.length
           ? cadastre.parcelles.length + ' parcelle' + (cadastre.parcelles.length > 1 ? 's' : '')
-            + ' au cadastre — suivez leurs bords pour tracer vos limites.'
+            + ' au cadastre. Suivez leurs bords pour tracer vos limites.'
           : cadastre.message);
     var el = $('cadastre-etat');
     if (el) { el.textContent = texteEtat; }
@@ -423,7 +423,7 @@
       Array.prototype.forEach.call(sel.options, function (o) {
         if (!o.value) { return; }
         var posee = elements.some(function (e) { return e.calque === 'parcelles' && String(e.parcelle_id) === o.value; });
-        o.textContent = o.dataset.nom + (posee ? ' — posée' : o.dataset.dims ? ' — ' + o.dataset.dims : ' — sans dimensions');
+        o.textContent = o.dataset.nom + (posee ? ', posée' : o.dataset.dims ? ', ' + o.dataset.dims : ', sans dimensions');
       });
     }
   }
@@ -478,7 +478,7 @@
       enCours = null; rect = null;
       if ($('trace-libelle')) { $('trace-libelle').value = ''; }
       etat(); tout(); listes(); message(j.message);
-    }).catch(function () { message('Le serveur n\'a pas répondu — rien n\'est enregistré.'); });
+    }).catch(function () { message('Le serveur n\'a pas répondu. Rien n\'est enregistré.'); });
   }
 
   function retirer(id) {
@@ -519,30 +519,30 @@
   }
   function motRepositionner() {
     var el = selectionEl();
-    if (!el) { return 'Glissez une parcelle pour la déplacer ; son orientation se règle ensuite au curseur du panneau Données.'; }
+    if (!el) { return 'Glissez une parcelle pour la déplacer. Son orientation se règle ensuite avec le curseur du panneau Données.'; }
     return orientable(el)
-      ? 'Parcelle ' + el.libelle + ' — glissez-la pour la déplacer ; son orientation se règle au curseur du panneau Données.'
+      ? 'Parcelle ' + el.libelle + '. Glissez-la pour la déplacer. Son orientation se règle avec le curseur du panneau Données.'
       : 'Parcelle ' + el.libelle + ' tracée à la main : elle se déplace, mais ne se tourne pas.';
   }
   function etat() {
     var n = enCours ? enCours.points.length : 0;
     var mot;
     if (rect) {
-      mot = rect.centre ? 'Parcelle ' + rect.parcelle.code + ' posée — tournez-la, puis enregistrez.'
+      mot = rect.centre ? 'Parcelle ' + rect.parcelle.code + ' posée. Tournez-la, puis enregistrez.'
         : 'Cliquez sur la carte à l\'endroit du centre de la parcelle ' + rect.parcelle.code + '.';
     } else if (!enCours) {
       mot = mode === 'repositionner' ? motRepositionner() : { deplacer: 'Glissez pour déplacer, molette pour zoomer.',
-              etiquette: 'Glissez une étiquette pour la déplacer ; double-clic pour la remettre à sa place.',
+              etiquette: 'Glissez une étiquette pour la déplacer. Un double-clic la remet à sa place.',
               point: 'Cliquez : un point.',
-              ligne: 'Cliquez point après point ; double-clic ou Entrée pour finir, clic droit pour défaire.',
-              polygone: 'Cliquez le contour ; double-clic ou Entrée pour fermer, clic droit pour défaire.',
-              libre: 'Appuyez et suivez le contour à la main ; relâchez pour fermer.',
-              rectangle: 'Cliquez le centre de la parcelle ; clic droit pour la reprendre.' }[mode];
+              ligne: 'Cliquez point après point. Double-clic ou Entrée pour finir, clic droit pour défaire.',
+              polygone: 'Cliquez le contour point par point. Double-clic ou Entrée pour fermer, clic droit pour défaire.',
+              libre: 'Appuyez et suivez le contour à la main. Relâchez pour fermer.',
+              rectangle: 'Cliquez le centre de la parcelle. Un clic droit la reprend.' }[mode];
     } else {
-      var mesure = enCours.type === 'polygone' && n > 2 ? ' — ' + fmt(surface(enCours.points))
-        : enCours.type === 'ligne' && n > 1 ? ' — ' + arrondi(longueur(enCours.points), 0) + ' m' : '';
+      var mesure = enCours.type === 'polygone' && n > 2 ? ', ' + fmt(surface(enCours.points))
+        : enCours.type === 'ligne' && n > 1 ? ', ' + arrondi(longueur(enCours.points), 0) + ' m' : '';
       mot = n + ' point' + (n > 1 ? 's' : '') + mesure
-        + '. Clic droit défait le dernier, Échap annule tout.';
+        + '. Un clic droit défait le dernier point, Échap annule tout.';
     }
     texte('trace-etat', mot);
     var pret = (rect && rect.centre) || (enCours && enCours.points.length >= ({ point: 1, ligne: 2, polygone: 3 }[enCours.type] || 1));
@@ -702,7 +702,7 @@
       el.proprietes = j.element.proprietes;
       tout();
       message(pos ? 'Étiquette déplacée.' : 'Étiquette remise à sa place.');
-    }).catch(function () { message("Le serveur n'a pas répondu — l'étiquette reste où elle était."); tout(); });
+    }).catch(function () { message("Le serveur n'a pas répondu. L'étiquette reste où elle était."); tout(); });
   }
 
   /* REPOSITIONNER UNE PARCELLE. On saisit la parcelle, elle suit le pointeur
@@ -752,7 +752,7 @@
         el.geometrie = j.element.geometrie; el.proprietes = j.element.proprietes;
         tout(); listes(); etat(); message(dit);
       }).catch(function () {
-        previsu = null; tout(); message("Le serveur n'a pas répondu — la parcelle reste où elle était.");
+        previsu = null; tout(); message("Le serveur n'a pas répondu. La parcelle reste où elle était.");
       });
   }
   function deplacerParcelle(el, dLat, dLon) {
@@ -871,7 +871,7 @@
     if (blocEau) { blocEau.hidden = false; }
     boutonEau.addEventListener('click', function () {
       boutonEau.disabled = true;
-      texte('eau-etat', 'Je regarde ce qu\'OpenStreetMap connaît autour du terrain…');
+      texte('eau-etat', 'Recherche de l\'eau connue d\'OpenStreetMap autour du terrain…');
       fetch(cfg.apiEau, { method: 'POST', body: new URLSearchParams({
         csrf: cfg.csrf, site_id: cfg.siteId }) })
         .then(function (r) { return r.json(); })
@@ -898,7 +898,7 @@
   if (boutonAltitude && cfg.peutEcrire && cfg.apiAltitude) {
     boutonAltitude.addEventListener('click', function () {
       boutonAltitude.disabled = true;
-      texte('altitude-etat', "Je relève les altitudes IGN sur l'emprise du terrain…");
+      texte('altitude-etat', "Relevé des altitudes IGN sur l'emprise du terrain…");
       fetch(cfg.apiAltitude, { method: 'POST', body: new URLSearchParams({
         csrf: cfg.csrf, site_id: cfg.siteId }) })
         .then(function (r) { return r.json(); })

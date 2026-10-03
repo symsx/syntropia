@@ -47,7 +47,7 @@ if (!$auth->estConnecte()) {
     repondre(403, ['ok' => false, 'message' => 'Non autorisé.']);
 }
 if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-    repondre(403, ['ok' => false, 'message' => 'Formulaire expiré — rechargez la page.']);
+    repondre(403, ['ok' => false, 'message' => 'Le formulaire a expiré. Rechargez la page.']);
 }
 
 $siteId = (int) ($_POST['site_id'] ?? 0);

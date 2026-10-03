@@ -28,7 +28,7 @@ final class Bordures
      */
     public const CADRES = [
         'externe' => ['libelle' => 'Bordure externe', 'fonctions' => ['bloque_herbe', 'couvre_sol', 'vent'],
-            'role' => 'bloquer l’herbe — couvrir le sol revient au même — et freiner le vent'],
+            'role' => 'bloquer l’herbe, ou couvrir le sol, et freiner le vent'],
         'interne' => ['libelle' => 'Bordure interne', 'fonctions' => ['biomasse'],
             'role' => 'apporter de la biomasse'],
         // La ligne des lianes d'une tortue liane (Théry, ch. 15 § 9 ; le porteur, 2026-09-30) : une ligne propre pour les
@@ -36,7 +36,7 @@ final class Bordures
         // ses « côtés » sont ses positions (`Planches::POSITIONS_LIANE`). Une liane se reconnaît à sa strate possible
         // « Liane / grimpante » (`7_liane`) au référentiel — pas à une fonction.
         'liane' => ['libelle' => 'Ligne des lianes', 'fonctions' => [],
-            'role' => 'porter les lianes de la structure — les émergentes en haut, la strate haute à leur ombre'],
+            'role' => 'porter les lianes de la structure, les émergentes en haut et la strate haute à leur ombre'],
     ];
 
     /** La strate possible qui marque une liane au référentiel (vocabulaire jardin-forêt de `Conduite`). */
@@ -257,9 +257,9 @@ final class Bordures
     {
         $strates = self::strates($e);
         $reserve = in_array('emergente', $strates, true)
-            ? 'Émergente : en haut de la structure — perturbée selon la lumière voulue dessous.'
+            ? 'Émergente : en haut de la structure, perturbée selon la lumière voulue dessous.'
             : (in_array('haute', $strates, true)
-                ? 'Strate haute : à l’ombre des émergentes — à l’est ou au nord, ou entre les poteaux centraux.'
+                ? 'Strate haute : à l’ombre des émergentes, à l’est ou au nord, ou entre les poteaux centraux.'
                 : null);
         // La production compte ici : la vigne, le kiwi montent sur la structure pour leurs fruits.
         return ['espece' => $e, 'fonctions' => array_values(array_intersect($roles, ['production', ...array_keys(Scenario::FONCTIONS)])), 'reserve' => $reserve];

@@ -38,9 +38,9 @@ enum Stade: string
     public function explication(): string
     {
         return match ($this) {
-            self::Colonisation => 'Une installation dans des conditions difficiles : faibles ressources, organismes peu exigeants, un sol jeune où dominent les bactéries et où les champignons manquent.',
-            self::Accumulation => 'Une croissance rapide qui multiplie et accumule la biomasse : la friche qui évolue vers le boisement.',
-            self::Abondance => 'Des réseaux d’interactions complexes et une circulation rapide des ressources : un sol mûr, des arbres souvent longévifs et des plantes exigeantes.',
+            self::Colonisation => 'Le vivant s’installe dans des conditions difficiles, avec de faibles ressources et des organismes peu exigeants. Le sol est jeune : les bactéries y dominent et les champignons manquent.',
+            self::Accumulation => 'Une croissance rapide multiplie et accumule la biomasse. C’est la friche qui évolue vers le boisement.',
+            self::Abondance => 'Des réseaux d’interactions complexes font circuler rapidement les ressources. Le sol est mûr, les arbres souvent longévifs et les plantes exigeantes.',
         };
     }
 
@@ -48,9 +48,9 @@ enum Stade: string
     public function observe(): string
     {
         return match ($this) {
-            self::Colonisation => 'Peu de vie dans le sol, pas de champignons ; des mousses et des lichens (des cactus et des agaves sous d’autres climats). Le relief compte : les creux gardent l’eau et les minéraux et font des microclimats abrités, les bosses restent exposées.',
-            self::Accumulation => 'Des saules, peupliers, bouleaux, noisetiers, aubépines, prunelliers qui s’installent tout seuls. La ronce se tient à la transition vers l’abondance.',
-            self::Abondance => 'Des arbres longévifs et exigeants (pommier, poirier, cognassier, noyer, cerisier), un sol riche en champignons, un sous-bois qui se ferme. L’abondance est relative : une prairie peut en être une.',
+            self::Colonisation => 'Le sol a peu de vie et pas de champignons. On y voit des mousses et des lichens, ou des cactus et des agaves sous d’autres climats. Le relief compte : les creux gardent l’eau et les minéraux et font des microclimats abrités, les bosses restent exposées.',
+            self::Accumulation => 'Des saules, des peupliers, des bouleaux, des noisetiers, des aubépines et des prunelliers s’installent tout seuls. La ronce marque la transition vers l’abondance.',
+            self::Abondance => 'On y voit des arbres longévifs et exigeants (pommier, poirier, cognassier, noyer, cerisier), un sol riche en champignons et un sous-bois qui se ferme. L’abondance est relative : une prairie peut être un milieu d’abondance.',
         };
     }
 
@@ -58,9 +58,9 @@ enum Stade: string
     public function usage(): string
     {
         return match ($this) {
-            self::Colonisation => 'La succession va de la colonisation vers l’accumulation, puis l’abondance : ce sont les plantes d’accumulation qui apportent supports et matière pour installer des productions plus exigeantes. Avec peu de moyens, la régénération naturelle assistée est une voie pour commencer.',
-            self::Accumulation => 'Les plantes d’accumulation fournissent déjà des supports et de la matière pour installer des productions plus exigeantes ; les épineux (aubépine, prunellier) protègent les jeunes plants de l’abroutement au démarrage.',
-            self::Abondance => 'L’énergie y est réinjectée presque aussitôt plutôt que stockée : c’est l’horizon de la succession, où les productions exigeantes trouvent leur place.',
+            self::Colonisation => 'La succession va de la colonisation vers l’accumulation, puis l’abondance. Les plantes d’accumulation apportent les supports et la matière qui permettent d’installer des productions plus exigeantes. Avec peu de moyens, la régénération naturelle assistée permet de commencer.',
+            self::Accumulation => 'Les plantes d’accumulation fournissent déjà des supports et de la matière pour installer des productions plus exigeantes. Les épineux (aubépine, prunellier) protègent les jeunes plants de l’abroutement au démarrage.',
+            self::Abondance => 'L’énergie y est réinjectée presque aussitôt plutôt que stockée. C’est l’horizon de la succession, où les productions exigeantes trouvent leur place.',
         };
     }
 
@@ -71,9 +71,9 @@ enum Stade: string
     public function repere(): string
     {
         return match ($this) {
-            self::Colonisation => 'À ce stade, la formation conseille de planter très dense et de tailler très souvent : « plus le sol est pauvre, plus on plante », et les trois premières années une perturbation forte lance la vie du sol.',
-            self::Accumulation => 'À ce stade, la formation conseille une densité modérée et des tailles qui s’espacent : la vie du sol ralentit d’elle-même.',
-            self::Abondance => 'À ce stade, les strates sont stables et l’on taille peu (« plus ça va, moins on taille ») ; l’apport de matière ralentit et se stabilise.',
+            self::Colonisation => 'À ce stade, la formation conseille de planter très dense et de tailler très souvent : « plus le sol est pauvre, plus on plante ». Les trois premières années, une perturbation forte lance la vie du sol.',
+            self::Accumulation => 'À ce stade, la formation conseille une densité modérée et des tailles qui s’espacent, car la vie du sol ralentit d’elle-même.',
+            self::Abondance => 'À ce stade, les strates sont stables et l’on taille peu : « plus ça va, moins on taille ». L’apport de matière ralentit et se stabilise.',
         };
     }
 

@@ -25,10 +25,10 @@
       if (d.p) usages.push('production en ' + lib(d.p));
       if (d.s) usages.push('service en ' + lib(d.s));
       var texte = usages.length
-        ? 'Le référentiel dit : ' + usages.join(', ') + ' (la strate dépend de l’usage — Théry, ch. 05).'
+        ? 'Le référentiel indique ' + usages.join(', ') + '. La strate dépend de l’usage (Théry, ch. 05).'
         : 'Le référentiel range cette plante en strate ' + d.toutes.map(lib).join(' ou ') + '.';
-      if (proposee) texte += ' Proposée ici : ' + lib(proposee) + (prod ? ', pour la production.' : ', pour le service.');
-      else texte += ' Pour ' + (prod ? 'la production' : 'le service') + ', il ne dit pas laquelle : à choisir, et à noter dans Espèces.';
+      if (proposee) texte += ' La strate proposée est ' + lib(proposee) + (prod ? ', pour la production.' : ', pour le service.');
+      else texte += ' Pour ' + (prod ? 'la production' : 'le service') + ', il n’indique pas de strate : choisissez-la, et notez-la dans Espèces.';
       if (o.strate.value && o.strate.value !== proposee) texte += ' Vous avez choisi ' + lib(o.strate.value) + '.';
       o.note.textContent = texte;
       o.note.hidden = false;

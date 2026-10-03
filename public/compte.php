@@ -56,7 +56,7 @@ if (is_array($flash)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? '');
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $message = [$action === 'mdp' ? 'mdp' : 'nom', 'erreur', 'Formulaire expiré — rechargez la page.'];
+        $message = [$action === 'mdp' ? 'mdp' : 'nom', 'erreur', 'Le formulaire a expiré. Rechargez la page.'];
         $onglet = $message[0];
     } elseif ($action === 'nom') {
         $onglet = 'nom';

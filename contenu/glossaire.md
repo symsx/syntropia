@@ -130,3 +130,8 @@ d'arrosage à prévoir.
 
 Un test qui plonge des mottes de terre sèches dans l'eau pour voir si elles
 tiennent ou se délitent — il révèle la stabilité de la structure du sol.
+
+# Association de plantes
+
+Le principe des associations de plantes est de permettre un meilleur
+développement des plantes lorsqu'on les regroupe ensemble.

@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $portee !== []) {
         $erreurs['droit'] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';
     } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
         http_response_code(403);
-        $erreurs['jeton'] = 'Formulaire expiré — rechargez la page.';
+        $erreurs['jeton'] = 'Le formulaire a expiré. Rechargez la page.';
     } elseif ($action === 'eau') {
         if ($sites->enregistrerEau($siteId, (string) ($_POST['ressource_eau'] ?? ''), (string) ($_POST['ressource_eau_detail'] ?? ''))) {
             $_SESSION['syntropia_flash_materiel'] = ['ok', 'La ressource en eau du site est enregistrée.'];
@@ -455,7 +455,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
     <main class="bureau" id="bureau">
 <?php if ($portee === []): ?>
       <div class="mv-centre">
-        <p class="mv-vide-page">Le matériel et l'eau se comptent parcelle par parcelle, et ce site n'en a pas encore.
+        <p class="mv-vide-page">Le matériel et l'eau se comptent parcelle par parcelle, et ce site n'a pas encore de parcelle.
           <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
@@ -463,7 +463,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
         <input class="mv-radio" type="radio" name="vue" id="v-mat"<?= $vueEau ? '' : ' checked' ?>>
         <input class="mv-radio" type="radio" name="vue" id="v-eau"<?= $vueEau ? ' checked' : '' ?>>
         <div class="mv-entete">
-          <h1 class="mv-titre">Matériel et eau — <?= $h($titrePage) ?></h1>
+          <h1 class="mv-titre">Le matériel et l'eau, <?= $h($titrePage) ?></h1>
 <?php if ($surface > 0): ?>
           <span class="mv-badge"><?= $nombre($surface) ?> m² arrosés</span>
 <?php endif; ?>
@@ -477,7 +477,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
         <p class="mv-message" role="status"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
 <?php if ($erreurs !== []): ?>
-        <p class="mv-message mv-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
+        <p class="mv-message mv-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
         <div class="mv-onglets" role="tablist">
           <label class="mv-onglet" for="v-mat">Matériel végétal</label>
@@ -487,7 +487,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
         <!-- ============ le matériel ============ -->
         <section class="mv-vue mv-vue-mat" id="mv-mat">
 <?php if ($recap === []): ?>
-          <p class="mv-message">Aucun végétal n'est encore placé <?= $tout ? 'sur les parcelles' : 'sur cette parcelle' ?> : la liste se déduit <?= $parcelle !== null && ($parcelle['type'] ?? '') === 'potager' ? 'du plan de culture' : 'du scénario' ?>.
+          <p class="mv-message">Aucun végétal n'est encore placé <?= $tout ? 'sur les parcelles' : 'sur cette parcelle' ?>. La liste se déduit <?= $parcelle !== null && ($parcelle['type'] ?? '') === 'potager' ? 'du plan de culture' : 'du scénario' ?>.
             <?php if ($parcelle !== null): ?><a href="conception-<?= ($parcelle['type'] ?? '') === 'potager' ? 'potager' : 'scenario' ?>.php?parcelle=<?= $idP ?>"><?= ($parcelle['type'] ?? '') === 'potager' ? 'Composer le plan de culture' : 'Composer le scénario' ?> →</a><?php endif; ?></p>
 <?php else: ?>
           <div class="mv-synthese">
@@ -505,8 +505,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
                   <td><?= $h($r['espece']) ?></td>
                   <td class="ori"><?= $h(Materiel::ORIGINES[$r['origine']] ?? '') ?></td>
                   <td class="q"><?php if ($r['n'] !== null): ?><?= $r['estime'] ? '≈ ' : '' ?><?= $nombre((float) $r['n']) ?><?= $r['estime'] ? ' <small>estimé</small>' : '' ?><?= $r['graines'] > 0 ? ' <small>· ≈ ' . $nombre((float) $r['graines']) . ' graines</small>' : '' ?>
-                    <?php elseif ($r['connu'] > 0): ?>≥ <?= $nombre((float) $r['connu']) ?> <small>et des quantités à préciser</small>
-                    <?php else: ?><small>à déterminer</small><?php endif; ?></td>
+                    <?php elseif ($r['connu'] > 0): ?>≥ <?= $nombre((float) $r['connu']) ?> <small>, d'autres quantités restent à préciser</small>
+                    <?php else: ?><small>À déterminer</small><?php endif; ?></td>
 <?php if ($tout): ?>
                   <td class="ori"><?= $h(implode(', ', $r['parcelles'])) ?></td>
 <?php endif; ?>
@@ -520,24 +520,24 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
           </div>
           <p class="mv-pied-note">
 <?php if ($estimes > 0): ?>
-            « Estimé » : une ligne de plants par planche ou par bande de bordure, à l'espacement du scénario — une estimation haute quand plusieurs végétaux se partagent une ligne. Une quantité saisie dans le scénario ou le plan de culture la remplace.
+            Une quantité « estimée » compte une ligne de plants par planche ou par bande de bordure, à l'espacement du scénario. L'estimation est haute quand plusieurs végétaux se partagent une ligne. Une quantité saisie dans le scénario ou le plan de culture la remplace.
 <?php else: ?>
             Les quantités sont celles du scénario. Sans quantité ni espacement, elles restent « à déterminer ».
 <?php endif; ?>
 <?php if ($depuisPlan): ?>
-            Les plants posés sur les lignes du <b>plan</b> — bordures, lignes de service des planches — sont comptés tels quels, à l'espacement de chaque espèce dans Espèces (d'où vient aussi leur origine) ; pour ce qui pousse en bordure, c'est ce compte qui fait foi.
+            Les plants posés sur les lignes du <b>plan</b> (bordures, lignes de service des planches) sont comptés tels quels, à l'espacement de chaque espèce dans Espèces, d'où vient aussi leur origine. Pour les bordures, c'est ce compte qui fait foi.
 <?php endif; ?>
 <?php if ($aPotager): ?>
-            Cultures du potager : la quantité est le nombre de <b>plants</b> saisi dans le plan de culture ; sans lui, une ligne de plants sur la planche, à l'espacement de la culture. Pour une culture semée à l'abri, les <b>graines</b> ajoutent la marge de semis — un taux de réussite de 80 %, la convention de planification de Lopez (91 % pour un poireau, 50 % pour une aubergine dans son livre) : à remplacer par vos propres levées. Une culture semée en place n'a pas de graines chiffrées.
+            Pour les cultures du potager, la quantité est le nombre de <b>plants</b> saisi dans le plan de culture. Sans lui, l'atelier compte une ligne de plants sur la planche, à l'espacement de la culture. Pour une culture semée à l'abri, le nombre de <b>graines</b> est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez (91 % pour un poireau, 50 % pour une aubergine dans son livre). Remplacez-le par vos propres levées. Une culture semée en place n'a pas de graines chiffrées.
 <?php endif; ?>
 <?php if ($aPrecise > 0): ?>
-            <?= $aPrecise ?> <?= $vegetaux($aPrecise) ?> sans origine : dites-la dans le scénario, elle décide de ce qu'on achète.
+            <?= $aPrecise ?> <?= $vegetaux($aPrecise) ?> sans origine. Indiquez-la dans le scénario : elle décide de ce qu'on achète.
 <?php endif; ?>
 <?php if ($sansScenario !== []): ?>
-            Sans scénario : <?= $h(implode(', ', $sansScenario)) ?>.
+            Parcelles sans scénario : <?= $h(implode(', ', $sansScenario)) ?>.
 <?php endif; ?>
 <?php if ($sansCulture !== []): ?>
-            Sans culture au plan : <?= $h(implode(', ', $sansCulture)) ?>.
+            Parcelles sans culture au plan : <?= $h(implode(', ', $sansCulture)) ?>.
 <?php endif; ?>
           </p>
 <?php endif; ?>
@@ -546,7 +546,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
         <!-- ============ l'eau ============ -->
         <section class="mv-vue mv-vue-eau" id="mv-eaupage">
 <?php if ($surface <= 0): ?>
-          <p class="mv-message mv-message--alerte">Le besoin en eau se calcule sur la surface : donnez la longueur et la largeur
+          <p class="mv-message mv-message--alerte">Le besoin en eau se calcule sur la surface. Donnez la longueur et la largeur
             <?= $tout ? 'des parcelles' : 'de la parcelle' ?> <a href="conception-parcelles.php<?= $parcelle !== null ? '?parcelle=' . $idP : '' ?>">sur son plan →</a></p>
 <?php else: ?>
           <input class="mv-radio" type="radio" name="bloc" id="b-1">
@@ -569,7 +569,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
                     <?php if ($b['m3_an'] !== null): ?>
                     <td class="q"><?= $nombre($b['m3_an'], 1) ?> m³</td><td class="q"><?= $nombre($b['mare_m3'], 1) ?> m³</td>
                     <?php else: ?>
-                    <td class="q" colspan="2">moins — non chiffré</td>
+                    <td class="q" colspan="2">Moins, non chiffré</td>
                     <?php endif; ?>
                   </tr>
 <?php endforeach; ?>
@@ -578,9 +578,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php if ($pointe !== null): ?>
               <p>En pointe d'été : <span class="mv-cle"><?= $nombre($pointe['m3_jour'], 2) ?> m³ par jour</span>, soit <?= $nombre($pointe['m3_semaine'], 1) ?> m³ dans la semaine (5 mm/jour).</p>
 <?php endif; ?>
-              <p class="doux">La réserve à prévoir égale le besoin annuel ; une mare se creuse un tiers plus grande, l'évaporation en prend le quart. Ordres de grandeur, tirés de Lopez (maraîchage d'annuelles) — pas une consommation attendue. On arrose tout, passe-pieds compris. <?= $tousPotagers ? 'Un potager d’annuelles est le cas que décrit Lopez : ces nombres s’y appliquent sans transposition de plante, non de climat.' : 'Une pérenne demande surtout l’arrosage de ses trois premières années.' ?></p>
+              <p class="doux">La réserve à prévoir égale le besoin annuel. Une mare se creuse un tiers plus grande, car l'évaporation en prend le quart. Ce sont des ordres de grandeur pour dimensionner, tirés de Lopez (maraîchage d'annuelles). On arrose tout, passe-pieds compris. <?= $tousPotagers ? 'Un potager d’annuelles est le cas que décrit Lopez : ces nombres s’y appliquent pour les plantes, mais le climat reste à transposer.' : 'Une pérenne demande surtout l’arrosage de ses trois premières années.' ?></p>
 <?php if ($sansDimensions !== []): ?>
-              <p class="doux mv-alerte">Sans dimensions, non comptées : <?= $h(implode(', ', $sansDimensions)) ?>.</p>
+              <p class="doux mv-alerte">Parcelles sans dimensions, non comptées : <?= $h(implode(', ', $sansDimensions)) ?>.</p>
 <?php endif; ?>
             </div>
 
@@ -591,17 +591,17 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php if ($peutEcrire): ?>
                  <a href="<?= $h($retour) ?>&amp;onglet=eau" data-ouvre-panneau="eau">La noter →</a>
 <?php endif; ?></p>
-              <p class="doux">Elle décide du stockage à prévoir : le réseau, un puits, une réserve ou rien — et sans eau, on bascule vers la régénération naturelle assistée.</p>
+              <p class="doux">Elle décide du stockage à prévoir : le réseau, un puits, une réserve ou rien. Sans eau, la régénération naturelle assistée devient la voie à suivre.</p>
 <?php else: ?>
-              <p><span class="mv-cle"><?= $h(BesoinEau::RESSOURCES[$ressource]) ?></span><?= $ressourceDetail !== '' ? ' — ' . $h($ressourceDetail) : '' ?></p>
+              <p><span class="mv-cle"><?= $h(BesoinEau::RESSOURCES[$ressource]) ?></span><?= $ressourceDetail !== '' ? ', ' . $h($ressourceDetail) : '' ?></p>
               <p><?= $h(BesoinEau::CONSEIL_RESSOURCE[$ressource]) ?></p>
-              <p class="doux"><b>À la taille de perturbation</b> : on coupe au moment que disent les plantes, avant ou après une pluie — la première en juin —, et l'on arrose si elle ne vient pas. <?= $ressource === 'aucune' ? 'Sans eau à portée, la taille se cale sur la pluie.' : 'Prévoyez de pouvoir arroser à ces dates, pas seulement pour les plants.' ?> Le corpus ne donne pas de dose pour une perturbation : aucun volume n'est calculé ici.</p>
+              <p class="doux"><b>À la taille de perturbation</b>, on coupe au moment que disent les plantes, avant ou après une pluie, la première fois en juin. On arrose si la pluie ne vient pas. <?= $ressource === 'aucune' ? 'Sans eau à portée, la taille se cale sur la pluie.' : 'Prévoyez de pouvoir arroser à ces dates, en plus des plants.' ?> Le corpus ne donne pas de dose pour une perturbation : aucun volume n'est calculé ici.</p>
 <?php if ($ressource !== 'reseau' && isset($besoins['intermediaire']) && $besoins['intermediaire']['m3_an'] !== null): ?>
-              <p class="doux">Réserve à prévoir : de <?= $nombre($besoins['intermediaire']['reserve_m3'], 0) ?> m³ en sol intermédiaire à <?= $nombre($besoins['degrade']['reserve_m3'], 0) ?> m³ en sol dégradé.</p>
+              <p class="doux">La réserve à prévoir va de <?= $nombre($besoins['intermediaire']['reserve_m3'], 0) ?> m³ en sol intermédiaire à <?= $nombre($besoins['degrade']['reserve_m3'], 0) ?> m³ en sol dégradé.</p>
 <?php endif; ?>
 <?php if ($ressource === 'aucune'): $aTransplanter = count(array_filter($recap, static fn (array $r): bool => in_array($r['origine'], ['achat', 'multiplication', 'mixte'], true))); ?>
 <?php if ($aTransplanter > 0): ?>
-              <p class="mv-alerte"><?= $aTransplanter ?> <?= $vegetaux($aTransplanter) ?> à transplanter : chacun demandera de l'eau trois ans.</p>
+              <p class="mv-alerte"><?= $aTransplanter ?> <?= $vegetaux($aTransplanter) ?> à transplanter. Chacun demandera de l'eau pendant trois ans.</p>
 <?php endif; ?>
 <?php endif; ?>
 <?php endif; ?>
@@ -612,51 +612,53 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php if ($tout): ?>
               <table>
                 <tbody>
-<?php foreach ($conseils as $c): $f = $c['freq']; $pointeSemaine = $f['semaines'][1]; ?>
+<?php foreach ($conseils as $c): $f = $c['freq']; ?>
                   <tr>
                     <td><span class="mv-cle"><?= $h($c['parcelle']['code']) ?></span></td>
                     <?php if ($c['releve'] === null): ?>
-                    <td>pas de test de sol — <a href="conception-materiel-et-eau.php?parcelle=<?= (int) $c['parcelle']['id'] ?>&amp;onglet=eau">à noter</a></td>
+                    <td>Pas de test de sol, <a href="conception-materiel-et-eau.php?parcelle=<?= (int) $c['parcelle']['id'] ?>&amp;onglet=eau">à noter</a></td>
                     <?php else: ?>
-                    <td>infiltration <?= $h($f['classe']['titre'] ?? 'non mesurée') ?> · <?= $pointeSemaine['passages'] ?> passage<?= $pointeSemaine['passages'] > 1 ? 's' : '' ?> en pointe</td>
+                    <td>Infiltration <?= $h($f['classe']['titre'] ?? 'non mesurée') ?></td>
                     <?php endif; ?>
                   </tr>
 <?php endforeach; ?>
                 </tbody>
               </table>
-              <p class="doux">Le rythme est propre à chaque sol : ouvrez une parcelle pour son conseil détaillé.</p>
+              <p class="doux">Le rythme est propre à chaque sol. Ouvrez une parcelle pour son conseil détaillé.</p>
 <?php else: $c = $conseils[$idP]; $f = $c['freq']; ?>
 <?php if ($c['releve'] === null): ?>
-              <p>Aucun test de sol sur cette parcelle. <b>L'infiltration</b> — une heure, dont l'essentiel à attendre — dit à quelle vitesse le sol boit ; elle règle la durée d'un passage et leur nombre.
+              <p>Cette parcelle n'a aucun test de sol. <b>L'infiltration</b> dit à quelle vitesse le sol boit, et donc comment l'arroser. Le test dure une heure, surtout faite d'attente.
 <?php if ($peutEcrire): ?> <a href="<?= $h($retour) ?>&amp;onglet=eau" data-ouvre-panneau="test">Noter un test →</a><?php endif; ?></p>
-              <p class="doux">En attendant, un repère sans mesure : <?= $f['semaines'][0]['passages'] ?> passages par semaine en moyenne d'été, <?= $f['semaines'][1]['passages'] ?> en pointe. <a href="releve-vierge.php" target="_blank" rel="noopener">La fiche à imprimer ↗</a></p>
+              <p class="doux">L'été demande <?= $nombre($f['semaines'][0]['mm']) ?> mm par semaine en moyenne, et <?= $nombre($f['semaines'][1]['mm']) ?> mm en pointe. <a href="releve-vierge.php" target="_blank" rel="noopener">La fiche à imprimer ↗</a></p>
 <?php else: ?>
-              <p class="doux">Relevé du <?= $h($dateFr((string) $c['releve']['date'])) ?> — <?= $h($c['releve']['point']) ?></p>
+              <p class="doux">Relevé du <?= $h($dateFr((string) $c['releve']['date'])) ?>, <?= $h($c['releve']['point']) ?></p>
 <?php if ($f['classe'] !== null): ?>
               <p>Infiltration <span class="mv-cle"><?= $nombre((float) $c['releve']['infiltration_mm_h'], 1) ?> mm/h</span> : <?= $h($f['classe']['titre']) ?>, comme un sol de type <?= $h($f['classe']['texture']) ?>.</p>
 <?php endif; ?>
 <?php if ($f['ressuyage'] !== null): ?>
-              <p>Ressuyage <span class="mv-cle"><?= $h($f['ressuyage']['titre']) ?></span> — <?= $h($f['ressuyage']['lecture']) ?>.</p>
+              <p>Ressuyage <span class="mv-cle"><?= $h($f['ressuyage']['titre']) ?></span> : <?= $h($f['ressuyage']['lecture']) ?>.</p>
 <?php endif; ?>
 <?php if ($f['mesure_a_refaire']): ?>
-              <p class="mv-alerte">L'infiltration doit se mesurer sur sol ressuyé, toujours le même état : à refaire quand il l'est.</p>
+              <p class="mv-alerte">L'infiltration se mesure sur sol ressuyé, toujours dans le même état. Refaites la mesure quand le sol est ressuyé.</p>
 <?php endif; ?>
               <table>
                 <tbody>
 <?php foreach ($f['semaines'] as $s): ?>
                   <tr>
-                    <td><?= $h($s['titre']) ?><br><small><?= $nombre($s['mm']) ?> mm</small></td>
-                    <td><span class="mv-cle"><?= $s['passages'] ?> passage<?= $s['passages'] > 1 ? 's' : '' ?></span> de <?= $nombre($s['dose_mm'], 1) ?> mm<?= $s['minutes_mini'] !== null ? '<br><small>au moins ' . $h($duree($s['minutes_mini'])) . ' chacun</small>' : '' ?></td>
+                    <td><?= $h($s['titre']) ?></td>
+                    <td><span class="mv-cle"><?= $nombre($s['mm']) ?> mm</span></td>
                   </tr>
 <?php endforeach; ?>
                 </tbody>
               </table>
-<?php if (($f['classe']['famille'] ?? '') === 'tampon'): ?>
-              <p class="doux">Sol lent : coupez chaque passage en plusieurs cycles courts, séparés de pauses, plutôt qu'un seul long arrosage.</p>
+<?php if (($f['classe']['famille'] ?? '') === 'drainant'): ?>
+              <p class="doux">Ce sol boit vite : il demande des passages plus courts et plus fréquents.</p>
+<?php elseif (($f['classe']['famille'] ?? '') === 'tampon'): ?>
+              <p class="doux">Ce sol fait tampon : il supporte un arrosage long et espacé. Coupez chaque passage en plusieurs cycles courts, séparés de pauses, plutôt qu'un seul long arrosage.</p>
 <?php endif; ?>
-              <p class="doux">Ne versez pas plus vite que le sol ne boit<?= $f['classe'] !== null ? ' (' . $nombre((float) $c['releve']['infiltration_mm_h'], 1) . ' mm/h)' : '' ?> : le surplus ruisselle.</p>
+              <p class="doux">Versez au rythme où le sol boit<?= $f['classe'] !== null ? ' (' . $nombre((float) $c['releve']['infiltration_mm_h'], 1) . ' mm/h)' : '' ?> : au-delà, l'eau ruisselle.</p>
 <?php endif; ?>
-              <p class="doux"><b>Avant chaque passage</b> : la main sous le mulch, puis enfoncée dans le sol. Frais et à peine humide : on attend. Sec : on arrose. Jamais collant.</p>
+              <p class="doux"><b>Avant chaque passage</b>, glissez la main sous le mulch, puis enfoncez-la dans le sol. S'il est frais et à peine humide, on attend. S'il est sec, on arrose. Il ne doit jamais coller.</p>
 <?php endif; ?>
             </div>
           </div>
@@ -690,8 +692,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 
 <?php if ($parcelle !== null): ?>
         <section class="mv-panneau mv-p-test">
-          <p class="pd-titre">Un test de sol — <?= $h($parcelle['code']) ?></p>
-          <p class="mv-note"><b>À quoi il sert</b> : à régler l'arrosage des trois premières années. Un sol qui boit vite demande des passages plus courts et plus fréquents ; un sol qui fait tampon supporte « long et espacé ». La méthode est sur la fiche 02, <a href="releve-vierge.php" target="_blank" rel="noopener">à imprimer ↗</a>. Comptez de trente minutes à une heure.</p>
+          <p class="pd-titre">Un test de sol, <?= $h($parcelle['code']) ?></p>
+          <p class="mv-note"><b>À quoi il sert.</b> Le test règle l'arrosage des trois premières années. Un sol qui boit vite demande des passages plus courts et plus fréquents. Un sol qui fait tampon supporte un arrosage long et espacé. La méthode est sur la fiche 02, <a href="releve-vierge.php" target="_blank" rel="noopener">à imprimer ↗</a>. Comptez de trente minutes à une heure.</p>
           <form method="post" action="conception-materiel-et-eau.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="releve">
@@ -699,17 +701,17 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
               <label class="mv-champ">Date du relevé
                 <input type="date" name="date" required max="<?= date('Y-m-d') ?>" value="<?= $val('date', date('Y-m-d')) ?>">
               </label>
-              <label class="mv-champ">Point <small>où dans la parcelle</small>
+              <label class="mv-champ">Point <small>L'endroit dans la parcelle</small>
                 <input type="text" name="point" maxlength="60" value="<?= $val('point') ?>" placeholder="Point 1">
               </label>
             </div>
-            <label class="mv-champ">Vitesse d'infiltration stabilisée <small>mm/h — double anneau</small>
+            <label class="mv-champ">Vitesse d'infiltration stabilisée <small>En mm/h, au double anneau</small>
               <input type="number" name="infiltration_mm_h" min="0.1" max="2000" step="0.1" inputmode="decimal" value="<?= $val('infiltration_mm_h') ?>" placeholder="Ex. 15">
             </label>
             <div class="mv-deux">
               <label class="mv-champ">État du sol
                 <select name="etat_humidite">
-                  <option value="">—</option>
+                  <option value="">Non dit</option>
 <?php foreach (BesoinEau::ETATS as $etat): ?>
                   <option value="<?= $h($etat) ?>"<?= ($saisie['etat_humidite'] ?? '') === $etat ? ' selected' : '' ?>><?= $h($etat) ?></option>
 <?php endforeach; ?>
@@ -719,7 +721,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
                 <input type="number" name="jours_depuis_pluie" min="0" max="60" step="1" value="<?= $val('jours_depuis_pluie') ?>" placeholder="Ex. 2">
               </label>
             </div>
-            <p class="mv-note"><b>Ressuyé</b> : l'eau de la dernière pluie a fini de s'égoutter, la terre est fraîche sans coller — l'état où l'on mesure. L'état et les jours disent ensemble à quelle vitesse ce sol se ressuie.</p>
+            <p class="mv-note">Un sol est <b>ressuyé</b> quand l'eau de la dernière pluie a fini de s'égoutter : la terre est fraîche sans coller. C'est l'état où l'on mesure. L'état et les jours disent ensemble à quelle vitesse ce sol se ressuie.</p>
             <button type="submit" class="mv-bouton">Noter ce test</button>
           </form>
 <?php if ($recents !== []): ?>
@@ -736,14 +738,14 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
             </form>
           </div>
 <?php endforeach; ?>
-          <p class="mv-note">Le plus récent règle le conseil d'arrosage.</p>
+          <p class="mv-note">Le relevé le plus récent règle le conseil d'arrosage.</p>
 <?php endif; ?>
         </section>
 <?php endif; ?>
 
         <section class="mv-panneau mv-p-eau">
           <p class="pd-titre">L'eau du site</p>
-          <p class="mv-note"><b>À quoi elle sert</b> : à dire quoi prévoir pour le stockage. Sans eau à portée, le système reste possible — plus lent, et dépendant des pluies : on sème plutôt qu'on ne transplante. Une seule réponse pour tout le projet.</p>
+          <p class="mv-note"><b>À quoi elle sert.</b> La ressource dit quoi prévoir pour le stockage. Sans eau à portée, le système reste possible, plus lent et dépendant des pluies : on sème plutôt que de transplanter. La réponse vaut pour tout le projet.</p>
           <form method="post" action="conception-materiel-et-eau.php?<?= $tout ? 'tout=1' : 'parcelle=' . $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="eau">
@@ -755,7 +757,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php endforeach; ?>
               </select>
             </label>
-            <label class="mv-champ">Le détail <small>débit, volume, distance…</small>
+            <label class="mv-champ">Le détail <small>Débit, volume, distance…</small>
               <input type="text" name="ressource_eau_detail" maxlength="190" value="<?= $val('ressource_eau_detail', $ressourceDetail) ?>" placeholder="Ex. mare de 200 m³ à 80 m du potager">
             </label>
             <button type="submit" class="mv-bouton">Enregistrer</button>
@@ -775,27 +777,31 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Deux choses se préparent ici, avant de planter : <strong>ce qu'il faudra se procurer</strong>, et <strong>l'eau qu'il faudra donner</strong>.
-         La liste des plants se déduit du scénario de chaque parcelle, et des lignes posées sur son plan (bordures, lignes de service des planches) ; le choix « à acheter, à multiplier, à laisser venir » vient de l'origine que vous y avez notée.</p>
-      <p><strong>Les besoins en eau</strong> [Lopez, <em>Les Jardins Sauvages</em>] : on n'arrose pas les légumes, on arrose la biologie du sol.
-         Le besoin annuel va d'environ 750 L/m² en sol dégradé et année sèche à 300 L/m² en sol intermédiaire ; en pointe d'été, jusqu'à 5 mm par jour.
-         Le sol structuré demande moins, l'ouvrage ne le chiffre pas. <strong>Ce sont des ordres de grandeur de dimensionnement, pas des normes</strong> — et ils
-         viennent d'un maraîchage d'annuelles en Haute-Vienne : pour une ligne pérenne, rien n'est chiffré, et les trois premières années restent celles qui comptent.
+      <p>Cette étape prépare deux choses avant de planter : <strong>ce qu'il faudra se procurer</strong> et <strong>l'eau qu'il faudra donner</strong>.
+         La liste des plants se déduit du scénario de chaque parcelle et des lignes posées sur son plan (bordures, lignes de service des planches).
+         Le classement « à acheter, à multiplier soi-même, régénération naturelle » vient de l'origine que vous y avez notée.</p>
+      <p><strong>Les besoins en eau</strong> [Lopez, <em>Les Jardins Sauvages</em>]. On n'arrose pas les légumes, on arrose la biologie du sol.
+         Le besoin annuel va d'environ 750 L/m² en sol dégradé et année sèche à 300 L/m² en sol intermédiaire. En pointe d'été, il monte jusqu'à 5 mm par jour.
+         Le sol structuré demande moins, mais l'ouvrage ne le chiffre pas. <strong>Ce sont des ordres de grandeur pour dimensionner.</strong> Ils viennent d'un
+         maraîchage d'annuelles en Haute-Vienne. Pour une ligne pérenne, rien n'est chiffré, et les trois premières années sont celles qui comptent.
          Un sol jamais travaillé et toujours couvert économise l'eau, mais pas dès les premières années : il faudra arroser.</p>
-      <p><strong>L'eau et la perturbation</strong> [Théry, ch. 12] : la taille est déjà un stress ; sans eau, une bonne part de son bénéfice se perd et la reprise ralentit. On la cale donc sur la pluie, et l'on arrose si elle ne vient pas.
-         Une boucle en découle, que la formation Joala décrit : plus de densité et de perturbation, c'est plus de biomasse déposée, donc un sol plus riche en matière organique — et un sol qui retient mieux l'eau
-         (une synthèse rapporte 20 L de stockage en plus par m² pour 1 % de matière organique supplémentaire : un ordre de grandeur non recoupé, pas une entrée de calcul). Les premières années, c'est pourtant l'arrosage qui paie.</p>
-      <p><strong>Les ouvrages de stockage</strong> [Lopez, pour environ 300 m³] : un puits ou forage, environ 5 000 € pompe comprise ; une mare, 400 m³ creusés pour en stocker 300
-         (environ 1 500 € de pelle mécanique en terre argileuse, plus environ 1 000 € de pompe) ; une cuve, très variable, les cuves enterrées bien plus chères ; une piscine convertie,
-         alimentée par un puits et la récupération de pluie, que l'auteur juge la meilleure solution. Un mètre carré de toiture recueille environ un mètre cube de pluie par an [de Looze].</p>
-      <p><strong>La fréquence d'arrosage</strong> se règle sur le sol. L'<strong>infiltration</strong> dit à quelle vitesse il boit : les classes reprennent la table de l'annexe 2 du
-         <em>Irrigation Manual</em> de la FAO (sable au-delà de 30 mm/h, limon sableux 20 à 30, limon 10 à 20, limon argileux 5 à 10, argile 1 à 5).
-         Le <strong>ressuyage</strong> dit combien de temps il garde l'eau de la pluie : encore détrempé deux jours après, il ne supporte pas d'être remouillé sans cesse ; déjà ressuyé au bout d'un jour, il se dessèche vite.
-         Le corpus de l'atelier dit seulement qu'un sol qui boit vite demande des passages plus courts et plus fréquents, et un sol qui fait tampon du « long et espacé ».
-         <strong>Les doses par passage (12, 18 ou 25 mm) sont un repère de cet atelier, pas une norme</strong> : le vrai arbitre est votre main, avant chaque arrosage.</p>
-      <p><strong>Quand arroser</strong> : tard le soir, la nuit ou très tôt le matin ; le matin par temps beau pour les plantes qui craignent l'humidité sur le feuillage.
-         Les semaines qui suivent un semis de couvert sont les plus importantes : la graine ne doit surtout pas se dessécher.
-         Et l'excès a ses dégâts — asphyxie, lessivage, salinisation.</p>
+      <p><strong>L'eau et la perturbation</strong> [Théry, ch. 12]. La taille est déjà un stress. Sans eau, une bonne part de son bénéfice se perd et la reprise ralentit.
+         On la cale donc sur la pluie, et l'on arrose si la pluie ne vient pas. La formation Joala décrit une boucle : plus de densité et de perturbation déposent plus
+         de biomasse, et le sol devient plus riche en matière organique et retient mieux l'eau. Une synthèse rapporte 20 L de stockage en plus par m² pour 1 % de matière
+         organique supplémentaire. C'est un ordre de grandeur non recoupé, qui n'entre dans aucun calcul. Les premières années, c'est pourtant l'arrosage qui compte.</p>
+      <p><strong>Les ouvrages de stockage</strong> [Lopez, pour environ 300 m³]. Un puits ou un forage coûte environ 5 000 €, pompe comprise. Une mare de 400 m³ creusés
+         en stocke 300, pour environ 1 500 € de pelle mécanique en terre argileuse et environ 1 000 € de pompe. Le prix d'une cuve est très variable, et les cuves enterrées
+         sont bien plus chères. L'auteur juge qu'une piscine convertie, alimentée par un puits et la récupération de pluie, est la meilleure solution. Un mètre carré de
+         toiture recueille environ un mètre cube de pluie par an [de Looze].</p>
+      <p><strong>La fréquence d'arrosage</strong> se règle sur le sol. L'<strong>infiltration</strong> dit à quelle vitesse il boit. Ses classes reprennent la table de
+         l'annexe 2 de l'<em>Irrigation Manual</em> de la FAO : sable au-delà de 30 mm/h, limon sableux 20 à 30, limon 10 à 20, limon argileux 5 à 10, argile 1 à 5.
+         Le <strong>ressuyage</strong> dit combien de temps le sol garde l'eau de la pluie. Encore détrempé deux jours après, il ne supporte pas d'être remouillé sans cesse.
+         Déjà ressuyé au bout d'un jour, il se dessèche vite. Le corpus de l'atelier dit seulement qu'un sol qui boit vite demande des passages plus courts et plus
+         fréquents, et qu'un sol qui fait tampon supporte un arrosage long et espacé. L'atelier ne calcule donc ni le nombre de passages ni la dose
+         d'un passage. Le vrai juge reste votre main, avant chaque arrosage.</p>
+      <p><strong>Quand arroser.</strong> On arrose tard le soir, la nuit ou très tôt le matin, et le matin par beau temps pour les plantes qui craignent l'humidité sur le
+         feuillage. Les semaines qui suivent un semis de couvert sont les plus importantes : la graine ne doit pas se dessécher. L'excès d'eau a aussi ses dégâts :
+         asphyxie, lessivage, salinisation.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>

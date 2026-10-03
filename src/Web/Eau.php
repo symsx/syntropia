@@ -77,7 +77,7 @@ final class Eau
         $cote = max(($nord - $sud) * $mLat, ($est - $ouest) * $mLon);
         if ($cote > self::COTE_MAX_M) {
             return ['traces' => [], 'message' => sprintf(
-                'Zoomez : je cherche l\'eau jusqu\'à %d m de côté, et la vue en fait %d.',
+                'Zoomez. La recherche de l\'eau se limite à %d m de côté, et la vue en fait %d.',
                 (int) self::COTE_MAX_M, (int) $cote)];
         }
         if (!function_exists('curl_init')) {
@@ -110,9 +110,9 @@ final class Eau
         curl_close($curl);
 
         if ($code === 429 || $code === 504) {
-            return ['traces' => [], 'message' => "OpenStreetMap est occupé — c'est un "
-                . "service tenu par des bénévoles. Réessayez dans un moment ; "
-                . "en attendant, l'eau se trace à la main."];
+            return ['traces' => [], 'message' => "OpenStreetMap est occupé. C'est un "
+                . "service tenu par des bénévoles. Réessayez dans un moment. "
+                . "En attendant, l'eau se trace à la main."];
         }
         if (!is_string($corps) || $code !== 200) {
             return ['traces' => [], 'message' => "OpenStreetMap n'a pas répondu. "
@@ -120,7 +120,7 @@ final class Eau
         }
         $json = json_decode($corps, true);
         if (!is_array($json['elements'] ?? null)) {
-            return ['traces' => [], 'message' => 'Réponse inattendue du service.'];
+            return ['traces' => [], 'message' => 'Le service a donné une réponse inattendue.'];
         }
 
         $traces = [];
@@ -156,9 +156,9 @@ final class Eau
             $traces[] = $trace;
         }
         if ($traces === []) {
-            return ['traces' => [], 'message' => "Aucune eau cartographiée ici. "
-                . "**Cela ne veut pas dire qu'il n'y en a pas** : OpenStreetMap est "
-                . "une carte faite par des gens, et un fossé récent n'y est jamais."];
+            return ['traces' => [], 'message' => "Aucune eau n'est cartographiée ici. "
+                . "Il peut pourtant y en avoir : OpenStreetMap est une carte faite par "
+                . "des personnes, et un fossé récent n'y figure pas."];
         }
         return ['traces' => $traces, 'message' => count($traces) . ' élément'
             . (count($traces) > 1 ? 's' : '') . " d'eau trouvé"

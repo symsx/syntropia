@@ -56,7 +56,7 @@ if (!$auth->estConnecte()) {
     repondre(403, ['ok' => false, 'message' => 'Non autorisé.']);
 }
 if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-    repondre(403, ['ok' => false, 'message' => 'Formulaire expiré — rechargez la page.']);
+    repondre(403, ['ok' => false, 'message' => 'Le formulaire a expiré. Rechargez la page.']);
 }
 
 $siteId = (int) ($_POST['site_id'] ?? 0);
@@ -68,9 +68,9 @@ if ($siteId <= 0 || !$sites->peutEcrireSur($siteId, (int) $auth->compteId())) {
 $calques = new Calques();
 $emprise = $calques->empriseDuTerrain($siteId);
 if ($emprise === null) {
-    repondre(200, ['ok' => false, 'message' => "Tracez d'abord les limites du terrain "
-        . "— à la main sur le calque du fond, ou en suivant le cadastre. "
-        . "C'est elles qui bornent le relevé."]);
+    repondre(200, ['ok' => false, 'message' => "Tracez d'abord les limites du terrain, "
+        . "à la main sur le calque des limites ou en suivant le cadastre. "
+        . "Elles bornent le relevé."]);
 }
 
 $sud = $emprise['sud']; $ouest = $emprise['ouest'];

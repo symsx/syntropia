@@ -42,7 +42,7 @@ $h = static fn (mixed $v): string => htmlspecialchars((string) $v, ENT_QUOTES, '
 $erreur = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        $erreur = 'Formulaire expiré — rechargez la page.';
+        $erreur = 'Le formulaire a expiré. Rechargez la page.';
     } elseif (($_POST['action'] ?? '') === 'revoquer') {
         $invitations->revoquer((int) ($_POST['id'] ?? 0), $compteId);
         header('Location: ' . Configuration::base() . 'inviter.php');

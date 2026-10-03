@@ -42,7 +42,7 @@ $sites = new Sites();
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-        repondre(403, ['ok' => false, 'message' => 'Formulaire expiré — rechargez la page.']);
+        repondre(403, ['ok' => false, 'message' => 'Le formulaire a expiré. Rechargez la page.']);
     }
     if (!$sites->activer((int) ($_POST['site_id'] ?? 0), $compteId)) {
         repondre(403, ['ok' => false, 'message' => "Ce projet ne vous est pas ouvert."]);

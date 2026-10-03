@@ -69,7 +69,7 @@ final class Scenario
         'centre' => 'Planches de culture',
         'bord_ext' => 'Bordure externe',
         'bord_int' => 'Bordure interne',
-        'autre' => 'Autre emplacement / végétal existant',
+        'autre' => 'Autre emplacement ou végétal existant',
     ];
 
     /**
@@ -78,9 +78,9 @@ final class Scenario
      * Écrit en tête de `scenario_ligne.conduite_taille`, suivi d'une précision libre : « trogne — tous les deux ans ».
      */
     public const GESTES = [
-        'basitone' => ['Basitone', 'tige entière à 3-4 cm de la souche, à chaque perturbation — engagement faible'],
-        'cépée' => ['Cépée', 'à la base, tout près du sol, à la fréquence de votre choix — engagement faible'],
-        'trogne' => ['Trogne', 'toujours au même endroit, tous les 1 à 2 ans, sinon la conduite se dégrade — engagement fort'],
+        'basitone' => ['Basitone', 'tige entière à 3-4 cm de la souche, à chaque perturbation, engagement faible'],
+        'cépée' => ['Cépée', 'à la base, tout près du sol, à la fréquence de votre choix, engagement faible'],
+        'trogne' => ['Trogne', 'toujours au même endroit, tous les 1 à 2 ans pour garder la conduite, engagement fort'],
     ];
 
     /**

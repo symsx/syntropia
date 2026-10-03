@@ -421,16 +421,16 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <input type="hidden" id="longitude" value="<?= htmlspecialchars((string) ($site['longitude'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
         <div class="carte-avis" id="carte-avis">
 <?php if ($latitude === null || $longitude === null): ?>
-        <p class="carte-sans-point"><strong>Le lieu n'est pas encore posé.</strong> La carte ne sait
-           donc pas où se placer. <a href="definition-site.php">Posez le point du site</a>, et revenez —
-           elle s'ouvrira sur votre terrain.</p>
+        <p class="carte-sans-point"><strong>Le lieu n'est pas encore posé.</strong> La carte ne peut
+           pas se placer. <a href="definition-site.php">Posez le point du site</a>, puis revenez : la
+           carte s'ouvrira sur votre terrain.</p>
 <?php endif; ?>
         <p class="carte-sans-point" id="carte-cadastre-info" hidden></p>
         </div>
         <p class="carte-reglures">
           <span id="carte-echelle" class="carte-echelle">échelle</span>
           <select id="fond-carte" class="carte-fond" aria-label="Fond de carte" title="Fond de carte"></select>
-          <button type="button" id="carte-centrer" class="carte-centrer" hidden>cadrer sur mes tracés</button>
+          <button type="button" id="carte-centrer" class="carte-centrer" hidden>Cadrer sur mes tracés</button>
         </p>
       </div>
     </main>
@@ -448,16 +448,16 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
       <div class="pd-corps">
         <p class="chercher-eau" hidden>
           <button type="button" id="eau-chercher" class="pd-bouton-discret">Chercher l'eau d'OpenStreetMap</button>
-          <span class="pd-aide"><strong>Tracez d'abord les limites du terrain</strong> — à la main,
+          <span class="pd-aide"><strong>Tracez d'abord les limites du terrain</strong>, à la main
              ou en suivant le cadastre.</span>
           <span class="pd-aide" id="eau-etat"></span>
         </p>
 
         <p class="cadastre-bascule" hidden>
           <label><input type="checkbox" class="case" id="cadastre-visible"> <strong>Voir le cadastre</strong></label>
-          <span class="pd-aide">Les limites des parcelles cadastrales, en trait fin — de quoi
-             suivre leurs bords pour tracer les vôtres. C'est un repère : rien n'en est
-             enregistré. Un plan cadastral est un document fiscal, et seul un bornage fait foi.
+          <span class="pd-aide">Les limites des parcelles cadastrales s'affichent en trait fin.
+             Elles servent de repère pour tracer les vôtres et ne sont pas enregistrées. Un plan
+             cadastral est un document fiscal : seul un bornage fait foi.
              <span id="cadastre-etat"></span></span>
         </p>
 
@@ -470,11 +470,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <p class="pd-etat" id="trace-etat"></p>
 
         <div id="vents-rose-bloc" hidden>
-          <p class="pd-aide">Le calque des vents se trace à la main : une flèche par vent, dans le
-             sens où il souffle, épaisse pour un dominant. Pour savoir d'où ils viennent, la rose
-             des vents se calcule sur ce point — quelques secondes, rien à mesurer. ⚠ La maille du
-             modèle est d'environ 25 km : elle donne le régime général, jamais le couloir d'un
-             vallon — d'où les flèches tracées à la main par-dessus.</p>
+          <p class="pd-aide">Le calque des vents se trace à la main, avec une flèche par vent dans
+             le sens où il souffle, épaisse pour un vent dominant. La rose des vents, calculée sur le
+             point du site en quelques secondes, dit d'où ils viennent. La maille du modèle météo est
+             d'environ 25 km. Elle donne le régime général des vents, sans les couloirs d'un vallon :
+             ceux-là se tracent à la main.</p>
 <?php if ($latitude === null || $longitude === null): ?>
           <p class="pd-aide"><strong>Posez d'abord le point du site.</strong></p>
 <?php else: ?>
@@ -486,7 +486,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
                    value="<?= htmlspecialchars((string) ($_POST['annees'] ?? Vents::ANNEES_DEFAUT), ENT_QUOTES, 'UTF-8') ?>"> années
             <button type="submit" class="pd-bouton-discret">Calculer la rose des vents</button>
           </form>
-          <p class="pd-aide">Elle se calcule, elle ne se garde pas : rien n'entre dans votre projet ici.</p>
+          <p class="pd-aide">La rose des vents n'est pas enregistrée dans le projet.</p>
 <?php endif; ?>
 <?php if ($roseMessage !== null): ?>
           <p class="pd-etat"><?= htmlspecialchars($roseMessage, ENT_QUOTES, 'UTF-8') ?></p>
@@ -522,9 +522,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php endforeach; ?>
             </svg>
             <figcaption class="pd-aide"><strong>D'où vient le vent</strong>, sur
-               <?= (int) $rose['annees'] ?> années — <?= htmlspecialchars($rose['debut'], ENT_QUOTES, 'UTF-8') ?>
+               <?= (int) $rose['annees'] ?> années, de <?= htmlspecialchars($rose['debut'], ENT_QUOTES, 'UTF-8') ?>
                à <?= htmlspecialchars($rose['fin'], ENT_QUOTES, 'UTF-8') ?>. L'aplat clair compte
-               toutes les heures, <strong>le foncé les heures à plus de <?= (int) Vents::SEUIL_FORT_KMH ?> km/h</strong>.
+               toutes les heures, <strong>l'aplat foncé les heures à plus de <?= (int) Vents::SEUIL_FORT_KMH ?> km/h</strong>.
                Source : réanalyse ERA5 via <a target="_blank" rel="noopener" href="https://open-meteo.com">Open-Meteo</a>, CC BY 4.0.</figcaption>
           </figure>
           <table class="vents-table">
@@ -540,11 +540,11 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           </table>
           <p class="pd-aide"><strong>Le vent le plus fréquent vient du <?= htmlspecialchars(Vents::nomLong($rose['dominant']), ENT_QUOTES, 'UTF-8') ?></strong><?php
               if ($rose['dominant_fort'] !== $rose['dominant']): ?>, mais
-             <strong>les heures fortes viennent surtout du <?= htmlspecialchars(Vents::nomLong($rose['dominant_fort']), ENT_QUOTES, 'UTF-8') ?></strong> —
-             et c'est celui-là qu'un brise-vent doit arrêter<?php else: ?>, et c'est aussi de là
-             que viennent les heures fortes<?php endif; ?>.</p>
-          <p class="pd-aide"><strong>Pour tracer la flèche</strong> : la rose dit d'où vient le
-             vent, la flèche va dans l'autre sens. Un vent de
+             <strong>les heures fortes viennent surtout du <?= htmlspecialchars(Vents::nomLong($rose['dominant_fort']), ENT_QUOTES, 'UTF-8') ?></strong>.
+             C'est ce vent qu'un brise-vent doit arrêter<?php else: ?>, et les heures fortes viennent
+             aussi de là<?php endif; ?>.</p>
+          <p class="pd-aide"><strong>Pour tracer la flèche.</strong> La rose dit d'où vient le
+             vent, et la flèche va dans l'autre sens. Un vent de
              <?= htmlspecialchars(Vents::nomLong($rose['dominant']), ENT_QUOTES, 'UTF-8') ?> se dessine
              <strong>en partant du <?= htmlspecialchars(Vents::nomLong($rose['dominant']), ENT_QUOTES, 'UTF-8') ?></strong>
              vers le centre du terrain.</p>
@@ -552,14 +552,13 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         </div>
 
         <div id="relief-bloc" hidden>
-          <p class="pd-aide">La pente et son sens décident de l'orientation des lignes, et de
-             l'endroit où l'eau s'en va. Je peux relever les altitudes IGN sur l'emprise du
-             terrain déjà tracé — quelques secondes, rien à mesurer. ⚠ La maille du modèle est
-             d'environ 5 m : elle donne la forme d'ensemble, jamais le détail d'une baissière ou
-             d'un fossé.</p>
-          <p class="pd-aide"><strong>Ou importez des courbes déjà tracées</strong> —
+          <p class="pd-aide">La pente et son sens décident de l'orientation des lignes et de
+             l'endroit où l'eau s'en va. L'atelier relève les altitudes IGN sur l'emprise du
+             terrain déjà tracé, en quelques secondes. La maille du modèle est d'environ 5 m. Elle
+             donne la forme d'ensemble du terrain, sans le détail d'une baissière ou d'un fossé.</p>
+          <p class="pd-aide"><strong>Vous pouvez aussi importer des courbes déjà tracées.</strong>
              <a target="_blank" rel="noopener" href="https://contour-buddy1.vercel.app">ContourBuddy</a>
-             les génère depuis la même altimétrie IGN et les exporte en GeoJSON ; un relevé sorti de
+             les génère depuis la même altimétrie IGN et les exporte en GeoJSON. Un relevé sorti de
              QGIS convient aussi. <a href="#import-bloc" class="va-import" data-calque="relief">Importer un fichier ↓</a></p>
           <button type="button" id="altitude-relever" class="pd-bouton-discret">Relever le relief</button>
           <p class="pd-aide" id="altitude-etat"><?php if ($grille !== null): ?><?= htmlspecialchars(
@@ -567,23 +566,22 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
               ENT_QUOTES, 'UTF-8') ?><?php endif; ?></p>
 <?php if ($pente !== null && $pente['pente_pct'] !== null): ?>
           <p class="pd-aide"><strong>Pente moyenne <?= htmlspecialchars(str_replace('.', ',', (string) $pente['pente_pct']), ENT_QUOTES, 'UTF-8') ?> %</strong>,
-             exposée <?= htmlspecialchars((string) $pente['exposition'], ENT_QUOTES, 'UTF-8') ?>
-             — dénivelé de <?= htmlspecialchars(str_replace('.', ',', (string) $pente['denivele_m']), ENT_QUOTES, 'UTF-8') ?> m
+             exposée <?= htmlspecialchars((string) $pente['exposition'], ENT_QUOTES, 'UTF-8') ?>,
+             avec un dénivelé de <?= htmlspecialchars(str_replace('.', ',', (string) $pente['denivele_m']), ENT_QUOTES, 'UTF-8') ?> m
              (de <?= (int) round($pente['mini']) ?> à <?= (int) round($pente['maxi']) ?> m).</p>
-          <p class="pd-aide"><?= htmlspecialchars(Relief::ceQuElleCommande($pente['pente_pct']), ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
         </div>
 
         <div id="ombres-bloc" hidden>
-          <p class="pd-aide">Le calcul d'une ombre demande deux mesures — la hauteur de l'obstacle et sa
-             distance — et un arbre se mesure mal, souvent chez le voisin.
+          <p class="pd-aide">Le calcul d'une ombre demande deux mesures, la hauteur de l'obstacle et sa
+             distance, et un arbre se mesure mal, souvent chez le voisin.
              <a target="_blank" rel="noopener" href="https://shademap.app">ShadeMap</a> donne
              <strong>directement les dates de début et de fin de l'ombre portée</strong>, à partir du relief
-             et des bâtiments : placez le repère sur la parcelle, faites défiler l'année, et notez les deux dates.</p>
+             et des bâtiments. Placez le repère sur la parcelle, faites défiler l'année et notez les deux dates.</p>
 <?php if ($latitude !== null && $longitude !== null): ?>
-          <p class="pd-aide"><strong>Je peux l'ouvrir sur votre terrain</strong>, au jour qui compte, au
-             <strong>midi solaire du lieu</strong> — l'instant où l'ombre est la plus courte. Chaque lien s'ouvre dans
-             un autre onglet, et rien de votre projet n'y part hors la position.</p>
+          <p class="pd-aide"><strong>Les liens ci-dessous ouvrent ShadeMap sur votre terrain</strong>, au jour
+             choisi et au <strong>midi solaire du lieu</strong>, l'instant où l'ombre est la plus courte. Chaque lien
+             s'ouvre dans un autre onglet. Seule la position du site est transmise.</p>
           <ul class="moments-soleil">
 <?php foreach (ShadeMap::moments($latitude, $longitude) as $moment): ?>
             <li><a target="_blank" rel="noopener" href="<?= htmlspecialchars($moment['url'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($moment['titre'], ENT_QUOTES, 'UTF-8') ?></a>
@@ -591,12 +589,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php endforeach; ?>
           </ul>
 <?php else: ?>
-          <p class="pd-aide">Posez d'abord le lieu (étape « Site ») : les liens s'ouvriront sur votre terrain.</p>
+          <p class="pd-aide">Posez d'abord le lieu à l'étape « Site ». Les liens s'ouvriront alors sur votre terrain.</p>
 <?php endif; ?>
-          <p class="pd-aide"><strong>ShadeMap ne livre pas de tracés</strong> que l'atelier puisse lire : ce que vous y
-             lisez se note à la main, dans le nom du tracé — « chêne, ombre du 28 oct. au 8 fév. ». Une période relevée
-             sur le terrain <strong>prime</strong> sur ce qu'il affiche. Si vous avez ailleurs le contour d'un ombrage en
-             GeoJSON, il s'importe comme le relief : <a href="#import-bloc" class="va-import" data-calque="ombres">Importer un fichier ↓</a></p>
+          <p class="pd-aide"><strong>Ce que vous lisez dans ShadeMap se note à la main</strong>, dans le nom du
+             tracé, par exemple « chêne, ombre du 28 oct. au 8 fév. » : l'atelier ne peut pas lire ses tracés. Une
+             période relevée sur le terrain <strong>prime</strong> sur ce que ShadeMap affiche. Le contour d'un
+             ombrage en GeoJSON s'importe comme le relief. <a href="#import-bloc" class="va-import" data-calque="ombres">Importer un fichier ↓</a></p>
         </div>
 
         <label class="pd-label" for="trace-libelle">Son nom</label>
@@ -605,8 +603,8 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <div id="trace-intensite-champ" hidden>
           <label class="pd-label" for="trace-intensite">Son intensité</label>
           <select id="trace-intensite" class="pd-champ-texte">
-            <option value="dominant" selected>dominant — trait épais</option>
-            <option value="secondaire">secondaire — trait fin</option>
+            <option value="dominant" selected>Dominant, trait épais</option>
+            <option value="secondaire">Secondaire, trait fin</option>
           </select>
         </div>
         <div id="trace-hauteur-champ" hidden>
@@ -616,13 +614,13 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 
         <div class="pd-boutons">
           <button type="button" id="trace-enregistrer" class="pd-bouton" disabled>Enregistrer ce tracé</button>
-          <button type="button" id="trace-annuler" class="pd-bouton-discret">annuler</button>
+          <button type="button" id="trace-annuler" class="pd-bouton-discret">Annuler</button>
         </div>
 
         <p class="pd-titre">Poser une parcelle</p>
         <label class="pd-label" for="parcelle-choix">Laquelle</label>
         <select id="parcelle-choix" class="pd-champ-texte">
-          <option value="">— aucune —</option>
+          <option value="">Aucune</option>
 <?php foreach ($parcelles as $p):
         $dims = $p['largeur_m'] !== null && $p['longueur_m'] !== null
             ? $p['largeur_m'] . ' × ' . $p['longueur_m'] . ' m' : ''; ?>
@@ -639,13 +637,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
         <ul class="calques-liste" id="calques-liste"></ul>
 
         <p class="pd-titre" id="import-bloc">Importer des tracés</p>
-        <p class="pd-aide">Des courbes de niveau tracées ailleurs — <a target="_blank" rel="noopener"
-           href="https://contour-buddy1.vercel.app">ContourBuddy</a> les génère depuis la même
-           altimétrie IGN et les exporte en GeoJSON —, un relevé sorti de QGIS, une trace GPS
-           convertie : tout fichier GeoJSON entre ici, sur le calque que vous choisissez. Un
-           <strong>multiple</strong> donne un tracé par morceau : une courbe coupée en trois
-           reste trois courbes. ⚠ Le GeoJSON suppose des degrés (WGS 84) — un export en
-           Lambert 93 est refusé, avec son motif.</p>
+        <p class="pd-aide">Tout fichier GeoJSON s'importe ici, sur le calque choisi : des courbes de
+           niveau générées par <a target="_blank" rel="noopener"
+           href="https://contour-buddy1.vercel.app">ContourBuddy</a>, un relevé sorti de QGIS, une
+           trace GPS convertie. Un tracé <strong>multiple</strong> donne un tracé par morceau : une
+           courbe coupée en trois reste trois courbes. Le fichier doit être en degrés (WGS 84). Un
+           export en Lambert 93 est refusé, avec son motif.</p>
 <?php if ($importMessage !== null): ?>
         <p class="pd-etat<?= $importAlerte ? ' pd-etat-alerte' : '' ?>"><?= htmlspecialchars($importMessage, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
@@ -674,30 +671,31 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Vous allez dessiner votre terrain, calque par calque — les limites, l'eau, les vents, ce qui
-         fait de l'ombre, et le contour de chaque parcelle. Un calque se complète le jour où l'on
-         remarque quelque chose : commencez par ce qui se voit sans instrument.</p>
+      <p>Le terrain se dessine sur la carte, calque par calque : les limites, l'eau, les vents, ce qui
+         fait de l'ombre et le contour de chaque parcelle. Un calque se complète au fil des observations.
+         Commencez par ce qui se voit sans instrument.</p>
       <p><strong>Le fond de carte</strong> se change en bas à gauche, et votre choix est retenu dans ce navigateur.
-         <em>Plan IGN</em> : les chemins, sentiers et bâtiments. <em>Photographie aérienne</em> : ce qu'on voit du ciel —
-         les arbres, les limites, l'eau ; elle va un cran plus près que la carte. <em>Infrarouge</em> : la végétation
-         vivante y ressort en rouge. <em>Photos anciennes</em> (1950 à 1995) : ce qu'était le terrain avant vous — haies
-         arrachées, mares comblées ; elles ne couvrent pas tout le territoire. Les fonds IGN sont © IGN, et se chargent
-         depuis les serveurs de l'IGN, comme ceux d'OpenStreetMap depuis les siens.</p>
+         Le <em>plan IGN</em> montre les chemins, les sentiers et les bâtiments. La <em>photographie aérienne</em>
+         montre les arbres, les limites et l'eau, et permet de zoomer un cran plus près. En <em>infrarouge</em>, la
+         végétation vivante ressort en rouge. Les <em>photos anciennes</em>, de 1950 à 1995, montrent le terrain
+         d'autrefois, avec ses haies arrachées et ses mares comblées. Elles ne couvrent pas tout le territoire. Les
+         fonds IGN sont © IGN et se chargent depuis les serveurs de l'IGN, comme ceux d'OpenStreetMap depuis les
+         siens.</p>
 <?php if ($peutEcrire): ?>
-      <p><strong>Cliquez sur la carte pour dessiner</strong> — un point d'un clic ; une ligne ou un
-         contour point par point, double-clic ou Entrée pour finir, clic droit pour défaire le
-         dernier point, Échap pour tout annuler. <strong>À main levée</strong> : maintenez le clic et
-         suivez le contour, relâchez pour finir.</p>
-      <p><strong>Une étiquette gêne ?</strong> Choisissez l'outil <strong>Étiquettes</strong> : glissez le nom
-         d'un objet où il se lit mieux — un trait pointillé le relie encore à son objet —, et
-         double-cliquez-le pour le remettre à sa place. La carte reste libre de se déplacer.</p>
-      <p><strong>Une parcelle à déplacer ?</strong> Choisissez l'outil <strong>Repositionner</strong> : glissez la
-         parcelle où elle doit être — son orientation se règle ensuite au curseur du panneau Données. Sa
-         taille et ses planches ne changent pas : elles se règlent sur la page de la parcelle, où les planches
-         se voient. Un déplacement se fait par pas d'environ un mètre.</p>
+      <p><strong>Pour dessiner, cliquez sur la carte.</strong> Un point se pose d'un clic. Une ligne ou un
+         contour se trace point par point : double-clic ou Entrée pour finir, clic droit pour défaire le
+         dernier point, Échap pour tout annuler. <strong>À main levée</strong>, maintenez le clic et suivez
+         le contour, puis relâchez pour finir.</p>
+      <p><strong>Pour déplacer une étiquette</strong>, choisissez l'outil <strong>Étiquettes</strong> et glissez le
+         nom de l'objet là où il se lit mieux. Un trait pointillé le relie à son objet. Un double-clic le remet à
+         sa place. La carte reste libre de se déplacer.</p>
+      <p><strong>Pour déplacer une parcelle</strong>, choisissez l'outil <strong>Repositionner</strong> et glissez la
+         parcelle à sa place. Son orientation se règle ensuite avec le curseur du panneau Données. Sa taille et
+         ses planches ne changent pas : elles se règlent sur la page de la parcelle. Le déplacement se fait par
+         pas d'environ un mètre.</p>
       <p id="calque-aide"></p>
 <?php else: ?>
-      <p>Vous êtes lecteur sur ce site : la carte se lit, rien ne s'y dessine.</p>
+      <p>Vous êtes lecteur de ce projet : la carte se consulte sans se modifier.</p>
 <?php endif; ?>
     </div>
   </aside>

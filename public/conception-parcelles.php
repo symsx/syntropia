@@ -725,7 +725,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php if ($demandeNouvelle): ?>
     <main class="bureau" id="bureau">
       <div class="parc-creation">
-        <p class="parc-annonce"><?= $parcelles === [] ? 'Ouvrez votre première parcelle — vous pourrez en ajouter d\'autres ensuite.' : 'Ouvrez une nouvelle parcelle.' ?></p>
+        <p class="parc-annonce"><?= $parcelles === [] ? 'Ouvrez votre première parcelle. Vous pourrez en ajouter d\'autres ensuite.' : 'Ouvrez une nouvelle parcelle.' ?></p>
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
           <input type="hidden" name="action" value="creer">
@@ -734,7 +734,7 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 <?php endif; ?>
           <div class="parc-champ">
             <label for="code">Code</label>
-            <small>Un repère court — A, B, P1… pour la retrouver dans les listes.</small>
+            <small>Un repère court, comme A, B ou P1, pour la retrouver dans les listes.</small>
             <input type="text" id="code" name="code" placeholder="A" maxlength="32"
                    value="<?= htmlspecialchars($codeSaisi, ENT_QUOTES, 'UTF-8') ?>">
           </div>
@@ -835,7 +835,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="pd-titre">Conduite</p>
         <div class="pd-ligne">
           <select id="in-conduite" aria-label="Conduite de la parcelle">
-            <option value=""<?= trim((string) ($parcelleActive['conduite'] ?? '')) === '' ? ' selected' : '' ?> data-resume="<?= htmlspecialchars(($siteAChoisi ? '' : 'Le site n’a pas encore choisi : la syntropie s’applique en attendant. ') . $resume($conduiteSite), ENT_QUOTES, 'UTF-8') ?>">Comme le site — <?= $siteAChoisi ? htmlspecialchars($conduiteSite->libelle(), ENT_QUOTES, 'UTF-8') : 'pas encore choisie' ?></option>
+            <option value=""<?= trim((string) ($parcelleActive['conduite'] ?? '')) === '' ? ' selected' : '' ?> data-resume="<?= htmlspecialchars(($siteAChoisi ? '' : 'La conduite du site n’est pas encore choisie : la syntropie s’applique en attendant. ') . $resume($conduiteSite), ENT_QUOTES, 'UTF-8') ?>">Comme le site : <?= $siteAChoisi ? htmlspecialchars($conduiteSite->libelle(), ENT_QUOTES, 'UTF-8') : 'pas encore choisie' ?></option>
 <?php foreach (Conduite::toutes() as $cas): ?>
             <option value="<?= $cas->value ?>"<?= trim((string) ($parcelleActive['conduite'] ?? '')) === $cas->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($resume($cas) . ($cas->reserve() !== null ? ' ' . $cas->reserve() : ''), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($cas->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
 <?php endforeach; ?>
@@ -846,26 +846,26 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="pd-titre">Le stade du terrain</p>
         <div class="pd-ligne">
           <select id="in-stade" aria-label="Stade du terrain de la parcelle">
-            <option value=""<?= trim((string) ($parcelleActive['stade'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Trois stades, par parcelle.">Pas encore dit</option>
+            <option value=""<?= trim((string) ($parcelleActive['stade'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Le stade dit d’où part la parcelle. Le scénario le rappelle, avec les conseils de la formation pour ce stade.">Pas encore dit</option>
 <?php foreach (Stade::tous() as $st): ?>
             <option value="<?= $st->value ?>"<?= trim((string) ($parcelleActive['stade'] ?? '')) === $st->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($st->explication() . ' ' . $st->observe() . ' ' . $st->repere(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($st->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
 <?php endforeach; ?>
           </select>
         </div>
 <?php $stadeActif = Stade::depuis($parcelleActive['stade'] ?? null); ?>
-        <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . $stadeActif->repere() : 'Dites d’où vous partez : le scénario le rappelle, avec ce que la formation en dit. Trois stades, par parcelle.', ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="pd-note" id="stade-resume"><?= htmlspecialchars($stadeActif !== null ? $stadeActif->explication() . ' ' . $stadeActif->observe() . ' ' . $stadeActif->repere() : 'Le stade dit d’où part la parcelle. Le scénario le rappelle, avec les conseils de la formation pour ce stade.', ENT_QUOTES, 'UTF-8') ?></p>
 
         <p class="pd-titre">Le type de tortue</p>
         <div class="pd-ligne">
           <select id="in-tortue" aria-label="Type de tortue de la parcelle">
-            <option value=""<?= trim((string) ($parcelleActive['tortue'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Ce que la parcelle portera sur ses planches : il orientera ce que l’atelier vous proposera d’y planter.">Pas encore dit</option>
+            <option value=""<?= trim((string) ($parcelleActive['tortue'] ?? '')) === '' ? ' selected' : '' ?> data-resume="Le type de tortue dit ce que la parcelle portera sur ses planches. Il oriente ce que l’atelier propose d’y planter.">Pas encore dit</option>
 <?php foreach (Tortue::tous() as $to): ?>
             <option value="<?= $to->value ?>"<?= trim((string) ($parcelleActive['tortue'] ?? '')) === $to->value ? ' selected' : '' ?> data-resume="<?= htmlspecialchars($to->explication(), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($to->libelle(), ENT_QUOTES, 'UTF-8') ?></option>
 <?php endforeach; ?>
           </select>
         </div>
 <?php $tortueActive = Tortue::depuis($parcelleActive['tortue'] ?? null); ?>
-        <p class="pd-note" id="tortue-resume"><?= htmlspecialchars($tortueActive !== null ? $tortueActive->explication() : 'Ce que la parcelle portera sur ses planches : il orientera ce que l’atelier vous proposera d’y planter.', ENT_QUOTES, 'UTF-8') ?></p>
+        <p class="pd-note" id="tortue-resume"><?= htmlspecialchars($tortueActive !== null ? $tortueActive->explication() : 'Le type de tortue dit ce que la parcelle portera sur ses planches. Il oriente ce que l’atelier propose d’y planter.', ENT_QUOTES, 'UTF-8') ?></p>
 
         <p class="pd-titre">La parcelle <span class="pd-unite">(m)</span></p>
         <div class="pd-ligne">
@@ -884,9 +884,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         </div>
 
         <p class="pd-titre">Rattrapage</p>
-        <p class="pd-note">1,20 m de planche et 0,50 m de passe-pied ne divisent pas forcément la
-           largeur disponible tout rond — le reste se répartit sur les planches, ou sur les
-           passe-pieds, jamais les deux à la fois.</p>
+        <p class="pd-note">Des planches de 1,20 m et des passe-pieds de 0,50 m ne remplissent pas
+           toujours la largeur disponible. Le reste se répartit sur les planches ou sur les
+           passe-pieds, jamais sur les deux à la fois.</p>
         <div class="parc-choix">
           <label><input type="radio" class="radio" name="rattrapage" id="rattrapage-passe-pieds" value="passe-pieds"<?= $planRattrapage === 'passe-pieds' ? ' checked' : '' ?>>Sur les passe-pieds</label>
           <label><input type="radio" class="radio" name="rattrapage" id="rattrapage-planches" value="planches"<?= $planRattrapage === 'planches' ? ' checked' : '' ?>>Sur les planches</label>
@@ -898,9 +898,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <label class="pd-ligne-nom"><input type="checkbox" class="case" id="passe-pieds-bords"<?= $planPassePiedsBords ? ' checked' : '' ?>>Un passe-pied le long des deux bords</label>
 
         <p class="pd-titre">Lignes par planche</p>
-        <p class="pd-note">Les lignes de plantation de chaque planche, à intervalles égaux dans sa largeur ; la
-           ligne centrale (en trait plein sur le plan) porte la biomasse et la structure, jamais de tuteurs. Trois
-           par défaut — elles recevront les plantes de service.</p>
+        <p class="pd-note">Les lignes de plantation de chaque planche sont à intervalles égaux dans sa largeur. La
+           ligne centrale, en trait plein sur le plan, porte la biomasse et la structure, jamais de tuteurs. Il y a
+           trois lignes par défaut. Elles recevront les plantes de service.</p>
         <div id="lignes-planches" class="lp-liste"></div>
 
         <div id="natures-bloc" hidden>
@@ -918,10 +918,10 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 
         <div id="liane-bloc"<?= ($parcelleActive['tortue'] ?? null) === 'liane' ? '' : ' hidden' ?>>
           <p class="pd-titre">La ligne des lianes</p>
-          <p class="pd-note">Tortue liane : une structure porte des lianes émergentes, et la strate haute (vigne, kiwi)
-             à leur ombre ; dessous, des bandes de culture. L'atelier dessine le plan au sol, pas la structure : une ligne
-             marque où montent les lianes — « à l’est ou au nord, ou au cœur de la tortue entre les poteaux centraux »
-             (Théry, ch. 15). En tireté violet sur le plan.</p>
+          <p class="pd-note">Dans une tortue liane, une structure porte des lianes émergentes, avec la strate haute
+             (vigne, kiwi) à leur ombre, et des bandes de culture dessous. L'atelier dessine le plan au sol, sans la
+             structure. Une ligne en tirets violets marque où montent les lianes : « à l’est ou au nord, ou au cœur de
+             la tortue entre les poteaux centraux » (Théry, ch. 15).</p>
           <div class="pd-ligne">
             <span class="pd-ligne-nom">Elle court</span>
             <select id="in-position-liane" aria-label="Position de la ligne des lianes">
@@ -933,9 +933,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         </div>
 
         <p class="pd-titre">Bordure externe <span class="pd-unite">(m)</span></p>
-        <p class="pd-note">Bloque-herbe, coupe-vent, défense contre les animaux — une haie
-           défensive en bord de parcelle. Cochez « vent » le côté d'où vient le vent dominant :
-           c'est lui qui devra l'arrêter, avec des plantes brise-vent.</p>
+        <p class="pd-note">La bordure externe est une haie défensive en bord de parcelle. Elle
+           bloque l'herbe, coupe le vent et défend contre les animaux. Cochez « vent » sur le côté
+           d'où vient le vent dominant : ce côté recevra des plantes brise-vent.</p>
 <?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
         <div class="pd-ligne pd-ligne-vent">
           <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordures[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-active"><?= $libelle ?></label>
@@ -945,8 +945,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endforeach; ?>
 
         <p class="pd-titre">Bordure interne <span class="pd-unite">(m)</span></p>
-        <p class="pd-note">Les fournisseurs de biomasse, juste à l'intérieur de la bordure
-           externe — inactive par défaut, une parcelle n'en a pas forcément besoin.</p>
+        <p class="pd-note">La bordure interne porte les fournisseurs de biomasse, juste à
+           l'intérieur de la bordure externe. Elle est inactive par défaut, car une parcelle n'en a
+           pas toujours besoin.</p>
 <?php foreach (['nord' => 'Nord', 'sud' => 'Sud', 'ouest' => 'Ouest', 'est' => 'Est'] as $cote => $libelle): ?>
         <div class="pd-ligne">
           <label class="pd-ligne-nom"><input type="checkbox"<?= $planBordureInterne[$cote]['actif'] ? ' checked' : '' ?> data-cote="<?= $cote ?>" class="case bordure-interne-active"><?= $libelle ?></label>
@@ -955,16 +956,15 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endforeach; ?>
         <p class="pd-reel-erreur" id="plan-erreur"<?= $erreursPlan === [] ? ' hidden' : '' ?>><?= htmlspecialchars(implode(' ', $erreursPlan), ENT_QUOTES, 'UTF-8') ?></p>
         <p class="pd-reel-note" id="plan-etat" hidden></p>
-        <p class="pd-reel-note">Enregistrer pose aussi cette parcelle, dimensionnée, sur
-           <a href="conception-etude-site.php">la carte interactive du terrain</a> — par un
-           rectangle posé d'un clic, plus rien à ressaisir.</p>
+        <p class="pd-reel-note">Une fois le plan enregistré, la parcelle se pose d'un clic sur
+           <a href="conception-etude-site.php">la carte du terrain</a>, avec ses dimensions.</p>
         <button type="button" class="pd-reel-bouton" id="plan-bouton">Enregistrer le plan</button>
 
         <p class="pd-titre" id="bl-titre">Les plantes des bordures</p>
-        <p class="pd-note">Une ligne de plants par côté, au milieu de sa bande : une espèce, ou plusieurs qui
-           alternent. L'écart entre deux plants voisins est la moyenne de leurs espacements, et chaque bout
-           garde la moitié du sien. Les espacements viennent de <a href="especes.php">Espèces</a>.</p>
-        <p class="pd-note" id="bl-suspendu" hidden>Le plan a changé : enregistrez-le d'abord — les plants se
+        <p class="pd-note">Chaque côté reçoit une ligne de plants, au milieu de sa bande, avec une espèce ou
+           plusieurs qui alternent. L'écart entre deux plants voisins est la moyenne de leurs espacements, et
+           chaque bout garde la moitié du sien. Les espacements viennent de <a href="especes.php">Espèces</a>.</p>
+        <p class="pd-note" id="bl-suspendu" hidden>Le plan a changé. Enregistrez-le d'abord : les plants se
            comptent sur le plan enregistré.</p>
 <?php if ($peutEcrire && $repGeometrie !== []):
     $nomEsp = static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
@@ -981,16 +981,16 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     }; ?>
         <div class="rb-bloc" id="rb">
 <?php if ($repRemplies): ?>
-          <p class="pd-note"><b>Répartir une liste de plantes</b> se fait sur des bordures vides : des côtés portent déjà
-            des plantes. Composez les autres côté par côté, ou videz d'abord toutes les lignes des bordures.</p>
+          <p class="pd-note"><b>Répartir une liste de plantes</b> se fait sur des bordures vides, et des côtés portent
+            déjà des plantes. Composez les autres côté par côté, ou videz d'abord toutes les lignes des bordures.</p>
 <?php elseif (!$repOuverte): ?>
           <a class="bl-proposer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;repartir=1">Répartir une liste de plantes sur toutes les bordures</a>
 <?php else: ?>
           <p class="pd-titre" style="margin-top:.4rem">Répartir une liste de plantes</p>
-          <p class="pd-note">Cochez les plantes de vos bordures : l'atelier les dispose sur chaque côté dont elles
-            remplissent la fonction, en alternance, à leur espacement. Au sud et à l'ouest de l'externe, des émergentes
-            seulement ; sur un côté coché « vent », des brise-vent entre les bloque-herbe. Il faut deux espèces au
-            moins par côté — la diversité fait la réussite du système. Rien n'est écrit avant « Poser ces bordures ».</p>
+          <p class="pd-note">Cochez les plantes de vos bordures. L'atelier les dispose sur chaque côté dont elles
+            remplissent la fonction, en alternance, à leur espacement. Au sud et à l'ouest de l'externe, il pose
+            seulement des émergentes. Sur un côté coché « vent », il pose des brise-vent entre les bloque-herbe. Il
+            faut au moins deux espèces par côté. Rien n'est enregistré avant « Poser ces bordures ».</p>
 <?php if ($erreurRepartition !== null): ?>
           <p class="bl-alerte" role="alert"><?= htmlspecialchars($erreurRepartition, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endif; ?>
@@ -999,20 +999,20 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php elseif ($repApercu !== null): ?>
           <div class="rb-apercu">
 <?php if (!$repApercu['ok']): ?>
-            <p class="bl-alerte"><b>Rien n'est réparti</b> : chaque côté doit recevoir deux espèces au moins de la liste.</p>
+            <p class="bl-alerte"><b>Rien n'est réparti.</b> Chaque côté doit recevoir au moins deux espèces de la liste.</p>
             <ul class="rb-cotes">
 <?php foreach ($repApercu['cotes'] as $cle => $c): if ($c['refus'] === null) { continue; } ?>
               <li><b><?= htmlspecialchars(Bordures::libelle($cle), ENT_QUOTES, 'UTF-8') ?></b> : <?= htmlspecialchars($c['refus'], ENT_QUOTES, 'UTF-8') ?>.</li>
 <?php endforeach; ?>
             </ul>
 <?php else: ?>
-            <p class="pd-note"><b>Aperçu</b>, dessiné sur le plan :</p>
+            <p class="pd-note"><b>L'aperçu</b> est dessiné sur le plan.</p>
             <ul class="rb-cotes">
 <?php foreach ($repApercu['cotes'] as $cle => $c):
     $vus = [];
     foreach ($c['serie'] as $e) { $vus[(int) $e['id']] ??= $nomEsp($e) . ' ' . ($c['plants'][(int) $e['id']] ?? 0); } ?>
               <li><b><?= htmlspecialchars(Bordures::libelle($cle) . ($c['brise_vent'] ? ' (vent)' : ''), ENT_QUOTES, 'UTF-8') ?></b>
-                — <?= htmlspecialchars($nombreFr($c['longueur']) . ' m, ' . $c['compte']['total'] . ' plants : ' . implode(', ', $vus), ENT_QUOTES, 'UTF-8') ?><?php if ($c['sans_plant'] !== []): ?>
+                : <?= htmlspecialchars($nombreFr($c['longueur']) . ' m, ' . $c['compte']['total'] . ' plants (' . implode(', ', $vus) . ')', ENT_QUOTES, 'UTF-8') ?><?php if ($c['sans_plant'] !== []): ?>
                 <small class="bl-reserve">Pas de place pour <?= htmlspecialchars(implode(', ', array_map($nomEsp, $c['sans_plant'])), ENT_QUOTES, 'UTF-8') ?>.</small><?php endif; ?></li>
 <?php endforeach; ?>
             </ul>
@@ -1021,7 +1021,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
             <p class="pd-note"><?= htmlspecialchars($m, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endforeach; ?>
 <?php if ($repApercu['sans_place'] !== []): ?>
-            <p class="pd-note">Sans place sur aucun côté : <?= htmlspecialchars(implode(' ; ', array_map(static fn (array $s): string => $nomEsp($s['espece']) . ' (' . implode(', ', $s['raisons']) . ')', $repApercu['sans_place'])), ENT_QUOTES, 'UTF-8') ?>.</p>
+            <p class="pd-note">Plantes sans place sur aucun côté : <?= htmlspecialchars(implode(' ; ', array_map(static fn (array $s): string => $nomEsp($s['espece']) . ' (' . implode(', ', $s['raisons']) . ')', $repApercu['sans_place'])), ENT_QUOTES, 'UTF-8') ?>.</p>
 <?php endif; ?>
 <?php if ($repApercu['ok']): ?>
             <form method="post" action="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>">
@@ -1047,26 +1047,26 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
             <ul class="bl-choix">
 <?php foreach ($repEligibles as $e): ?>
               <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= in_array((int) $e['id'], $repChoix, true) ? ' checked' : '' ?>>
-                <span><b><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></b> — <?= htmlspecialchars($fonctionsEsp($e), ENT_QUOTES, 'UTF-8') ?> ;
-                  <?= htmlspecialchars($strateEsp($e) . ' ; ' . $nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') ?></span></label></li>
+                <span><b><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></b> : <?= htmlspecialchars($fonctionsEsp($e), ENT_QUOTES, 'UTF-8') ?>,
+                  <?= htmlspecialchars($strateEsp($e) . ', ' . $nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') ?></span></label></li>
 <?php endforeach; ?>
 <?php foreach ($repGrisees as $g): ?>
               <li class="rb-grisee"><label><input type="checkbox" class="case" disabled>
-                <span><b><?= htmlspecialchars($nomEsp($g['espece']), ENT_QUOTES, 'UTF-8') ?></b> — <?= htmlspecialchars($g['raison'], ENT_QUOTES, 'UTF-8') ?></span></label></li>
+                <span><b><?= htmlspecialchars($nomEsp($g['espece']), ENT_QUOTES, 'UTF-8') ?></b> : <?= htmlspecialchars($g['raison'], ENT_QUOTES, 'UTF-8') ?></span></label></li>
 <?php endforeach; ?>
             </ul>
 <?php foreach (RepartitionBordures::CADRES as $cadre): ?>
             <div class="pd-ligne rb-colonne">
-              <span class="pd-ligne-nom">Colonne vertébrale — <?= $cadre ?></span>
+              <span class="pd-ligne-nom">Colonne vertébrale, bordure <?= $cadre ?></span>
               <select name="colonne_<?= $cadre ?>" aria-label="Colonne vertébrale de la bordure <?= $cadre ?> : une plante sur deux">
-                <option value="">aucune</option>
+                <option value="">Aucune</option>
 <?php foreach ($repEligibles as $e): if (!Bordures::convient($cadre, $e)) { continue; } ?>
                 <option value="<?= (int) $e['id'] ?>"<?= $repColonnes[$cadre] === (int) $e['id'] ? ' selected' : '' ?>><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></option>
 <?php endforeach; ?>
               </select>
             </div>
 <?php endforeach; ?>
-            <p class="pd-note">La colonne vertébrale revient un plant sur deux ; cochez-la aussi dans la liste.</p>
+            <p class="pd-note">La colonne vertébrale revient un plant sur deux. Cochez-la aussi dans la liste.</p>
             <div class="bl-ajout">
               <button type="submit" class="bl-bouton">Voir l'aperçu</button>
               <a class="bl-retirer" href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>">Fermer</a>
@@ -1079,25 +1079,25 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="bl-alerte" role="alert"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></p>
 <?php endforeach; ?>
 <?php if ($lignesBordures === []): ?>
-        <p class="pd-note">Aucune bordure sur le plan enregistré : les lignes s'appuient sur lui. Cochez les côtés
-           voulus, donnez-leur une largeur, enregistrez le plan — leurs lignes apparaîtront ici.</p>
+        <p class="pd-note">Le plan enregistré n'a aucune bordure, et les lignes s'appuient sur lui. Cochez les côtés
+           voulus, donnez-leur une largeur et enregistrez le plan : leurs lignes apparaîtront ici.</p>
 <?php endif; ?>
 <?php foreach ($lignesBordures as $cle => $lb):
     [$cadre, $cote] = Bordures::depuisCle($cle);
     $geo = $lb['geometrie'];
     $compte = $lb['compte'];
     $resume = $lb['places'] === [] ? 'vide'
-        : ($geo === null ? ($cadre === 'liane' ? 'pas à cette position, ou hors tortue liane — la ligne est gardée' : 'côté inactif — la ligne est gardée')
+        : ($geo === null ? ($cadre === 'liane' ? 'ligne gardée, mais pas à cette position ou hors tortue liane' : 'ligne gardée, mais côté inactif')
         : ($compte['ok'] ? $compte['total'] . ' plant' . ($compte['total'] > 1 ? 's' : '') : 'pas de compte'));
     $convenantes = array_values(array_filter($especesSite, static fn (array $e): bool => Bordures::convient($cadre, $e)));
     $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
     $etiquette = static function (array $e) use ($nombreFr): string {
         $nom = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
-        return $nom . ' — ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement');
+        return $nom . ', ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement');
     }; ?>
         <details class="bl-cote" id="bl-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>"<?= $bordureOuverte === $cle ? ' open' : '' ?>>
           <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . ($cadre === 'liane' ? Planches::POSITIONS_LIANE[$cote] : $cote), ENT_QUOTES, 'UTF-8') ?>
-            <small>— <?= $geo !== null ? htmlspecialchars($nombreFr($geo['longueur']) . ' m · ', ENT_QUOTES, 'UTF-8') : '' ?><?= htmlspecialchars($resume, ENT_QUOTES, 'UTF-8') ?></small></summary>
+            <small><?= $geo !== null ? htmlspecialchars($nombreFr($geo['longueur']) . ' m · ', ENT_QUOTES, 'UTF-8') : '' ?><?= htmlspecialchars($resume, ENT_QUOTES, 'UTF-8') ?></small></summary>
           <p class="pd-note">Pour <?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>.</p>
 <?php if ($lb['places'] !== []): ?>
           <ol class="bl-serie">
@@ -1116,8 +1116,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endforeach; ?>
           </ol>
 <?php if ($compte !== null && !$compte['ok'] && $compte['manquants'] !== []): ?>
-          <p class="bl-alerte">Pas de compte : <?= htmlspecialchars(implode(', ', array_map(static fn (int $k): string => $lb['places'][$k]['nom'], $compte['manquants'])), ENT_QUOTES, 'UTF-8') ?>
-            n'<?= count($compte['manquants']) > 1 ? 'ont' : 'a' ?> pas d'espacement — renseignez-le dans <a href="especes.php">Espèces</a>.</p>
+          <p class="bl-alerte">Les plants ne peuvent pas se compter : <?= htmlspecialchars(implode(', ', array_map(static fn (int $k): string => $lb['places'][$k]['nom'], $compte['manquants'])), ENT_QUOTES, 'UTF-8') ?>
+            n'<?= count($compte['manquants']) > 1 ? 'ont' : 'a' ?> pas d'espacement. Renseignez-le dans <a href="especes.php">Espèces</a>.</p>
 <?php elseif ($compte !== null && $compte['ok'] && $compte['total'] === 0): ?>
           <p class="bl-alerte">La ligne est plus courte qu'un espacement : aucun plant n'y tient.</p>
 <?php endif; ?>
@@ -1130,24 +1130,24 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           <div class="bl-proposition">
             <p class="pd-titre" style="margin-top:.4rem">Ce que l'atelier propose</p>
 <?php if ($proposition === [] && $cadre === 'liane'): ?>
-            <p class="pd-note">Aucune liane vivace ou ligneuse dans votre référentiel. Dans <a href="especes.php">Espèces</a>,
-              cochez la strate « Liane / grimpante » des lianes que vous voulez y voir.</p>
+            <p class="pd-note">Votre référentiel n'a aucune liane vivace ou ligneuse. Dans <a href="especes.php">Espèces</a>,
+              cochez la strate « Liane / grimpante » des lianes que vous voulez voir ici.</p>
 <?php elseif ($proposition === []): ?>
-            <p class="pd-note">Aucune espèce de votre référentiel ne porte la fonction de cette bordure
-              (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>), hors annuelles. Ajoutez-la
-              dans <a href="especes.php">Espèces</a> : le rôle, ou la case « bloque l'herbe ».</p>
+            <p class="pd-note">Aucune espèce vivace ou ligneuse de votre référentiel n'a la fonction de cette bordure
+              (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>). Ajoutez-la dans
+              <a href="especes.php">Espèces</a>, avec le rôle ou la case « bloque l'herbe ».</p>
 <?php else: ?>
 <?php if ($cadre === 'liane'):
     $annuelles = Bordures::lianesAnnuelles($especesSite); ?>
-            <p class="pd-note">Les lianes vivaces ou ligneuses de votre référentiel (strate « Liane / grimpante »), les
-              émergentes d'abord : seules celles de contrées ensoleillées supportent le plein soleil en haut de la structure
-              (Théry, ch. 15).<?= $annuelles !== [] ? ' La première année, doublez-les de lianes annuelles le temps qu’elles s’installent : '
+            <p class="pd-note">Voici les lianes vivaces ou ligneuses de votre référentiel (strate « Liane / grimpante »),
+              les émergentes d'abord. Seules les lianes de contrées ensoleillées supportent le plein soleil en haut de la
+              structure (Théry, ch. 15).<?= $annuelles !== [] ? ' La première année, doublez-les de lianes annuelles le temps qu’elles s’installent : '
               . htmlspecialchars(implode(', ', array_map(static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']), $annuelles)), ENT_QUOTES, 'UTF-8') . '.' : '' ?></p>
 <?php endif; ?>
-            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Toutes les espèces vivaces ou ligneuses de votre référentiel qui savent
-              ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . ' — les annuelles n\'y sont pas, une
-              bordure est pérenne. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui n'ont pas
-              d'espacement ne sont pas cochées, faute de pouvoir les compter.<?= $apercu !== null && $apercu['ok'] ? ' Les '
+            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Voici toutes les espèces vivaces ou ligneuses de votre référentiel
+              qui savent ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . '. Les annuelles n\'y sont
+              pas, car une bordure est pérenne. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui
+              n'ont pas d'espacement ne sont pas cochées, car elles ne peuvent pas se compter.<?= $apercu !== null && $apercu['ok'] ? ' Les '
               . count($comptables) . ' cochées donneraient ' . $apercu['total'] . ' plants sur ' . htmlspecialchars($nombreFr($geo['longueur']), ENT_QUOTES, 'UTF-8') . ' m.' : '' ?></p>
             <form method="post" id="<?= $formProp ?>">
               <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -1159,7 +1159,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php foreach ($proposition as $pr): $e = $pr['espece']; ?>
                 <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= $e['espacement_retenu_m'] !== null ? ' checked' : '' ?>>
                   <span><b><?= htmlspecialchars((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></b>
-                    — <?= htmlspecialchars(implode(', ', array_map(static fn (string $f): string => mb_strtolower(\Syntropia\Scenario::FONCTIONS[$f] ?? $f), $pr['fonctions'])), ENT_QUOTES, 'UTF-8') ?> ;
+                    : <?= htmlspecialchars(implode(', ', array_map(static fn (string $f): string => mb_strtolower(\Syntropia\Scenario::FONCTIONS[$f] ?? $f), $pr['fonctions'])), ENT_QUOTES, 'UTF-8') ?>,
                     <?= $e['espacement_retenu_m'] !== null ? htmlspecialchars($nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') : 'sans espacement' ?><?php if ($pr['reserve'] !== null): ?>
                     <small class="bl-reserve"><?= htmlspecialchars($pr['reserve'], ENT_QUOTES, 'UTF-8') ?></small><?php endif; ?></span></label></li>
 <?php endforeach; ?>
@@ -1214,8 +1214,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     $repere = $dc === null ? CalendrierLignes::repere(array_map(static fn (int $i): ?array => (new Especes())->parId($i), $idsSerie), new \DateTimeImmutable('today')) : null; ?>
           <div class="bl-calendrier">
             <p class="pd-titre" style="margin-top:.5rem">Le calendrier prévu</p>
-            <p class="pd-note">Des prévisions : la date réelle se donnera à la Réalisation, et le jour d'une perturbation
-              s'adaptera au temps qu'il fait — le journal gardera ce qui a été fait.</p>
+            <p class="pd-note">Ces dates sont des prévisions. La date réelle se donne à la Réalisation, et le jour d'une
+              perturbation s'adapte au temps qu'il fait. Le journal garde ce qui a été fait.</p>
 <?php if ($peutEcrire): ?>
             <form method="post" class="bl-ajout">
               <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -1228,7 +1228,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
               <button type="submit" class="bl-bouton">Noter</button>
             </form>
 <?php if ($repere !== null): ?>
-            <p class="pd-note">Date proposée d'après le calendrier de <?= htmlspecialchars($repere['espece'], ENT_QUOTES, 'UTF-8') ?> dans Espèces — rien n'est noté avant « Noter ».</p>
+            <p class="pd-note">Cette date est proposée d'après le calendrier de <?= htmlspecialchars($repere['espece'], ENT_QUOTES, 'UTF-8') ?> dans Espèces. Rien n'est enregistré avant « Noter ».</p>
 <?php endif; ?>
 <?php else: ?>
             <p class="pd-note">Plantation prévue : <?= $dc !== null && $dc['mise_en_place_prevue'] !== null ? htmlspecialchars((string) $dc['mise_en_place_prevue'], ENT_QUOTES, 'UTF-8') : 'pas encore notée' ?>.</p>
@@ -1236,7 +1236,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php if ($pp !== []): ?>
             <ol class="bl-serie">
 <?php foreach ($pp as $x): ?>
-              <li><span><?= htmlspecialchars((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y'), ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars(CalendrierLignes::libelleGeste((string) $x['geste']), ENT_QUOTES, 'UTF-8') ?></span>
+              <li><span><?= htmlspecialchars((new \DateTimeImmutable((string) $x['date_prevue']))->format('d/m/Y'), ENT_QUOTES, 'UTF-8') ?> : <?= htmlspecialchars(CalendrierLignes::libelleGeste((string) $x['geste']), ENT_QUOTES, 'UTF-8') ?></span>
 <?php if ($peutEcrire): ?>
                 <form method="post" style="margin-left:auto">
                   <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -1264,8 +1264,9 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
               </select>
               <button type="submit" class="bl-bouton">Prévoir</button>
             </form>
-            <p class="pd-note">Repères de Théry (ch. 12) : la première coupe en vert en juin, les suivantes quand il y a de quoi
-              couper ; les tailles de ligneux en hiver, hors gel — à recaler sur l'état des bourgeons de votre lieu.</p>
+            <p class="pd-note">Les repères de Théry (ch. 12) : la première coupe en vert en juin, puis les suivantes quand il
+              y a de quoi couper ; les tailles de ligneux en hiver, hors gel. Ces repères se recalent sur l'état des
+              bourgeons de votre lieu.</p>
 <?php endif; ?>
           </div>
 <?php endif; ?>
@@ -1282,11 +1283,11 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           <div class="pd-champ"><dt>Passe-pied</dt><dd id="r-passe-pied">—</dd></div>
           <div class="pd-champ"><dt>Linéaire de bordure</dt><dd id="r-lineaire">—</dd></div>
         </dl>
-        <p class="pd-note">La planche de bord (la première et la dernière de chaque rang) touche
-           la bordure plutôt qu'un passe-pied : elle ne se travaille que d'un seul côté, d'où sa
-           largeur plus étroite.</p>
-        <p class="pd-note">« Surface utile » compte tout ce que les bordures laissent, passe-pieds
-           compris ; « Surface des planches » ne compte que ce qui se cultive vraiment.</p>
+        <p class="pd-note">La planche de bord, la première et la dernière de chaque rang, touche la
+           bordure plutôt qu'un passe-pied. Elle ne se travaille que d'un côté : c'est pourquoi elle est
+           plus étroite.</p>
+        <p class="pd-note">La surface utile compte tout ce que les bordures laissent, passe-pieds
+           compris. La surface des planches ne compte que ce qui se cultive.</p>
       </div>
     </aside>
 <?php endif; ?>
@@ -1301,40 +1302,39 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
 <?php if ($demandeNouvelle): ?>
-      <p>Le code et le nom suffisent pour ouvrir une parcelle — tout le reste (forme,
-         dimensions, sol) se précise ensuite, ici ou dans les étapes suivantes.
-         <strong>Pérenne</strong> : vergers, haies, système porté par des arbres.
-         <strong>Potager</strong> : cultures de légumes, annuelles.</p>
+      <p>Le code et le nom suffisent pour ouvrir une parcelle. La forme, les dimensions et
+         le sol se précisent ensuite, ici ou dans les étapes suivantes. Une parcelle
+         <strong>pérenne</strong> est portée par des arbres : verger, haie. Un
+         <strong>potager</strong> porte des cultures de légumes, de feuilles et de racines
+         pour soi et la famille.</p>
 <?php else: ?>
-      <p>Vous allez créer la ou les parcelles du site, en fixant leur forme et leur place.
-         Ici : les dimensions de la parcelle <code><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?></code>,
-         où courent ses bordures, et la largeur voulue pour les planches. Le nombre de
-         planches se calcule seul — et avec lui les linéaires, donc le nombre de plants
-         et de graines. Prévoyez un mètre ruban et dix minutes sur place.</p>
-      <p><strong>Sélection</strong> — cliquez une bordure du dessin pour la choisir.
-         <strong>Déplacer un bord</strong> — tirez le bord d'une bordure sur le dessin
-         pour changer sa largeur ; le tableau « Ce que la géométrie donne » se met à
-         jour au relâchement. <strong>Zoom</strong> — la molette, ou « − » et « + » en bas du plan ;
-         agrandi, le plan se fait glisser.</p>
-      <p><strong>Annuler les changements</strong> (en bas) ramène le plan tel qu'il est enregistré ;
-         <strong>Réinitialiser</strong> le fait repartir des valeurs par défaut de l'atelier (12 × 8 m…). Les deux
-         demandent confirmation, et aucun n'écrit rien : seul « Enregistrer le plan » écrit.</p>
-      <p><strong>Les plantes des bordures</strong> — une fois le plan enregistré, chaque côté actif reçoit une
-         ligne de plants : choisissez une espèce, ou plusieurs qui alternent (la diversité est le principe). La
-         bordure externe bloque l'herbe et freine le vent, l'interne apporte de la biomasse : les espèces qui le
-         font viennent en tête de la liste. « Proposer les espèces de cette bordure » les montre toutes (hors annuelles :
-         une bordure est pérenne) ; vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
-         d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chaque espèce avec sa
-         couleur et son sigle : la <strong>légende</strong> les liste, les sigles s'inscrivent sur le plan quand le zoom
-         le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Tout/rien » les montre ou
-         les retire tous, la pastille d'une espèce les siens ; « Afficher la légende », au bas de la page, la
-         retire.</p>
-      <p><strong>Répartir une liste de plantes</strong> — sur des bordures encore vides, cochez une seule liste pour
-         toute la parcelle : l'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance,
-         des émergentes seules au sud et à l'ouest de l'externe, des brise-vent sur les côtés cochés « vent », et la
-         colonne vertébrale choisie un plant sur deux. Un côté ne garde que les plantes qu'il peut porter ; s'il en
-         reste moins de deux, rien n'est réparti et l'atelier dit pourquoi. Vous voyez l'aperçu sur le plan avant de
-         poser, puis vous retouchez chaque côté à la main si vous le voulez.</p>
+      <p>Cette étape fixe la forme et la place des parcelles du site. Pour la parcelle
+         <code><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?></code>, vous donnez
+         ses dimensions, ses bordures et le sens de ses planches. Le nombre de planches se calcule seul, et avec
+         lui les linéaires, donc le nombre de plants et de graines.</p>
+      <p>L'outil <strong>Sélection</strong> choisit une bordure d'un clic sur le dessin. L'outil
+         <strong>Déplacer un bord</strong> change la largeur d'une bordure en tirant son bord. Le tableau
+         « Ce que la géométrie donne » se met à jour au relâchement. Le plan se zoome avec la molette, ou avec
+         « − » et « + » en bas du plan. Agrandi, il se fait glisser.</p>
+      <p><strong>Annuler les changements</strong>, en bas, ramène le plan tel qu'il est enregistré.
+         <strong>Réinitialiser</strong> le fait repartir des valeurs par défaut de l'atelier (12 × 8 m). Les deux
+         demandent confirmation et n'enregistrent rien : seul « Enregistrer le plan » enregistre.</p>
+      <p><strong>Les plantes des bordures.</strong> Une fois le plan enregistré, chaque côté actif reçoit une
+         ligne de plants, avec une espèce ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine
+         le vent, la bordure interne apporte de la biomasse. Les espèces qui remplissent ces fonctions viennent en
+         tête de la liste. « Proposer les espèces de cette bordure » les montre toutes, sauf les annuelles, car une
+         bordure est pérenne. Vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
+         d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chacune avec sa
+         couleur et son sigle. La <strong>légende</strong> les liste. Les sigles s'inscrivent sur le plan quand le
+         zoom le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Tout/rien » affiche
+         ou masque tous les sigles, et la pastille d'une espèce ceux de cette espèce. « Afficher la légende », au
+         bas de la page, masque la légende.</p>
+      <p><strong>Répartir une liste de plantes.</strong> Sur des bordures encore vides, vous cochez une seule
+         liste pour toute la parcelle. L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en
+         alternance. Il pose seulement des émergentes au sud et à l'ouest de l'externe, des brise-vent sur les côtés
+         cochés « vent », et la colonne vertébrale choisie un plant sur deux. Un côté ne garde que les plantes qu'il
+         peut porter. S'il en reste moins de deux, rien n'est réparti et l'atelier dit pourquoi. L'aperçu s'affiche
+         sur le plan avant de poser, et chaque côté se retouche ensuite à la main.</p>
 <?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
@@ -1348,7 +1348,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
       </button>
     </form>
 <?php if (!$demandeNouvelle): ?>
-    <label class="pied-option"><input type="checkbox" id="afficher-cotes" class="case" checked> Afficher les côtes</label>
+    <label class="pied-option"><input type="checkbox" id="afficher-cotes" class="case" checked> Afficher les cotes</label>
 <?php if ($legende !== []): ?>
     <label class="pied-option"><input type="checkbox" id="afficher-legende" class="case" checked> Afficher la légende</label>
 <?php endif; ?>

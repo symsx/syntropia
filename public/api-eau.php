@@ -47,7 +47,7 @@ if (!$auth->estConnecte()) {
     repondre(403, ['ok' => false, 'message' => 'Non autorisé.']);
 }
 if (!$auth->jetonValide($_POST['csrf'] ?? null)) {
-    repondre(403, ['ok' => false, 'message' => 'Formulaire expiré — rechargez la page.']);
+    repondre(403, ['ok' => false, 'message' => 'Le formulaire a expiré. Rechargez la page.']);
 }
 
 $siteId = (int) ($_POST['site_id'] ?? 0);
@@ -63,10 +63,9 @@ if ($siteId <= 0 || !$sites->peutEcrireSur($siteId, (int) $auth->compteId())) {
 $calques = new Calques();
 $emprise = $calques->empriseDuTerrain($siteId, Eau::MARGE_M);
 if ($emprise === null) {
-    repondre(200, ['ok' => false, 'message' => "Tracez d'abord les limites du terrain "
-        . "— à la main sur le calque du fond, ou en suivant le cadastre. "
-        . "C'est elles qui bornent la recherche : sans elles, je ramènerais "
-        . "la rivière du département."]);
+    repondre(200, ['ok' => false, 'message' => "Tracez d'abord les limites du terrain, "
+        . "à la main sur le calque des limites ou en suivant le cadastre. "
+        . "Elles bornent la recherche de l'eau autour du terrain."]);
 }
 
 $resultat = Eau::dansEmprise([$emprise['sud'], $emprise['ouest']],

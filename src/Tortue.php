@@ -35,9 +35,9 @@ enum Tortue: string
     {
         return match ($this) {
             self::Classique => 'Des planches de production, une ligne centrale de biomasse et des bordures vivantes (Théry, ch. 8 et 11).',
-            self::Zebre => 'Des planches pérennes (petits fruits, tisanes, mellifères, biomasse ligneuse) alternent avec des planches annuelles (légumes, pépinières) ; la biomasse annuelle en 3D doit réussir sur les lignes pérennes (Théry, ch. 15 § 7).',
-            self::Abeille => 'Pérenne et annuel sur la même planche : une bande pérenne, une bande potagère ; des émergents de 3,50 m au plus ; elle prend deux fois la surface d’un potager classique (Théry, ch. 15 § 8).',
-            self::Liane => 'Tortue d’ombre, pour les étés secs et les pluies violentes : une structure porte des lianes émergentes, la strate haute (vigne, kiwi) à leur ombre, et protège dessous une succession potagère sans biomasse 3D ; maïs et tournesol les deux premières années seulement, le temps que les lianes s’installent ; pour les petites surfaces (Théry, ch. 15 § 9).',
+            self::Zebre => 'Des planches pérennes (petits fruits, tisanes, mellifères, biomasse ligneuse) alternent avec des planches annuelles (légumes, pépinières). La biomasse annuelle en 3D doit réussir sur les lignes pérennes (Théry, ch. 15 § 7).',
+            self::Abeille => 'Chaque planche porte une bande pérenne et une bande potagère. Les émergents mesurent 3,50 m au plus. Cette tortue prend deux fois la surface d’un potager classique (Théry, ch. 15 § 8).',
+            self::Liane => 'C’est une tortue d’ombre, pour les étés secs et les pluies violentes, sur de petites surfaces. Une structure porte des lianes émergentes, avec la strate haute (vigne, kiwi) à leur ombre. Elle protège dessous une succession potagère sans biomasse 3D. Le maïs et le tournesol n’y poussent que les deux premières années, le temps que les lianes s’installent (Théry, ch. 15 § 9).',
         };
     }
 
