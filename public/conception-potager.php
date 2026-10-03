@@ -233,7 +233,8 @@ if ($parcelle !== null && $peutEcrire && isset($etatPlanches[$planchesLignes])) 
     }
     $etatP = $etatPlanches[$planchesLignes];
     $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesService->toutes($siteId), $natures[$planchesLignes] ?? null,
-        LignesDeService::liane($parcelle, new \DateTimeImmutable('today')));
+        LignesDeService::liane($parcelle, new \DateTimeImmutable('today')),
+        \Syntropia\Planches::demiPlancheDeFin($parcelle, $planchesLignes));
     // Rien de posé sur la planche, ou « Reprendre la proposition » : les choix partent de la proposition.
     $partirDeLaProposition = ($_GET['proposer_lignes'] ?? '') === '1' || array_filter($etatP['lignes']) === [];
     $choixLignes = [];
@@ -769,7 +770,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
               <p class="pt-lignes"><small>Lignes de service : <?php
                 $morceaux = [];
                 foreach ($lp['lignes'] as $k => $l) {
-                    $morceaux[] = $k . ($k === \Syntropia\Planches::centrale(count($lp['lignes'])) + 1 ? '*' : '') . ' '
+                    $morceaux[] = $k . ($k === \Syntropia\Planches::centraleDe($parcelle, (int) $c['numero']) + 1 ? '*' : '') . ' '
                         . ($l === null ? '—' : $l['nom'] . ($l['compte'] !== null ? ' (' . $l['compte'] . ')' : ''));
                 }
                 echo $h(implode(' · ', $morceaux)); ?></small>
@@ -946,7 +947,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <label class="pt-champ">La ligne
             <select name="ligne">
 <?php foreach ($posees as $k => $pose): ?>
-              <option value="<?= (int) $k ?>"<?= $k === \Syntropia\Planches::centrale(count($pl['etat']['lignes'])) + 1 ? ' selected' : '' ?>>Ligne <?= (int) $k ?> · <?= $h($pose['nom']) ?></option>
+              <option value="<?= (int) $k ?>"<?= $k === \Syntropia\Planches::centraleDe($parcelle, (int) $pl['numero']) + 1 ? ' selected' : '' ?>>Ligne <?= (int) $k ?> · <?= $h($pose['nom']) ?></option>
 <?php endforeach; ?>
             </select></label>
           <label class="pt-champ">La date prévue

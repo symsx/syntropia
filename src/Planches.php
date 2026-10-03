@@ -152,10 +152,39 @@ final class Planches
         };
     }
 
-    /** L'indice (de 0) de la ligne centrale parmi `$n` lignes à intervalles égaux : celle du milieu, ou la plus proche. */
-    public static function centrale(int $n): int
+    /**
+     * L'indice (de 0) de la ligne centrale parmi `$n` lignes à intervalles égaux : celle du milieu, ou la plus proche.
+     * Avec un nombre pair, deux lignes sont également proches du milieu : la plus à l'ouest (ou au nord), sauf `$miroir`,
+     * qui prend l'autre.
+     */
+    public static function centrale(int $n, bool $miroir = false): int
     {
-        return intdiv($n - 1, 2);
+        return $miroir ? $n - 1 - intdiv($n - 1, 2) : intdiv($n - 1, 2);
+    }
+
+    /**
+     * La demi-planche du bord est (ou sud) est-elle la planche `$numero` ? Une demi-planche de bord est une planche
+     * entière coupée en son milieu : sa ligne centrale est du côté de la bordure, ses autres lignes du côté du
+     * passe-pied (le porteur, 2026-10-03). Celle de l'ouest (ou du nord) l'a déjà par la règle commune ; celle de l'est
+     * (ou du sud) prend la ligne en miroir.
+     */
+    public static function estDemiPlancheDeFin(int $numero, int $n, bool $bords): bool
+    {
+        return !$bords && $n >= 2 && $numero === $n;
+    }
+
+    /** La planche `$numero` d'une parcelle (numérotée de 1) est-elle sa demi-planche du bord est ou sud ? */
+    public static function demiPlancheDeFin(array $parcelle, int $numero): bool
+    {
+        $z = self::zone($parcelle);
+        return $z !== null && self::estDemiPlancheDeFin($numero, $z['disp']['n'], self::passePiedsAuxBords($z['plan']));
+    }
+
+    /** L'indice de la ligne centrale de la planche `$numero` d'une parcelle (numérotée de 1). */
+    public static function centraleDe(array $parcelle, int $numero): int
+    {
+        $plan = json_decode((string) ($parcelle['plan'] ?? ''), true);
+        return self::centrale(self::nombreDeLignes($plan, $numero), self::demiPlancheDeFin($parcelle, $numero));
     }
 
     /**
@@ -176,15 +205,17 @@ final class Planches
 
         $out = [];
         $pos = ($nordSud ? $x0 : $y0) + $disp['debut'];
+        $bords = self::passePiedsAuxBords($plan);
         foreach ($disp['largeurs'] as $k => $w) {
             $numero = $k + 1;
             $n = self::nombreDeLignes($plan, $numero);
+            $c = self::centrale($n, self::estDemiPlancheDeFin($numero, $disp['n'], $bords));
             $lignes = [];
             for ($j = 0; $j < $n; $j++) {
                 $d = $pos + $w * ($j + 1) / ($n + 1);
                 $lignes[] = $nordSud
-                    ? ['indice' => $j, 'centrale' => $j === self::centrale($n), 'x1' => $d, 'y1' => $y0, 'x2' => $d, 'y2' => $y0 + $hauteurUtile]
-                    : ['indice' => $j, 'centrale' => $j === self::centrale($n), 'x1' => $x0, 'y1' => $d, 'x2' => $x0 + $largeurUtile, 'y2' => $d];
+                    ? ['indice' => $j, 'centrale' => $j === $c, 'x1' => $d, 'y1' => $y0, 'x2' => $d, 'y2' => $y0 + $hauteurUtile]
+                    : ['indice' => $j, 'centrale' => $j === $c, 'x1' => $x0, 'y1' => $d, 'x2' => $x0 + $largeurUtile, 'y2' => $d];
             }
             $out[] = $nordSud
                 ? ['numero' => $numero, 'x' => $pos, 'y' => $y0, 'largeur' => $w, 'longueur' => $hauteurUtile, 'sens' => 'nord-sud', 'lignes' => $lignes]

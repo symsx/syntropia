@@ -47,9 +47,11 @@ final class LignesDeService
      * @param list<array<string, mixed>> $especes le référentiel du site (`Especes::toutes()`)
      * @param array{installee: bool, jusqu: ?string}|null $liane en tortue liane : les deux premières années sont-elles
      *        passées, et jusqu'à quand (date lisible) elles courent — `null` pour une autre tortue (`self::liane()`)
+     * @param bool $miroir la planche est la demi-planche du bord est ou sud (`Planches::estDemiPlancheDeFin()`) : sa
+     *        ligne centrale est du côté de la bordure
      * @return list<array{indice: int, centrale: bool, strate: ?string, raison: string, candidats: list<array<string, mixed>>, proposee: ?array<string, mixed>}>
      */
-    public static function proposer(int $n, array $stratesProductions, array $especes, ?array $naturePlanche = null, ?array $liane = null): array
+    public static function proposer(int $n, array $stratesProductions, array $especes, ?array $naturePlanche = null, ?array $liane = null, bool $miroir = false): array
     {
         if ($n < 1) {
             return [];
@@ -59,7 +61,7 @@ final class LignesDeService
             // Les lianes de la structure tiennent la strate émergente : elle n'est plus à compléter sur la planche.
             $stratesProductions[] = 'emergente';
         }
-        $centrale = Planches::centrale($n);
+        $centrale = Planches::centrale($n, $miroir);
         // Les espèces du cycle de la ligne d'abord (tri stable) — une préférence, non un filtre.
         $trier = static function (array $liste, int $indice) use ($n, $naturePlanche): array {
             $nature = self::natureDeLigne($indice, $n, $naturePlanche);

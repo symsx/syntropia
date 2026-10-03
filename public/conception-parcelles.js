@@ -37,8 +37,9 @@
     var v = naturesSaisies[numero];
     return (v === 'perenne' || v === 'annuelle') ? v : natureParDefaut(numero);
   }
-  // La ligne centrale : celle du milieu, ou la plus proche — même règle que Planches::centrale().
-  function centrale(n){ return Math.floor((n - 1) / 2); }
+  // La ligne centrale : celle du milieu, ou la plus proche — même règle que Planches::centrale(). La demi-planche du bord
+  // est (ou sud) prend l'autre en cas d'égalité : sa centrale est du côté de la bordure (Planches::estDemiPlancheDeFin()).
+  function centrale(n, miroir){ var c = Math.floor((n - 1) / 2); return miroir ? n - 1 - c : c; }
   var signatureListe = '';
   function blocNatures(sens){
     var bloc = document.getElementById('natures-bloc');
@@ -351,10 +352,11 @@
       var haut = bn + bni, bas = H - bs - bsi, gauche = bo + boi, droite = L - be - bei;
       layout.largeurs.forEach(function(w, i){
         var n = lignesDe(i + 1), largeurPx = w * ECH;
+        var c = centrale(n, !passePiedsBords() && layout.n >= 2 && i === layout.n - 1);
         for (var j = 0; j < n; j++){
           var d = depart + largeurPx * (j + 1) / (n + 1);
           var trait = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          trait.setAttribute('class', 'plan-ligne' + (j === centrale(n) ? ' plan-ligne-centrale' : ''));
+          trait.setAttribute('class', 'plan-ligne' + (j === c ? ' plan-ligne-centrale' : ''));
           if (sens === 'nord-sud'){ trait.setAttribute('x1', d); trait.setAttribute('x2', d); trait.setAttribute('y1', haut); trait.setAttribute('y2', bas); }
           else { trait.setAttribute('y1', d); trait.setAttribute('y2', d); trait.setAttribute('x1', gauche); trait.setAttribute('x2', droite); }
           gLignes.appendChild(trait);
