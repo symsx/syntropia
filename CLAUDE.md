@@ -2057,7 +2057,7 @@ il apparaît réellement, pour ne pas noyer le motif.
    `~/www/plantae/` et la base `jubile_plantae` (comme `bdd_vg2` s'interdit `~/www/syntropia/`). La page d'accueil du compte
    (`~/www/index.html`) porte les deux boutons. Vérifié le 2026-09-29 : `/syntropia/` et `/plantae/` répondent en 200.
    Syntropia lit toujours Plantae par instantanés CSV (`bin/catalogue-plantae.py`).
-   **Plantae lira `jubile_syntropia_comptes`** (décision du porteur, `EV-060` dans `~/projets/bdd_vg2/EVOLUTION-DECISIONS.md`) —
+   **Plantae lira `jubile_syntropia_comptes`** (décision du porteur, `EV-060` dans `~/projets/plantae/EVOLUTION-DECISIONS.md`, dossier nommé `bdd_vg2` jusqu'au 2026-10-03) —
    les comptes de Syntropia font référence : lecture de `compte` (identifiant, empreinte, `actif`) et d'une ligne `acces`
    `application = 'plantae'`, `role = 'administrateur'` ; **Plantae n'écrit rien** (ni `tentative`, ni `derniere_connexion`) et
    garde son cookie. L'utilisateur MySQL `jubile_plantae` n'a que `SELECT` sur `jubile_syntropia_comptes`. **Ce qui nous engage** :
