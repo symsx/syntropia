@@ -109,7 +109,7 @@ foreach ($calques->dUnSite($siteId) as $ancien) {
 
 $ajout = $calques->ajouter($siteId, [
     'calque' => 'relief', 'type' => 'grille',
-    'libelle' => 'Relief IGN — pas de ' . $g['pas'] . ' m',
+    'libelle' => 'Relief IGN — pas de ' . rtrim(rtrim(number_format((float) $g['pas'], 1, ',', ''), '0'), ',') . ' m',
     'geometrie' => json_encode($geometrie),
     'proprietes' => json_encode(['cote' => $g['cote'], 'pas' => $g['pas'],
         'z' => $g['z'], 'releve_le' => date('Y-m-d')]),

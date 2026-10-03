@@ -186,6 +186,33 @@ Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impres
   `<style>`, une entité HTML ne se décode pas).
 - **Non fait** : le chapitre « Participants » (Phase 3) — la couverture ne nomme que le porteur.
 
+## Phase 2 — faite le 2026-10-03, pas encore déployée
+
+- **`src/DessinsDossier.php`** (pur) : le terrain (les tracés de `calque_element`, projection locale de `Calques`, le
+  nord en haut, échelle et flèche du nord, sans fond de carte ; du relief, les courbes de niveau seules), le plan d'une
+  parcelle (bordures externe et interne, planches, pérennes hachurées, lignes avec la centrale en trait plein, ligne
+  des lianes, plants des bordures avec leur sigle, côtés, dimensions, échelle) et la frise du scénario (même lecture
+  que l'écran, sans lien). Largeur fixe de 1000 unités.
+- **`dossier-projet.php`** : une phase « Conception » (saut de page avant), le chapitre « Le terrain » (dessin,
+  légende des calques, tableau de ce qui a été tracé avec sa mesure) et **une page par parcelle** : ce qui la définit
+  (type, conduite, tortue, stade, dimensions, planches, campagne de plantation), le plan et sa légende, les
+  bordures (série et nombre de plants), les lignes de service des planches, puis le scénario (frise en syntropie,
+  strates en jardin-forêt) ou, pour un potager, le plan de culture par planche. Une case par chapitre, comme en
+  Phase 1.
+- **Vérifié** : les trois dessins, rendus en lecture seule sur La Vadaux (base locale), puis capturés.
+- **Vérifié par le porteur** en local, avec son compte : la page et un PDF de 10 pages imprimé depuis Firefox. Corrigé
+  après lecture : la légende du plan ne parle plus de hachures sans planche pérenne, et nomme la ligne des lianes ; un
+  titre de section (« Le plan ») ne reste plus seul en bas de page — chaque titre et son contenu forment un bloc
+  insécable (`.bloc`), Firefox ignorant `break-after:avoid`. Les courbes de niveau se recalculent depuis la grille,
+  comme dans `conception-etude-site.php` (elles ne sont pas stockées) ; le libellé du relief se recompose depuis le
+  pas, et `api-altitude.php` l'arrondit désormais à l'écriture.
+- **Corrigé en passant** (demandé par le porteur le 2026-10-03) : la demi-planche du bord est (ou sud) a sa ligne
+  centrale du côté de la bordure — `Planches::estDemiPlancheDeFin()`, même règle dans `conception-parcelles.js`,
+  `LignesDeService::proposer()`, `conception-potager.php` et le dossier. Vérifié à l'écran par le porteur. Le livret
+  « L'atelier » (passage sur les demi-planches) est à compléter avec le déploiement.
+- **Laissé tel quel, accord du porteur** : le PDF de Firefox porte ses propres en-têtes (adresse, date) et ignore le
+  pied de page de `@page` — c'est un réglage de la boîte d'impression.
+
 ## Phases proposées
 
 | Phase | Contenu | Résultat |
