@@ -377,13 +377,13 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
     <main class="bureau" id="bureau">
 <?php if ($parcelle === null): ?>
       <div class="pj-centre">
-        <p class="pj-vide">Le journal des perturbations se tient parcelle par parcelle, et ce site n'en a pas encore.
+        <p class="pj-vide">Le journal des perturbations se tient parcelle par parcelle, et ce site n'a pas encore de parcelle.
           <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="pj-centre">
         <div class="pj-entete">
-          <h1 class="pj-titre">Perturbation — <?= $h($titrePage) ?></h1>
+          <h1 class="pj-titre">La perturbation, <?= $h($titrePage) ?></h1>
 <?php if ($interventions !== []): ?>
           <span class="pj-badge"><?= count($interventions) ?> intervention<?= count($interventions) > 1 ? 's' : '' ?></span>
 <?php endif; ?>
@@ -397,7 +397,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
         <p class="pj-message" role="status"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
 <?php if ($erreurs !== []): ?>
-        <p class="pj-message pj-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
+        <p class="pj-message pj-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
 
 <?php if ($plantes !== []): ?>
@@ -407,19 +407,19 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
 <?php if (isset($dernieres[$cle])): ?>
             <b><?= $h($ilYA(Perturbation::joursDepuis($dernieres[$cle], $aujourdhui))) ?></b>
 <?php else: ?>
-            <small>pas encore coupée</small>
+            <small>Pas encore coupée</small>
 <?php endif; ?>
           </span>
 <?php endforeach; ?>
         </div>
-        <p class="pj-note-plantes">Le temps écoulé depuis la dernière perturbation, sans seuil : la prochaine se fait quand il y a de quoi couper — et de quoi arroser si la pluie ne vient pas.</p>
+        <p class="pj-note-plantes">Le temps écoulé depuis la dernière perturbation s'affiche sans seuil. La prochaine se fait quand il y a de quoi couper, et de quoi arroser si la pluie ne vient pas.</p>
 <?php elseif ($interventions === []): ?>
-        <p class="pj-annonce">Perturber, ici, n'est pas un accident : c'est un geste qui relance la croissance. Notez chaque coupe — la première, en juin, puis chacune de celles qui suivent.
-          Les plantes de biomasse (celles du scénario, ou marquées telles dans le plan de culture d'un potager) apparaîtront ici avec le temps écoulé depuis leur dernière coupe.</p>
+        <p class="pj-annonce">Perturber est un geste qui relance la croissance. Notez chaque coupe : la première, en juin, puis chacune de celles qui suivent.
+          Les plantes de biomasse, celles du scénario ou celles marquées ainsi dans le plan de culture d'un potager, apparaîtront ici avec le temps écoulé depuis leur dernière coupe.</p>
 <?php endif; ?>
 
 <?php if ($ancienne !== []): ?>
-        <p class="pj-ancienne"><b>Votre note d'avant le journal</b> —
+        <p class="pj-ancienne"><b>Votre note d'avant le journal.</b>
 <?php foreach (['quand' => 'Quand', 'quoi' => 'Quoi', 'comment' => 'Comment'] as $k => $lib): if (isset($ancienne[$k])): ?>
           <?= $lib ?> : <?= $h($ancienne[$k]) ?>.
 <?php endif; endforeach; ?>
@@ -445,7 +445,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
               <tr class="pj-ligne">
                 <td class="d"><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>&amp;modifier=<?= (int) $i['id'] ?>" title="Ouvrir pour compléter ou corriger"><?= $h($dateFr((string) $i['date'])) ?></a><?php else: ?><?= $h($dateFr((string) $i['date'])) ?><?php endif; ?></td>
                 <td<?= $affaiblit ? ' class="aff"' : '' ?>><?= $h(Perturbation::libelle(Perturbation::TYPES, $i['type'])) ?></td>
-                <td><?= $h(Perturbation::joindre(Perturbation::vegetaux($i['especes'] ?? ''))) ?><?php if ((string) ($i['zone'] ?? '') !== ''): ?><?= (string) ($i['especes'] ?? '') !== '' ? ' ' : '' ?><span class="doux">— <?= $h($i['zone']) ?></span><?php endif; ?></td>
+                <td><?= $h(Perturbation::joindre(Perturbation::vegetaux($i['especes'] ?? ''))) ?><?php if ((string) ($i['zone'] ?? '') !== ''): ?><?= (string) ($i['especes'] ?? '') !== '' ? ' ' : '' ?><span class="doux">(<?= $h($i['zone']) ?>)</span><?php endif; ?></td>
                 <td class="c-etat"><?= $h(Perturbation::libelle(Perturbation::STADES, $i['stade_phenologique'])) ?></td>
                 <td class="c-eau"><?= $h(Perturbation::libelle(Perturbation::EAUX, $i['conditions_eau'])) ?></td>
                 <td class="c-sol"><?= $h(Perturbation::libelle(Perturbation::BIOMASSES, $i['biomasse_deposee'])) ?></td>
@@ -476,8 +476,8 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
         <div class="pj-erreurs" role="alert"><strong>Votre saisie est à reprendre.</strong>
           <ul><?php foreach ($erreurs as $e): ?><li><?= $h($e) ?></li><?php endforeach; ?></ul></div>
 <?php endif; ?>
-        <p class="pd-titre"><?= $editionId > 0 ? 'Compléter ou corriger l’intervention' : 'Noter une intervention' ?> — <?= $h($parcelle['code']) ?></p>
-        <p class="pj-note"><b>À quoi elle sert</b> : à retrouver ce qui s'est fait et dans quel état étaient les plantes, pour reconnaître le saut du chat quand il vient et comprendre pourquoi il tarde. Seuls la date et le geste sont demandés ; le reste se note quand on le sait — ce qu'on constate, par exemple, vient plus tard.</p>
+        <p class="pd-titre"><?= $editionId > 0 ? 'Compléter ou corriger l’intervention' : 'Noter une intervention' ?>, <?= $h($parcelle['code']) ?></p>
+        <p class="pj-note"><b>À quoi elle sert.</b> Elle garde ce qui s'est fait et l'état des plantes, pour reconnaître le saut du chat quand il vient et comprendre pourquoi il tarde. Seuls la date et le geste sont demandés. Le reste se note quand on le sait : ce qu'on constate, par exemple, vient plus tard.</p>
         <form method="post" action="suivi-perturbation.php?parcelle=<?= $idP ?>">
           <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
           <input type="hidden" name="action" value="<?= $editionId > 0 ? 'modifier' : 'ajouter' ?>">
@@ -492,48 +492,48 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
             </label>
             <label class="pj-champ">Geste
               <select name="type" required>
-                <option value="">—</option>
+                <option value="">Choisir…</option>
 <?php foreach (Perturbation::TYPES as $cle => $lib): ?>
                 <option value="<?= $h($cle) ?>"<?= $f['type'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
               </select>
             </label>
           </div>
-          <p class="pj-conseil pj-conseil--aff"><b>Affaiblir n'est pas perturber.</b> On couche une couverture qu'on veut planter sous la paille : une taille la ferait repartir « à fond la caisse » (Joala, 4-3). Ce geste se note, mais il ne compte pas comme une perturbation.</p>
-          <p class="pj-conseil pj-conseil--desh"><b>Des adventices qui reviennent disent que la plantation n'est pas assez dense.</b> Des plantes de colonisation sont encore là : désherbez à la main, et densifiez avec des plantes du système d'accumulation. Ce geste se note, mais ne compte pas comme une perturbation.</p>
+          <p class="pj-conseil pj-conseil--aff"><b>Affaiblir une couverture.</b> Une couverture qu'on veut planter se couche sous la paille, car une taille la ferait repartir vigoureusement (Joala, 4-3). Ce geste se note, mais il ne compte pas comme une perturbation.</p>
+          <p class="pj-conseil pj-conseil--desh"><b>Des adventices qui reviennent signalent une plantation pas assez dense.</b> Des plantes de colonisation sont encore là. Désherbez à la main, et densifiez avec des plantes du système d'accumulation. Ce geste se note, mais il ne compte pas comme une perturbation.</p>
 
 <?php if ($plantes !== []): ?>
           <fieldset class="pj-cases">
-            <legend>Ce qui est coupé <small>les plantes de biomasse</small></legend>
+            <legend>Ce qui est coupé <small>Les plantes de biomasse</small></legend>
 <?php foreach ($plantes as $nom): ?>
             <label class="pj-case"><input type="checkbox" class="case" name="especes[]" value="<?= $h($nom) ?>"<?= in_array($nom, $f['vegetaux'], true) ? ' checked' : '' ?>><?= $h($nom) ?></label>
 <?php endforeach; ?>
           </fieldset>
 <?php endif; ?>
-          <label class="pj-champ"><?= $plantes !== [] ? 'Un autre végétal' : 'Ce qui est coupé' ?> <small>facultatif</small>
+          <label class="pj-champ"><?= $plantes !== [] ? 'Un autre végétal' : 'Ce qui est coupé' ?> <small>Facultatif</small>
             <input type="text" name="autre_vegetal" maxlength="120" value="<?= $h($f['autre']) ?>" placeholder="Ex. saule, consoude">
           </label>
-          <label class="pj-champ">La zone <small>facultatif</small>
+          <label class="pj-champ">La zone <small>Facultatif</small>
             <input type="text" name="zone" maxlength="120" value="<?= $h($f['zone']) ?>" placeholder="Ex. toute la bordure sud">
           </label>
-          <p class="pj-note">Le corpus le dit ainsi : perturber <b>toutes les plantes alliées d'une zone en même temps</b> — l'information de perturbation est démultipliée par la masse (Théry, ch. 12).</p>
+          <p class="pj-note">Le corpus conseille de perturber <b>toutes les plantes alliées d'une zone en même temps</b> : l'information de perturbation est démultipliée par la masse (Théry, ch. 12).</p>
 
-          <label class="pj-champ">L'état des plantes <small>c'est lui qui dicte le bon moment</small>
+          <label class="pj-champ">L'état des plantes <small>Il dicte le bon moment</small>
             <select name="stade_phenologique">
-              <option value="">—</option>
+              <option value="">Non dit</option>
 <?php foreach (Perturbation::STADES as $cle => $lib): ?>
               <option value="<?= $h($cle) ?>"<?= $f['stade_phenologique'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
             </select>
           </label>
-          <label class="pj-champ">Pourquoi maintenant <small>facultatif</small>
+          <label class="pj-champ">Pourquoi maintenant <small>Facultatif</small>
             <textarea name="motif" rows="2" maxlength="2000" placeholder="Ce qui vous a décidé à intervenir à ce moment"><?= $h($f['motif']) ?></textarea>
           </label>
 
           <div class="pj-deux">
             <label class="pj-champ">L'eau
               <select name="conditions_eau">
-                <option value="">—</option>
+                <option value="">Non dit</option>
 <?php foreach (Perturbation::EAUX as $cle => $lib): ?>
                 <option value="<?= $h($cle) ?>"<?= $f['conditions_eau'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
@@ -541,35 +541,35 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
             </label>
             <label class="pj-champ">Les pluies à venir
               <select name="pluies_a_venir">
-                <option value="">—</option>
+                <option value="">Non dit</option>
 <?php foreach (Perturbation::PLUIES as $cle => $lib): ?>
                 <option value="<?= $h($cle) ?>"<?= $f['pluies_a_venir'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
               </select>
             </label>
           </div>
-          <p class="pj-conseil pj-conseil--sec"><b>Cela se note, rien ne l'interdit.</b> La taille est déjà un stress : sans eau, une bonne part du bénéfice se perd et la reprise ralentit (Théry, ch. 12). Coupez au moment que disent les plantes, et prévoyez de quoi arroser si la pluie ne vient pas.</p>
-          <p class="pj-note">L'eau est un accélérateur d'information : elle porte le signal « il faut que ça pousse ». Juste avant une pluie, juste après, entre deux averses, ou avant un arrosage.</p>
+          <p class="pj-conseil pj-conseil--sec"><b>L'atelier conseille, il n'interdit rien.</b> La taille est déjà un stress : sans eau, une bonne part du bénéfice se perd et la reprise ralentit (Théry, ch. 12). Coupez au moment que disent les plantes, et prévoyez de quoi arroser si la pluie ne vient pas.</p>
+          <p class="pj-note">L'eau accélère l'information : elle porte le signal « il faut que ça pousse ». On coupe juste avant une pluie, juste après, entre deux averses, ou avant un arrosage.</p>
 
           <label class="pj-champ">La biomasse coupée
             <select name="biomasse_deposee">
-              <option value="">—</option>
+              <option value="">Non dit</option>
 <?php foreach (Perturbation::BIOMASSES as $cle => $lib): ?>
               <option value="<?= $h($cle) ?>"<?= $f['biomasse_deposee'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
             </select>
           </label>
-          <p class="pj-conseil pj-conseil--exp"><b>Ce qui sort ne nourrit plus le sol.</b> La biomasse se laisse au sol, au pied des plantes (Théry, ch. 12 ; Joala, 2-4). Avec des fagots, on en garde au moins un tiers.</p>
+          <p class="pj-conseil pj-conseil--exp"><b>La biomasse nourrit le sol.</b> Elle se laisse au sol, au pied des plantes (Théry, ch. 12 ; Joala, 2-4). Avec des fagots, on en garde au moins un tiers sur place.</p>
 
-          <label class="pj-champ">Ce qu'on constate ensuite <small>repousse, couleur, vigueur — se complète plus tard</small>
+          <label class="pj-champ">Ce qu'on constate ensuite <small>Repousse, couleur, vigueur, à compléter plus tard</small>
             <textarea name="resultat_constate" rows="3" maxlength="2000" placeholder="Ce que vous voyez quelques jours après"><?= $h($f['resultat_constate']) ?></textarea>
           </label>
 
-          <label class="pj-champ">L'outil <small>facultatif</small>
+          <label class="pj-champ">L'outil <small>Facultatif</small>
             <input type="text" name="outil" maxlength="120" value="<?= $h($f['outil']) ?>" placeholder="Ex. serpette, sécateur, faux">
           </label>
           <div class="pj-deux">
-            <label class="pj-champ">Durée <small>heures</small>
+            <label class="pj-champ">Durée <small>En heures</small>
               <input type="number" name="duree_h" min="0.05" max="99" step="0.05" inputmode="decimal" value="<?= $h($f['duree_h']) ?>">
             </label>
             <label class="pj-champ">Personnes
@@ -577,20 +577,20 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
             </label>
           </div>
           <div class="pj-deux">
-            <label class="pj-champ">Quantité traitée <small>pour rapporter la durée</small>
+            <label class="pj-champ">Quantité traitée <small>Pour rapporter la durée</small>
               <input type="number" name="quantite_traitee" min="0.01" step="0.01" inputmode="decimal" value="<?= $h($f['quantite_traitee']) ?>">
             </label>
             <label class="pj-champ">Comptée en
               <select name="unite_quantite">
-                <option value="">—</option>
+                <option value="">Non dit</option>
                 <option value="m"<?= $f['unite_quantite'] === 'm' ? ' selected' : '' ?>>mètres de ligne</option>
                 <option value="m2"<?= $f['unite_quantite'] === 'm2' ? ' selected' : '' ?>>m²</option>
               </select>
             </label>
           </div>
           <label class="pj-champ"><span class="pj-case" style="display:flex;align-items:center;gap:.4rem"><input type="checkbox" class="case" name="premiere_fois" value="1"<?= $f['premiere_fois'] ? ' checked' : '' ?>>C'est la première fois que je fais ce geste</span>
-            <small>le premier passage prend deux à trois fois plus longtemps que le dixième</small></label>
-          <label class="pj-champ">Notes <small>facultatif</small>
+            <small>Le premier passage prend deux à trois fois plus longtemps que le dixième</small></label>
+          <label class="pj-champ">Notes <small>Facultatif</small>
             <textarea name="notes" rows="2" maxlength="2000"><?= $h($f['notes']) ?></textarea>
           </label>
           <button type="submit" class="pj-bouton"><?= $editionId > 0 ? 'Enregistrer' : 'Noter cette intervention' ?></button>
@@ -622,21 +622,21 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>En syntropique, tailler n'est pas soigner l'arbre : c'est imiter ce que fait la nature (une chute de branche, un passage d'animal) pour relancer sa croissance
+      <p>En syntropie, tailler imite ce que fait la nature, comme une chute de branche ou le passage d'un animal, pour relancer la croissance
          et nourrir le sol de ce qui tombe. Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?>
-         est l'<strong>effet</strong> de cette perturbation : il se déclenche par la taille, non par la seule densité.</p>
-      <p><strong>Le bon moment, c'est l'état des plantes qui le dit.</strong> Les plantes de biomasse se coupent en pleine croissance, et au plus tard quand les fleurs se fanent et que
-         les butineurs s'en désintéressent : passé ce cap, les sucres partent vers la reproduction (Théry, ch. 12 ; Faraj, « avant le déclin qui suit la floraison »).
-         Les ligneux se taillent aussi l'hiver, hors gel et avant le débourrement, dont la date avance d'année en année (Joala, 3-1). La première perturbation est en juin ;
-         les suivantes viennent <strong>quand il y a de quoi couper</strong>.</p>
-      <p><strong>L'eau fait partie du geste.</strong> La taille est déjà un stress : la coupe se cale juste avant ou juste après une pluie, entre deux averses, ou avant un arrosage —
-         et l'on arrose si la pluie ne vient pas. L'eau est ce qui porte l'information « il faut que ça pousse ».</p>
-      <p><strong>Toute la zone d'un coup, et tout au sol.</strong> On perturbe ensemble les plantes alliées d'une zone, et l'on ne sort rien : feuilles et résidus restent au pied des plantes.
-         Coupe à ras (3 à 4 cm de la souche) pour les arbustes en buisson ; les plantes non ligneuses (consoude, mélisse…) peuvent se faucher plusieurs fois dans l'année.</p>
-      <p><strong>Des exemples, pas des fréquences pour votre site.</strong> Dans la formation : la consoude jusqu'à six coupes par an, la mélisse trois ou quatre ; dans un potager en transition vers
-         le jardin-forêt, une nouvelle taille possible sous trois semaines. La vôtre suit la repousse de vos plantes.</p>
-      <p><strong>Couper n'est pas affaiblir.</strong> Une couverture spontanée qu'on veut planter ne se taille pas avant d'être couverte : la coupe la fait repartir. On la couche sous la paille.
-         Ce geste se note à part, et ne compte pas comme une perturbation.</p>
+         est l'<strong>effet</strong> de cette perturbation : la taille le déclenche, et la densité seule ne suffit pas.</p>
+      <p><strong>L'état des plantes dit le bon moment.</strong> Les plantes de biomasse se coupent en pleine croissance, et au plus tard quand les fleurs se fanent et que
+         les butineurs s'en désintéressent. Passé ce cap, les sucres partent vers la reproduction (Théry, ch. 12 ; Faraj, « avant le déclin qui suit la floraison »).
+         Les ligneux se taillent aussi l'hiver, hors gel et avant le débourrement, dont la date avance d'année en année (Joala, 3-1). La première perturbation est en juin,
+         et les suivantes viennent <strong>quand il y a de quoi couper</strong>.</p>
+      <p><strong>L'eau fait partie du geste.</strong> La taille est déjà un stress. La coupe se cale juste avant ou juste après une pluie, entre deux averses, ou avant un arrosage,
+         et l'on arrose si la pluie ne vient pas. L'eau porte l'information « il faut que ça pousse ».</p>
+      <p><strong>Toute la zone d'un coup, et tout au sol.</strong> On perturbe ensemble les plantes alliées d'une zone, et tout reste sur place : feuilles et résidus restent au pied
+         des plantes. Les arbustes en buisson se coupent à ras, à 3 ou 4 cm de la souche. Les plantes non ligneuses (consoude, mélisse…) peuvent se faucher plusieurs fois dans l'année.</p>
+      <p><strong>Des exemples de la formation.</strong> La consoude se coupe jusqu'à six fois par an, la mélisse trois ou quatre fois. Dans un potager en transition vers le jardin-forêt,
+         une nouvelle taille est possible au bout de trois semaines. Sur votre site, le rythme suit la repousse de vos plantes.</p>
+      <p><strong>Couper et affaiblir.</strong> Une couverture spontanée qu'on veut planter ne se taille pas avant d'être couverte, car la coupe la fait repartir. On la couche sous la
+         paille. Ce geste se note à part, et il ne compte pas comme une perturbation.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>

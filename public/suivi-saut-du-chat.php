@@ -401,7 +401,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
     <main class="bureau" id="bureau">
 <?php if ($parcelle === null): ?>
       <div class="sd-centre">
-        <p class="sd-vide">Le saut du chat se constate parcelle par parcelle, et ce site n'en a pas encore.
+        <p class="sd-vide">Le saut du chat se constate parcelle par parcelle, et ce site n'a pas encore de parcelle.
           <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
@@ -409,7 +409,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
         <input class="sd-radio" type="radio" name="vue" id="v-cond"<?= $vue === 'conditions' ? ' checked' : '' ?>>
         <input class="sd-radio" type="radio" name="vue" id="v-const"<?= $vue === 'constats' ? ' checked' : '' ?>>
         <div class="sd-entete">
-          <h1 class="sd-titre">Saut du chat — <?= $h($titrePage) ?></h1>
+          <h1 class="sd-titre">Le saut du chat, <?= $h($titrePage) ?></h1>
 <?php if ($derniere !== null): ?>
           <span class="sd-badge"><?= $visibleMaintenant ? 'Visible au dernier constat' : 'Pas encore visible' ?></span>
 <?php endif; ?>
@@ -423,16 +423,16 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
         <p class="sd-message" role="status"><?= $h($flash[1]) ?></p>
 <?php endif; ?>
 <?php if ($erreurs !== []): ?>
-        <p class="sd-message sd-message--alerte" role="alert">Votre saisie est à reprendre — le détail est dans le panneau Données.</p>
+        <p class="sd-message sd-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
 <?php if ($joursPlantee !== null): ?>
         <p class="sd-temps"><?= $finPlantation !== '' ? 'Planté du ' . $h($dateFr($datePlantation)) . ' au ' . $h($dateFr($finPlantation)) . ' ; point zéro il y a ' : 'Point zéro le ' . $h($dateFr($datePlantation)) . ', il y a ' ?><?= $joursPlantee ?> jour<?= $joursPlantee > 1 ? 's' : '' ?>.
-          Dans la formation, le saut du chat vient d'ordinaire dès les premiers mois, dès la première année — un repère, pas une échéance.
+          Dans la formation, le saut du chat vient d'ordinaire dès les premiers mois, dès la première année. C'est un repère.
 <?php if ($peutEcrire): ?>
           <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">Changer les dates</a>
 <?php endif; ?></p>
 <?php elseif ($peutEcrire): ?>
-        <p class="sd-temps">Les dates de plantation situent le projet dans son film et disent depuis quand on attend le saut du chat.
+        <p class="sd-temps">Les dates de plantation situent le projet dans son scénario et disent depuis quand on attend le saut du chat.
           <a href="<?= $h($retour) ?>&amp;saisie=plantation" data-ouvre-panneau="plantation">Les noter →</a></p>
 <?php endif; ?>
 
@@ -448,7 +448,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php foreach ($conditions as $cond): [$sym, $lib] = $symboles[$cond['etat']]; ?>
               <li class="sd-cond sd-cond--<?= $h($cond['etat']) ?> sd-item-cond">
                 <span class="sd-sym" aria-hidden="true"><?= $sym ?></span>
-                <h2><?= $h($cond['titre']) ?><span class="sd-rien"> — <?= $h($lib) ?></span></h2>
+                <h2><?= $h($cond['titre']) ?><span class="sd-rien"> : <?= $h($lib) ?></span></h2>
                 <p><?= $h($cond['detail']) ?> <small>[<?= $h($cond['source']) ?>]</small></p>
               </li>
 <?php endforeach; ?>
@@ -458,14 +458,14 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
             <button type="button" id="sd-prec-cond">← Précédentes</button><span id="sd-page-cond"></span><button type="button" id="sd-suiv-cond">Suivantes →</button>
           </div>
 <?php if (!$visibleMaintenant): ?>
-          <p class="sd-si-tarde">Rien d'anormal à attendre — le saut du chat vient avec le temps. En attendant, planter davantage peut aider, selon la période.</p>
+          <p class="sd-si-tarde">Le saut du chat vient avec le temps. En attendant, planter davantage peut aider, selon la période.</p>
 <?php endif; ?>
         </section>
 
         <!-- ============ les constats ============ -->
         <section class="sd-vue sd-vue-const" id="sd-const-vue">
 <?php if ($ancienne !== []): ?>
-          <p class="sd-ancienne"><b>Votre note d'avant le constat</b> —
+          <p class="sd-ancienne"><b>Votre note d'avant le constat.</b>
             <?= isset($ancienne['visible']) ? 'Le saut du chat était noté visible. ' : '' ?><?= isset($ancienne['observations']) ? 'Observations : ' . $h($ancienne['observations']) . '.' : '' ?>
 <?php if ($peutEcrire): ?>
             <a href="<?= $h($retour) ?>&amp;depuis=note">En faire un constat →</a>
@@ -474,7 +474,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php endif; ?>
 <?php if ($constats === []): ?>
 <?php if ($ancienne === []): ?>
-          <p class="sd-vide">Aucun constat n'est encore noté sur cette parcelle. Le saut du chat se reconnaît en comparant : notez la pousse d'une plante sur quelques jours, à côté d'un témoin.
+          <p class="sd-vide">Aucun constat n'est encore noté sur cette parcelle. Le saut du chat se constate en comparant : notez la pousse d'une plante sur quelques jours, à côté d'un témoin.
 <?php if ($peutEcrire): ?>
             <a href="<?= $h($retour) ?>&amp;saisie=1" id="sd-saisir-vide">Noter le premier →</a>
 <?php endif; ?></p>
@@ -529,8 +529,8 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php endif; ?>
 
         <section class="sd-panneau sd-p-constat">
-          <p class="pd-titre"><?= $editionId > 0 ? 'Corriger le constat' : 'Noter un constat' ?> — <?= $h($parcelle['code']) ?></p>
-          <p class="sd-note"><b>À quoi il sert</b> : à reconnaître le saut du chat, et à le suivre dans le temps. Il se reconnaît en <strong>comparant</strong> : la pousse d'une plante sur quelques jours, à côté d'un témoin — même sol, conduit classiquement. Seuls la date et la réponse sont demandées ; la mesure vient quand on l'a.</p>
+          <p class="pd-titre"><?= $editionId > 0 ? 'Corriger le constat' : 'Noter un constat' ?>, <?= $h($parcelle['code']) ?></p>
+          <p class="sd-note"><b>À quoi il sert.</b> Le constat sert à reconnaître le saut du chat et à le suivre dans le temps. Il se fait en <strong>comparant</strong> la pousse d'une plante sur quelques jours avec celle d'un témoin, dans le même sol, conduit de façon classique. Seules la date et la réponse sont demandées. La mesure se note quand on l'a.</p>
           <form method="post" action="suivi-saut-du-chat.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="<?= $editionId > 0 ? 'modifier' : 'ajouter' ?>">
@@ -548,11 +548,11 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
               <label><input type="radio" class="radio" name="visible" value="<?= $h($cle) ?>"<?= $f['visible'] === $cle ? ' checked' : '' ?>><?= $h($lib) ?></label>
 <?php endforeach; ?>
             </fieldset>
-            <label class="sd-champ">La plante observée <small>facultatif</small>
+            <label class="sd-champ">La plante observée <small>Facultatif</small>
               <input type="text" name="vegetal" maxlength="160" value="<?= $h($f['vegetal']) ?>" placeholder="Ex. maïs, tournesol, pommier">
             </label>
             <div class="sd-deux">
-              <label class="sd-champ">Sa pousse <small>cm</small>
+              <label class="sd-champ">Sa pousse <small>En cm</small>
                 <input type="number" name="pousse_cm" min="0" max="2000" step="0.1" inputmode="decimal" value="<?= $h($f['pousse_cm']) ?>">
               </label>
               <label class="sd-champ">Sur combien de jours
@@ -560,24 +560,24 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
               </label>
             </div>
             <div class="sd-deux">
-              <label class="sd-champ">Pousse du témoin <small>cm, même durée</small>
+              <label class="sd-champ">Pousse du témoin <small>En cm, sur la même durée</small>
                 <input type="number" name="temoin_pousse_cm" min="0" max="2000" step="0.1" inputmode="decimal" value="<?= $h($f['temoin_pousse_cm']) ?>">
               </label>
-              <label class="sd-champ">Le témoin, c'est <small>facultatif</small>
+              <label class="sd-champ">Le témoin <small>Facultatif</small>
                 <input type="text" name="temoin_decrit" maxlength="190" value="<?= $h($f['temoin_decrit']) ?>" placeholder="Ex. mêmes plants, à 10 m, paillés">
               </label>
             </div>
-            <p class="sd-note">Une pousse se mesure sur une durée ; un témoin ne compare que si la plante est mesurée aussi. Les ordres de grandeur de la formation — maïs jusqu'à 30 cm en 24 h, tournesols 1,50 m de plus que les mêmes plantés classiquement, pérennes jusqu'à deux fois plus vite — sont des <b>repères</b>, pas des seuils.</p>
-            <label class="sd-champ">Des adventices reviennent-elles ? <small>facultatif</small>
+            <p class="sd-note">Une pousse se mesure sur une durée, et la comparaison demande de mesurer aussi la plante. Les ordres de grandeur de la formation sont des <b>repères</b> : le maïs jusqu'à 30 cm en 24 h, des tournesols 1,50 m plus hauts que les mêmes plantés de façon classique, des pérennes qui poussent jusqu'à deux fois plus vite.</p>
+            <label class="sd-champ">Des adventices reviennent-elles ? <small>Facultatif</small>
               <select name="adventices">
-                <option value="">—</option>
+                <option value="">Non dit</option>
 <?php foreach (SautDuChat::ADVENTICES as $cle => $lib): ?>
                 <option value="<?= $h($cle) ?>"<?= $f['adventices'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
 <?php endforeach; ?>
               </select>
             </label>
-            <p class="sd-note sd-conseil-adv">Si oui, c'est le signe que la plantation n'est pas assez dense : des plantes de colonisation sont encore là. On désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
-            <label class="sd-champ">Ce que vous voyez <small>croissance, couleur, densité du feuillage…</small>
+            <p class="sd-note sd-conseil-adv">Des adventices qui reviennent signalent une plantation pas assez dense : des plantes de colonisation sont encore là. On désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
+            <label class="sd-champ">Ce que vous voyez <small>Croissance, couleur, densité du feuillage…</small>
               <textarea name="notes" rows="3" maxlength="2000"><?= $h($f['notes']) ?></textarea>
             </label>
             <button type="submit" class="sd-bouton"><?= $editionId > 0 ? 'Enregistrer' : 'Noter ce constat' ?></button>
@@ -598,21 +598,21 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
         </section>
 
         <section class="sd-panneau sd-p-plantation">
-          <p class="pd-titre">La plantation — <?= $h($parcelle['code']) ?></p>
-          <p class="sd-note"><b>À quoi elle sert</b> : à situer le projet dans son film — les trois premières années sont celles du stade placentaire — et à dire si la plantation a été faite dans une même période. Une plantation dense s'étale sur <strong>trois saisons — fin d'automne, hiver, printemps — selon les besoins des végétaux</strong> : ce qui compte est un <strong>point zéro unique</strong>, aucune structurante ajoutée après coup. Le début est le point zéro ; la fin se note quand la plantation est terminée. Vidées, les dates s'effacent.</p>
+          <p class="pd-titre">La plantation, <?= $h($parcelle['code']) ?></p>
+          <p class="sd-note"><b>À quoi elle sert.</b> Les dates situent le projet dans son scénario, dont les trois premières années sont celles du stade placentaire. Elles disent aussi si la plantation a été faite dans une même période. Une plantation dense s'étale sur <strong>trois saisons, fin d'automne, hiver et printemps, selon les besoins des végétaux</strong>. Ce qui compte est un <strong>point zéro unique</strong>, sans structurante ajoutée après coup. Le début est le point zéro, et la fin se note quand la plantation est terminée. Une date vidée s'efface.</p>
           <form method="post" action="suivi-saut-du-chat.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="plantation">
             <input type="hidden" name="parcelle" value="<?= $idP ?>">
             <div class="sd-deux">
-              <label class="sd-champ">Début <small>le point zéro</small>
+              <label class="sd-champ">Début <small>Le point zéro</small>
                 <input type="date" name="date_plantation" min="2000-01-01" max="<?= date('Y-m-d') ?>" value="<?= $h($dateP) ?>">
               </label>
-              <label class="sd-champ">Fin <small>facultatif</small>
+              <label class="sd-champ">Fin <small>Facultatif</small>
                 <input type="date" name="fin_plantation" min="2000-01-01" max="<?= date('Y-m-d') ?>" value="<?= $h($finP) ?>">
               </label>
             </div>
-            <p class="sd-note"><b>Les fenêtres, selon les végétaux</b> [Théry, ch. 11 ; Joala] : les racines nues à partir de mi-novembre ; les boutures ligneuses au repos végétatif ; les placentaires — graines de maïs, de tournesol — au printemps, selon la température du sol (6 °C pour le maïs, 5 °C pour le tournesol). La campagne s'étale ainsi sur environ six mois — un repère de lecture, non une limite. Elles se lisent avec votre terrain et votre climat.</p>
+            <p class="sd-note"><b>Les fenêtres, selon les végétaux</b> [Théry, ch. 11 ; Joala]. Les racines nues se plantent à partir de mi-novembre, les boutures ligneuses au repos végétatif. Les placentaires, graines de maïs ou de tournesol, se sèment au printemps selon la température du sol : 6 °C pour le maïs, 5 °C pour le tournesol. La campagne s'étale ainsi sur environ six mois. Ces repères se lisent avec votre terrain et votre climat.</p>
             <button type="submit" class="sd-bouton">Enregistrer</button>
           </form>
         </section>
@@ -630,20 +630,23 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?> est <strong>l'effet de la perturbation</strong> : quand on taille la biomasse, le sol est nourri et l'information
-         « il faut que ça pousse » gagne les plantes alentour. C'est un effet, pas un objectif : il se déclenche par la <strong>taille</strong>, non par la seule densité.
-         Le mécanisme (l'acide gibbérellique transmis par les racines et les mycorhizes) est celui qu'avance la formation ; l'atelier ne le donne pas pour établi.</p>
-      <p><strong>Il se reconnaît en comparant.</strong> Une plante qui pousse vite peut simplement vivre une bonne année : d'où le
-         <?= Documentation::terme($termes, 'temoin', 'témoin') ?>, conduit classiquement dans le même sol. Les ordres de grandeur donnés dans l'entretien de Théry — maïs perturbés en fin de printemps jusqu'à 30 cm en 24 heures,
-         tournesols 1,50 m de plus que les mêmes plantés classiquement à 10 m, pérennes jusqu'à deux fois plus vite que des arbres paillés et arrosés — sont des repères de lecture, non des seuils.</p>
-      <p><strong>Ce qui le rend possible</strong> se lit dans ce que vous avez déjà noté : une perturbation dans le journal, de quoi couper au scénario, l'état des plantes et l'eau à la coupe,
-         la biomasse laissée au sol, toutes les plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque ligne dit ce que l'atelier sait, ce qu'il faut regarder, ou que rien n'est encore noté —
-         jamais « échec ». Ce que la formation n'a pas encore tranché — combien de biomasse suffit, quelle fréquence, quoi planter selon l'itinéraire — n'est pas chiffré ici.</p>
-      <p><strong>Les adventices.</strong> Le sol se prépare par déchaumage, avec les moyens dont vous disposez, pour recevoir la plantation — et les semis se font sur un sol exempt d'adventices.
-         Si des adventices reviennent en cours de projet, c'est le signe que la plantation n'est pas assez dense : des plantes de colonisation sont encore là. On désherbe à la main,
-         et l'on densifie avec des plantes du système d'accumulation.</p>
-      <p><strong>Quand ?</strong> Dans les exemples de Théry, dès les premiers mois et dès la première année, quand les plantes de biomasse et les annuelles de démarrage sont réussies ; un mauvais démarrage des bordures vivantes le retarde,
-         et le rattrapage coûte du travail. Ce n'est pas une échéance.</p>
+      <p>Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?> est l'accélération nette de la croissance du système. Il se constate
+         en comparant avec un <?= Documentation::terme($termes, 'temoin', 'témoin') ?> conduit de façon classique.</p>
+      <p>C'est <strong>l'effet de la perturbation</strong> : quand on taille la biomasse, le sol est nourri et l'information « il faut que ça pousse » gagne les plantes
+         alentour. La <strong>taille</strong> le déclenche, et la densité seule ne suffit pas. La formation l'explique par l'acide gibbérellique transmis par les racines
+         et les mycorhizes. L'atelier rapporte cette explication sans la donner pour établie.</p>
+      <p><strong>Pourquoi un témoin.</strong> Une plante qui pousse vite peut simplement vivre une bonne année. Le témoin est conduit de façon classique dans le même sol.
+         L'entretien de Théry donne des ordres de grandeur, à lire comme des repères : des maïs perturbés en fin de printemps qui poussent jusqu'à 30 cm en 24 heures,
+         des tournesols 1,50 m plus hauts que les mêmes plantés de façon classique à 10 m, des pérennes qui poussent jusqu'à deux fois plus vite que des arbres paillés et arrosés.</p>
+      <p><strong>Ce qui le rend possible</strong> se lit dans ce que vous avez déjà noté : une perturbation dans le journal, de quoi couper au scénario, l'état des plantes et
+         l'eau à la coupe, la biomasse laissée au sol, toutes les plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque ligne dit ce que l'atelier sait,
+         ce qu'il faut regarder, ou que rien n'est encore noté. Ce que la formation n'a pas encore tranché n'est pas chiffré ici : combien de biomasse suffit, à quelle
+         fréquence, et quoi planter selon l'itinéraire.</p>
+      <p><strong>Les adventices.</strong> Le sol se prépare par déchaumage, avec les moyens dont vous disposez, pour recevoir la plantation, et les semis se font sur un sol
+         exempt d'adventices. Si des adventices reviennent en cours de projet, la plantation n'est pas assez dense : des plantes de colonisation sont encore là. On désherbe
+         à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
+      <p><strong>Quand.</strong> Dans les exemples de Théry, le saut du chat vient dès les premiers mois et dès la première année, quand les plantes de biomasse et les
+         annuelles de démarrage sont réussies. Un mauvais démarrage des bordures vivantes le retarde, et le rattrapage coûte du travail.</p>
       <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>

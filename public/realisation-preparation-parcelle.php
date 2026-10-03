@@ -151,8 +151,8 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 
     <main class="bureau" id="bureau">
       <div class="prep-cadre">
-        <p class="prep-annonce">Avant de planter, le terrain se prépare. Comment comptez-vous
-           vous y prendre ?</p>
+        <p class="prep-annonce">Avant de planter, le terrain se prépare. Indiquez comment vous
+           comptez vous y prendre.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -182,7 +182,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
           </div>
 
           <button type="submit" class="prep-bouton">Continuer</button>
-          <p class="prep-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="prep-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -196,26 +196,25 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Le déchaumage retourne la couverture existante ; couvrir ou bâcher
-         l'étouffe sans travailler le sol — plus lent, souvent plus
-         respectueux de la vie qui s'y trouve déjà. Le choix dépend du
-         temps disponible, de ce qui pousse déjà là, et de ce que vous
-         pouvez mobiliser : bras, outils, ou animaux.</p>
+      <p>Le déchaumage retourne la couverture existante. Couvrir ou bâcher l'étouffe sans
+         travailler le sol : c'est plus lent, et souvent plus respectueux de la vie qui s'y
+         trouve déjà. Le choix dépend du temps disponible, de ce qui pousse déjà là, et de ce
+         que vous pouvez mobiliser : bras, outils ou animaux.</p>
       <p><strong>Pourquoi elle compte.</strong> La préparation du sol et la plantation sont les deux moments les plus
-         coûteux du projet, et ceux dont dépend le saut du chat : les brûler se paie ensuite en désherbage et en rattrapage
+         coûteux du projet, et le saut du chat en dépend. Les bâcler se paie ensuite en désherbage et en rattrapage
          (Théry, ch. 14). Ce que vous notez ici se relit à l'étape « Saut du chat », parmi ce qui le rend possible.</p>
-      <p><strong>Ce que disent les sources.</strong> Préparer tôt, mais toujours couvrir le sol en attendant la plantation, sans laisser
-         les bâches plus qu'il n'en faut. Bâcher sur un sol le plus humide possible — le lendemain matin d'une pluie, avant que la rosée
-         s'évapore — et bâcher aussi les chemins, une saison, avant d'y semer du trèfle blanc. L'idéal (Faraj) : un couvert adapté semé un
-         ou deux ans avant de planter. Une fois planté, il n'y a plus de travail du sol. Et la préparation est la première chose que le
-         climat empêche : prévoyez un repli manuel.</p>
-      <p><strong>Le déchaumage n'est pas que du désherbage.</strong> Il prépare le sol à recevoir la plantation, avec les moyens dont vous disposez :
-         une bâche, un motoculteur, des animaux, ou autre chose. Si des adventices reviennent ensuite, c'est le signe que la plantation n'est pas assez dense —
-         des plantes de colonisation sont encore là : on désherbe à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
-      <p><strong>Un sol exempt d'adventices.</strong> Les semis — ceux des tortues en particulier — se font sur un sol propre : Lopez pose comme règle
-         de semer dans un sol exempt d'adventices, et la régénération naturelle assistée prévoit l'élimination préalable des adventices et des faux-semis
-         (un à quatre passages) pour épuiser la banque de graines. Pour les pionniers d'une succession, leur concurrence — celle des graminées surtout, dont
-         les racines gênent fortement les arbres (Théry, ch. 3) — est un frein au saut du chat.</p>
+      <p><strong>Ce que disent les sources.</strong> Préparez tôt, mais couvrez toujours le sol en attendant la plantation, sans laisser
+         les bâches plus qu'il n'en faut. Bâchez sur un sol le plus humide possible, le lendemain matin d'une pluie, avant que la rosée
+         s'évapore. Bâchez aussi les chemins pendant une saison, avant d'y semer du trèfle blanc. L'idéal, selon Faraj, est un couvert
+         adapté semé un ou deux ans avant de planter. Une fois planté, le sol ne se travaille plus. La préparation est la première chose
+         que le climat empêche : prévoyez un repli manuel.</p>
+      <p><strong>Le déchaumage prépare le sol à recevoir la plantation</strong>, avec les moyens dont vous disposez : une bâche, un
+         motoculteur, des animaux ou autre chose. Si des adventices reviennent ensuite, la plantation n'est pas assez dense, et des plantes
+         de colonisation sont encore là. On désherbe alors à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
+      <p><strong>Un sol exempt d'adventices.</strong> Les semis, ceux des tortues en particulier, se font sur un sol propre. Lopez pose comme
+         règle de semer dans un sol exempt d'adventices. La régénération naturelle assistée prévoit l'élimination préalable des adventices et
+         des faux-semis, en un à quatre passages, pour épuiser la banque de graines. La concurrence des adventices freine le saut du chat chez
+         les pionniers d'une succession, surtout celle des graminées, dont les racines gênent fortement les arbres (Théry, ch. 3).</p>
     </div>
   </aside>
 

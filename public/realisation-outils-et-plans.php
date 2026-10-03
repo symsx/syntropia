@@ -143,18 +143,18 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
           <div class="outils-champ">
             <label for="moyens_humains">Qui vient, et combien</label>
-            <small>Aide-t-on d'autres personnes que vous ? Combien, et pour combien de temps.</small>
+            <small>Les personnes qui vous aident, combien, et pour combien de temps.</small>
             <textarea id="moyens_humains" name="moyens_humains" rows="2" placeholder="Seul, en famille, un chantier participatif…"><?= htmlspecialchars($reponses['outils_moyens_humains'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <div class="outils-champ">
             <label for="plan_notes">Notes sur le plan d'implantation</label>
-            <small>Où planter quoi, tel que vous l'envisagez — le scénario de plantation (en Conception) dit quoi, à quelle strate et pour combien de temps.</small>
+            <small>Où planter quoi, tel que vous l'envisagez. Le scénario de plantation, en Conception, dit quoi planter, à quelle strate et pour combien de temps.</small>
             <textarea id="plan_notes" name="plan_notes" rows="2" placeholder="Ce que vous savez déjà de l'emplacement des plants"><?= htmlspecialchars($reponses['outils_plan_notes'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <button type="submit" class="outils-bouton">Continuer</button>
-          <p class="outils-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="outils-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -169,10 +169,9 @@ $reponses = $reponsesService->pourParticipant($participantId);
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
       <p>Cette étape rassemble ce qu'il faut avoir sous la main avant de
-         commencer — les outils, et les personnes. Le scénario de
-         plantation (en Conception) dit quoi planter, à quelle strate et
-         pour combien de temps ; les notes sur le plan d'implantation
-         précisent où.</p>
+         commencer : les outils et les personnes. Le scénario de plantation,
+         en Conception, dit quoi planter, à quelle strate et pour combien de
+         temps. Les notes sur le plan d'implantation précisent où.</p>
     </div>
   </aside>
 

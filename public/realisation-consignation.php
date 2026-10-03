@@ -135,7 +135,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
     <main class="bureau" id="bureau">
       <div class="consig-cadre">
-        <p class="consig-annonce">Ce qui a été fait, pour s'en souvenir — pas pour se juger.</p>
+        <p class="consig-annonce">Notez ce qui a été fait, pour vous en souvenir.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -155,7 +155,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
           </div>
 
           <button type="submit" class="consig-bouton">Continuer</button>
-          <p class="consig-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="consig-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -169,10 +169,10 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>La date et les conditions comptent autant que le geste : un même
-         chantier mené sous la pluie ou en pleine canicule ne donnera pas
-         le même résultat, et savoir pourquoi aide à comprendre ce qui se
-         passera ensuite — en Suivi, la phase qui commence juste après.</p>
+      <p>La date et les conditions comptent autant que le geste. Un même
+         chantier mené sous la pluie ou en pleine canicule ne donne pas le
+         même résultat. Savoir pourquoi aide à comprendre ce qui se passera
+         ensuite, en Suivi, la phase qui commence juste après.</p>
     </div>
   </aside>
 

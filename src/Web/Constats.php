@@ -70,7 +70,7 @@ final class Constats
 
         $visible = trim((string) ($v['visible'] ?? ''));
         if (!isset(SautDuChat::VISIBLES[$visible])) {
-            $erreurs['visible'] = 'Dites si le saut du chat est visible, ou pas encore.';
+            $erreurs['visible'] = 'Indiquez si le saut du chat est visible, ou pas encore.';
         }
 
         $texte = static function (string $cle, int $max, string $nom) use ($v, &$erreurs): ?string {
@@ -113,12 +113,12 @@ final class Constats
 
         $adventices = trim((string) ($v['adventices'] ?? ''));
         if ($adventices !== '' && !isset(SautDuChat::ADVENTICES[$adventices])) {
-            $erreurs['adventices'] = 'Dites si des adventices reviennent, ou laissez vide.';
+            $erreurs['adventices'] = 'Indiquez si des adventices reviennent, ou laissez vide.';
         }
 
         // Une pousse sans durée ne dit rien ; un témoin sans pousse ne compare rien.
         if (($pousse !== null || $temoinPousse !== null) && $jours === null && !isset($erreurs['sur_jours'])) {
-            $erreurs['sur_jours'] = 'Une pousse se mesure sur une durée : dites sur combien de jours.';
+            $erreurs['sur_jours'] = 'Une pousse se mesure sur une durée : indiquez sur combien de jours.';
         }
         if ($temoinPousse !== null && $pousse === null && !isset($erreurs['pousse_cm'])) {
             $erreurs['pousse_cm'] = 'Le témoin sert à comparer : notez aussi la pousse de la plante.';

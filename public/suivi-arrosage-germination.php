@@ -170,7 +170,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
           </div>
 
           <button type="submit" class="arros-bouton">Continuer</button>
-          <p class="arros-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="arros-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -184,10 +184,10 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>La phase Suivi commence dès que quelque chose est en terre : elle
+      <p>La phase Suivi commence dès que quelque chose est en terre. Elle
          accompagne le système, saison après saison, tant qu'il vit. Cette
-         première étape observe ce qui se passe tout de suite après la
-         plantation — l'eau, et les premiers signes que ça a pris.</p>
+         première étape observe ce qui se passe juste après la plantation :
+         l'arrosage, et les premiers signes que les plants ont pris.</p>
     </div>
   </aside>
 

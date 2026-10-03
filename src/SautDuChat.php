@@ -168,7 +168,7 @@ final class SautDuChat
                     . '. Préparer tôt, mais toujours couvrir le sol en attendant la plantation. Les semis se font sur un sol exempt d’adventices, dont la concurrence freine le saut du chat, surtout celui des pionniers de la succession.',
                 'source' => 'Théry, ch. 3 et 14 ; Lopez ; RNA']
             : ['cle' => 'preparation', 'titre' => 'Le sol est préparé', 'etat' => self::VIDE,
-                'detail' => 'La préparation n’est pas notée (Réalisation, étape 1). Préparation et plantation sont les deux moments les plus coûteux du projet : les brûler se paie ensuite en désherbage et en rattrapage. Les semis se font sur un sol exempt d’adventices.',
+                'detail' => 'La préparation n’est pas notée (Réalisation, étape 1). Préparation et plantation sont les deux moments les plus coûteux du projet : les bâcler se paie ensuite en désherbage et en rattrapage. Les semis se font sur un sol exempt d’adventices.',
                 'source' => 'Théry, ch. 3 et 14 ; Lopez'];
 
         // 0 bis. La plantation dense se fait dans une même période, sans structurante ajoutée après coup.
@@ -178,7 +178,7 @@ final class SautDuChat
         $sourceCampagne = 'Théry, ch. 11 ; Faraj ; Joala 4-1';
         if ($d0 === false) {
             $c[] = ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::VIDE,
-                'detail' => 'Le point zéro n’est pas noté. Une plantation dense se fait dans une même période, qui peut courir sur trois saisons — fin d’automne, hiver, printemps — selon les besoins des végétaux ; ce qui compte : aucune structurante ajoutée après coup.',
+                'detail' => 'Le point zéro n’est pas noté. Une plantation dense se fait dans une même période, qui peut courir sur trois saisons (fin d’automne, hiver, printemps) selon les besoins des végétaux. Ce qui compte est de n’ajouter aucune structurante après coup.',
                 'source' => $sourceCampagne];
         } elseif ($d1 === false) {
             $c[] = ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::VIDE,
@@ -190,7 +190,7 @@ final class SautDuChat
             $etendue = 'Du ' . $d0->format('d/m/Y') . ' au ' . $d1->format('d/m/Y') . ($jours > 0 ? ', environ ' . $mois . ' mois' : ', en un jour') . '.';
             $c[] = $jours <= self::CAMPAGNE_JOURS
                 ? ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::OK,
-                    'detail' => $etendue . ' Dans une même saison de plantation. « Dense » : pas encore de repère chiffré.',
+                    'detail' => $etendue . ' Dans une même saison de plantation. Aucun repère chiffré ne dit encore ce qu’est une plantation dense.',
                     'source' => $sourceCampagne]
                 : ['cle' => 'campagne', 'titre' => $titreCampagne, 'etat' => self::ATTENTION,
                     'detail' => $etendue . ' Plus d’une saison de plantation : des plants ajoutés bien après le point zéro occupent moins le sol que s’ils avaient été plantés avec le reste.',
@@ -202,7 +202,7 @@ final class SautDuChat
         $titreAdv = 'Les adventices ne reviennent pas';
         if ($adventices === 'oui') {
             $c[] = ['cle' => 'adventices', 'titre' => $titreAdv, 'etat' => self::ATTENTION,
-                'detail' => 'Des adventices reviennent : c’est le signe que la plantation n’est pas assez dense — des plantes de colonisation sont encore là. Désherbez à la main, et densifiez avec des plantes du système d’accumulation (le support cite '
+                'detail' => 'Des adventices reviennent : la plantation n’est pas assez dense, et des plantes de colonisation sont encore là. Désherbez à la main, et densifiez avec des plantes du système d’accumulation (le support cite '
                     . implode(', ', self::ACCUMULATION) . ').',
                 'source' => 'Repère de l’atelier ; Joala 2-2'];
         } elseif ($adventices === 'non') {
@@ -210,7 +210,7 @@ final class SautDuChat
                 'detail' => 'Aucune adventice ne revient au dernier constat qui l’a noté.', 'source' => 'Repère de l’atelier'];
         } else {
             $c[] = ['cle' => 'adventices', 'titre' => $titreAdv, 'etat' => self::VIDE,
-                'detail' => 'À noter au constat. Si des adventices reviennent, c’est le signe que la plantation n’est pas assez dense : on désherbe à la main et l’on densifie avec des plantes du système d’accumulation.',
+                'detail' => 'À noter au constat. Si des adventices reviennent, la plantation n’est pas assez dense : on désherbe à la main et l’on densifie avec des plantes du système d’accumulation.',
                 'source' => 'Repère de l’atelier ; Joala 2-2'];
         }
 
@@ -232,10 +232,10 @@ final class SautDuChat
             ? ['cle' => 'de_quoi_couper', 'titre' => 'De quoi couper', 'etat' => self::VIDE,
                 'detail' => ($potager
                     ? 'Aucune culture de ce potager n’est marquée « plante de biomasse » (le maïs ou le tournesol d’une tranchée centrale, par exemple : on les ouvre dans le plan de culture pour les marquer).'
-                    : 'Aucune plante de biomasse dans le scénario de cette parcelle.') . ' Sans masse suffisante à tailler, pas de perturbation efficace : le framboisier en bordure vivante est écarté pour cette raison.',
+                    : 'Aucune plante de biomasse dans le scénario de cette parcelle.') . ' Sans masse suffisante à tailler, la perturbation n’est pas efficace : le framboisier en bordure vivante est écarté pour cette raison.',
                 'source' => 'Théry, ch. 15']
             : ['cle' => 'de_quoi_couper', 'titre' => 'De quoi couper', 'etat' => self::OK,
-                'detail' => count($biomasse) . ' plante' . (count($biomasse) > 1 ? 's' : '') . ' de biomasse ' . ($potager ? 'au potager' : 'au scénario') . ' : ' . implode(', ', array_slice(array_values($biomasse), 0, 4)) . (count($biomasse) > 4 ? '…' : '') . '. Combien de masse suffit : pas encore de repère.',
+                'detail' => count($biomasse) . ' plante' . (count($biomasse) > 1 ? 's' : '') . ' de biomasse ' . ($potager ? 'au potager' : 'au scénario') . ' : ' . implode(', ', array_slice(array_values($biomasse), 0, 4)) . (count($biomasse) > 4 ? '…' : '') . '. Aucun repère ne dit encore combien de masse suffit.',
                 'source' => 'Théry, ch. 12 et 15'];
 
         // 3. L'état des plantes à la coupe — c'est lui qui dicte le moment.
@@ -300,7 +300,7 @@ final class SautDuChat
                         'source' => 'Théry, ch. 12 ; Joala 3-7'];
                 } else {
                     $c[] = ['cle' => 'ensemble', 'titre' => 'Toutes les plantes de biomasse coupées ensemble', 'etat' => self::ATTENTION,
-                        'detail' => 'Pas coupées avec les autres : ' . implode(', ', $manquantes) . '.',
+                        'detail' => 'Plantes non coupées avec les autres : ' . implode(', ', $manquantes) . '.',
                         'source' => 'Théry, ch. 12 ; Joala 3-7'];
                 }
             }

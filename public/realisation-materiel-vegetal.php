@@ -133,8 +133,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
 
     <main class="bureau" id="bureau">
       <div class="mveg-cadre">
-        <p class="mveg-annonce">Ce qui va être planté vient de quelque part : de vous, ou
-           d'ailleurs.</p>
+        <p class="mveg-annonce">Ce qui va être planté vient de vous, ou d'ailleurs.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -142,21 +141,21 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
             <label for="multiplication">Ce que vous multipliez vous-même</label>
             <small><?= Documentation::terme($termes, 'bouturage', 'Bouturage') ?>,
                <?= Documentation::terme($termes, 'semis', 'semis') ?>,
-               <?= Documentation::terme($termes, 'division', 'division') ?> — ce qui part de ce
-               que vous avez déjà : des <?= Documentation::terme($termes, 'pieds-meres', 'pieds-mères') ?>
-               à bouturer, des graines à récolter, sur votre terrain ou ailleurs.</small>
+               <?= Documentation::terme($termes, 'division', 'division') ?> : ce qui part de ce
+               que vous avez déjà, comme des <?= Documentation::terme($termes, 'pieds-meres', 'pieds-mères') ?>
+               à bouturer ou des graines à récolter, sur votre terrain ou ailleurs.</small>
             <textarea id="multiplication" name="multiplication" rows="3" placeholder="Quoi, comment, à partir de quels pieds…"><?= htmlspecialchars($reponses['materiel_multiplication'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <div class="mveg-champ">
             <label for="achat">Ce que vous allez vous procurer</label>
-            <small>Ce qui manque encore — un végétal déjà utile, présent sur le terrain, n'a
-               rien à faire ici.</small>
+            <small>Ce qui manque encore. Un végétal déjà utile et présent sur le terrain ne se
+               note pas ici.</small>
             <textarea id="achat" name="achat" rows="3" placeholder="Quoi, auprès de qui, en quelle quantité approximative…"><?= htmlspecialchars($reponses['materiel_achat'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
           <button type="submit" class="mveg-bouton">Continuer</button>
-          <p class="mveg-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="mveg-note">Vos réponses sont enregistrées quand vous continuez. Vous pourrez les modifier plus tard.</p>
         </form>
       </div>
     </main>
@@ -170,15 +169,13 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p><strong>Trois façons de multiplier</strong> — le bouturage prélève un
-         fragment de tige ou de racine d'un pied déjà en place ; le semis
-         part d'une graine ; la division sépare une touffe existante en
-         plusieurs plants. Les trois coûtent surtout du temps, pas de
-         l'argent — une voie utile quand les moyens financiers sont
-         serrés (voir l'étape Moyens, en Définition).</p>
-      <p>Un végétal déjà utile au projet, présent sur le terrain sans rien
-         y avoir planté, ne se multiplie ni ne s'achète — il se note
-         simplement, pour mémoire, avec ce qu'il apporte.</p>
+      <p><strong>Trois façons de multiplier.</strong> Le bouturage prélève un fragment de
+         tige ou de racine d'un pied déjà en place. Le semis part d'une graine. La division
+         sépare une touffe existante en plusieurs plants. Les trois demandent surtout du
+         temps, ce qui en fait une voie utile quand les moyens financiers sont serrés (étape
+         Moyens, en Définition).</p>
+      <p>Un végétal déjà utile au projet et présent sur le terrain se note dans le scénario,
+         à l'emplacement « Autre emplacement ou végétal existant ».</p>
     </div>
   </aside>
 

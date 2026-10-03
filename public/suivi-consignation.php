@@ -135,8 +135,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
 
     <main class="bureau" id="bureau">
       <div class="consuiv-cadre">
-        <p class="consuiv-annonce">Ce que vous observez, noté — le suivi se relit mieux qu'il
-           ne se souvient.</p>
+        <p class="consuiv-annonce">Notez ce que vous observez et les résultats obtenus.</p>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -156,7 +155,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
           </div>
 
           <button type="submit" class="consuiv-bouton">Continuer</button>
-          <p class="consuiv-note">Enregistré dès que vous continuez — vous pouvez revenir sans rien perdre.</p>
+          <p class="consuiv-note">Votre observation est enregistrée quand vous continuez.</p>
         </form>
       </div>
     </main>
@@ -170,10 +169,10 @@ $reponses = $reponsesService->pourParticipant($participantId);
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Cette consignation-ci se répète — un projet vivant y revient
-         bien plus souvent qu'aux étapes amont, réglées une fois. Rien
-         n'empêche d'y revenir à volonté : vos réponses précédentes
-         restent, et se réécrivent à chaque passage.</p>
+      <p>Cette consignation se répète : un projet vivant y revient plus
+         souvent qu'aux étapes précédentes, réglées une fois. La page garde
+         une seule observation : chaque enregistrement remplace la
+         précédente.</p>
     </div>
   </aside>
 

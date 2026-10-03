@@ -114,7 +114,7 @@ final class Interventions
                 return null;
             }
             if (mb_strlen($valeur) > $max) {
-                $erreurs[$cle] = $nom . ' : ' . $max . ' caractères au plus.';
+                $erreurs[$cle] = $nom . ' compte ' . $max . ' caractères au plus.';
                 return null;
             }
             return $valeur;
@@ -137,14 +137,14 @@ final class Interventions
             return round((float) $brut, 2);
         };
         $duree = $nombre('duree_h', 0.05, 99, 'La durée se compte en heures, de 0,05 à 99.');
-        $personnes = $nombre('personnes', 1, 99, 'Le nombre de personnes : un entier de 1 à 99.');
+        $personnes = $nombre('personnes', 1, 99, 'Le nombre de personnes est un entier de 1 à 99.');
         if ($personnes !== null && $personnes !== floor($personnes)) {
-            $erreurs['personnes'] = 'Le nombre de personnes : un entier de 1 à 99.';
+            $erreurs['personnes'] = 'Le nombre de personnes est un entier de 1 à 99.';
         }
-        $quantite = $nombre('quantite_traitee', 0.01, 999999, 'La quantité traitée : un nombre positif.');
+        $quantite = $nombre('quantite_traitee', 0.01, 999999, 'La quantité traitée est un nombre positif.');
         $unite = trim((string) ($v['unite_quantite'] ?? ''));
         if ($quantite !== null && !in_array($unite, ['m', 'm2'], true)) {
-            $erreurs['unite_quantite'] = 'Dites si la quantité se compte en mètres de ligne ou en m².';
+            $erreurs['unite_quantite'] = 'Indiquez si la quantité se compte en mètres de ligne ou en m².';
         }
         if ($quantite === null) {
             $unite = '';
