@@ -41,6 +41,15 @@ l'eucalyptus proscrit avec le recul, maïs population. **Joala est la
 structure d'Anaëlle Théry** : `[Joala]` et `[Théry]` (le livre) sont
 deux supports d'une même autrice, pas deux sources indépendantes.
 
+Cinquième versement (2026-10-03) : le module 7
+(`plantations-perennes-et-trognes.md`) — le tableau espace-temps tel
+qu'il est enseigné aujourd'hui (chêne au lieu d'eucalyptus, plus de
+tipi de boutures), quatre types de bordures vivantes et le « bloc
+herbe » par face, cépée et trogne, taille au solstice (mi-juillet au
+plus tard), goji, et le design coté d'une tortue de trognes à feuilles
+comestibles (Agrecolibre) avec son évolution placenta → climax et ses
+élévations — une référence pour une future vue de côté.
+
 **Ce que ce n'est pas** : une validation scientifique des propos, ni
 une relecture intégrale des enregistrements — voir le README du
 dossier pour la méthode et les réserves par fiche. Les fichiers du

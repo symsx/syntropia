@@ -385,6 +385,11 @@ d'arrosage, retirées).
   `chantier-saut-du-chat.md`) : repères d'été Joala, alias « maïs », règle de
   famille, définition du saut du chat au glossaire, correspondance du fichier
   de semences du porteur avec l'import d'`especes.php`.
+- Module 7 de la formation, versé le 2026-10-03
+  (`connaissances/formation-joala/plantations-perennes-et-trognes.md`) : face sud des bordures refermée
+  (code en l'état), la mélisse ne bloque plus l'herbe, la menthe garde sa fiche (divergence ouverte) ;
+  cadre à 147 espèces — **quatre émergents à compléter** (chêne pédonculé, orme, hêtre, mûrier noir).
+  Cadre et seed modifiés en local, **pas encore déployés** (`deployer.py mettre-a-jour`, schéma inchangé).
 - Zone USDA : filtrer par rusticité suppose une donnée absente (à décider).
 - Proposé sans réponse : agrandir `espece.statut_local` ; faire du cadre
   complet le modèle téléchargeable d'`especes.php` ; supprimer

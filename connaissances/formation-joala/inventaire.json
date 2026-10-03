@@ -637,6 +637,376 @@
       "octets": 15317,
       "sha256": "7a8c499e7ba391d7a34ab19a00e27f79cc36b566f69d861782678d7a7af3f61d",
       "fiche": "printemps-mini-foret-et-sol.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-1-point_sur_la_taille_au_solstice_d_ete.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 8894,
+      "sha256": "6da374d0b1813139cd2791b599b278e67e47be4f0e16a5ab38a7b486aa8222bb",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-2-resilience_alimentaire_et_applications_economiques.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 42717,
+      "sha256": "f2145b0932e7d511e75c925ba3a98b319640f2a7af547ece6a2de358e3acf650",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-3-revisions.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 7905,
+      "sha256": "f3f897cad524c42923741df442ed3147ab389671dbe1691e2c0c7943406a7d56",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-4-point_outil.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 7183,
+      "sha256": "ddf71d511f3d5c5a5708d430314b6ea81846fd703c1dde16272b1b1b4faed56e",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-5-espace_temps_et_plantations_perennes.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 21728,
+      "sha256": "66ebde2c274ad4fb4ff1517ed7a9f94bf5ccc3d5b613ff0d4e28ed6685c72d95",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-6-structure_d_une_plantation.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 18884,
+      "sha256": "be339b08d5868e59b8dcae009d8f60e808c6490df26ebd7cca73824ee929b284",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-7-construire_un_tableau_temps-espace.txt",
+      "nature": "texte du cours (sans synthèse générée), avec la description des courbes du tableau",
+      "lecture": "lu en entier (pas de ligne « transcription : »)",
+      "octets": 18234,
+      "sha256": "f52d31ef1235c180fdac127c85de6799db21c2bbb3370db45b88827deab2cce5",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-8-valorisation_du_climax.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 14565,
+      "sha256": "21cddb5e2dc7d520dcb4077f2a8b57ecf1066becc3a9010b03d52c70d16480d2",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-9-rappel_emergents.txt",
+      "nature": "notes du cours",
+      "lecture": "lu en entier (pas de ligne « transcription : »)",
+      "octets": 5362,
+      "sha256": "b606cd660a044ca5a8c3431bebe0ad6dc4c71b622502fae7647f49ebf81b22b0",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-10-présentation_design_d_un_systeme_enbelgique.txt",
+      "nature": "présentation de quatre lignes, renvoie aux images",
+      "lecture": "lu en entier",
+      "octets": 491,
+      "sha256": "fbb2e15f779320644b944c7fc47b49e32552495c9f1ecc0351ff3a80046a8ffb",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-11-retour_vers_le_futur.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 8570,
+      "sha256": "7c632133eb6acb9b9f71683392603909cb82215147547ac7ecbd15de54c5dc81",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "7-12-point_goji.txt",
+      "nature": "synthèse générée, suivie du texte parlé",
+      "lecture": "synthèse seule (arrêt à la ligne « transcription : »)",
+      "octets": 9153,
+      "sha256": "61a509aa628d753b7a0595e7ce1d659c6f7721c72baea0c71e6932d74442cb95",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_1.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1011443,
+      "sha256": "ea1718a3bf1dc29eedd13403a30ca680d39fbfbe70777e2c388413543ddfbe81",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_2.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1459762,
+      "sha256": "336379f55d37cf86a564c310b8b59b9149626329c563631a78d10c5c3736679e",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_3.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 2659090,
+      "sha256": "b3df93c79ed165afcddda8530e091a361016f197dd652625f37013f17a68922f",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_4.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1926229,
+      "sha256": "ff4cf01c1c0615e5de341486f69ed5525d4f871a9b21b18c29f14f0d4c03657e",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_5.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1600330,
+      "sha256": "52f11da947436e7b9eec518651c5dab2e7e92b85888d22d8225f938da5fa850f",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_6.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1948902,
+      "sha256": "41e91277f18a003662b82af28572f6bc55619fb4538235f0bbea9031cf41ea97",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_7.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1432656,
+      "sha256": "920681a4f8ab461711be6e1e10afdd658db9a826a4857829355c454f34999e62",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_8.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1396549,
+      "sha256": "0fb39430410dcfe747be525a97113ba06075abb704a1460767f635d07c479f77",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_9.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1464760,
+      "sha256": "f8f302beb320e7217cbe09d46e1cc808521f241a05721227cf06862aecc56b23",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_A.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1187830,
+      "sha256": "602538a27c0f1797cb1d1766c7e8b65123dd3778379caa505ee49305b3b2f130",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_B.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1334154,
+      "sha256": "c3986726a01bdd2c537bf92eeaa9c2355140b896e0d2d887d00577036995d383",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_C.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1178325,
+      "sha256": "dfe96f38b912fc67936d97836fabb6fc87f8d7e605c1557f3653883fdab15516",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_D.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1075448,
+      "sha256": "1a0f4cf096bd66b7a6e783790fa49fc9ab73f1ad8dc2c8c72ca939d8870e3356",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_E.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1306036,
+      "sha256": "6d502baf3f1ffc99dfc4ad052506d08c262f7bf2e368e21d93879ec6ae5d895c",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_F.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1272633,
+      "sha256": "e60a5fa20306590522cd63a7f9ccfcbfadc0122f8f64375cd771a974f345aca6",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_G.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1124747,
+      "sha256": "23e69eb0ffe2e7dff6af9e767b24bf0e069d9b24029fbd1429a2cbe87f8da98e",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_H.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1304728,
+      "sha256": "5cb423ac5eb49aeb2c8049b0833e11af149986343102fef38f71e6b6a3effca5",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_I.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1215286,
+      "sha256": "fc1e846b3afa123634c191b2c263468aed7c337d99f62eb811ddff96d90144fc",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_J.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 961949,
+      "sha256": "3e18b11186876dac058c4419fe0835093e9d31f56ce32b7f37804769261d43fd",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_K.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1263974,
+      "sha256": "c6016b1290fa38c7882d85aa89c6bdf0116f9106ba84de18175cca6c98834744",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_L.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 2126398,
+      "sha256": "373deba14179f4e41e32ab42e9bdb48e5e03df469e244fb89e1ed518e7140086",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_M.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 2471291,
+      "sha256": "c1158f42359aae160949d73fc28eadb3d529ac0b5e356f2104ebf6489601fec6",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_N.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 838111,
+      "sha256": "1b47ab4a379c4493839f7c6e3ba8a5698fad95847551d66a91605060b7b93045",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_O.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 2244917,
+      "sha256": "cfd152f81cee03d8681196208080b6a74cc1eabbb62da4940cf33da424e74fbf",
+      "fiche": "plantations-perennes-et-trognes.md"
+    },
+    {
+      "versement": "2026-10-03",
+      "racine_source": "/home/sylvain/Bureau/Projets/input",
+      "fichier": "tortue_feuilles_agrecolibre_P.png",
+      "nature": "image : diapositive du design Agrecolibre (Anne Goldschmidt & Anaëlle Théry, août 2024)",
+      "lecture": "regardée",
+      "octets": 1682644,
+      "sha256": "e7e0481c031631c8282af10db44720b7ef89ef7adeaff4ed4e719da81e621cb2",
+      "fiche": "plantations-perennes-et-trognes.md"
     }
   ]
 }

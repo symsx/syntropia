@@ -526,6 +526,18 @@ stade n'est toujours pas donnée. **N° 10 (densité)** : topinambour à 15 cm l
 les chemins, pas par le centre dense ; sans gravité dès la 4e année — rejoint la règle des adventices (Phase 2 ter). **Précision du porteur** :
 Joala est la structure d'Anaëlle Théry ; les deux formulations du saut du chat citées plus haut (Théry, Joala 5-1) sont donc d'une même autrice.
 
+**Mise à jour du 2026-10-03 (versement du module 7 — `connaissances/formation-joala/plantations-perennes-et-trognes.md`)** — aucune question
+fermée, cinq documentées. **N° 1 (fréquence et période de coupe)** : la **taille d'été, du 21 juin à la mi-juillet au plus tard** pour une plante
+de production (une repousse plus tardive ne s'aoûte pas et gèle), plus souple pour une plante de biomasse ; trogne rasée chaque hiver ; cépée en
+rotation de trois ans ; au moins un tiers de la biomasse rendu au sol — toujours pas de repère par espèce. **N° 2 (quoi planter, quand)** :
+« tout est planté dans la même saison » — l'hiver les ligneux et les nids de graines, le printemps suivant les annuelles et le repiquage des
+bordures ; des poquets de féveroles tous les 50 cm sur les bordures avec la plantation d'hiver, perturbés à la floraison. **N° 3 (itinéraires)** :
+quatre types de bordures vivantes (potager en 3D, intérimaire, pérenne, extensif), le jardin-cueillette en tortue zèbre, « dix tortues au fil des
+années plutôt qu'une grande » — pas encore une liste d'itinéraires. **N° 6 (biomasse)** : 70 à 80 % des plantes du départ, redit. **N° 10
+(densité)** : un design coté (Agrecolibre) — goji tous les 20 cm, blettes tous les 5 à 10 cm, un mélange de bisannuelles à 40 cm au plus, cassis
+tous les 50 cm — valable pour ce design seulement. **Deux erreurs dites par l'autrice** : le **tipi de boutures** de variétés différentes (le livre,
+ch. 11) — planter plusieurs boutures au même endroit, toujours de la même espèce ; et l'eucalyptus, remplacé par le chêne, le frêne, l'orme, le charme.
+
 ## Documentation, à chaque phase
 
 - Livret « L'atelier » (`contenu/documentation-atelier.md`) : le chapitre concerné **dans la même vague**,

@@ -210,3 +210,10 @@ Toutes les questions du 2026-09-23 sont tranchées. Une question est ouverte dep
    moyenne, d'après les études citées au seed) : il fructifie dans une strate plus lumineuse que celle où il rend
    service. Si la règle se confirme, la strate de production est celle de la plante mûre, et la bascule tombe au début
    de la production (la récolte, au référentiel, en donne déjà la fin).
+   **Élément du module 7 (2026-10-03, `7-7` — `connaissances/formation-joala/plantations-perennes-et-trognes.md`)** : le
+   tableau espace-temps est « indicatif » ; chaque plante trouve sa strate au fil de sa croissance, et l'autrice invite à
+   **noter la strate finale à partir du placenta 3**, sauf exception ; les courbes décrites (mûrier blanc, cassis, sureau,
+   chalef) atteignent leur strate finale au début du secondaire 1 — pour le cassis, l'âge de sa première production.
+   Compatible avec la réponse du porteur pour les pérennes ; **rien sur les annuelles** (fève, pomme de terre). La
+   question reste ouverte. Les **élévations** du design Agrecolibre (même fiche) dessinent la hauteur de chaque espèce
+   d'une planche dans le temps — une référence pour la vue de côté envisagée.

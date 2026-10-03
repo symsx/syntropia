@@ -198,6 +198,19 @@ de 42 m² — `connaissances/formation-joala/printemps-mini-foret-et-sol.md`) r�
 strate basse soit appropriée au sud pour un jardin-forêt » — **non tranché**. Si elle l'est, la règle dépendrait de la
 conduite de la parcelle (`Heritage`, syntropie ou jardin-forêt). Rien n'est changé dans le code.
 
+**Élément nouveau, 2026-10-03 — le module 7** (`connaissances/formation-joala/plantations-perennes-et-trognes.md`). Le cours
+`7-5`, sur les plantations pérennes, donne le « bloc herbe » d'une bordure pérenne extérieure : **au sud et à l'ouest,
+romarin, lavande, hysope** ; **à l'est et au nord, sauge et consoude**. C'est la règle du livre et celle du cadre, où
+romarin, lavande et hysope sont des **émergentes** de bordure (`orientation_bordure` sud-ouest) : la « bande de rocaille »
+de la mini-forêt n'est donc pas une strate basse au sens du code. L'écart avec `6-5` se réduit à **la sauge** (strate
+haute au cadre, face nord-est ; au sud dans la mini-forêt) et à **l'hélichryse** (absente du cadre).
+**Refermée le 2026-10-03 par le porteur : le code reste en l'état.** Deux autres points du même cours, tranchés le même
+jour : la **mélisse « ne bloque rien »** (`7-5`), et `7-7` ne confie le blocage de l'herbe, au nord et à l'est, qu'à la
+consoude — **la mélisse perd `bloque_herbe`** au cadre (repère du 2026-09-30 « à vérifier », décision du porteur) : elle
+n'est plus proposée ni répartie comme bloque-herbe sur l'externe, et reste proposée pour la biomasse sur l'interne. La
+**menthe**, que `7-5` classe « non adaptée » à l'est et au nord, **garde sa fiche** (celle du porteur) : divergence
+laissée ouverte, dite dans les notes du cadre.
+
 ## Après l'essai du porteur en production (2026-10-01)
 
 Le porteur a essayé la répartition sur La Vadaux P1 (17 × 4 m) et trouvé des espacements trop grands. Trois décisions :

@@ -48,6 +48,14 @@ jusqu'à la ligne « transcription : » seulement**, à la demande de Sylvain. U
 se lit comme une pratique qui a évolué (l'eucalyptus, module 6), non comme un désaccord. Les webinaires Destination Syntropie invitent, eux,
 d'autres intervenants.
 
+### Cinquième versement — 2026-10-03
+
+Même dossier source, qui reçoit le **module 7** : douze fichiers texte (`7-1` à `7-12`) — la taille au solstice, la résilience alimentaire, le
+cadre d'une plantation pérenne et ses quatre types de bordures vivantes, le tableau espace-temps (version de cours du ch. 11 du livre), les
+émergents en cépée et en trogne, le goji — et **25 images** : les diapositives d'un design de tortue « feuilles » (Agrecolibre, Belgique, Anne
+Goldschmidt et Anaëlle Théry, août 2024). Synthèses **lues jusqu'à la ligne « transcription : »** ; `7-7`, `7-9` et `7-10`, qui n'en ont
+pas, lus en entier ; les images regardées une à une. Une fiche : [plantations pérennes, émergents et trognes](plantations-perennes-et-trognes.md).
+
 ## Fiches de lecture
 
 | Fiche | Provenance | Ce qu'elle apporte |
@@ -60,6 +68,7 @@ d'autres intervenants.
 | [Strates et lumière](strates-et-lumiere.md) | `[Joala]` | Trois mousquetaires, tableau des besoins en lumière par strate — utile à un futur scénario |
 | [Le potager syntropique](potager-syntropique.md) | `[Joala]` | La planche, ses strates, les successions (maïs, courges, courgettes, tomates, poivrons, haricots, choux, fenouil), la perturbation rapportée et les divergences à garder visibles |
 | [Printemps, mini-forêt et sol](printemps-mini-foret-et-sol.md) | `[Joala]` | Perturbation de printemps, végétation spontanée, chemins, mini-forêt de 42 m², densité et taille selon le sol, eucalyptus à proscrire, maïs population, ravageurs comme indicateurs |
+| [Plantations pérennes, émergents et trognes](plantations-perennes-et-trognes.md) | `[Joala]` | Tableau espace-temps (ce qui a changé depuis le livre), quatre types de bordures vivantes et le « bloc herbe » par face, succession d'un jardin-cueillette, cépée et trogne, taille au solstice, goji, design coté d'une tortue de trognes à feuilles comestibles |
 | [Autonomie — Molino](molino-autonomie.md) | `[Molino]` | Biomasse, occultation, sécheresse et organisation d'un jardin normand |
 | [Pépinière et bilan — Andru](andru-pepiniere-et-bilan.md) | `[Andru]` | Temps, eau, apports et observations d'un massif ariégeois |
 | [Production de bourgeons](production-de-bourgeons.md) | `[DS-bourgeons]` | Destination du système, plants disponibles et conflits de calendrier |
