@@ -122,3 +122,10 @@
 - `chantier-textes-atelier.md` — le plan (5 vagues) pour réécrire les textes de l'atelier dans le style du porteur :
   pages, textes de `src/`, livrets « L'atelier » et « Les sources », glossaire. Demandé le 2026-10-03 ; **terminé et déployé le
   même jour**, cinq vagues relues par le porteur.
+- `chantier-espacement-des-services.md` — le plan (5 phases) pour **tirer des sources l'espacement des plantes** : un
+  espacement par fonction (Théry ch. 11 et 14, Joala 7-10) — de service (`espacement_retenu_m` : 25 cm en biomasse,
+  40 cm en bloque-herbe, rien pour le brise-vent) et de production (`espacement_monoculture_m`) ; le service lu dans
+  `role` (biomasse d'abord) ; la ligne pérenne en série, la production en structure et le service entre ; **75 % de
+  biomasse**, par planche au potager, par ligne en pérenne, dit comme une information et compté dans « Matériel et
+  eau ». Demandé le 2026-10-04 avec un CSV du cadre revu par le porteur, **qui attend la règle** ; toutes les
+  questions tranchées le jour même ; **Phase 1 (la règle au nœud `conception-de-la-tortue.md`) faite**.

@@ -36,6 +36,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `export-import-projet` (Phases 1-3 faites, Phase 4 GeoJSON facultative) ;
     `mises-a-jour` (Phases 1-4 faites, 5-7 avant la version 1) ;
     `documentation-atelier` (maintenance continue, voir § Directives).
+  - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
+    fonction, la ligne pérenne en série, 75 % de biomasse ; Phase 1, la règle au nœud, faite).
   - **Planifiés, pas commencés** : `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions

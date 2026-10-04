@@ -207,6 +207,43 @@ et non définitives » : une surcharge les corrige. Le goji garde 50 cm (ligne i
 | Maïs | poquets à 50 cm | entre centre et bordure | ch. 08, ch. 11 |
 | Courge | 200 cm, en quinconce | de part et d'autre du centre | ch. 08 § 7.7 |
 
+## L'espacement selon la fonction
+
+Règle posée par le porteur le 2026-10-04 (`chantier-espacement-des-services.md`), d'après les plans de Théry et de
+Joala — une seule autrice, jamais deux sources indépendantes.
+
+- **L'espacement dépend de la fonction de la plante sur la ligne**, pas de l'espèce seule ni de sa taille adulte. Sur
+  la ligne centrale de « Les eucalyptus », un eucalyptus et un nid de frêne prennent chacun une case : *« un plant, une
+  bouture ou un nid de graines tous les 25 cm »* (Théry ch. 11 § 7).
+- **Deux espacements par espèce** : l'**espacement de service** (`espacement_retenu_m`), l'écart entre une plante de
+  service et ses voisines, quelles qu'elles soient ; l'**espacement de production** (`espacement_monoculture_m`),
+  l'intervalle entre deux plants de production. Le hêtre d'Agrecolibre est planté tous les 1,80 m en production, et
+  prend une case de quelques dizaines de centimètres en service : les deux ne se contredisent pas.
+- **Le service d'une espèce** se lit dans `role`, par priorité : **biomasse, puis bloque-herbe (ou couvre-sol), puis
+  brise-vent**. L'espacement de biomasse, plus serré, renforce l'autre service au lieu de l'empêcher.
+- **La ligne pérenne est une série** : les productions à leur espacement de production forment la structure, les
+  plantes de service remplissent les cases entre elles. Seul le poquet est d'une seule espèce — le tipi de trois
+  variétés est « une erreur souvent faite » (Joala 7-7). Au potager, au contraire, **une ligne, une espèce** (ch. 8 § 8).
+
+| Fonction | Espacement | Source |
+|---|---|---|
+| Biomasse et perturbation, ligne centrale pérenne | 25 cm (45 cm chez Agrecolibre) | Théry ch. 11 § 7 ; Joala, production de bourgeons ; Joala 7-10 |
+| Bloque-herbe, en bordure | 40 cm ; 20 cm à l'installation | Théry ch. 11, ch. 14 (p. 117, 119, 121) ; Joala, production de bourgeons |
+| Brise-vent | aucun chiffre — laissé vide jusqu'à une source | — |
+| Production, structure de la ligne | eucalyptus 2 m ; hêtre 1,80 m ; mûrier 2 m ; tilleul, cédrèle 1,50 m ; sureau 1 m | Théry ch. 11, ch. 14 ; Joala 7-10 |
+| Production, fruitiers principaux | les écarts du verger classique, voire plus | Théry ch. 15 § 4 |
+
+**Les 75 % de biomasse.** *« 70 à 80 % des plantes implantées sont destinées à la biomasse et à la perturbation »*
+(Théry ch. 11, règle 7 ; ch. 14 ; Joala 7-7) — un chiffre que la bibliographie du livre range parmi ceux sans
+référence. L'atelier retient **75 %, pour le seul service biomasse et perturbation**, compté **par planche au
+potager** (une ligne y porte une espèce) et **par ligne en pérenne**. Il sert deux fois : dire sur le plan et dans le
+scénario la part de biomasse — **une information, jamais une alerte**, sous 75 % — et compter dans « Matériel et eau »
+les plants qui seront sacrifiés.
+
+**Ce que la règle ne dit pas** : la densité suit aussi l'état du sol (Joala, printemps et mini-forêt) ; réduire les
+émergents prive le système de « backup », il faut doubler ou tripler (Joala, tortues et succession) ; et les annuelles
+placentaires (maïs, tournesol), semées dense, ne se dessinent pas sur le plan (Théry ch. 11).
+
 ## Questions ouvertes
 
 1. **Une règle de choix des services plus fine** que « compléter les strates vides » : quelle espèce de
