@@ -365,17 +365,20 @@ valeur de `acces.role` ; le moment venu, donner au porteur une ligne `acces`
 `('plantae', 'administrateur')` ; réponse sur `acces.application` **pas
 encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
-### État et prochaine étape — au 2026-10-03 au soir
+### État et prochaine étape — au 2026-10-04 au soir
 
-Tout est commité et poussé (`origin/main`) ; la production est à jour
-(commit `ef8da1e`, **schéma 19**, inchangé), déployée le 2026-10-03 avec
-sauvegarde. Ce déploiement porte le Dossier Projet Phase 2, la ligne centrale
-de la demi-planche de fin, le retrait des phrases de développement et la
-réécriture de tous les textes de l'atelier (`chantier-textes-atelier.md`,
-terminé). Parcours à essayer par le porteur : imprimer le Dossier Projet
-(terrain, parcelles), relire le livret « L'atelier » sur téléphone.
+La production est à jour (commit `9fd375d`, **schéma 19**, inchangé), déployée le
+2026-10-04 avec sauvegarde. Ce déploiement porte la légende du plan retirée avec
+les plants périmés, le Dossier Projet Phase 3 (matériel, eau, calendrier,
+participants), les cinq phases de `chantier-espacement-des-services.md` (deux
+espacements, la ligne centrale pérenne en série, la part de biomasse, la biomasse
+à sacrifier, le défaut par fonction) et le cadre des espèces revu par le porteur
+(module 7, dix espacements, noyer seulement en production). Compte de test local :
+`claudetest1` (voir la mémoire). Parcours à essayer par le porteur : imprimer le
+Dossier Projet complet ; ouvrir une fiche d'espèce ; regarder la part de biomasse
+(panneau Informations du plan, du scénario, du potager) et « Matériel et eau ».
 
-**La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 3 à 5 (la 5 :
+**La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5 (la 5 :
 le feuillet de chantier de chaque parcelle), puis la présentation
 (`chantier-presentation.md` ; sa Phase 1 corrigera la description des doses
 d'arrosage, retirées).
@@ -391,8 +394,10 @@ d'arrosage, retirées).
   (`connaissances/formation-joala/plantations-perennes-et-trognes.md`) : face sud des bordures refermée
   (code en l'état), la mélisse ne bloque plus l'herbe, la menthe garde sa fiche (divergence ouverte) ;
   cadre à 147 espèces, les quatre émergents complétés par le porteur le 2026-10-04 (avec dix espacements de
-  service revus ; le noyer seulement en production, à cause de la juglone). Cadre et seed modifiés,
-  **pas encore déployés** (`deployer.py mettre-a-jour`, schéma inchangé).
+  service revus ; le noyer seulement en production, à cause de la juglone) — déployé le 2026-10-04.
+- Espacement de production des arbres : la plupart n'en ont pas (le noyer posé en production sur la ligne
+  centrale est « à déterminer ») ; le design Agrecolibre donne hêtre 1,80 m et mûrier 2 m — non reportés,
+  à proposer au porteur.
 - Espacement des plantes : la règle par fonction et ses chiffres sont « le maximum que l'on puisse faire
   aujourd'hui » (le porteur, 2026-10-04) ; **il posera la question à Théry au module de perfectionnement
   conception syntropie, en janvier 2027** — reprendre `chantier-espacement-des-services.md` ensuite.
