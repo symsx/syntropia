@@ -66,7 +66,7 @@ final class RepartitionBordures
             return 'ne remplit la fonction d’aucune bordure (bloque-herbe, couvre-sol, brise-vent, biomasse)';
         }
         if (($e['espacement_retenu_m'] ?? null) === null || (float) $e['espacement_retenu_m'] <= 0) {
-            return 'pas d’espacement au référentiel, à compléter dans Espèces';
+            return 'pas d’espacement de service au référentiel, à compléter dans Espèces';
         }
         return null;
     }

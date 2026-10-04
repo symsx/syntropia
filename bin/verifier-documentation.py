@@ -69,7 +69,7 @@ COUVERTURE = {
         "src/Scenario.php", "src/Strates.php", "src/Web/Occupation.php", "src/SautDuChat.php",
         "public/assets/js/strates.js",
     ],
-    "Concevoir : les espèces": ["public/especes.php", "src/Web/Especes.php"],
+    "Concevoir : les espèces": ["public/especes.php", "src/Web/Especes.php", "src/Espacement.php"],
     "Concevoir : le potager": [
         "public/conception-potager.php", "src/Web/Cultures.php", "src/Associations.php", "src/PlanDeCulture.php",
         "src/CalendrierLopez.php", "src/Succession.php", "src/LignesDeService.php", "src/Temps.php",

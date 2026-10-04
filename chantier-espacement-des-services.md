@@ -1,6 +1,6 @@
 # L'espacement des plantes de service — une règle tirée des sources
 
-**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phase 1 écrite le même jour, à relire par le porteur.** Le porteur a revu `espacement_retenu_m` de dix
+**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 et 2 faites le même jour.** Le porteur a revu `espacement_retenu_m` de dix
 espèces du cadre et complété quatre émergents (chêne, orme, hêtre, mûrier noir), sans source pour ces valeurs. Il
 précise le sens de la colonne et demande une règle :
 
@@ -65,7 +65,8 @@ nid de frêne y prennent la même case.
 | Poquets sur les bordures | 50 cm | féverole | Joala 7-7 |
 
 **Deux espacements différents se lisent sur les plans.**
-1. **L'intervalle de structure** : la distance entre deux plants de l'espèce qui structure la ligne — eucalyptus 2 m,
+1. **L'intervalle de structure** : la distance entre deux plants de l'espèce qui structure la ligne — eucalyptus 2 m
+   (marqué en biomasse chez Théry, non en production — corrigé le 2026-10-04),
    hêtres 1,80 m, mûriers 2 m, tilleuls et cédrèles 1,50 m (Joala 7-10), sureaux 1 m.
 2. **Le pas de remplissage** : la structure se subdivise, et chaque case reçoit une plante de service. 2 m / 25 cm =
    8 cases chez Théry ; 180 / 90 / 45 cm chez Agrecolibre, des moitiés successives.
@@ -91,7 +92,7 @@ sources donnent pour chacune :
 | Biomasse et perturbation, ligne centrale pérenne | 25 cm (45 cm chez Agrecolibre) | Théry ch. 11 ; Joala, production de bourgeons ; Joala 7-10 |
 | Bloque-herbe, bordure | 40 cm (20 cm à l'installation) | Théry ch. 11 et 14 ; Joala, production de bourgeons |
 | Brise-vent | aucun chiffre | le corpus ne nomme aucune espèce brise-vent (`conception-de-la-tortue.md`, question 4) |
-| Production | l'intervalle de la structure : eucalyptus 2 m, hêtre 1,80 m, mûrier 2 m, tilleul et cédrèle 1,50 m, sureau 1 m ; fruitiers aux écarts du verger | Théry ch. 11, ch. 14, ch. 15 § 4 ; Joala 7-10 |
+| Production | l'intervalle de la structure : trognes à feuilles comestibles d'Agrecolibre (hêtre 1,80 m, mûrier 2 m, tilleul et cédrèle 1,50 m) ; fruitiers aux écarts du verger | Joala 7-10 ; Théry ch. 15 § 4, ch. 15 § 4 ; Joala 7-10 |
 
 La première lecture, gardée pour mémoire : le pas dépendrait de la ligne et de la forme du plant.
 
@@ -163,4 +164,21 @@ Plus de question ouverte : le chantier peut avancer phase par phase.
 `skills-map/nodes/conception-de-la-tortue.md`, § L'espacement selon la fonction : les deux espacements, la priorité
 de `role`, la ligne pérenne en série et la ligne potagère à une espèce, le tableau par fonction avec ses sources, les
 75 % (par planche au potager, par ligne en pérenne ; une information), et ce que la règle ne dit pas. Rien n'est codé.
+
+## Phase 2 — faite le 2026-10-04, pas encore déployée
+
+- **`src/Espacement.php`** (pur) : `service()` lit le service d'une espèce dans son rôle (biomasse ou perturbation,
+  puis bloque-herbe ou couvre-sol, puis brise-vent) ; `PART_BIOMASSE` = 0,75, pour les Phases 4.
+- **`especes.php`** : « Espacement de service » (`espacement_retenu_m`) et « Espacement de production »
+  (`espacement_monoculture_m`), chacun expliqué au survol (`glossaire.md`) ; sous les deux champs, le service que le rôle
+  donne à l'espèce ; un paragraphe « Deux espacements » au panneau Informations. Les noms de colonnes du CSV ne
+  changent pas : un fichier déjà fait s'importe toujours.
+- **Les bordures** (`conception-parcelles.php`, `RepartitionBordures`) disent « sans espacement de service ».
+- **Livret « L'atelier »** : chapitre des espèces (les deux espacements, la priorité) et passages des bordures.
+- **Corrigé en passant** dans le nœud, le chantier et le glossaire : l'eucalyptus de Théry (ch. 11) est marqué en
+  **biomasse**, non en production ; l'exemple de production devient les trognes à feuilles d'Agrecolibre.
+- **Vérifié** en local (compte `claudetest1`) : la fiche de quatre espèces du cadre — consoude et chalef « biomasse »,
+  lavande « bloque-herbe », noyer « aucun service » — les deux mots au glossaire et au survol.
+- **À voir avec le porteur** : le noyer n'a que le rôle « production » au cadre, mais le CSV du 2026-10-04 lui donne un
+  espacement de service (0,5 m). Sans rôle de service, cet espacement ne servira pas.
 

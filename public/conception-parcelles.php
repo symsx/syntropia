@@ -1093,7 +1093,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
     $etiquette = static function (array $e) use ($nombreFr): string {
         $nom = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
-        return $nom . ', ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement');
+        return $nom . ', ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement de service');
     }; ?>
         <details class="bl-cote" id="bl-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>"<?= $bordureOuverte === $cle ? ' open' : '' ?>>
           <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . ($cadre === 'liane' ? Planches::POSITIONS_LIANE[$cote] : $cote), ENT_QUOTES, 'UTF-8') ?>
@@ -1106,7 +1106,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
               <span><?= htmlspecialchars($pl['nom'] . ($pl['variete'] !== '' ? ' (' . $pl['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></span>
               <span class="bl-nombre"><?php
                 if (!$pl['connue']) { echo 'inconnue du référentiel'; }
-                elseif ($pl['espacement'] === null) { echo 'sans espacement'; }
+                elseif ($pl['espacement'] === null) { echo 'sans espacement de service'; }
                 elseif ($compte !== null && $compte['ok']) { echo (int) $compte['comptes'][$k], ' · ', htmlspecialchars($nombreFr($pl['espacement']), ENT_QUOTES, 'UTF-8'), ' m'; }
                 else { echo htmlspecialchars($nombreFr($pl['espacement']), ENT_QUOTES, 'UTF-8'), ' m'; } ?></span>
 <?php if ($peutEcrire): ?>
@@ -1117,7 +1117,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
           </ol>
 <?php if ($compte !== null && !$compte['ok'] && $compte['manquants'] !== []): ?>
           <p class="bl-alerte">Les plants ne peuvent pas se compter : <?= htmlspecialchars(implode(', ', array_map(static fn (int $k): string => $lb['places'][$k]['nom'], $compte['manquants'])), ENT_QUOTES, 'UTF-8') ?>
-            n'<?= count($compte['manquants']) > 1 ? 'ont' : 'a' ?> pas d'espacement. Renseignez-le dans <a href="especes.php">Espèces</a>.</p>
+            n'<?= count($compte['manquants']) > 1 ? 'ont' : 'a' ?> pas d'espacement de service. Renseignez-le dans <a href="especes.php">Espèces</a>.</p>
 <?php elseif ($compte !== null && $compte['ok'] && $compte['total'] === 0): ?>
           <p class="bl-alerte">La ligne est plus courte qu'un espacement : aucun plant n'y tient.</p>
 <?php endif; ?>
@@ -1160,7 +1160,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
                 <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= $e['espacement_retenu_m'] !== null ? ' checked' : '' ?>>
                   <span><b><?= htmlspecialchars((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></b>
                     : <?= htmlspecialchars(implode(', ', array_map(static fn (string $f): string => mb_strtolower(\Syntropia\Scenario::FONCTIONS[$f] ?? $f), $pr['fonctions'])), ENT_QUOTES, 'UTF-8') ?>,
-                    <?= $e['espacement_retenu_m'] !== null ? htmlspecialchars($nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') : 'sans espacement' ?><?php if ($pr['reserve'] !== null): ?>
+                    <?= $e['espacement_retenu_m'] !== null ? htmlspecialchars($nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') : 'sans espacement de service' ?><?php if ($pr['reserve'] !== null): ?>
                     <small class="bl-reserve"><?= htmlspecialchars($pr['reserve'], ENT_QUOTES, 'UTF-8') ?></small><?php endif; ?></span></label></li>
 <?php endforeach; ?>
               </ul>

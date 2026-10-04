@@ -120,3 +120,13 @@ stabilité de la structure du sol.
 
 Le principe des associations de plantes est de permettre un meilleur développement des plantes lorsqu'on les regroupe
 ensemble.
+
+# Espacement de service
+
+L'écart entre une plante de service et ses voisines sur une ligne, quelles qu'elles soient : 25 cm pour la biomasse
+au centre d'une planche, 40 cm pour bloquer l'herbe en bordure, d'après Théry.
+
+# Espacement de production
+
+L'intervalle entre deux plants d'une même espèce cultivée pour sa récolte, comme des mûriers tous les 2 m, conduits
+en trogne pour leurs feuilles.

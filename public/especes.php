@@ -26,6 +26,8 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\CalendrierLopez;
 use Syntropia\Conduite;
 use Syntropia\Configuration;
+use Syntropia\Documentation;
+use Syntropia\Espacement;
 use Syntropia\Role;
 use Syntropia\Scenario;
 use Syntropia\Web\Authentification;
@@ -309,6 +311,9 @@ $roleSaisi = is_array($roleBrut)
     : array_values(array_filter(explode('|', (string) $roleBrut), static fn (string $x): bool => $x !== ''));
 
 $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('d/m/Y');
+$termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
+// Le service que le rôle donne à l'espèce, celui dont l'espacement de service est l'écart (`Espacement::service()`).
+$serviceSaisi = Espacement::service(implode('|', $roleSaisi));
 ?>
 <!doctype html>
 <html lang="fr">
@@ -585,13 +590,17 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
             </div>
           </details>
           <div class="es-deux">
-            <label class="es-champ">Espacement retenu (m)
+            <label class="es-champ"><?= Documentation::terme($termes, 'espacement-de-service', 'Espacement de service') ?> (m)
               <input type="number" name="espacement_retenu_m" min="0.01" max="50" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_retenu_m']) ?>">
             </label>
-            <label class="es-champ">Espacement en monoculture (m)
+            <label class="es-champ"><?= Documentation::terme($termes, 'espacement-de-production', 'Espacement de production') ?> (m)
               <input type="number" name="espacement_monoculture_m" min="0.01" max="50" step="0.01" inputmode="decimal" value="<?= $h($f['espacement_monoculture_m']) ?>">
             </label>
           </div>
+          <p class="es-note"><?= $serviceSaisi !== null
+              ? 'D’après son rôle, cette espèce rend le service ' . $h(Espacement::SERVICES[$serviceSaisi]['libelle']) . '.'
+              : 'D’après son rôle, cette espèce ne rend ni le service biomasse, ni bloque-herbe, ni brise-vent.' ?>
+            Quand elle en rend plusieurs, la biomasse passe avant le bloque-herbe, puis le brise-vent.</p>
           <details>
             <summary>Plus de détails</summary>
             <label class="es-champ" style="margin-top:.5rem">Strates possibles</label>
@@ -760,6 +769,9 @@ $dateFr = static fn (string $d): string => (new DateTimeImmutable($d))->format('
       <p><strong>Le rôle</strong> se choisit dans une liste fermée, avec une ou plusieurs valeurs à la fois : la
          production, ou une fonction de service. C'est le même vocabulaire que le scénario pérenne et le plan de
          culture du potager (biomasse, bloque-herbe, tuteur…).</p>
+      <p><strong>Deux espacements.</strong> L'espacement de service est l'écart entre la plante et ses voisines
+         quand elle sert à la biomasse, à bloquer l'herbe ou à freiner le vent. Sur une même ligne, d'autres espèces
+         l'entourent. L'espacement de production est l'intervalle entre deux plants cultivés pour leur récolte.</p>
     </div>
   </aside>
 

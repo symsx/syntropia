@@ -230,8 +230,12 @@ Joala — une seule autrice, jamais deux sources indépendantes.
 | Biomasse et perturbation, ligne centrale pérenne | 25 cm (45 cm chez Agrecolibre) | Théry ch. 11 § 7 ; Joala, production de bourgeons ; Joala 7-10 |
 | Bloque-herbe, en bordure | 40 cm ; 20 cm à l'installation | Théry ch. 11, ch. 14 (p. 117, 119, 121) ; Joala, production de bourgeons |
 | Brise-vent | aucun chiffre — laissé vide jusqu'à une source | — |
-| Production, structure de la ligne | eucalyptus 2 m ; hêtre 1,80 m ; mûrier 2 m ; tilleul, cédrèle 1,50 m ; sureau 1 m | Théry ch. 11, ch. 14 ; Joala 7-10 |
+| Production, structure de la ligne | trognes à feuilles comestibles : hêtre 1,80 m ; mûrier 2 m ; tilleul, cédrèle 1,50 m | Joala 7-10 |
 | Production, fruitiers principaux | les écarts du verger classique, voire plus | Théry ch. 15 § 4 |
+
+Une plante de biomasse peut aussi revenir à intervalle régulier : chez Théry, l'eucalyptus, marqué en biomasse, est
+posé tous les 2 m (ch. 11 § 7). Cet intervalle découle de la composition de la série ; ce n'est pas un espacement de
+production.
 
 **Les 75 % de biomasse.** *« 70 à 80 % des plantes implantées sont destinées à la biomasse et à la perturbation »*
 (Théry ch. 11, règle 7 ; ch. 14 ; Joala 7-7) — un chiffre que la bibliographie du livre range parmi ceux sans

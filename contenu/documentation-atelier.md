@@ -189,7 +189,7 @@ des plantes émergentes. Vous gardez celles que vous voulez, et elles alternent 
 Une plante peut être notée « bloque l'herbe » dans Espèces. En bordure, une plante couvre-sol
 compte aussi comme bloque-herbe.
 
-L'atelier compte les plants de chaque espèce d'après leur espacement, pris dans **Espèces**. Entre
+L'atelier compte les plants de chaque espèce d'après leur espacement de service, pris dans **Espèces**. Entre
 deux plants voisins, l'écart est la moyenne de leurs espacements. À chaque bout, il garde la moitié
 du sien.
 
@@ -205,13 +205,13 @@ quand le zoom le permet, et le survol d'un point donne le nom de la plante.
 Dans la légende, « Tout/rien » affiche ou masque tous les sigles, et la pastille d'une espèce ceux
 de cette espèce. Ces choix restent dans votre navigateur, parcelle par parcelle.
 
-Une espèce sans espacement empêche le compte de sa ligne, et la page le dit. Après un changement
+Une espèce sans espacement de service empêche le compte de sa ligne, et la page le dit. Après un changement
 de dimensions ou de bordures, les plants se recomptent quand le plan est de nouveau enregistré.
 
 Tant que les bordures externe et interne sont vides, vous pouvez **répartir une liste de plantes
 sur toutes les bordures** d'un coup. Vous cochez une seule liste pour la parcelle.
 
-Les plantes sans espacement ou annuelles sont grisées, avec la raison. Vous pouvez choisir une
+Les plantes sans espacement de service ou annuelles sont grisées, avec la raison. Vous pouvez choisir une
 **colonne vertébrale** par bordure, qui revient un plant sur deux.
 
 L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance. Il pose
@@ -300,6 +300,13 @@ pour semer : « le critère n'est pas la date mais la température du sol », di
 
 Elle porte enfin ses rôles : la production, ou une fonction de service (biomasse, bloque-herbe,
 tuteur…). C'est le même vocabulaire que le scénario et le plan de culture du potager.
+
+Elle a deux espacements. L'**espacement de service** est l'écart avec ses voisines sur une ligne,
+quand elle sert à la biomasse, à bloquer l'herbe ou à freiner le vent. L'**espacement de
+production** sépare deux plants cultivés pour leur récolte.
+
+Son service se lit dans son rôle. Quand elle en rend plusieurs, la biomasse passe avant le
+bloque-herbe, puis le brise-vent.
 
 Un fichier CSV importe plusieurs espèces d'un coup, à partir d'un modèle à télécharger. Il est
 vérifié en entier avant tout enregistrement.

@@ -28,6 +28,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Sigles.php              les sigles des plantes d'un plan (« La », « FeA ») — calculés, uniques sur le plan, deux sigles qui ne diffèrent que d'un accent comptent pour un ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation, accumulation ou abondance (trois stades, par parcelle, schéma 19) : ce qui s'observe, ce que le corpus permet d'affirmer, et ce qu'on fait à chaque stade (densité, taille — Joala 6-8, sans chiffre) ; pur
+  Espacement.php          l'espacement selon la fonction — le service d'une espèce lu dans son rôle (biomasse, puis bloque-herbe, puis brise-vent), la part de biomasse visée (75 %) ; pur
   Materiel.php            le matériel végétal à se procurer — regroupe le scénario par origine, estime les quantités depuis l'espacement et le plan ; pour un potager, les plants de chaque culture et les graines à démarrer (80 %, convention de Lopez) ; pur
   BesoinEau.php           besoins en eau (Lopez) et fréquence d'arrosage d'après infiltration et ressuyage ; pur
   ShadeMap.php            liens ShadeMap sur le terrain (solstices, équinoxe, exposition annuelle, au midi solaire du lieu) — un lien, jamais un import
