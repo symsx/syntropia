@@ -1356,6 +1356,33 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
+0000. **État au 2026-10-04, fin de journée — pour la reprise.** Tout est commité **et poussé** (`origin/main` à `903fee0`) ;
+   **la production est à jour** (commit `9fd375d`, **schéma 19** inchangé, `mettre-a-jour` avec sauvegarde, vérifié :
+   fichiers identiques, syntaxe PHP distante, 200/302/403 attendus). Le porteur teste, puis revient. Fait ce jour :
+   - **Plan de parcelle** (`621f562`) : « Réinitialiser », comme tout changement de géométrie, laissait la légende des
+     plants périmés — elle se retire avec eux. Confirmé corrigé par le porteur.
+   - **Dossier Projet, Phase 3** (`3e1282a`) : matériel et eau dans chaque parcelle, un récapitulatif du projet, le
+     calendrier, les participants (visibles de tout membre, choix du porteur). Le compte du matériel sorti dans
+     `src/Web/MaterielDuSite.php` (l'écran et le papier disent la même liste) ; `DessinsDossier::nombre($v, 0)` imprimait
+     « 12 m² » pour 120 — corrigé. PDF de 12 pages relu.
+   - **Espacement des plantes, cinq phases** (`a731ee3` → `1af9703`, `chantier-espacement-des-services.md`) : un
+     espacement par fonction — de service (`espacement_retenu_m`) et de production (`espacement_monoculture_m`) ; le
+     service lu dans `role` (biomasse, puis bloque-herbe, puis brise-vent ; `src/Espacement.php`) ; la ligne centrale
+     pérenne comptée en série (`Materiel::quantitesScenario()`, vérifié sur « Les eucalyptus » de Théry) ; la part de
+     biomasse face aux 75 % (`src/Web/PartBiomasse.php`, panneau Informations du plan, du scénario, du potager — une
+     information) et la biomasse à sacrifier dans « Matériel et eau » ; le défaut par fonction (biomasse 0,25 m,
+     bloque-herbe 0,40 m). Le CSV du cadre revu par le porteur intégré (seed régénéré par un script qui redonne d'abord
+     le bloc existant à l'identique ; base et CSV : 147 espèces, 0 écart) ; **le noyer seulement en production** (juglone).
+   - **Le porteur posera la question des espacements à Théry en janvier 2027** (module de perfectionnement conception
+     syntropie) : la règle et les chiffres actuels sont « le maximum que l'on puisse faire aujourd'hui ».
+   - **Compte de test local** : `claudetest1`, contributeur de La Vadaux (base locale seulement ; voir la mémoire).
+     Forger une session PHP est refusé par les permissions : se connecter par `connexion.php`. La base locale n'a aucune
+     ligne de scénario — la série n'a été vue que sur des données simulées.
+   - **À proposer au porteur** : un espacement de production pour les arbres (hêtre 1,80 m et mûrier 2 m d'après
+     Agrecolibre ; le noyer en production sur la ligne centrale est « à déterminer ») ; plusieurs productions sur une
+     même ligne se comptent chacune à son intervalle, sans vérifier qu'elles tiennent ensemble.
+   - **La suite, ordre du porteur** : Dossier Projet Phases 4 et 5, puis la présentation.
+
 000. **État au 2026-10-02, fin de journée — pour la reprise.** Tout est commité **et poussé sur GitHub** (`origin/main` à
    jour) ; **la production est à jour** (dernier déploiement 23 h 58, commit `bf3d846`, **schéma 19**), par
    `deployer.py mettre-a-jour`, personne de connecté, sauvegardes faites. Les parcours restent à essayer avec le vrai
