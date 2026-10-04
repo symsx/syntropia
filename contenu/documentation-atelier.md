@@ -368,6 +368,10 @@ multiplier soi-même, régénération naturelle.
 La quantité saisie l'emporte. Sinon, elle est estimée d'après l'espacement et le plan, et la page
 le dit. Les plants posés sur les lignes du plan sont comptés tels quels.
 
+Sur la ligne centrale d'une parcelle pérenne, les plantes se partagent la ligne. Les productions
+prennent leur espacement de production, et les plantes de service vivaces et ligneuses remplissent
+les cases qui restent. Les annuelles semées en poquets ne prennent pas de case.
+
 Pour un potager, la liste vient du plan de culture. Pour une culture semée à l'abri, le nombre de
 graines est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez.
 

@@ -11,11 +11,13 @@ namespace Syntropia;
  * session, tout arrive en paramètre — comme `Scenario` et `Relief`.
  *
  * **Une quantité saisie prime toujours.** Sans saisie, on estime depuis
- * l'espacement et le plan de la parcelle, et l'estimation se dit « estimée » :
- * une ligne de plants par planche ou par bande de bordure, à l'espacement de la
- * ligne du scénario (à défaut, celui du référentiel de végétaux). C'est une
- * estimation haute quand plusieurs végétaux se partagent une même ligne — la
- * page le dit.
+ * l'espacement et le plan de la parcelle, et l'estimation se dit « estimée ».
+ * **La ligne centrale d'une parcelle pérenne est une série** (`quantitesScenario()`,
+ * chantier-espacement-des-services.md, Phase 3) : les productions à leur espacement
+ * de production, les plantes de service pérennes dans les cases qui restent. Ailleurs
+ * — une bordure sans ligne au plan, une annuelle placentaire —, une ligne de plants
+ * par planche ou par bande, à l'espacement de la ligne du scénario (à défaut, celui
+ * du référentiel) : une estimation haute quand plusieurs végétaux se partagent la bande.
  */
 final class Materiel
 {
@@ -178,6 +180,92 @@ final class Materiel
             default => 0,
         };
         return $n > 0 ? ['n' => $n, 'mode' => 'estime', 'espacement' => $esp] : ['n' => null, 'mode' => null, 'espacement' => $esp];
+    }
+
+    /**
+     * Les quantités des lignes du scénario d'une parcelle pérenne, dans l'ordre reçu.
+     *
+     * **La ligne centrale est une série** (décisions du porteur, 2026-10-04 — `chantier-espacement-des-services.md`,
+     * Phase 3 ; `skills-map/nodes/conception-de-la-tortue.md`, § L'espacement selon la fonction). Sur chaque planche :
+     * - **la structure** — une ligne de production (principale ou secondaire, avec ou sans fonction de service) — se
+     *   plante à son **espacement de production** : celui de la ligne, à défaut `espacement_monoculture_m` ;
+     * - **une quantité saisie** prime toujours, et ses plants occupent leurs cases ;
+     * - **les plantes de service vivaces et ligneuses** se partagent le reste de la ligne en série, comme une bordure
+     *   (`Bordures::compter()`), chacune à son **espacement de service** : celui de la ligne, à défaut
+     *   `espacement_retenu_m`. Une plante de structure y prend une case, de la largeur moyenne des cases de service :
+     *   chez Théry, l'eucalyptus et le mûrier ont chacun la leur, tous les 25 cm (ch. 11 § 7) ;
+     * - **les annuelles et bisannuelles placentaires** (maïs, tournesol, féverole) ne prennent pas de case : elles se
+     *   sèment en poquets entre les pieds (Théry ch. 11 : « on ne les indique pas dans le plan ») et gardent
+     *   l'estimation d'une ligne par planche, comme les lignes de bordure.
+     * Une plante de service sans espacement reste « à déterminer » ; les autres se comptent sans elle.
+     *
+     * @param list<array<string, mixed>> $lignes   des lignes de `scenario_ligne`
+     * @param array<string, mixed>|null $bandes    `bandes()` de la parcelle
+     * @param callable(string): ?array $especeDe   la fiche du référentiel d'un végétal, par son nom
+     * @return list<array{n: ?int, mode: ?string, espacement: ?float}>
+     */
+    public static function quantitesScenario(array $lignes, ?array $bandes, callable $especeDe): array
+    {
+        $positif = static fn (mixed $v): ?float => $v !== null && $v !== '' && (float) $v > 0 ? (float) $v : null;
+        $out = [];
+        $structure = [];
+        $saisies = [];
+        $serie = [];
+        foreach (array_values($lignes) as $i => $l) {
+            $e = $especeDe((string) $l['espece']);
+            $d = Scenario::details($l);
+            $espLigne = $positif($l['espacement_m'] ?? null);
+            $production = ($d['production'] ?? null) !== null;
+            $centre = ($d['emplacement'] ?? 'centre') === 'centre';
+            $annuelle = in_array((string) ($e['cycle'] ?? ''), Bordures::CYCLES_EXCLUS, true);
+            if (!$centre || ($annuelle && !$production)) {
+                // Hors de la série : l'estimation d'une ligne par bande.
+                $out[$i] = self::quantite($l, $bandes, $e === null ? null : $positif($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']));
+                continue;
+            }
+            $esp = $espLigne ?? $positif($production ? ($e['espacement_monoculture_m'] ?? null) : ($e['espacement_retenu_m'] ?? null));
+            if (($l['nb_pieds'] ?? null) !== null && $l['nb_pieds'] !== '') {
+                $out[$i] = ['n' => (int) $l['nb_pieds'], 'mode' => 'saisi', 'espacement' => $esp];
+                $saisies[$i] = $esp;
+            } elseif ($production) {
+                $structure[$i] = $esp;
+            } else {
+                $serie[$i] = $esp;
+            }
+        }
+        $nb = $bandes['centre']['nb'] ?? 0;
+        $longueur = (float) ($bandes['centre']['longueur'] ?? 0);
+        $connues = array_filter($serie, static fn (?float $v): bool => $v !== null);
+        $case = $connues === [] ? 0.0 : array_sum($connues) / count($connues);
+        $occupe = 0.0;
+        foreach ($structure as $i => $esp) {
+            if ($nb <= 0 || $longueur <= 0 || $esp === null) {
+                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => $esp];
+                continue;
+            }
+            $parPlanche = self::surBande($longueur, $esp);
+            $out[$i] = ['n' => $nb * $parPlanche, 'mode' => 'estime', 'espacement' => $esp];
+            $occupe += $parPlanche * $case;
+        }
+        foreach ($saisies as $i => $esp) {
+            if ($nb > 0) {
+                $occupe += $out[$i]['n'] / $nb * ($esp ?? $case);
+            }
+        }
+        $libre = max(0.0, $longueur - $occupe);
+        $compte = $connues !== [] && $nb > 0 && $libre > 0 ? Bordures::compter($libre, array_values($connues)) : null;
+        $k = 0;
+        foreach ($serie as $i => $esp) {
+            if ($esp === null) {
+                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => null];
+                continue;
+            }
+            $n = $compte !== null && $compte['ok'] ? $nb * $compte['comptes'][$k] : 0;
+            $out[$i] = $n > 0 ? ['n' => $n, 'mode' => 'estime', 'espacement' => $esp] : ['n' => null, 'mode' => null, 'espacement' => $esp];
+            $k++;
+        }
+        ksort($out);
+        return $out;
     }
 
     /**

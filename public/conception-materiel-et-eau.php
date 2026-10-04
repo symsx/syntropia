@@ -12,7 +12,8 @@ declare(strict_types=1);
  * Deux vues, en onglets CSS purs, que le bureau ne fait jamais défiler :
  * - **Matériel végétal** — ce que le scénario de la parcelle demande (pour un potager, son plan de culture : plants et graines), regroupé
  *   par origine (à acheter, à multiplier, à laisser venir). Une quantité saisie
- *   prime ; sinon elle est estimée depuis l'espacement et le plan, et dite telle.
+ *   prime ; sinon elle est estimée depuis l'espacement et le plan, et dite telle — la ligne centrale d'une parcelle
+ *   pérenne en série (`Materiel::quantitesScenario()`).
  * - **Eau** — le besoin annuel en trois scénarios de sol (Lopez), la ressource
  *   déclarée et ce qu'elle change, et **la fréquence d'arrosage que les tests de
  *   sol suggèrent** (infiltration, ressuyage — fiche 02 de l'étude du sol).
@@ -447,7 +448,7 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
           </div>
           <p class="mv-pied-note">
 <?php if ($estimes > 0): ?>
-            Une quantité « estimée » compte une ligne de plants par planche ou par bande de bordure, à l'espacement du scénario. L'estimation est haute quand plusieurs végétaux se partagent une ligne. Une quantité saisie dans le scénario ou le plan de culture la remplace.
+            Sur la ligne centrale d'une parcelle pérenne, une quantité « estimée » se compte en série : les productions à leur espacement de production, les plantes de service vivaces et ligneuses dans les cases qui restent, à leur espacement de service. Ailleurs, et pour les annuelles semées en poquets, elle compte une ligne de plants par planche ou par bande de bordure. Une quantité saisie dans le scénario ou le plan de culture la remplace.
 <?php else: ?>
             Les quantités sont celles du scénario. Sans quantité ni espacement, elles restent « à déterminer ».
 <?php endif; ?>

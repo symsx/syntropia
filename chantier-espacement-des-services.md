@@ -1,6 +1,6 @@
 # L'espacement des plantes de service — une règle tirée des sources
 
-**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 et 2 faites le même jour.** Le porteur a revu `espacement_retenu_m` de dix
+**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 à 3 faites le même jour.** Le porteur a revu `espacement_retenu_m` de dix
 espèces du cadre et complété quatre émergents (chêne, orme, hêtre, mûrier noir), sans source pour ces valeurs. Il
 précise le sens de la colonne et demande une règle :
 
@@ -181,4 +181,33 @@ de `role`, la ligne pérenne en série et la ligne potagère à une espèce, le 
   lavande « bloque-herbe », noyer « aucun service » — les deux mots au glossaire et au survol.
 - **À voir avec le porteur** : le noyer n'a que le rôle « production » au cadre, mais le CSV du 2026-10-04 lui donne un
   espacement de service (0,5 m). Sans rôle de service, cet espacement ne servira pas.
+
+## Phase 3 — faite le 2026-10-04, pas encore déployée
+
+Deux questions tranchées par le porteur avant de coder :
+- **Qui entre dans la série** : les plantes de service **vivaces et ligneuses** seules. Les annuelles et bisannuelles
+  placentaires (maïs, tournesol, féverole) se sèment en poquets entre les pieds et ne prennent pas de case (Théry
+  ch. 11) ; elles gardent l'estimation d'une ligne par planche.
+- **Une quantité saisie** prime et **occupe ses cases** : les autres plantes de service se partagent le reste.
+
+Ce qui est fait :
+- **`Materiel::quantitesScenario()`** (pur) compte les lignes du scénario d'une parcelle pérenne. Sur la ligne
+  centrale de chaque planche : la structure (une ligne de production) à son espacement de production (la ligne, à
+  défaut `espacement_monoculture_m`) ; les quantités saisies ; puis les plantes de service pérennes en série dans la
+  longueur qui reste (`Bordures::compter()`), chacune à son espacement de service (la ligne, à défaut
+  `espacement_retenu_m`). Une plante de structure prend une case de la largeur moyenne des cases de service. Les lignes
+  de bordure et les annuelles gardent `Materiel::quantite()`.
+- **Appelée par `MaterielDuSite`** (« Matériel et eau », Dossier Projet) **et `Occupation`** (l'occupation au sol du
+  scénario et du potager) : les trois disent les mêmes nombres.
+- Les notes de « Matériel et eau » et du dossier, et le livret (« Concevoir : le matériel et l'eau »), disent la série.
+- **Vérifié** : le plan « Les eucalyptus » de Théry rejoué sur une planche de 10 m — quatre productions tous les 2 m
+  (mûrier, cassis, sureau, chalef), quatre plantes de service à 25 cm (eucalyptus, frêne, goji, lonicera) — donne 5
+  plants de chaque, soit un eucalyptus tous les 2 m et huit cases de 25 cm par tronçon, comme le livre ; une quantité
+  saisie réduit d'autant les autres ; une annuelle et une ligne de bordure gardent leur estimation ; une espèce
+  inconnue reste « à déterminer ». Les pages qui comptent (Matériel et eau, Dossier Projet, scénario, potager, plan)
+  s'ouvrent sans erreur ; le potager P1 de La Vadaux donne la même liste qu'avant.
+- **Non vu sur des données réelles** : la base locale n'a aucune ligne de scénario.
+- **Limites** : plusieurs productions sur la même ligne se comptent chacune à son intervalle, sans vérifier qu'elles
+  tiennent ensemble ; une production sans espacement de production reste « à déterminer » (elle prenait avant
+  l'espacement de service à défaut).
 

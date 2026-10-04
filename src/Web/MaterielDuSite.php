@@ -17,7 +17,8 @@ use Syntropia\Scenario;
  * Les règles, inchangées : un potager compte son plan de culture ; une autre parcelle, son scénario. Les plants posés sur
  * les lignes du plan (bordures, lignes de service des planches) font foi : une plante du scénario déclarée en bordure
  * prend leur compte, et ce que le plan porte sans que le scénario le nomme s'ajoute (chantier « peuplement de la
- * parcelle », Phase 7). Sans quantité saisie, l'espacement de la ligne, à défaut celui du référentiel, l'estime.
+ * parcelle », Phase 7). Sans quantité saisie, l'espacement de la ligne, à défaut celui du référentiel, l'estime ; la
+ * ligne centrale d'une parcelle pérenne se compte en série (`Materiel::quantitesScenario()`).
  */
 final class MaterielDuSite
 {
@@ -34,18 +35,22 @@ final class MaterielDuSite
      */
     public function entrees(int $siteId, array $parcelles): array
     {
-        // L'espacement du référentiel, à défaut de celui de la ligne du scénario.
-        $espacements = [];
+        // Les fiches du référentiel, par nom usuel ou scientifique : leurs espacements et leur cycle.
+        $fiches = [];
         foreach ($this->especes->toutes($siteId) as $e) {
-            $esp = (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
-            if ($esp > 0) {
-                foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $nom) {
-                    if ((string) $nom !== '') {
-                        $espacements[mb_strtolower((string) $nom)] ??= $esp;
-                    }
+            foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $nom) {
+                if ((string) $nom !== '') {
+                    $fiches[mb_strtolower((string) $nom)] ??= $e;
                 }
             }
         }
+        $especeDe = static fn (string $nom): ?array => $fiches[mb_strtolower(trim($nom))] ?? null;
+        // L'espacement du référentiel pour une culture du potager : de service, à défaut de production.
+        $espacementDe = static function (string $nom) use ($especeDe): ?float {
+            $e = $especeDe($nom);
+            $v = $e === null ? 0.0 : (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
+            return $v > 0 ? $v : null;
+        };
 
         $entrees = [];
         $sansScenario = [];
@@ -63,7 +68,7 @@ final class MaterielDuSite
                 }
                 foreach ($cultures as $c) {
                     $entrees[] = ['ligne' => ['espece' => $c['espece'], 'origine' => 'potager'], 'parcelle' => (string) $p['code'],
-                        'qte' => Materiel::quantiteCulture($c, $bandes, $espacements[mb_strtolower(trim((string) $c['espece']))] ?? null)];
+                        'qte' => Materiel::quantiteCulture($c, $bandes, $espacementDe((string) $c['espece']))];
                 }
                 foreach ($duPlan as $d) {
                     $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
@@ -75,7 +80,9 @@ final class MaterielDuSite
             if ($lignes === []) {
                 $sansScenario[] = (string) $p['code'];
             }
-            foreach ($lignes as $l) {
+            // La ligne centrale comptée en série (`Materiel::quantitesScenario()`).
+            $quantites = Materiel::quantitesScenario($lignes, $bandes, $especeDe);
+            foreach (array_values($lignes) as $rang => $l) {
                 $ou = Scenario::details($l)['emplacement'] ?? 'centre';
                 if (in_array($ou, ['bord_ext', 'bord_int'], true) && isset($bordAvecLignes[$ou])) {
                     $nom = mb_strtolower(trim((string) $l['espece']));
@@ -91,8 +98,7 @@ final class MaterielDuSite
                     $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => ['n' => $trouve ? $n : null, 'mode' => 'plan', 'espacement' => null]];
                     continue;
                 }
-                $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'],
-                    'qte' => Materiel::quantite($l, $bandes, $espacements[mb_strtolower(trim((string) $l['espece']))] ?? null)];
+                $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => $quantites[$rang]];
             }
             // Ce que le plan porte sans que le scénario le nomme.
             foreach ($duPlan as $k => $d) {

@@ -128,4 +128,4 @@
   `role` (biomasse d'abord) ; la ligne pérenne en série, la production en structure et le service entre ; **75 % de
   biomasse**, par planche au potager, par ligne en pérenne, dit comme une information et compté dans « Matériel et
   eau ». Demandé le 2026-10-04 avec un CSV du cadre revu par le porteur, **qui attend la règle** ; toutes les
-  questions tranchées le jour même ; **Phase 1 (la règle au nœud `conception-de-la-tortue.md`) et Phase 2 (les deux espacements nommés à l'écran, `src/Espacement.php`) faites**.
+  questions tranchées le jour même ; **Phase 1 (la règle au nœud `conception-de-la-tortue.md`) Phase 2 (les deux espacements nommés à l'écran, `src/Espacement.php`) et Phase 3 (la ligne centrale pérenne comptée en série, `Materiel::quantitesScenario()`) faites**.

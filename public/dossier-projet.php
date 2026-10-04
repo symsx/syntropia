@@ -823,8 +823,10 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
 <?php endforeach; ?>
       </tbody>
     </table>
-    <p class="note-dossier">Une quantité « estimée » compte une ligne de plants par planche ou par bande de bordure, à l’espacement
-       du végétal ; une quantité saisie la remplace. Les plants posés sur les lignes du plan sont comptés tels quels.</p>
+    <p class="note-dossier">Sur la ligne centrale d’une parcelle pérenne, une quantité « estimée » se compte en série : les
+       productions à leur espacement de production, les plantes de service dans les cases qui restent. Ailleurs, elle
+       compte une ligne de plants par planche ou par bande. Une quantité saisie la remplace. Les plants posés sur les
+       lignes du plan sont comptés tels quels.</p>
 <?php endif; ?>
 
     <div class="bloc">

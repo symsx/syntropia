@@ -92,14 +92,16 @@ final class Occupation
             }
         } else {
             $cadres = ['bord_ext' => 'externe', 'bord_int' => 'interne'];
-            foreach ((new Parcelles($this->pdo()))->scenario((int) $parcelle['id']) as $l) {
+            $scenario = (new Parcelles($this->pdo()))->scenario((int) $parcelle['id']);
+            // La ligne centrale comptée en série, comme dans Matériel et eau.
+            $quantites = Materiel::quantitesScenario($scenario, $bandes, $trouver);
+            foreach (array_values($scenario) as $rang => $l) {
                 $ou = Scenario::details($l)['emplacement'] ?? 'centre';
                 if (isset($cadres[$ou], $bordAvecLignes[$cadres[$ou]])) {
                     continue; // le plan porte déjà ce qui pousse de ce côté
                 }
-                $e = $trouver((string) $l['espece']);
                 $plantes[] = ['nom' => (string) $l['espece'], 'strate' => (string) $l['strate'],
-                    'n' => Materiel::quantite($l, $bandes, $espacement($e))['n'], 'largeur' => $largeur($e)];
+                    'n' => $quantites[$rang]['n'], 'largeur' => $largeur($trouver((string) $l['espece']))];
             }
         }
         return Strates::occupation($plantes, $surface);
