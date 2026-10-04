@@ -530,6 +530,11 @@
     plantsPerimes = true;
     var g = document.getElementById('plantations');
     if (g) g.classList.add('plan-perime');
+    // Les plants masqués, leur légende n'a plus d'objet : elle se retire, et le plan reprend sa place.
+    var legende = document.getElementById('plan-legende');
+    var montrer = document.getElementById('afficher-legende');
+    if (legende){ legende.hidden = true; appliquerVue(); }
+    if (montrer) montrer.closest('.pied-option').style.display = 'none';
     var note = document.getElementById('bl-suspendu');
     if (note) note.hidden = false;
     document.querySelectorAll('.bl-cote').forEach(function(d){ d.classList.add('bl-suspendu'); });
