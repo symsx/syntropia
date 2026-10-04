@@ -600,7 +600,9 @@ $serviceSaisi = Espacement::service(implode('|', $roleSaisi));
           <p class="es-note"><?= $serviceSaisi !== null
               ? 'D’après son rôle, cette espèce rend le service ' . $h(Espacement::SERVICES[$serviceSaisi]['libelle']) . '.'
               : 'D’après son rôle, cette espèce ne rend ni le service biomasse, ni bloque-herbe, ni brise-vent.' ?>
-            Quand elle en rend plusieurs, la biomasse passe avant le bloque-herbe, puis le brise-vent.</p>
+            Quand elle en rend plusieurs, la biomasse passe avant le bloque-herbe, puis le brise-vent.<?php
+            if ($serviceSaisi !== null && isset(Espacement::DEFAUTS[$serviceSaisi]) && trim($f['espacement_retenu_m']) === ''): ?>
+            Sans espacement de service noté, l'atelier prend <?= $h(str_replace('.', ',', (string) Espacement::DEFAUTS[$serviceSaisi])) ?> m, celui de son service.<?php endif; ?></p>
           <details>
             <summary>Plus de détails</summary>
             <label class="es-champ" style="margin-top:.5rem">Strates possibles</label>

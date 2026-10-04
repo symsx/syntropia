@@ -21,6 +21,7 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Espacement;
 use Syntropia\Associations;
 use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
@@ -893,7 +894,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($l['candidats'] !== []): ?>
                 <optgroup label="Proposées pour cette ligne">
 <?php foreach ($l['candidats'] as $e): ?>
-                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ($e['espacement_retenu_m'] !== null ? ', ' . rtrim(rtrim(number_format((float) $e['espacement_retenu_m'], 2, ',', ''), '0'), ',') . ' m' : ', sans espacement')) ?></option>
+                  <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . (Espacement::deService($e) !== null ? ', ' . rtrim(rtrim(number_format((float) Espacement::deService($e), 2, ',', ''), '0'), ',') . ' m' . (Espacement::parDefaut($e) ? ' par défaut' : '') : ', sans espacement de service')) ?></option>
 <?php endforeach; ?>
                 </optgroup>
 <?php endif; ?>

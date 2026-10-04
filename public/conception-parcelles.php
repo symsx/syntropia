@@ -6,6 +6,7 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\Espacement;
 use Syntropia\Bordures;
 use Syntropia\Conduite;
 use Syntropia\Configuration;
@@ -398,7 +399,7 @@ if ($repApercu !== null && $repApercu['ok']) {
         if ($g !== null && $c['compte']['ok']) {
             $poserPlants($cle, $g, $c['compte']['positions'], static fn (int $k): array => ['#' . (int) $c['serie'][$k]['id'],
                 ($c['serie'][$k]['largeur_m'] ?? null) !== null ? (float) $c['serie'][$k]['largeur_m'] : null,
-                ($c['serie'][$k]['espacement_retenu_m'] ?? null) !== null ? (float) $c['serie'][$k]['espacement_retenu_m'] : null]);
+                Espacement::deService($c['serie'][$k])]);
         }
     }
 }
@@ -1057,7 +1058,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php foreach ($repEligibles as $e): ?>
               <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= in_array((int) $e['id'], $repChoix, true) ? ' checked' : '' ?>>
                 <span><b><?= htmlspecialchars($nomEsp($e), ENT_QUOTES, 'UTF-8') ?></b> : <?= htmlspecialchars($fonctionsEsp($e), ENT_QUOTES, 'UTF-8') ?>,
-                  <?= htmlspecialchars($strateEsp($e) . ', ' . $nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') ?></span></label></li>
+                  <?= htmlspecialchars($strateEsp($e) . ', ' . $nombreFr((float) Espacement::deService($e)) . ' m' . (Espacement::parDefaut($e) ? ' par défaut' : ''), ENT_QUOTES, 'UTF-8') ?></span></label></li>
 <?php endforeach; ?>
 <?php foreach ($repGrisees as $g): ?>
               <li class="rb-grisee"><label><input type="checkbox" class="case" disabled>
@@ -1102,7 +1103,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
     $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
     $etiquette = static function (array $e) use ($nombreFr): string {
         $nom = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
-        return $nom . ', ' . ($e['espacement_retenu_m'] !== null ? $nombreFr((float) $e['espacement_retenu_m']) . ' m' : 'sans espacement de service');
+        return $nom . ', ' . (Espacement::deService($e) !== null ? $nombreFr((float) Espacement::deService($e)) . ' m' . (Espacement::parDefaut($e) ? ' par défaut' : '') : 'sans espacement de service');
     }; ?>
         <details class="bl-cote" id="bl-<?= htmlspecialchars(str_replace(':', '-', $cle), ENT_QUOTES, 'UTF-8') ?>"<?= $bordureOuverte === $cle ? ' open' : '' ?>>
           <summary><?= htmlspecialchars(ucfirst(Bordures::CADRES[$cadre]['libelle']) . ' ' . ($cadre === 'liane' ? Planches::POSITIONS_LIANE[$cote] : $cote), ENT_QUOTES, 'UTF-8') ?>
@@ -1133,8 +1134,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endif; ?>
 <?php if ($peutEcrire && $geo !== null && $bordureProposee === $cle):
     $proposition = Bordures::proposer($cadre, $cote, $especesSite);
-    $comptables = array_values(array_filter($proposition, static fn (array $pr): bool => $pr['espece']['espacement_retenu_m'] !== null));
-    $apercu = $comptables !== [] ? Bordures::compter($geo['longueur'], array_map(static fn (array $pr): float => (float) $pr['espece']['espacement_retenu_m'], $comptables)) : null;
+    $comptables = array_values(array_filter($proposition, static fn (array $pr): bool => Espacement::deService($pr['espece']) !== null));
+    $apercu = $comptables !== [] ? Bordures::compter($geo['longueur'], array_map(static fn (array $pr): float => (float) Espacement::deService($pr['espece']), $comptables)) : null;
     $formProp = 'bl-prop-' . str_replace(':', '-', $cle); ?>
           <div class="bl-proposition">
             <p class="pd-titre" style="margin-top:.4rem">Ce que l'atelier propose</p>
@@ -1166,10 +1167,10 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
               <input type="hidden" name="version_ligne" value="<?= htmlspecialchars($lb['version'], ENT_QUOTES, 'UTF-8') ?>">
               <ul class="bl-choix">
 <?php foreach ($proposition as $pr): $e = $pr['espece']; ?>
-                <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= $e['espacement_retenu_m'] !== null ? ' checked' : '' ?>>
+                <li><label><input type="checkbox" class="case" name="choix[]" value="<?= (int) $e['id'] ?>"<?= Espacement::deService($e) !== null ? ' checked' : '' ?>>
                   <span><b><?= htmlspecialchars((string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></b>
                     : <?= htmlspecialchars(implode(', ', array_map(static fn (string $f): string => mb_strtolower(\Syntropia\Scenario::FONCTIONS[$f] ?? $f), $pr['fonctions'])), ENT_QUOTES, 'UTF-8') ?>,
-                    <?= $e['espacement_retenu_m'] !== null ? htmlspecialchars($nombreFr((float) $e['espacement_retenu_m']) . ' m', ENT_QUOTES, 'UTF-8') : 'sans espacement de service' ?><?php if ($pr['reserve'] !== null): ?>
+                    <?= Espacement::deService($e) !== null ? htmlspecialchars($nombreFr((float) Espacement::deService($e)) . ' m' . (Espacement::parDefaut($e) ? ' par défaut' : ''), ENT_QUOTES, 'UTF-8') : 'sans espacement de service' ?><?php if ($pr['reserve'] !== null): ?>
                     <small class="bl-reserve"><?= htmlspecialchars($pr['reserve'], ENT_QUOTES, 'UTF-8') ?></small><?php endif; ?></span></label></li>
 <?php endforeach; ?>
               </ul>

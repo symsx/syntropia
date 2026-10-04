@@ -7,6 +7,7 @@ namespace Syntropia\Web;
 use PDO;
 use Syntropia\Bordures;
 use Syntropia\Database;
+use Syntropia\Espacement;
 
 /**
  * Les lignes de plants d'une parcelle (`ligne_plantation`) — celles des bordures (Phase 2), les lignes de service des
@@ -250,7 +251,7 @@ final class LignesPlantation
                 }
                 $brutes[] = $place;
                 $e = $this->especes()->parNom((string) $place['nom_scientifique'], (string) $place['variete'], $siteId);
-                $esp = $e !== null && $e['espacement_retenu_m'] !== null ? (float) $e['espacement_retenu_m'] : null;
+                $esp = Espacement::deService($e);
                 $compte = $esp !== null ? Bordures::compter($p['longueur'], [$esp]) : null;
                 $lignes[$l['indice'] + 1] = ['nom' => $e !== null ? (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) : (string) $place['nom_scientifique'],
                     'espece' => $e, 'espacement' => $esp, 'compte' => $compte !== null && $compte['ok'] ? $compte['total'] : null];
@@ -288,7 +289,7 @@ final class LignesPlantation
             $places = [];
             foreach ($serie as $l) {
                 $e = $this->especes()->parNom((string) $l['nom_scientifique'], (string) $l['variete'], $siteId);
-                $esp = $e !== null && $e['espacement_retenu_m'] !== null ? (float) $e['espacement_retenu_m'] : null;
+                $esp = Espacement::deService($e);
                 $places[] = ['nom_scientifique' => (string) $l['nom_scientifique'], 'variete' => (string) $l['variete'],
                     'origine' => $e !== null ? (string) ($e['origine'] ?? '') : '',
                     'nom' => $e !== null ? (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) : (string) $l['nom_scientifique'],

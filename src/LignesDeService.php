@@ -74,8 +74,8 @@ final class LignesDeService
         // La ligne centrale : la biomasse, émergente de préférence (Théry ch. 8 ; Joala 5-5, 5-6).
         $biomasse = array_values(array_filter($especes, static fn (array $e): bool => in_array('biomasse', self::roles($e), true)));
         $natureC = self::natureDeLigne($centrale, $n, $naturePlanche);
-        usort($biomasse, static fn (array $a, array $b): int => [!in_array('emergente', self::stratesService($a), true), Planches::natureDuCycle($a['cycle'] ?? null) !== $natureC, $a['espacement_retenu_m'] === null]
-            <=> [!in_array('emergente', self::stratesService($b), true), Planches::natureDuCycle($b['cycle'] ?? null) !== $natureC, $b['espacement_retenu_m'] === null]);
+        usort($biomasse, static fn (array $a, array $b): int => [!in_array('emergente', self::stratesService($a), true), Planches::natureDuCycle($a['cycle'] ?? null) !== $natureC, Espacement::deService($a) === null]
+            <=> [!in_array('emergente', self::stratesService($b), true), Planches::natureDuCycle($b['cycle'] ?? null) !== $natureC, Espacement::deService($b) === null]);
         $strateCentrale = $biomasse !== [] && in_array('emergente', self::stratesService($biomasse[0]), true) ? 'emergente' : null;
         $vides = array_values(array_diff($vides, $strateCentrale !== null ? [$strateCentrale] : []));
 
@@ -171,7 +171,7 @@ final class LignesDeService
     private static function premiere(array $candidats): ?array
     {
         foreach ($candidats as $e) {
-            if ($e['espacement_retenu_m'] !== null) {
+            if (Espacement::deService($e) !== null) {
                 return $e;
             }
         }

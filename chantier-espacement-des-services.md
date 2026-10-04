@@ -1,6 +1,6 @@
 # L'espacement des plantes de service — une règle tirée des sources
 
-**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 à 4 faites le même jour ; la 5 attend la relecture du cadre.** Le porteur a revu `espacement_retenu_m` de dix
+**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Les cinq phases faites le même jour ; à reprendre après janvier 2027 (§ Phase 5).** Le porteur a revu `espacement_retenu_m` de dix
 espèces du cadre et complété quatre émergents (chêne, orme, hêtre, mûrier noir), sans source pour ces valeurs. Il
 précise le sens de la colonne et demande une règle :
 
@@ -232,4 +232,28 @@ Ce qui est fait :
   combien de masse suffit » — il parle de masse à tailler, la part de biomasse parle de nombre de plants.
 - **Une phrase de synthèse retenue sans guillemets** : « 70 à 80 % des plantes implantées… » est la synthèse du
   corpus (ch. 11), non une citation vérifiée du livre ; l'écran et le nœud la disent sans guillemets.
+
+## Phase 5 — faite le 2026-10-04, pas encore déployée
+
+Décisions du porteur le même jour : **le noyer reste seulement en production** — ses feuilles contiennent de la juglone,
+qui peut freiner le développement d'autres végétaux ; pas d'espacement de service. **Les données du CSV et la règle par
+fonction sont « le maximum que l'on puisse faire aujourd'hui »** : le porteur posera la question à Théry au module de
+perfectionnement conception syntropie, **en janvier 2027**.
+
+- **L'espacement de service par défaut** : `Espacement::deService()` rend celui de la fiche s'il est noté, sinon celui de
+  son service (`DEFAUTS` : biomasse 0,25 m, bloque-herbe 0,40 m), sinon rien — une production seule, un brise-vent ;
+  `parDefaut()` le dit. Lu partout où l'on compte des plants de service : bordures et lignes de service
+  (`LignesPlantation`), répartition (`RepartitionBordures`), proposition des lignes (`LignesDeService`), ligne centrale
+  (`Materiel::quantitesScenario()`), et les listes du plan et du potager, qui écrivent « par défaut » à côté de la
+  valeur. Espèces le dit sous les deux champs quand la case est vide. Les cultures du potager, des productions,
+  gardent leur estimation (`retenu`, à défaut `monoculture`).
+- **Le CSV du porteur intégré** : le bloc généré de `sql/02-especes-seed.sql` régénéré par un script qui redonne d'abord
+  le bloc existant à l'identique (147 lignes) ; 14 lignes changent (dix espacements de service, les quatre émergents).
+  Une case vide n'effaçant rien, deux effacements s'écrivent après le bloc : l'espacement de service du noyer (10 m
+  jusque-là) et le statut « à compléter » des quatre émergents. La note du noyer dit la juglone.
+- **Vérifié** : le schéma rejoué en local ; la base comparée au CSV case par case — 147 espèces, 0 écart ; le noyer sans
+  espacement de service, les quatre émergents sans statut. Dans le cadre, **aucune espèce ne reçoit le défaut** (toutes
+  ont un espacement de service, sauf le noyer, qui n'a pas de service) : il ne sert qu'aux espèces à venir et aux
+  surcharges. Les comptes du plan de La Vadaux P1 sont inchangés (chalef 19, saule 18, consoude 40), les pages sans
+  erreur.
 

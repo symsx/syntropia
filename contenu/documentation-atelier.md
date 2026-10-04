@@ -315,6 +315,9 @@ production** sépare deux plants cultivés pour leur récolte.
 Son service se lit dans son rôle. Quand elle en rend plusieurs, la biomasse passe avant le
 bloque-herbe, puis le brise-vent.
 
+Sans espacement de service noté, l'atelier prend celui de son service : 25 cm pour la biomasse,
+40 cm pour le bloque-herbe, d'après Théry. Le brise-vent n'a pas de chiffre.
+
 Un fichier CSV importe plusieurs espèces d'un coup, à partir d'un modèle à télécharger. Il est
 vérifié en entier avant tout enregistrement.
 

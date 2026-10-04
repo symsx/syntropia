@@ -37,7 +37,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `mises-a-jour` (Phases 1-4 faites, 5-7 avant la version 1) ;
     `documentation-atelier` (maintenance continue, voir § Directives).
   - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
-    fonction, la ligne pérenne en série, 75 % de biomasse ; Phases 1 à 4 faites ; la 5, le cadre relu et le CSV du porteur, attend).
+    fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry).
   - **Planifiés, pas commencés** : `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions
@@ -390,8 +390,12 @@ d'arrosage, retirées).
 - Module 7 de la formation, versé le 2026-10-03
   (`connaissances/formation-joala/plantations-perennes-et-trognes.md`) : face sud des bordures refermée
   (code en l'état), la mélisse ne bloque plus l'herbe, la menthe garde sa fiche (divergence ouverte) ;
-  cadre à 147 espèces — **quatre émergents à compléter** (chêne pédonculé, orme, hêtre, mûrier noir).
-  Cadre et seed modifiés en local, **pas encore déployés** (`deployer.py mettre-a-jour`, schéma inchangé).
+  cadre à 147 espèces, les quatre émergents complétés par le porteur le 2026-10-04 (avec dix espacements de
+  service revus ; le noyer seulement en production, à cause de la juglone). Cadre et seed modifiés,
+  **pas encore déployés** (`deployer.py mettre-a-jour`, schéma inchangé).
+- Espacement des plantes : la règle par fonction et ses chiffres sont « le maximum que l'on puisse faire
+  aujourd'hui » (le porteur, 2026-10-04) ; **il posera la question à Théry au module de perfectionnement
+  conception syntropie, en janvier 2027** — reprendre `chantier-espacement-des-services.md` ensuite.
 - Zone USDA : filtrer par rusticité suppose une donnée absente (à décider).
 - Proposé sans réponse : agrandir `espece.statut_local` ; faire du cadre
   complet le modèle téléchargeable d'`especes.php` ; supprimer

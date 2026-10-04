@@ -25,6 +25,14 @@ final class Espacement
     ];
 
     /**
+     * L'espacement de service par défaut de chaque service, pour une espèce qui n'en a pas (Phase 5, le porteur,
+     * 2026-10-04 : « le maximum que l'on puisse faire aujourd'hui », à reprendre avec Théry en janvier 2027) — la case de
+     * la ligne centrale pour la biomasse (Théry ch. 11 § 7 : « tous les 25 cm »), celle de la bordure pour le
+     * bloque-herbe (ch. 11 et 14 : consoude, lavande, sauge à 40 cm). Le brise-vent n'a pas de chiffre au corpus.
+     */
+    public const DEFAUTS = ['biomasse' => 0.25, 'bloque_herbe' => 0.40];
+
+    /**
      * La part de plants de biomasse visée à l'implantation : « 70 à 80 % » (Théry ch. 11, règle 7 ; Joala 7-7), 75 %
      * retenus par le porteur, par planche au potager et par ligne en pérenne. Sous ce seuil, une information.
      */
@@ -37,6 +45,31 @@ final class Espacement
     public static function service(?string $role): ?string
     {
         return self::serviceDe(Scenario::fonctionsDe($role));
+    }
+
+    /**
+     * L'espacement de service d'une espèce : le sien (`espacement_retenu_m`) s'il est noté, sinon celui de son service
+     * (`DEFAUTS`) ; `null` sans l'un ni l'autre — une production seule, un brise-vent sans chiffre.
+     *
+     * @param array<string, mixed>|null $espece une fiche du référentiel
+     */
+    public static function deService(?array $espece): ?float
+    {
+        if ($espece === null) {
+            return null;
+        }
+        $propre = $espece['espacement_retenu_m'] ?? null;
+        if ($propre !== null && $propre !== '' && (float) $propre > 0) {
+            return (float) $propre;
+        }
+        return self::DEFAUTS[self::service($espece['role'] ?? null)] ?? null;
+    }
+
+    /** L'espacement de service vient-il du défaut de son service, et non de la fiche ? */
+    public static function parDefaut(?array $espece): bool
+    {
+        $propre = $espece['espacement_retenu_m'] ?? null;
+        return $espece !== null && ($propre === null || $propre === '' || (float) $propre <= 0) && self::deService($espece) !== null;
     }
 
     /**

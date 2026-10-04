@@ -65,7 +65,7 @@ final class RepartitionBordures
         if (!self::convientAUneBordure($e)) {
             return 'ne remplit la fonction d’aucune bordure (bloque-herbe, couvre-sol, brise-vent, biomasse)';
         }
-        if (($e['espacement_retenu_m'] ?? null) === null || (float) $e['espacement_retenu_m'] <= 0) {
+        if (Espacement::deService($e) === null) {
             return 'pas d’espacement de service au référentiel, à compléter dans Espèces';
         }
         return null;
@@ -238,7 +238,7 @@ final class RepartitionBordures
                 // n'atteint pas sort de la série, et l'on recompte — la fin de la série change, un plant de plus peut tenir.
                 while (true) {
                     $serie = self::composer($colonne, $autres);
-                    $compte = Bordures::compter($l['longueur'], array_map(static fn (array $e): float => (float) $e['espacement_retenu_m'], $serie));
+                    $compte = Bordures::compter($l['longueur'], array_map(static fn (array $e): float => (float) Espacement::deService($e), $serie));
                     $vides = [];
                     foreach ($autres as $j => $a) {
                         $n = 0;

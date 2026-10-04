@@ -221,11 +221,11 @@ final class Materiel
             $annuelle = in_array((string) ($e['cycle'] ?? ''), Bordures::CYCLES_EXCLUS, true);
             if (!$centre || ($annuelle && !$production)) {
                 // Hors de la série : l'estimation d'une ligne par bande.
-                $out[$i] = self::quantite($l, $bandes, $e === null ? null : $positif($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']))
+                $out[$i] = self::quantite($l, $bandes, Espacement::deService($e) ?? $positif($e['espacement_monoculture_m'] ?? null))
                     + ['sur_ligne' => false];
                 continue;
             }
-            $esp = $espLigne ?? $positif($production ? ($e['espacement_monoculture_m'] ?? null) : ($e['espacement_retenu_m'] ?? null));
+            $esp = $espLigne ?? ($production ? $positif($e['espacement_monoculture_m'] ?? null) : Espacement::deService($e));
             if (($l['nb_pieds'] ?? null) !== null && $l['nb_pieds'] !== '') {
                 $out[$i] = ['n' => (int) $l['nb_pieds'], 'mode' => 'saisi', 'espacement' => $esp, 'sur_ligne' => true];
                 $saisies[$i] = $esp;
