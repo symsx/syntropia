@@ -76,7 +76,7 @@ COUVERTURE = {
         "src/Web/CalendrierLignes.php",
     ],
     "Concevoir : le matériel et l'eau": [
-        "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php",
+        "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php", "src/Web/MaterielDuSite.php",
         "src/Web/ReleveSol.php",
     ],
     "Réaliser": [
@@ -88,7 +88,8 @@ COUVERTURE = {
         "public/suivi-saut-du-chat.php", "public/suivi-consignation.php",
         "src/Perturbation.php", "src/Web/Interventions.php", "src/SautDuChat.php", "src/Web/Constats.php",
     ],
-    "Le Dossier Projet": ["public/dossier-projet.php", "src/DessinsDossier.php", "src/Web/Reponses.php"],
+    "Le Dossier Projet": ["public/dossier-projet.php", "src/DessinsDossier.php", "src/Web/Reponses.php",
+                          "src/Web/MaterielDuSite.php"],
     "Le bureau": ["public/assets/css/gabarit.css", "public/assets/js/gabarit.js"],
     "Comptes, projets et rôles": [
         "public/compte.php", "public/inscription.php", "public/deconnexion.php",

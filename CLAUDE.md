@@ -29,7 +29,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     face sud de l'externe en jardin-forêt rouverte, non tranchée),
     `textes-atelier` (2026-10-03).
   - **En cours** : `dossier-projet` (Phases 1 et 2 faites et déployées, Phase 3
-    suivante — ordre du porteur) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
+    faite le 2026-10-04, pas déployée ; Phase 4 suivante — ordre du porteur) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
     3, 5 faites ; **Phase 4 bloquée**, attend le porteur et la formation — une
     règle sans réponse sourcée ne se code pas) ; `film-de-la-parcelle`
     (Phases 1, 2, 2 bis faites) ; `associations` (Phase 1 faite) ;

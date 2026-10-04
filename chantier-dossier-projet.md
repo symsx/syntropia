@@ -213,6 +213,29 @@ Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impres
 - **Laissé tel quel, accord du porteur** : le PDF de Firefox porte ses propres en-têtes (adresse, date) et ignore le
   pied de page de `@page` — c'est un réglage de la boîte d'impression.
 
+## Phase 3 — faite le 2026-10-04, pas encore déployée
+
+- **Dans chaque parcelle** : « Ce qu'il faut se procurer » (végétal, origine, quantité — estimée, minimale ou à
+  déterminer, dite comme à l'écran) et « L'eau » (le besoin annuel en trois sols et la mare creusée, la pointe
+  d'été, le dernier test de sol : infiltration, ressuyage, millimètres par semaine). Les ordres de grandeur gardent
+  leur étiquette (Lopez).
+- **Un chapitre « Matériel et eau, tout le projet »** (saut de page avant) : la synthèse par origine, la liste
+  d'achats commune avec ses parcelles, puis l'eau du site — la ressource déclarée, ce qu'elle change, le besoin
+  annuel sur toute la surface arrosée. Choix du porteur le 2026-10-04 : les deux, par parcelle et récapitulatif.
+- **Le calendrier** (les quatre saisons de l'étape « Calendrier », réponses de la personne, à défaut du porteur :
+  `Reponses::calendrierDuProjet()`) et **les participants** (nom, rôle, depuis le), à la suite, sans saut de page.
+  Les participants sont visibles de **tout membre** (choix du porteur le 2026-10-04), alors que `membres.php` les
+  réserve au porteur : là, on retire un accès ; ici, on lit. `participant.role_projet` et `engagement` ne sont
+  remplis par aucune page : rien d'eux ne s'imprime.
+- **Un seul compte** : la boucle qui compte le matériel est sortie de `conception-materiel-et-eau.php` dans
+  `src/Web/MaterielDuSite.php`, que les deux pages appellent — l'écran et le papier disent la même liste (sortie de
+  la page vérifiée identique avant et après, sur les quatre vues de La Vadaux).
+- **Corrigé en passant** : `DessinsDossier::nombre($v, 0)` retirait les zéros d'un entier (« 120 m² » imprimé
+  « 12 m² », « 1 500 » en « 1 5 ») — le tableau « Ce qui a été tracé » de la Phase 2, déployé, en était touché.
+- **Vérifié** en local avec un compte contributeur (`claudetest1`) : PDF par `Page.printToPDF`, 12 pages, relu ;
+  les cases des nouveaux chapitres ; la Définition inchangée. Le calendrier rempli n'a pas été vu imprimé (La Vadaux
+  n'en a pas en local).
+
 ## Phases proposées
 
 | Phase | Contenu | Résultat |

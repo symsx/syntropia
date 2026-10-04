@@ -55,6 +55,29 @@ final class Reponses
      */
     public function definitionDuProjet(int $siteId, int $compteId): array
     {
+        return $this->duProjet($siteId, $compteId, 'definition');
+    }
+
+    /**
+     * Le calendrier de la Conception (`calendrier_printemps`… `calendrier_hiver`), pour le Dossier Projet, sur la même
+     * règle que `definitionDuProjet()` : la personne si elle l'a rempli, à défaut le porteur.
+     *
+     * @return array{reponses: array<string, string>, nom: ?string}
+     */
+    public function calendrierDuProjet(int $siteId, int $compteId): array
+    {
+        return $this->duProjet($siteId, $compteId, 'conception', ['calendrier_printemps', 'calendrier_ete', 'calendrier_automne', 'calendrier_hiver']);
+    }
+
+    /**
+     * Les réponses d'une phase, limitées à quelques questions si `$questions` les nomme : celles de la personne si elle
+     * en a donné au moins une, à défaut celles du porteur. Lecture seule.
+     *
+     * @param list<string> $questions
+     * @return array{reponses: array<string, string>, nom: ?string}
+     */
+    private function duProjet(int $siteId, int $compteId, string $phase, array $questions = []): array
+    {
         $lire = function (string $sql, array $params): ?array {
             $req = $this->pdo()->prepare($sql);
             $req->execute($params);
@@ -73,8 +96,9 @@ final class Reponses
                 continue;
             }
             $req = $this->pdo()->prepare(
-                "SELECT question, texte FROM reponse WHERE participant_id = ? AND phase = 'definition' AND texte <> ''");
-            $req->execute([(int) $p['id']]);
+                "SELECT question, texte FROM reponse WHERE participant_id = ? AND phase = ? AND texte <> ''"
+                . ($questions === [] ? '' : ' AND question IN (' . implode(', ', array_fill(0, count($questions), '?')) . ')'));
+            $req->execute([(int) $p['id'], $phase, ...$questions]);
             $reponses = $req->fetchAll(PDO::FETCH_KEY_PAIR);
             if (is_array($reponses) && $reponses !== []) {
                 return ['reponses' => $reponses, 'nom' => (string) $p['nom']];

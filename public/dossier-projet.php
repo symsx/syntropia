@@ -8,7 +8,9 @@ declare(strict_types=1);
  * Voir `chantier-dossier-projet.md`. Phase 1 : la couverture et la Définition (vision, objectifs, moyens, site), le
  * choix des chapitres à imprimer, la mise en page papier. Phase 2 : la Conception — le terrain (les tracés de la carte,
  * avec échelle et nord, sans fond de carte) et une page par parcelle (ce qui la définit, son plan, son scénario). Les
- * dessins viennent de `DessinsDossier`.
+ * dessins viennent de `DessinsDossier`. Phase 3 : dans chaque parcelle, ce qu'il faut se procurer et l'eau (les comptes
+ * de l'étape « Matériel et eau », par `MaterielDuSite` et `BesoinEau`), puis le récapitulatif du projet, le calendrier
+ * et les participants.
  *
  * DÉLIBÉRÉMENT HORS DU GABARIT « LE BUREAU » — la seconde exception, admise par le porteur le 2026-09-19, comme
  * `releve-vierge.php` : c'est un document qu'on imprime, pas une page qu'on visite, et il fait plusieurs pages ; le
@@ -28,10 +30,12 @@ require __DIR__ . '/../src/autoload.php';
 require __DIR__ . '/../src/Configuration.php';
 require __DIR__ . '/../src/Database.php';
 
+use Syntropia\BesoinEau;
 use Syntropia\Bordures;
 use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\DessinsDossier;
+use Syntropia\Materiel;
 use Syntropia\Planches;
 use Syntropia\Relief;
 use Syntropia\Role;
@@ -44,7 +48,9 @@ use Syntropia\Web\Comptes;
 use Syntropia\Web\Cultures;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\LignesPlantation;
+use Syntropia\Web\MaterielDuSite;
 use Syntropia\Web\Parcelles;
+use Syntropia\Web\ReleveSol;
 use Syntropia\Web\Reponses;
 use Syntropia\Web\Sites;
 
@@ -175,6 +181,9 @@ foreach ($elements as $el) {
 
 $parcellesService = new Parcelles();
 $lignesService = new LignesPlantation();
+$materielService = new MaterielDuSite();
+$releves = new ReleveSol();
+$entreesProjet = [];
 $couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53', '#1f6f78', '#b36b00', '#556b2f', '#7a3b3b'];
 $parcelles = [];
 foreach ($parcellesService->dUnSite($siteId) as $p) {
@@ -261,6 +270,12 @@ foreach ($parcellesService->dUnSite($siteId) as $p) {
     }
     unset($gr);
 
+    // Ce qu'il faut se procurer, et l'eau : les comptes de l'étape « Matériel et eau », parcelle par parcelle.
+    $materiel = $materielService->entrees($siteId, [$p]);
+    $entreesProjet = array_merge($entreesProjet, $materiel['entrees']);
+    $surface = BesoinEau::surfaceM2($p);
+    $releve = $releves->recents($idP, 1)[0] ?? null;
+
     $parcelles[] = [
         'id' => $idP, 'code' => (string) $p['code'], 'nom' => (string) $p['nom'], 'potager' => $potager,
         'identite' => [
@@ -280,15 +295,56 @@ foreach ($parcellesService->dUnSite($siteId) as $p) {
         'legende' => array_values(array_filter($especesPlan, static fn (array $e): bool => $e['n'] > 0)),
         'bordures' => $bordures, 'planches' => $planches,
         'cultures' => $cultures,
+        'materiel' => Materiel::regrouper($materiel['entrees']),
+        'eau' => $surface === null ? null : ['surface' => $surface, 'besoins' => BesoinEau::besoins($surface),
+            'pointe' => BesoinEau::pointe($surface), 'releve' => $releve, 'freq' => BesoinEau::frequence($releve)],
         'scenario' => $lignesScenario === [] ? null : ($cParcelle->scenarioADesTemps() ? ['frise' => DessinsDossier::frise($strates, $groupes)] : ['strates' => $strates, 'groupes' => $groupes]),
     ];
 }
 
-/** Les chapitres de la Conception, pour les cases : le terrain, puis une page par parcelle. */
+/* ------------------------------------------------------------------ la Conception : matériel et eau, calendrier */
+
+// Tout le projet : la liste d'achats commune, la surface arrosée et la ressource en eau du site.
+$recapProjet = Materiel::regrouper($entreesProjet);
+$syntheseProjet = Materiel::synthese($recapProjet);
+$surfaceProjet = array_sum(array_map(static fn (array $pc): float => $pc['eau']['surface'] ?? 0.0, $parcelles));
+$besoinsProjet = $surfaceProjet > 0 ? BesoinEau::besoins($surfaceProjet) : [];
+$sansDimensions = array_column(array_filter($parcelles, static fn (array $pc): bool => $pc['eau'] === null), 'code');
+$ressource = (string) ($site['ressource_eau'] ?? '');
+$ressourceDetail = trim((string) ($site['ressource_eau_detail'] ?? ''));
+
+$calendrier = (new Reponses())->calendrierDuProjet($siteId, $compteId);
+$saisons = ['calendrier_printemps' => 'Printemps', 'calendrier_ete' => 'Été', 'calendrier_automne' => 'Automne', 'calendrier_hiver' => 'Hiver'];
+
+/** Les chapitres de la Conception, pour les cases : le terrain, une page par parcelle, le matériel et l'eau, le calendrier. */
 $chapitresConception = ['terrain' => 'Le terrain'] + ($parcelles === [] ? ['parcelles' => 'Les parcelles'] : []);
 foreach ($parcelles as $pc) {
     $chapitresConception['parcelle-' . $pc['id']] = 'Parcelle ' . $pc['code'];
 }
+$chapitresConception['materiel'] = 'Matériel et eau';
+$chapitresConception['calendrier'] = 'Le calendrier';
+
+/* ------------------------------------------------------------------ les participants */
+
+// Qui a accès au projet, et depuis quand : visible de tout membre (le porteur, 2026-10-04), pas seulement du porteur
+// comme dans `membres.php`, où l'on retire un accès.
+$membres = $sites->membres($siteId);
+$nomsMembres = (new Comptes())->nomsParIds(array_column($membres, 'compte_id'));
+$roles = ['porteur' => 'Porteur', 'contributeur' => 'Contributeur', 'lecteur' => 'Lecteur'];
+$participants = array_map(static fn (array $m): array => [
+    'nom' => trim((string) ($nomsMembres[$m['compte_id']]['nom_affiche'] ?? '')) !== ''
+        ? (string) $nomsMembres[$m['compte_id']]['nom_affiche'] : (string) ($nomsMembres[$m['compte_id']]['identifiant'] ?? ''),
+    'role' => $roles[$m['role']] ?? $m['role'],
+    'depuis' => $m['depuis_le']], $membres);
+
+/** Une quantité du récapitulatif, telle que l'écran la dit : estimée, minimale, ou à déterminer. */
+$quantite = static function (array $r): string {
+    if ($r['n'] !== null) {
+        return ($r['estime'] ? '≈ ' : '') . DessinsDossier::nombre((float) $r['n'], 0) . ($r['estime'] ? ' <span class="vide">estimé</span>' : '')
+            . ($r['graines'] > 0 ? ' <span class="vide">· ≈ ' . DessinsDossier::nombre((float) $r['graines'], 0) . ' graines</span>' : '');
+    }
+    return $r['connu'] > 0 ? '≥ ' . DessinsDossier::nombre((float) $r['connu'], 0) . ' <span class="vide">, le reste à préciser</span>' : '<span class="vide">à déterminer</span>';
+};
 
 /** Un texte dans une chaîne CSS : dans `<style>`, rien n'est décodé — on échappe à la manière du CSS (`\22 `), ce qui
  *  écarte aussi toute fermeture de la balise. */
@@ -360,7 +416,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   .a-faire{ margin:.8rem 0 0; color:var(--muted); font-size:.85rem; }
 
   /* Le choix des chapitres : une case décochée retire son chapitre, à l'écran comme sur le papier. */
-<?php foreach (array_merge(['couverture'], array_keys($chapitres), array_keys($chapitresConception)) as $id): ?>
+<?php foreach (array_merge(['couverture'], array_keys($chapitres), array_keys($chapitresConception), ['participants']) as $id): ?>
   body:has(#imprimer-<?= $id ?>:not(:checked)) #chapitre-<?= $id ?>{ display:none; }
 <?php endforeach; ?>
   .aucun{ display:none; }
@@ -407,6 +463,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   table.liste th{ font-weight:500; color:var(--muted); font-size:.8rem; }
   table.liste tr{ break-inside:avoid; }
   .nombre{ text-align:right !important; white-space:nowrap; }
+  .note-dossier{ color:var(--muted); font-size:.85rem; margin:.5rem 0 0; }
 
   @media (max-width:30rem){
     .feuille{ padding:1.1rem 1rem; }
@@ -430,7 +487,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     .phase{ display:none; }
     .titre-phase{ display:block; }
     #phase-conception{ break-before:page; }
-    .feuille.parcelle{ break-before:page; break-inside:auto; }
+    .feuille.parcelle, .feuille.a-part{ break-before:page; break-inside:auto; }
     .feuille.terrain{ break-inside:auto; }
     a{ color:inherit; text-decoration:none; }
     .lien-etape{ display:none; }
@@ -457,6 +514,10 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
 <?php foreach ($chapitresConception as $id => $titre): ?>
     <label><input type="checkbox" id="imprimer-<?= $id ?>" checked><span><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></span></label>
 <?php endforeach; ?>
+  </div>
+  <p class="groupe">Le projet</p>
+  <div class="cases">
+    <label><input type="checkbox" id="imprimer-participants" checked><span>Les participants</span></label>
   </div>
   <p class="note">Ce que vous voyez ici est ce qui s’imprime. Pour un PDF, choisissez « Enregistrer en PDF » comme
      imprimante. Le choix des chapitres ne se garde pas : tout est coché à chaque ouverture.</p>
@@ -669,8 +730,170 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
 <?php endif; ?>
     </div>
 <?php endif; ?>
+
+    <div class="bloc">
+    <h3>Ce qu’il faut se procurer</h3>
+<?php if ($pc['materiel'] === []): ?>
+    <p class="vide">Aucun végétal n’est encore placé. La liste se déduit <?= $pc['potager'] ? 'du plan de culture' : 'du scénario et des lignes du plan' ?>.</p>
+<?php else: ?>
+    <table class="liste">
+      <thead><tr><th>Végétal</th><th>Origine</th><th class="nombre">Quantité</th></tr></thead>
+      <tbody>
+<?php foreach ($pc['materiel'] as $r): ?>
+        <tr>
+          <td><?= htmlspecialchars($r['espece'], ENT_QUOTES, 'UTF-8') ?></td>
+          <td><?= htmlspecialchars(Materiel::ORIGINES[$r['origine']] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+          <td class="nombre"><?= $quantite($r) ?></td>
+        </tr>
+<?php endforeach; ?>
+      </tbody>
+    </table>
+<?php endif; ?>
+    </div>
+
+    <div class="bloc">
+    <h3>L’eau</h3>
+<?php if ($pc['eau'] === null): ?>
+    <p class="vide">Le besoin en eau se calcule sur la surface : la parcelle n’a pas encore de dimensions.</p>
+<?php else: $eau = $pc['eau']; $f = $eau['freq']; ?>
+    <table class="liste">
+      <thead><tr><th>Sur <?= DessinsDossier::nombre($eau['surface'], 0) ?> m², si le sol est…</th><th class="nombre">Par an</th><th class="nombre">Mare creusée</th></tr></thead>
+      <tbody>
+<?php foreach ($eau['besoins'] as $b): ?>
+        <tr>
+          <td><?= htmlspecialchars($b['titre'], ENT_QUOTES, 'UTF-8') ?></td>
+<?php if ($b['m3_an'] !== null): ?>
+          <td class="nombre"><?= DessinsDossier::nombre($b['m3_an'], 1) ?> m³</td><td class="nombre"><?= DessinsDossier::nombre($b['mare_m3'], 1) ?> m³</td>
+<?php else: ?>
+          <td class="nombre" colspan="2">moins, non chiffré</td>
+<?php endif; ?>
+        </tr>
+<?php endforeach; ?>
+      </tbody>
+    </table>
+    <p class="note-dossier">En pointe d’été : <?= DessinsDossier::nombre($eau['pointe']['m3_jour'], 2) ?> m³ par jour (5 mm par jour). Ce sont des
+       ordres de grandeur pour dimensionner, tirés de Lopez (maraîchage d’annuelles).</p>
+<?php if ($eau['releve'] === null): ?>
+    <p class="note-dossier">Aucun test de sol n’est noté : le rythme d’arrosage reste à lire. L’été demande
+       <?= DessinsDossier::nombre($f['semaines'][0]['mm'], 0) ?> mm par semaine en moyenne, et <?= DessinsDossier::nombre($f['semaines'][1]['mm'], 0) ?> mm en pointe.</p>
+<?php else: ?>
+    <p class="note-dossier">Test de sol du <?= htmlspecialchars($dateEnMots((string) $eau['releve']['date']) ?? '', ENT_QUOTES, 'UTF-8') ?><?= trim((string) $eau['releve']['point']) !== '' ? ', ' . htmlspecialchars((string) $eau['releve']['point'], ENT_QUOTES, 'UTF-8') : '' ?>.
+<?php if ($f['classe'] !== null): ?>
+       Infiltration de <?= DessinsDossier::nombre((float) $eau['releve']['infiltration_mm_h'], 1) ?> mm/h : <?= htmlspecialchars($f['classe']['titre'], ENT_QUOTES, 'UTF-8') ?>, comme un sol de type <?= htmlspecialchars($f['classe']['texture'], ENT_QUOTES, 'UTF-8') ?>.
+<?php endif; ?>
+<?php if ($f['ressuyage'] !== null): ?>
+       Ressuyage <?= htmlspecialchars($f['ressuyage']['titre'], ENT_QUOTES, 'UTF-8') ?> : <?= htmlspecialchars($f['ressuyage']['lecture'], ENT_QUOTES, 'UTF-8') ?>.
+<?php endif; ?>
+<?php foreach ($f['semaines'] as $sem): ?>
+       <?= htmlspecialchars($sem['titre'], ENT_QUOTES, 'UTF-8') ?> : <?= DessinsDossier::nombre($sem['mm'], 0) ?> mm.
+<?php endforeach; ?>
+<?php if (($f['classe']['famille'] ?? '') === 'drainant'): ?>
+       Ce sol boit vite : il demande des passages plus courts et plus fréquents.
+<?php elseif (($f['classe']['famille'] ?? '') === 'tampon'): ?>
+       Ce sol fait tampon : il supporte un arrosage long et espacé, en plusieurs cycles courts.
+<?php endif; ?>
+    </p>
+<?php endif; ?>
+<?php endif; ?>
+    </div>
   </section>
 <?php endforeach; ?>
+
+  <section class="feuille a-part" id="chapitre-materiel">
+    <p class="phase">Conception</p>
+    <h2>Matériel et eau, tout le projet</h2>
+<?php if ($recapProjet === []): ?>
+    <p class="vide">Aucun végétal n’est encore placé sur les parcelles. Cela se fait aux étapes « Scénario » et « Potager » de la Conception.</p>
+    <p class="a-faire lien-etape"><a href="conception-materiel-et-eau.php">Aller à l’étape « Matériel et eau » →</a></p>
+<?php else: ?>
+    <p class="sous-titre"><?= implode(' · ', array_map(static fn (string $cle): string => htmlspecialchars(Materiel::ORIGINES[$cle], ENT_QUOTES, 'UTF-8') . ' : '
+        . $syntheseProjet[$cle]['especes'] . ' végéta' . ($syntheseProjet[$cle]['especes'] > 1 ? 'ux' : 'l')
+        . ($syntheseProjet[$cle]['plants'] > 0 ? ', ' . ($syntheseProjet[$cle]['incomplet'] ? 'au moins ' : '') . DessinsDossier::nombre((float) $syntheseProjet[$cle]['plants'], 0) . ' plants' : ''),
+        array_values(array_filter(array_keys(Materiel::ORIGINES), static fn (string $cle): bool => isset($syntheseProjet[$cle]))))) ?>.</p>
+    <table class="liste">
+      <thead><tr><th>Végétal</th><th>Origine</th><th>Parcelles</th><th class="nombre">Quantité</th></tr></thead>
+      <tbody>
+<?php foreach ($recapProjet as $r): ?>
+        <tr>
+          <td><?= htmlspecialchars($r['espece'], ENT_QUOTES, 'UTF-8') ?></td>
+          <td><?= htmlspecialchars(Materiel::ORIGINES[$r['origine']] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+          <td><?= htmlspecialchars(implode(', ', $r['parcelles']), ENT_QUOTES, 'UTF-8') ?></td>
+          <td class="nombre"><?= $quantite($r) ?></td>
+        </tr>
+<?php endforeach; ?>
+      </tbody>
+    </table>
+    <p class="note-dossier">Une quantité « estimée » compte une ligne de plants par planche ou par bande de bordure, à l’espacement
+       du végétal ; une quantité saisie la remplace. Les plants posés sur les lignes du plan sont comptés tels quels.</p>
+<?php endif; ?>
+
+    <div class="bloc">
+    <h3>L’eau du site</h3>
+    <dl class="reponses">
+      <div>
+        <dt>Ressource en eau</dt>
+        <dd><?= $ressource === '' ? '<span class="vide">pas encore renseigné</span>'
+            : htmlspecialchars(BesoinEau::RESSOURCES[$ressource] ?? $ressource, ENT_QUOTES, 'UTF-8') . ($ressourceDetail !== '' ? ', ' . htmlspecialchars($ressourceDetail, ENT_QUOTES, 'UTF-8') : '') ?></dd>
+      </div>
+<?php if (isset(BesoinEau::CONSEIL_RESSOURCE[$ressource])): ?>
+      <div>
+        <dt>Ce qu’elle change</dt>
+        <dd><?= htmlspecialchars(BesoinEau::CONSEIL_RESSOURCE[$ressource], ENT_QUOTES, 'UTF-8') ?></dd>
+      </div>
+<?php endif; ?>
+<?php if ($surfaceProjet > 0): ?>
+      <div>
+        <dt>Besoin annuel, sur <?= DessinsDossier::nombre($surfaceProjet, 0) ?> m² arrosés</dt>
+        <dd><?= implode(' ; ', array_map(static fn (array $b): string => htmlspecialchars(mb_strtolower(mb_substr($b['titre'], 0, 1)) . mb_substr($b['titre'], 1), ENT_QUOTES, 'UTF-8') . ' : '
+            . ($b['m3_an'] !== null ? DessinsDossier::nombre($b['m3_an'], 1) . ' m³ (mare creusée de ' . DessinsDossier::nombre($b['mare_m3'], 1) . ' m³)' : 'moins, non chiffré'), $besoinsProjet)) ?>.</dd>
+      </div>
+<?php endif; ?>
+    </dl>
+<?php if ($sansDimensions !== []): ?>
+    <p class="note-dossier">Parcelles sans dimensions, non comptées : <?= htmlspecialchars(implode(', ', $sansDimensions), ENT_QUOTES, 'UTF-8') ?>.</p>
+<?php endif; ?>
+<?php if ($ressource === ''): ?>
+    <p class="a-faire lien-etape"><a href="conception-materiel-et-eau.php?onglet=eau">Noter la ressource en eau →</a></p>
+<?php endif; ?>
+    </div>
+  </section>
+
+  <section class="feuille" id="chapitre-calendrier">
+    <p class="phase">Conception</p>
+    <h2>Le calendrier</h2>
+<?php if ($calendrier['reponses'] === []): ?>
+    <p class="vide">Pas encore renseigné. Cela se fait à l’étape « Calendrier » de la Conception.</p>
+    <p class="a-faire lien-etape"><a href="conception-calendrier.php">Aller à cette étape →</a></p>
+<?php else: ?>
+    <p class="provenance">Réponses de <?= htmlspecialchars((string) $calendrier['nom'], ENT_QUOTES, 'UTF-8') ?>.</p>
+    <dl class="reponses">
+<?php foreach ($saisons as $cle => $saison): ?>
+      <div>
+        <dt><?= $saison ?></dt>
+        <dd><?= isset($calendrier['reponses'][$cle]) ? $h($calendrier['reponses'][$cle]) : '<span class="vide">pas encore renseigné</span>' ?></dd>
+      </div>
+<?php endforeach; ?>
+    </dl>
+<?php endif; ?>
+  </section>
+
+  <section class="feuille" id="chapitre-participants">
+    <p class="phase">Le projet</p>
+    <h2>Les participants</h2>
+    <p class="sous-titre">Les personnes qui ont accès au projet dans l’atelier.</p>
+    <table class="liste">
+      <thead><tr><th>Nom</th><th>Rôle</th><th>Depuis le</th></tr></thead>
+      <tbody>
+<?php foreach ($participants as $m): ?>
+        <tr>
+          <td><?= $m['nom'] !== '' ? htmlspecialchars($m['nom'], ENT_QUOTES, 'UTF-8') : '<span class="vide">sans nom</span>' ?></td>
+          <td><?= htmlspecialchars($m['role'], ENT_QUOTES, 'UTF-8') ?></td>
+          <td><?= htmlspecialchars($dateEnMots($m['depuis']) ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+        </tr>
+<?php endforeach; ?>
+      </tbody>
+    </table>
+  </section>
 </main>
 
 <script>

@@ -30,11 +30,8 @@ use Syntropia\BesoinEau;
 use Syntropia\Configuration;
 use Syntropia\Materiel;
 use Syntropia\Role;
-use Syntropia\Scenario;
 use Syntropia\Web\Authentification;
-use Syntropia\Web\Cultures;
-use Syntropia\Web\Especes;
-use Syntropia\Web\LignesPlantation;
+use Syntropia\Web\MaterielDuSite;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\ReleveSol;
 use Syntropia\Web\Sites;
@@ -125,80 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $portee !== []) {
     }
 }
 
-// L'espacement du référentiel, à défaut de celui de la ligne du scénario.
-$espacements = [];
-foreach ((new Especes())->toutes($siteId) as $e) {
-    $esp = (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
-    if ($esp > 0) {
-        foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $nom) {
-            if ((string) $nom !== '') {
-                $espacements[mb_strtolower((string) $nom)] ??= $esp;
-            }
-        }
-    }
-}
-
 /* ------------------------------------------------------------------ le matériel */
 
-$entrees = [];
-$sansScenario = [];
-$sansCulture = [];
-$culturesService = new Cultures();
-$lignesService = new LignesPlantation();
-foreach ($portee as $p) {
-    $bandes = Materiel::bandes($p);
-    // Les plants posés sur les lignes du plan — bordures et lignes de service des planches : ils font foi (chantier
-    // « peuplement de la parcelle », Phase 7). Une plante du scénario déclarée en bordure prend leur compte.
-    $duPlan = Materiel::lignesDuPlan($lignesService->etat($p, $siteId), $lignesService->etatPlanches($p, $siteId));
-    $bordAvecLignes = array_flip(array_column($duPlan, 'ou'));
-    $pris = [];
-    // Un potager n'a pas de scénario de strates et de temps : ses cultures sont son plan de culture.
-    if (($p['type'] ?? '') === 'potager') {
-        $cultures = $culturesService->dUneParcelle((int) $p['id']);
-        if ($cultures === []) {
-            $sansCulture[] = (string) $p['code'];
-        }
-        foreach ($cultures as $c) {
-            $entrees[] = ['ligne' => ['espece' => $c['espece'], 'origine' => 'potager'], 'parcelle' => (string) $p['code'],
-                'qte' => Materiel::quantiteCulture($c, $bandes, $espacements[mb_strtolower(trim((string) $c['espece']))] ?? null)];
-        }
-        foreach ($duPlan as $d) {
-            $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
-                'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
-        }
-        continue;
-    }
-    $lignes = $parcellesService->scenario((int) $p['id']);
-    if ($lignes === []) {
-        $sansScenario[] = (string) $p['code'];
-    }
-    foreach ($lignes as $l) {
-        $ou = Scenario::details($l)['emplacement'] ?? 'centre';
-        if (in_array($ou, ['bord_ext', 'bord_int'], true) && isset($bordAvecLignes[$ou])) {
-            $nom = mb_strtolower(trim((string) $l['espece']));
-            $n = 0;
-            $trouve = false;
-            foreach ($duPlan as $k => $d) {
-                if ($d['ou'] === $ou && in_array($nom, [mb_strtolower($d['espece']), mb_strtolower($d['nom_scientifique'])], true)) {
-                    $trouve = true;
-                    $pris[$k] = true;
-                    $n = $n === null || $d['n'] === null ? null : $n + $d['n'];
-                }
-            }
-            $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => ['n' => $trouve ? $n : null, 'mode' => 'plan', 'espacement' => null]];
-            continue;
-        }
-        $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'],
-            'qte' => Materiel::quantite($l, $bandes, $espacements[mb_strtolower(trim((string) $l['espece']))] ?? null)];
-    }
-    // Ce que le plan porte sans que le scénario le nomme.
-    foreach ($duPlan as $k => $d) {
-        if (!isset($pris[$k])) {
-            $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
-                'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
-        }
-    }
-}
+// Le compte est partagé avec le Dossier Projet (`MaterielDuSite`) : l'écran et le papier disent la même liste.
+['entrees' => $entrees, 'sansScenario' => $sansScenario, 'sansCulture' => $sansCulture] = (new MaterielDuSite())->entrees($siteId, $portee);
 $depuisPlan = count(array_filter($entrees, static fn (array $e): bool => ($e['qte']['mode'] ?? null) === 'plan')) > 0;
 $recap = Materiel::regrouper($entrees);
 $synthese = Materiel::synthese($recap);

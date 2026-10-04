@@ -30,10 +30,11 @@ final class DessinsDossier
         return (string) round($v, 1);
     }
 
-    /** Un nombre en français, sans zéros inutiles (« 4 », « 0,4 », « 17,5 »). */
+    /** Un nombre en français, sans zéros inutiles (« 4 », « 0,4 », « 17,5 »). Sans décimale, rien ne se retire : « 120 ». */
     public static function nombre(float $v, int $decimales = 2): string
     {
-        return rtrim(rtrim(number_format($v, $decimales, ',', ' '), '0'), ',');
+        $texte = number_format($v, $decimales, ',', ' ');
+        return $decimales > 0 ? rtrim(rtrim($texte, '0'), ',') : $texte;
     }
 
     /** La longueur de la barre d'échelle : la plus grande valeur ronde qui tient dans `$maxM` mètres. */

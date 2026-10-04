@@ -48,7 +48,8 @@
   placée avant « Documentation », puis un **sous-dossier par parcelle** qui sert de
   document de chantier pour l'implantation. Demandé et **cadré le 2026-09-19** (les six
   questions sont tranchées) ; **Phase 1 faite le 2026-10-02** (la page, la couverture, la Définition, le
-  choix des chapitres, le menu) — Phases 2 à 5 à suivre dans l'ordre (décision du porteur).
+  choix des chapitres, le menu), **Phase 2 le 2026-10-03** (terrain, parcelles), **Phase 3 le 2026-10-04** (matériel,
+  eau, calendrier, participants) — Phases 4 et 5 à suivre dans l'ordre (décision du porteur).
 - `chantier-saut-du-chat.md` — le plan (5 phases) pour outiller le **saut du chat**, « clé de voûte du
   système » selon le porteur : journal des perturbations (table `intervention`, déjà au schéma), constat
   comparé à un témoin et diagnostic des conditions, stade du terrain, itinéraire technique, puis la

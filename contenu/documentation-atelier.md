@@ -438,6 +438,12 @@ puis la Définition : la vision, les objectifs, les moyens et le site.
 La Conception suit : le terrain, avec les tracés de la carte, l'échelle et le nord, puis une page
 par parcelle, avec son plan, ses bordures, ses planches et son scénario ou son plan de culture.
 
+Chaque parcelle dit aussi ce qu'il faut se procurer et l'eau qu'il lui faudra, avec les mêmes
+comptes que l'étape « Matériel et eau ». Un récapitulatif donne la liste de tout le projet.
+
+Le dossier finit par le calendrier, saison par saison, et par les participants : qui a accès au
+projet, avec quel rôle, et depuis quand.
+
 Les chapitres à imprimer se cochent. Ce qui s'affiche est ce qui s'imprime, et le choix se refait à
 chaque ouverture.
 
