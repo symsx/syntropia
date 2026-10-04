@@ -130,6 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $portee !== []) {
 $depuisPlan = count(array_filter($entrees, static fn (array $e): bool => ($e['qte']['mode'] ?? null) === 'plan')) > 0;
 $recap = Materiel::regrouper($entrees);
 $synthese = Materiel::synthese($recap);
+// Les plants de biomasse : ceux qui seront sacrifiés à la perturbation (chantier-espacement-des-services.md, Phase 4).
+$aSacrifier = array_sum(array_column($recap, 'biomasse'));
 $aPrecise = count(array_filter($recap, static fn (array $r): bool => $r['origine'] === ''));
 $estimes = count(array_filter($recap, static fn (array $r): bool => $r['estime']));
 $aPotager = isset($synthese['potager']);
@@ -423,6 +425,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
             <span class="mv-puce-o"><?= $h($titre) ?> · <b><?= $s['especes'] ?></b> <?= $vegetaux($s['especes']) ?>
               <?= $s['plants'] > 0 ? '· <b>' . ($s['incomplet'] ? '≥ ' : '') . $nombre((float) $s['plants']) . '</b> plants' : '' ?></span>
 <?php endforeach; ?>
+<?php if ($aSacrifier > 0): ?>
+            <span class="mv-puce-o">Biomasse à sacrifier · <b><?= $nombre((float) $aSacrifier) ?></b> plants</span>
+<?php endif; ?>
           </div>
           <div class="mv-zone-tableau" id="mv-zone">
             <table class="mv-tableau">
@@ -457,6 +462,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php endif; ?>
 <?php if ($aPotager): ?>
             Pour les cultures du potager, la quantité est le nombre de <b>plants</b> saisi dans le plan de culture. Sans lui, l'atelier compte une ligne de plants sur la planche, à l'espacement de la culture. Pour une culture semée à l'abri, le nombre de <b>graines</b> est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez (91 % pour un poireau, 50 % pour une aubergine dans son livre). Remplacez-le par vos propres levées. Une culture semée en place n'a pas de graines chiffrées.
+<?php endif; ?>
+<?php if ($aSacrifier > 0): ?>
+            La biomasse à sacrifier compte les plants dont la fonction est la biomasse : ils seront taillés et rendus au sol. Théry en destine 70 à 80 % à l'implantation.
 <?php endif; ?>
 <?php if ($aPrecise > 0): ?>
             <?= $aPrecise ?> <?= $vegetaux($aPrecise) ?> sans origine. Indiquez-la dans le scénario : elle décide de ce qu'on achète.

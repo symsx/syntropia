@@ -57,6 +57,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Import.php               l'import d'un fichier d'export en projet neuf — valide chaque colonne d'après le schéma réel, une transaction ; appelé par importer.php
     Export.php               l'export d'un projet en JSON — lit chaque table en entier, retire comptes/identifiants/accès, plafond 1 Mo ; appelé par exporter.php
     MaterielDuSite.php       le matériel végétal de quelques parcelles (scénario ou plan de culture, plants du plan qui font foi) avant regroupement — partagé par conception-materiel-et-eau.php et dossier-projet.php
+    PartBiomasse.php         la part de plants de biomasse d'une parcelle face aux 75 % — par planche au potager, sur la ligne centrale en pérenne ; appelé par conception-parcelles.php, conception-scenario.php, conception-potager.php
     ReleveSol.php            relevés de sol d'une parcelle (`releve_sol`) — infiltration, état d'humidité, jours depuis la pluie ; appelé par conception-materiel-et-eau.php
     Especes.php              référentiel de végétaux — cadre partagé (site_id=0) + surcharges par site, clé (nom_scientifique, variete), avec un calendrier par espèce (semis/repiquage/récolte, en mots comme Lopez)
 contenu/

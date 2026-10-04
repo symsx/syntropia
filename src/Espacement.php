@@ -36,12 +36,64 @@ final class Espacement
      */
     public static function service(?string $role): ?string
     {
-        $fonctions = Scenario::fonctionsDe($role);
+        return self::serviceDe(Scenario::fonctionsDe($role));
+    }
+
+    /**
+     * Le service que donne une liste de fonctions — celles d'une ligne du scénario, ou d'un rôle déjà lu.
+     *
+     * @param list<string> $fonctions
+     */
+    public static function serviceDe(array $fonctions): ?string
+    {
         foreach (self::SERVICES as $service => $s) {
             if (array_intersect($s['roles'], $fonctions) !== []) {
                 return $service;
             }
         }
         return null;
+    }
+
+    /**
+     * Une ligne du scénario porte-t-elle des plants de biomasse ? Jamais une ligne de production ; une ligne de service,
+     * si ses fonctions — à défaut le rôle de l'espèce au référentiel — donnent le service biomasse.
+     *
+     * @param array<string, mixed> $ligne     une ligne de `scenario_ligne`
+     * @param array<string, mixed>|null $espece sa fiche du référentiel
+     */
+    public static function ligneDeBiomasse(array $ligne, ?array $espece): bool
+    {
+        $d = Scenario::details($ligne);
+        if (($d['production'] ?? null) !== null) {
+            return false;
+        }
+        $fonctions = is_array($d['fonctions'] ?? null) ? $d['fonctions'] : [];
+        return (self::serviceDe($fonctions) ?? self::service($espece['role'] ?? null)) === 'biomasse';
+    }
+
+    /**
+     * La part de plants de biomasse d'un ensemble — une planche de potager, la ligne centrale d'une parcelle pérenne.
+     * Un plant sans nombre ne compte pas, et se nomme.
+     *
+     * @param list<array{nom: string, n: ?int, biomasse: bool}> $plantes
+     * @return array{biomasse: int, total: int, part: ?float, atteinte: ?bool, sans_nombre: list<string>}
+     */
+    public static function partBiomasse(array $plantes): array
+    {
+        $biomasse = 0;
+        $total = 0;
+        $sansNombre = [];
+        foreach ($plantes as $p) {
+            if ($p['n'] === null) {
+                $sansNombre[] = $p['nom'];
+                continue;
+            }
+            $total += $p['n'];
+            $biomasse += $p['biomasse'] ? $p['n'] : 0;
+        }
+        $part = $total > 0 ? $biomasse / $total : null;
+        return ['biomasse' => $biomasse, 'total' => $total, 'part' => $part,
+            'atteinte' => $part === null ? null : $part >= self::PART_BIOMASSE - 1e-9,
+            'sans_nombre' => array_values(array_unique($sansNombre))];
     }
 }

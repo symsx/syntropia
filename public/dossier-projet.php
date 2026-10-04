@@ -307,6 +307,7 @@ foreach ($parcellesService->dUnSite($siteId) as $p) {
 // Tout le projet : la liste d'achats commune, la surface arrosée et la ressource en eau du site.
 $recapProjet = Materiel::regrouper($entreesProjet);
 $syntheseProjet = Materiel::synthese($recapProjet);
+$aSacrifier = array_sum(array_column($recapProjet, 'biomasse'));
 $surfaceProjet = array_sum(array_map(static fn (array $pc): float => $pc['eau']['surface'] ?? 0.0, $parcelles));
 $besoinsProjet = $surfaceProjet > 0 ? BesoinEau::besoins($surfaceProjet) : [];
 $sansDimensions = array_column(array_filter($parcelles, static fn (array $pc): bool => $pc['eau'] === null), 'code');
@@ -809,7 +810,8 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <p class="sous-titre"><?= implode(' · ', array_map(static fn (string $cle): string => htmlspecialchars(Materiel::ORIGINES[$cle], ENT_QUOTES, 'UTF-8') . ' : '
         . $syntheseProjet[$cle]['especes'] . ' végéta' . ($syntheseProjet[$cle]['especes'] > 1 ? 'ux' : 'l')
         . ($syntheseProjet[$cle]['plants'] > 0 ? ', ' . ($syntheseProjet[$cle]['incomplet'] ? 'au moins ' : '') . DessinsDossier::nombre((float) $syntheseProjet[$cle]['plants'], 0) . ' plants' : ''),
-        array_values(array_filter(array_keys(Materiel::ORIGINES), static fn (string $cle): bool => isset($syntheseProjet[$cle]))))) ?>.</p>
+        array_values(array_filter(array_keys(Materiel::ORIGINES), static fn (string $cle): bool => isset($syntheseProjet[$cle]))))) ?>.<?= $aSacrifier > 0
+        ? ' Dont ' . DessinsDossier::nombre((float) $aSacrifier, 0) . ' plants de biomasse, à sacrifier à la perturbation.' : '' ?></p>
     <table class="liste">
       <thead><tr><th>Végétal</th><th>Origine</th><th>Parcelles</th><th class="nombre">Quantité</th></tr></thead>
       <tbody>

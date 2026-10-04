@@ -20,6 +20,7 @@ use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Parcelles;
+use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
@@ -239,6 +240,8 @@ if (!$demandeNouvelle) {
         $parcelleActive = $parcelles[0];
     }
 }
+// La part de biomasse, face aux 75 % (`PartBiomasse`) : par planche au potager, sur la ligne centrale en pérenne.
+$partsBiomasse = $parcelleActive !== null ? (new PartBiomasse())->dUneParcelle($parcelleActive, $siteId) : [];
 if ($parcelleActive === null && $parcelles === [] && $erreursCreation !== []) {
     // Échec de création avec zéro parcelle existante : rester sur le formulaire.
     $demandeNouvelle = true;
@@ -483,6 +486,12 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-planche{ fill:var(--socle-accent-doux); fill-opacity:.5; }
   .plan-plant{ stroke:#fff; stroke-width:1.5; }
   .plan-plant-envergure{ fill-opacity:.28; stroke-opacity:.6; stroke-width:1; }
+  /* La part de biomasse au panneau Informations : la liste du scénario et du potager, sans couleur d'alerte. */
+  .pi-saut{ list-style:none; margin:0 0 .9rem; padding:0; font:400 .84rem/1.45 var(--texte); }
+  .pi-saut li{ margin:0 0 .35rem; padding-left:1.3rem; position:relative; }
+  .pi-saut .pi-saut-signe{ position:absolute; left:0; }
+  .pi-saut li.ok .pi-saut-signe{ color:var(--accent-titre); }
+  .pi-saut small{ color:var(--muted); }
   /* Les sigles des plants, la zone de survol, la légende (le porteur, 2026-10-01). */
   .plan-sigle{ font-family:var(--titre); font-weight:600; fill:var(--ink); stroke:var(--surface); paint-order:stroke;
     text-anchor:middle; dominant-baseline:central; pointer-events:none; }
@@ -1335,6 +1344,19 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          cochés « vent », et la colonne vertébrale choisie un plant sur deux. Un côté ne garde que les plantes qu'il
          peut porter. S'il en reste moins de deux, rien n'est réparti et l'atelier dit pourquoi. L'aperçu s'affiche
          sur le plan avant de poser, et chaque côté se retouche ensuite à la main.</p>
+<?php if ($partsBiomasse !== []): ?>
+      <p><strong>La part de biomasse.</strong> Théry destine 70 à 80 % des plantes implantées à la biomasse et à la
+         perturbation (ch. 11). L'atelier vise 75 %, <?= ($parcelleActive['type'] ?? '') === 'potager' ? 'planche par planche' : 'sur la ligne centrale' ?>.
+         C'est un repère, pas une règle.</p>
+      <ul class="pi-saut">
+<?php foreach ($partsBiomasse as $pb): ?>
+        <li class="<?= $pb['atteinte'] ? 'ok' : 'vide' ?>"><span class="pi-saut-signe"><?= $pb['atteinte'] === null ? '○' : ($pb['atteinte'] ? '✓' : '·') ?></span>
+          <strong><?= htmlspecialchars($pb['libelle'], ENT_QUOTES, 'UTF-8') ?></strong> : <?= $pb['part'] === null ? 'rien de compté'
+            : (int) round($pb['part'] * 100) . ' %, ' . $pb['biomasse'] . ' plant' . ($pb['biomasse'] > 1 ? 's' : '') . ' de biomasse sur ' . $pb['total'] ?><?= $pb['sans_nombre'] !== []
+            ? ' · <small>sans nombre de plants : ' . htmlspecialchars(implode(', ', $pb['sans_nombre']), ENT_QUOTES, 'UTF-8') . '</small>' : '' ?></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
 <?php endif; ?>
       <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>

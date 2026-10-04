@@ -38,6 +38,7 @@ use Syntropia\Web\Especes;
 use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Occupation;
 use Syntropia\Web\Parcelles;
+use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Sites;
 
 Authentification::demarrer($_SERVER);
@@ -465,6 +466,8 @@ foreach ($especesService->toutes($siteId) as $e) {
     }
 }
 $occupation = $parcelle !== null ? (new Occupation())->dUneParcelle($parcelle, $siteId) : null;
+// La part de biomasse de chaque planche, face aux 75 % (`PartBiomasse`) — une information.
+$partsBiomasse = $parcelle !== null ? (new PartBiomasse())->dUneParcelle($parcelle, $siteId) : [];
 $titrePage = $parcelle !== null ? $parcelle['code'] . ' — ' . $parcelle['nom'] : '';
 $lienParcelle = static fn (array $p): string => (($p['type'] ?? '') === 'potager' ? 'conception-potager.php' : 'conception-scenario.php') . '?parcelle=' . (int) $p['id'];
 $listeNoms = static fn (array $noms): string => implode(', ', array_map(static fn (string $n): string => Associations::toxique($n) ? $n . ' (toxique)' : $n, $noms));
@@ -1123,6 +1126,19 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
         $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
         <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
           <strong><?= $h($o['libelle']) ?></strong> : <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
+<?php if ($partsBiomasse !== []): ?>
+      <p><strong>La part de biomasse.</strong> Théry destine 70 à 80 % des plantes implantées à la biomasse et à la
+         perturbation (ch. 11). L'atelier vise 75 %, <?= true ? 'planche par planche' : 'sur la ligne centrale' ?>.
+         C'est un repère, pas une règle.</p>
+      <ul class="pi-saut">
+<?php foreach ($partsBiomasse as $pb): ?>
+        <li class="<?= $pb['atteinte'] ? 'ok' : 'vide' ?>"><span class="pi-saut-signe"><?= $pb['atteinte'] === null ? '○' : ($pb['atteinte'] ? '✓' : '·') ?></span>
+          <strong><?= htmlspecialchars($pb['libelle'], ENT_QUOTES, 'UTF-8') ?></strong> : <?= $pb['part'] === null ? 'rien de compté'
+            : (int) round($pb['part'] * 100) . ' %, ' . $pb['biomasse'] . ' plant' . ($pb['biomasse'] > 1 ? 's' : '') . ' de biomasse sur ' . $pb['total'] ?><?= $pb['sans_nombre'] !== []
+            ? ' · <small>sans nombre de plants : ' . htmlspecialchars(implode(', ', $pb['sans_nombre']), ENT_QUOTES, 'UTF-8') . '</small>' : '' ?></li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>

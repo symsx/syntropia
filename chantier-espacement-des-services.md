@@ -1,6 +1,6 @@
 # L'espacement des plantes de service — une règle tirée des sources
 
-**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 à 3 faites le même jour.** Le porteur a revu `espacement_retenu_m` de dix
+**Demandé par le porteur le 2026-10-04 ; toutes les questions tranchées le même jour (§ Décisions). Phases 1 à 4 faites le même jour ; la 5 attend la relecture du cadre.** Le porteur a revu `espacement_retenu_m` de dix
 espèces du cadre et complété quatre émergents (chêne, orme, hêtre, mûrier noir), sans source pour ces valeurs. Il
 précise le sens de la colonne et demande une règle :
 
@@ -210,4 +210,26 @@ Ce qui est fait :
 - **Limites** : plusieurs productions sur la même ligne se comptent chacune à son intervalle, sans vérifier qu'elles
   tiennent ensemble ; une production sans espacement de production reste « à déterminer » (elle prenait avant
   l'espacement de service à défaut).
+
+## Phase 4 — faite le 2026-10-04, pas encore déployée
+
+- **`Espacement::partBiomasse()`** (pur) : la part de plants de biomasse d'un ensemble, face aux 75 % ; un plant sans
+  nombre ne compte pas et se nomme. **`Espacement::ligneDeBiomasse()`** : une ligne de production ne l'est jamais ; une
+  ligne de service l'est si ses fonctions, à défaut le rôle de l'espèce, donnent le service biomasse.
+- **`src/Web/PartBiomasse.php`** : par planche au potager (ses cultures et ses lignes de service), sur la ligne centrale
+  en pérenne (les plants de la série, `quantitesScenario()` marquant ceux qui y sont : `sur_ligne`).
+- **Affichée** au panneau Informations du plan (`conception-parcelles.php`), du scénario et du potager, comme
+  l'occupation au sol : ✓ à 75 % ou plus, · en dessous, ○ sans rien de compté — **sans couleur d'alerte**.
+- **« Matériel et eau »** : une puce « Biomasse à sacrifier · N plants » et sa note ; le Dossier Projet le dit au
+  récapitulatif. `Materiel::regrouper()` somme les plants de biomasse connus (`biomasse`), chaque entrée de
+  `MaterielDuSite` disant si elle en est.
+- Livret « L'atelier » : plan, scénario, potager, matériel.
+- **Vérifié** : le plan « Les eucalyptus » avec une lavande bloque-herbe — 27 plants de biomasse sur 40, 67,5 %, « · » ;
+  un goji au rôle « production et biomasse » posé en service compte en biomasse. La Vadaux P1 : 77 plants de biomasse à
+  sacrifier (chalef 19, consoude 40, saule 18, tous de service biomasse en bordure), la planche 1 « rien de compté »
+  (ses cultures n'ont pas de nombre). Pages sans erreur.
+- **Laissé tel quel** : le contrôle « le saut du chat est-il préparé ? » dit toujours « aucun repère ne dit encore
+  combien de masse suffit » — il parle de masse à tailler, la part de biomasse parle de nombre de plants.
+- **Une phrase de synthèse retenue sans guillemets** : « 70 à 80 % des plantes implantées… » est la synthèse du
+  corpus (ch. 11), non une citation vérifiée du livre ; l'écran et le nœud la disent sans guillemets.
 

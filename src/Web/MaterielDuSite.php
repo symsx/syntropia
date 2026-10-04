@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Syntropia\Web;
 
+use Syntropia\Espacement;
 use Syntropia\Materiel;
 use Syntropia\Scenario;
 
@@ -18,7 +19,8 @@ use Syntropia\Scenario;
  * les lignes du plan (bordures, lignes de service des planches) font foi : une plante du scénario déclarée en bordure
  * prend leur compte, et ce que le plan porte sans que le scénario le nomme s'ajoute (chantier « peuplement de la
  * parcelle », Phase 7). Sans quantité saisie, l'espacement de la ligne, à défaut celui du référentiel, l'estime ; la
- * ligne centrale d'une parcelle pérenne se compte en série (`Materiel::quantitesScenario()`).
+ * ligne centrale d'une parcelle pérenne se compte en série (`Materiel::quantitesScenario()`). Chaque entrée dit si ses
+ * plants sont de biomasse — ceux qui seront sacrifiés à la perturbation (Phase 4 du même chantier).
  */
 final class MaterielDuSite
 {
@@ -52,6 +54,9 @@ final class MaterielDuSite
             return $v > 0 ? $v : null;
         };
 
+        // Un plant du plan (bordure, ligne de service) est de biomasse quand le rôle de son espèce en donne le service.
+        $planDeBiomasse = static fn (array $d): bool => Espacement::service(($especeDe($d['espece']) ?? $especeDe($d['nom_scientifique']))['role'] ?? null) === 'biomasse';
+
         $entrees = [];
         $sansScenario = [];
         $sansCulture = [];
@@ -68,11 +73,12 @@ final class MaterielDuSite
                 }
                 foreach ($cultures as $c) {
                     $entrees[] = ['ligne' => ['espece' => $c['espece'], 'origine' => 'potager'], 'parcelle' => (string) $p['code'],
-                        'qte' => Materiel::quantiteCulture($c, $bandes, $espacementDe((string) $c['espece']))];
+                        'qte' => Materiel::quantiteCulture($c, $bandes, $espacementDe((string) $c['espece'])),
+                        'biomasse' => Espacement::service($c['role'] ?? null) === 'biomasse'];
                 }
                 foreach ($duPlan as $d) {
                     $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
-                        'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
+                        'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null], 'biomasse' => $planDeBiomasse($d)];
                 }
                 continue;
             }
@@ -95,16 +101,18 @@ final class MaterielDuSite
                             $n = $n === null || $d['n'] === null ? null : $n + $d['n'];
                         }
                     }
-                    $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => ['n' => $trouve ? $n : null, 'mode' => 'plan', 'espacement' => null]];
+                    $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => ['n' => $trouve ? $n : null, 'mode' => 'plan', 'espacement' => null],
+                        'biomasse' => Espacement::ligneDeBiomasse($l, $especeDe((string) $l['espece']))];
                     continue;
                 }
-                $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => $quantites[$rang]];
+                $entrees[] = ['ligne' => $l, 'parcelle' => (string) $p['code'], 'qte' => $quantites[$rang],
+                    'biomasse' => Espacement::ligneDeBiomasse($l, $especeDe((string) $l['espece']))];
             }
             // Ce que le plan porte sans que le scénario le nomme.
             foreach ($duPlan as $k => $d) {
                 if (!isset($pris[$k])) {
                     $entrees[] = ['ligne' => ['espece' => $d['espece'], 'origine' => $d['origine']], 'parcelle' => (string) $p['code'],
-                        'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null]];
+                        'qte' => ['n' => $d['n'], 'mode' => 'plan', 'espacement' => null], 'biomasse' => $planDeBiomasse($d)];
                 }
             }
         }

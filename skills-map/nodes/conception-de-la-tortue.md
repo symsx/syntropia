@@ -237,8 +237,8 @@ Une plante de biomasse peut aussi revenir à intervalle régulier : chez Théry,
 posé tous les 2 m (ch. 11 § 7). Cet intervalle découle de la composition de la série ; ce n'est pas un espacement de
 production.
 
-**Les 75 % de biomasse.** *« 70 à 80 % des plantes implantées sont destinées à la biomasse et à la perturbation »*
-(Théry ch. 11, règle 7 ; ch. 14 ; Joala 7-7) — un chiffre que la bibliographie du livre range parmi ceux sans
+**Les 75 % de biomasse.** 70 à 80 % des plantes implantées sont destinées à la biomasse et à la perturbation
+(Théry ch. 11, règle 7, dans la synthèse du corpus ; ch. 14 ; Joala 7-7) — un chiffre que la bibliographie du livre range parmi ceux sans
 référence. L'atelier retient **75 %, pour le seul service biomasse et perturbation**, compté **par planche au
 potager** (une ligne y porte une espèce) et **par ligne en pérenne**. Il sert deux fois : dire sur le plan et dans le
 scénario la part de biomasse — **une information, jamais une alerte**, sous 75 % — et compter dans « Matériel et eau »

@@ -57,7 +57,7 @@ COUVERTURE = {
     "Concevoir : l'étude du sol": ["public/conception-etude-sol.php", "public/releve-vierge.php", "src/FicheTerrain.php"],
     "Concevoir : le plan de la parcelle": [
         "public/conception-parcelles.php", "public/conception-parcelles.js", "src/Web/Parcelles.php",
-        "src/Planches.php", "src/Stade.php", "src/Tortue.php", "public/assets/js/gabarit.js",
+        "src/Planches.php", "src/Stade.php", "src/Tortue.php", "public/assets/js/gabarit.js", "src/Web/PartBiomasse.php",
     ],
     "Concevoir : les bordures": [
         "public/conception-parcelles.php", "public/conception-parcelles.js", "src/Bordures.php",
@@ -67,13 +67,13 @@ COUVERTURE = {
     "Concevoir : le scénario": [
         "public/conception-scenario.php", "public/conception-calendrier.php", "src/Web/Scenarios.php",
         "src/Scenario.php", "src/Strates.php", "src/Web/Occupation.php", "src/SautDuChat.php",
-        "public/assets/js/strates.js",
+        "public/assets/js/strates.js", "src/Web/PartBiomasse.php",
     ],
     "Concevoir : les espèces": ["public/especes.php", "src/Web/Especes.php", "src/Espacement.php"],
     "Concevoir : le potager": [
         "public/conception-potager.php", "src/Web/Cultures.php", "src/Associations.php", "src/PlanDeCulture.php",
         "src/CalendrierLopez.php", "src/Succession.php", "src/LignesDeService.php", "src/Temps.php",
-        "src/Web/CalendrierLignes.php",
+        "src/Web/CalendrierLignes.php", "src/Web/PartBiomasse.php",
     ],
     "Concevoir : le matériel et l'eau": [
         "public/conception-materiel-et-eau.php", "src/Materiel.php", "src/BesoinEau.php", "src/Web/MaterielDuSite.php",

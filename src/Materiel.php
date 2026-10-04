@@ -202,7 +202,8 @@ final class Materiel
      * @param list<array<string, mixed>> $lignes   des lignes de `scenario_ligne`
      * @param array<string, mixed>|null $bandes    `bandes()` de la parcelle
      * @param callable(string): ?array $especeDe   la fiche du référentiel d'un végétal, par son nom
-     * @return list<array{n: ?int, mode: ?string, espacement: ?float}>
+     * @return list<array{n: ?int, mode: ?string, espacement: ?float, sur_ligne: bool}>
+     *         `sur_ligne` : la ligne compte parmi les plants de la ligne centrale (pour la part de biomasse)
      */
     public static function quantitesScenario(array $lignes, ?array $bandes, callable $especeDe): array
     {
@@ -220,12 +221,13 @@ final class Materiel
             $annuelle = in_array((string) ($e['cycle'] ?? ''), Bordures::CYCLES_EXCLUS, true);
             if (!$centre || ($annuelle && !$production)) {
                 // Hors de la série : l'estimation d'une ligne par bande.
-                $out[$i] = self::quantite($l, $bandes, $e === null ? null : $positif($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']));
+                $out[$i] = self::quantite($l, $bandes, $e === null ? null : $positif($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']))
+                    + ['sur_ligne' => false];
                 continue;
             }
             $esp = $espLigne ?? $positif($production ? ($e['espacement_monoculture_m'] ?? null) : ($e['espacement_retenu_m'] ?? null));
             if (($l['nb_pieds'] ?? null) !== null && $l['nb_pieds'] !== '') {
-                $out[$i] = ['n' => (int) $l['nb_pieds'], 'mode' => 'saisi', 'espacement' => $esp];
+                $out[$i] = ['n' => (int) $l['nb_pieds'], 'mode' => 'saisi', 'espacement' => $esp, 'sur_ligne' => true];
                 $saisies[$i] = $esp;
             } elseif ($production) {
                 $structure[$i] = $esp;
@@ -240,11 +242,11 @@ final class Materiel
         $occupe = 0.0;
         foreach ($structure as $i => $esp) {
             if ($nb <= 0 || $longueur <= 0 || $esp === null) {
-                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => $esp];
+                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => $esp, 'sur_ligne' => true];
                 continue;
             }
             $parPlanche = self::surBande($longueur, $esp);
-            $out[$i] = ['n' => $nb * $parPlanche, 'mode' => 'estime', 'espacement' => $esp];
+            $out[$i] = ['n' => $nb * $parPlanche, 'mode' => 'estime', 'espacement' => $esp, 'sur_ligne' => true];
             $occupe += $parPlanche * $case;
         }
         foreach ($saisies as $i => $esp) {
@@ -257,11 +259,12 @@ final class Materiel
         $k = 0;
         foreach ($serie as $i => $esp) {
             if ($esp === null) {
-                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => null];
+                $out[$i] = ['n' => null, 'mode' => null, 'espacement' => null, 'sur_ligne' => true];
                 continue;
             }
             $n = $compte !== null && $compte['ok'] ? $nb * $compte['comptes'][$k] : 0;
-            $out[$i] = $n > 0 ? ['n' => $n, 'mode' => 'estime', 'espacement' => $esp] : ['n' => null, 'mode' => null, 'espacement' => $esp];
+            $out[$i] = ($n > 0 ? ['n' => $n, 'mode' => 'estime', 'espacement' => $esp] : ['n' => null, 'mode' => null, 'espacement' => $esp])
+                + ['sur_ligne' => true];
             $k++;
         }
         ksort($out);
@@ -307,7 +310,10 @@ final class Materiel
      * on n'additionne pas des quantités qu'on ne connaît pas, on le dit.
      *
      * @param list<array{ligne: array<string, mixed>, parcelle: string, qte: array{n: ?int, mode: ?string, espacement: ?float, graines?: ?int}}> $entrees
-     * @return list<array{espece: string, origine: string, parcelles: list<string>, n: ?int, connu: int, inconnu: int, estime: bool, graines: int}>
+     * `biomasse` : combien de ces plants, connus, sont de biomasse — à sacrifier à la perturbation (une entrée marquée
+     * `biomasse`, `MaterielDuSite`).
+     *
+     * @return list<array{espece: string, origine: string, parcelles: list<string>, n: ?int, connu: int, inconnu: int, estime: bool, graines: int, biomasse: int}>
      */
     public static function regrouper(array $entrees): array
     {
@@ -317,7 +323,7 @@ final class Materiel
             $espece = trim((string) $e['ligne']['espece']);
             $cle = $origine . '|' . mb_strtolower($espece);
             $groupes[$cle] ??= ['espece' => $espece, 'origine' => $origine, 'parcelles' => [], 'n' => 0,
-                'connu' => 0, 'inconnu' => 0, 'estime' => false, 'graines' => 0];
+                'connu' => 0, 'inconnu' => 0, 'estime' => false, 'graines' => 0, 'biomasse' => 0];
             $g = &$groupes[$cle];
             if (!in_array($e['parcelle'], $g['parcelles'], true)) {
                 $g['parcelles'][] = $e['parcelle'];
@@ -328,6 +334,7 @@ final class Materiel
                 $g['connu'] += $e['qte']['n'];
                 $g['estime'] = $g['estime'] || $e['qte']['mode'] === 'estime';
                 $g['graines'] += (int) ($e['qte']['graines'] ?? 0);
+                $g['biomasse'] += !empty($e['biomasse']) ? $e['qte']['n'] : 0;
             }
             unset($g);
         }

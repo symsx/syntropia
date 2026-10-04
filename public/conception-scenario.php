@@ -35,6 +35,7 @@ use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\Occupation;
 use Syntropia\Web\Parcelles;
+use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Scenarios;
 use Syntropia\Web\Sites;
 
@@ -94,6 +95,8 @@ if ($parcelle !== null) {
     $souhaitsDuSite = $scenarios->souhaitsDuSite($siteId, $participantId);
     // L'occupation au sol par strate (Théry, ch. 05) — les quatre strates de lumière, syntropie seulement.
     $occupation = isset($conduite->strates()['emergente']) ? (new Occupation())->dUneParcelle($parcelle, $siteId) : null;
+    // La part de biomasse de la ligne centrale, face aux 75 % (`PartBiomasse`) — une information.
+    $partsBiomasse = (new PartBiomasse())->dUneParcelle($parcelle, $siteId);
     $prepareSaut = SautDuChat::conception($lignes, $conduite->scenarioADesTemps(), (string) ($site['ressource_eau'] ?? ''), $conduite->strates(), Stade::depuis($parcelle['stade'] ?? null));
 
     $editId = (int) ($_GET['vegetal'] ?? 0);
@@ -885,6 +888,19 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
         $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
         <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
           <strong><?= $h($o['libelle']) ?></strong> : <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
+<?php endforeach; ?>
+      </ul>
+<?php endif; ?>
+<?php if (($partsBiomasse ?? []) !== []): ?>
+      <p><strong>La part de biomasse.</strong> Théry destine 70 à 80 % des plantes implantées à la biomasse et à la
+         perturbation (ch. 11). L'atelier vise 75 %, <?= false ? 'planche par planche' : 'sur la ligne centrale' ?>.
+         C'est un repère, pas une règle.</p>
+      <ul class="pi-saut">
+<?php foreach ($partsBiomasse as $pb): ?>
+        <li class="<?= $pb['atteinte'] ? 'ok' : 'vide' ?>"><span class="pi-saut-signe"><?= $pb['atteinte'] === null ? '○' : ($pb['atteinte'] ? '✓' : '·') ?></span>
+          <strong><?= htmlspecialchars($pb['libelle'], ENT_QUOTES, 'UTF-8') ?></strong> : <?= $pb['part'] === null ? 'rien de compté'
+            : (int) round($pb['part'] * 100) . ' %, ' . $pb['biomasse'] . ' plant' . ($pb['biomasse'] > 1 ? 's' : '') . ' de biomasse sur ' . $pb['total'] ?><?= $pb['sans_nombre'] !== []
+            ? ' · <small>sans nombre de plants : ' . htmlspecialchars(implode(', ', $pb['sans_nombre']), ENT_QUOTES, 'UTF-8') . '</small>' : '' ?></li>
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>

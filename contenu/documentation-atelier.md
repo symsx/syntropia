@@ -171,6 +171,9 @@ Au bas de la page, « Annuler les changements » ramène le plan tel qu'il est e
 
 Les deux demandent confirmation et n'enregistrent rien : seul « Enregistrer le plan » enregistre.
 
+Le panneau Informations donne aussi la part de biomasse : par planche pour un potager, sur la
+ligne centrale pour une parcelle pérenne. L'atelier vise 75 %.
+
 # Concevoir : les bordures
 
 Une fois le plan enregistré, **chaque côté actif d'une bordure reçoit une ligne de plants**, au
@@ -269,6 +272,10 @@ Le panneau Informations montre **l'occupation au sol** de chaque strate : la sur
 adultes, rapportée à la parcelle. Les repères de Théry sont de 20, 40, 60 et 80 % de la plus haute
 à la plus basse.
 
+Le même panneau donne **la part de biomasse** de la ligne centrale : combien de ses plants servent
+à la biomasse. Théry en destine 70 à 80 % à l'implantation, et l'atelier vise 75 %. C'est une
+information, pas une règle.
+
 Le même panneau dit si **le saut du chat est préparé** : des plantes à perturber, 70 à 80 % de
 biomasse, au moins deux espèces par strate, des plantes de démarrage, un geste de taille noté.
 
@@ -357,6 +364,9 @@ strates que les productions laissent vides, les plus hautes près du centre.
 Chaque ligne porte une espèce, sa mise en place et sa fin prévues, et ses perturbations prévues.
 Le calendrier du potager les montre en clair, à côté des cultures.
 
+Le panneau Informations donne **la part de biomasse** de chaque planche : ses cultures et ses
+lignes, comptées ensemble. L'atelier vise 75 %, d'après Théry. C'est une information.
+
 # Concevoir : le matériel et l'eau
 
 La page **Matériel et eau** dit ce qu'il faudra se procurer et l'eau qu'il faudra donner. Elle se
@@ -374,6 +384,9 @@ les cases qui restent. Les annuelles semées en poquets ne prennent pas de case.
 
 Pour un potager, la liste vient du plan de culture. Pour une culture semée à l'abri, le nombre de
 graines est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez.
+
+La **biomasse à sacrifier** compte les plants dont la fonction est la biomasse : ils seront taillés
+et rendus au sol.
 
 Le besoin en **eau** se donne pour trois états du sol : le volume par an, la réserve à prévoir et
 le débit d'une semaine de pointe. Ce sont des ordres de grandeur tirés de Lopez.
