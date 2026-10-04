@@ -121,6 +121,7 @@ if ($jetonOk) {
             'lignes'            => $_POST['lignes'] ?? null,
             'natures'           => $_POST['natures'] ?? null,
             'liane'             => $_POST['liane'] ?? null,
+            'reinitialiser'     => ($_POST['reinitialiser'] ?? '') === '1',
         ], (string) ($_POST['version_plan'] ?? ''));
         $erreursPlan = $resultatPlan['erreurs'];
         // Appelée en tâche de fond par conception-parcelles.js : une
@@ -1092,15 +1093,23 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="pd-note">Le plan enregistré n'a aucune bordure, et les lignes s'appuient sur lui. Cochez les côtés
            voulus, donnez-leur une largeur et enregistrez le plan : leurs lignes apparaîtront ici.</p>
 <?php endif; ?>
-<?php foreach ($lignesBordures as $cle => $lb):
+<?php $cotesBriseVent = $parcelleActive !== null ? RepartitionBordures::cotesBriseVent($parcelleActive) : [];
+foreach ($lignesBordures as $cle => $lb):
     [$cadre, $cote] = Bordures::depuisCle($cle);
     $geo = $lb['geometrie'];
     $compte = $lb['compte'];
     $resume = $lb['places'] === [] ? 'vide'
         : ($geo === null ? ($cadre === 'liane' ? 'ligne gardée, mais pas à cette position ou hors tortue liane' : 'ligne gardée, mais côté inactif')
         : ($compte['ok'] ? $compte['total'] . ' plant' . ($compte['total'] > 1 ? 's' : '') : 'pas de compte'));
-    $convenantes = array_values(array_filter($especesSite, static fn (array $e): bool => Bordures::convient($cadre, $e)));
-    $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !Bordures::convient($cadre, $e)));
+    // « Pour cette bordure » : ce que les règles conseillent sur ce côté (le porteur, 2026-10-04) — celles de la
+    // répartition. Le reste va dans « les autres espèces », sauf les plantes qui ne sont que de production : elles n'ont
+    // rien à faire en bordure et ne s'y proposent pas.
+    $bvCote = $cadre === 'externe' && in_array($cote, $cotesBriseVent, true);
+    $conseillee = static fn (array $e): bool => Bordures::convient($cadre, $e)
+        && ($cadre === 'liane' || RepartitionBordures::refusSurCote($cadre, $cote, $bvCote, $e) === null);
+    $convenantes = array_values(array_filter($especesSite, $conseillee));
+    $autres = array_values(array_filter($especesSite, static fn (array $e): bool => !$conseillee($e)
+        && array_values(array_filter(explode('|', (string) ($e['role'] ?? '')))) !== ['production']));
     $etiquette = static function (array $e) use ($nombreFr): string {
         $nom = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']) . ((string) $e['variete'] !== '' ? ' (' . $e['variete'] . ')' : '');
         return $nom . ', ' . (Espacement::deService($e) !== null ? $nombreFr((float) Espacement::deService($e)) . ' m' . (Espacement::parDefaut($e) ? ' par défaut' : '') : 'sans espacement de service');
@@ -1133,7 +1142,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
 <?php endif; ?>
 <?php endif; ?>
 <?php if ($peutEcrire && $geo !== null && $bordureProposee === $cle):
-    $proposition = Bordures::proposer($cadre, $cote, $especesSite);
+    $proposition = Bordures::proposer($cadre, $cote, $especesSite, $bvCote);
     $comptables = array_values(array_filter($proposition, static fn (array $pr): bool => Espacement::deService($pr['espece']) !== null));
     $apercu = $comptables !== [] ? Bordures::compter($geo['longueur'], array_map(static fn (array $pr): float => (float) Espacement::deService($pr['espece']), $comptables)) : null;
     $formProp = 'bl-prop-' . str_replace(':', '-', $cle); ?>
@@ -1154,9 +1163,10 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
               structure (Théry, ch. 15).<?= $annuelles !== [] ? ' La première année, doublez-les de lianes annuelles le temps qu’elles s’installent : '
               . htmlspecialchars(implode(', ', array_map(static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']), $annuelles)), ENT_QUOTES, 'UTF-8') . '.' : '' ?></p>
 <?php endif; ?>
-            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Voici toutes les espèces vivaces ou ligneuses de votre référentiel
-              qui savent ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . '. Les annuelles n\'y sont
-              pas, car une bordure est pérenne. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui
+            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Voici les espèces vivaces ou ligneuses de votre référentiel
+              qui savent ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . ' et que les règles conseillent
+              de ce côté : la face où chacune se plaît, des émergentes au sud et à l\'ouest de l\'externe. Les annuelles n\'y sont
+              pas, car une bordure est pérenne. Les autres espèces restent à ajouter à la main. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui
               n'ont pas d'espacement ne sont pas cochées, car elles ne peuvent pas se compter.<?= $apercu !== null && $apercu['ok'] ? ' Les '
               . count($comptables) . ' cochées donneraient ' . $apercu['total'] . ' plants sur ' . htmlspecialchars($nombreFr($geo['longueur']), ENT_QUOTES, 'UTF-8') . ' m.' : '' ?></p>
             <form method="post" id="<?= $formProp ?>">
@@ -1327,13 +1337,16 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          « Ce que la géométrie donne » se met à jour au relâchement. Le plan se zoome avec la molette, ou avec
          « − » et « + » en bas du plan. Agrandi, il se fait glisser.</p>
       <p><strong>Annuler les changements</strong>, en bas, ramène le plan tel qu'il est enregistré.
-         <strong>Réinitialiser</strong> le fait repartir des valeurs par défaut de l'atelier (12 × 8 m). Les deux
+         <strong>Réinitialiser</strong> fait repartir toute la parcelle des valeurs par défaut de l'atelier
+         (12 × 8 m), avec la conduite du site, sans stade ni tortue, et sans plantes sur ses lignes. Les deux
          demandent confirmation et n'enregistrent rien : seul « Enregistrer le plan » enregistre.</p>
       <p><strong>Les plantes des bordures.</strong> Une fois le plan enregistré, chaque côté actif reçoit une
          ligne de plants, avec une espèce ou plusieurs qui alternent. La bordure externe bloque l'herbe et freine
-         le vent, la bordure interne apporte de la biomasse. Les espèces qui remplissent ces fonctions viennent en
-         tête de la liste. « Proposer les espèces de cette bordure » les montre toutes, sauf les annuelles, car une
-         bordure est pérenne. Vous gardez celles que vous voulez. L'atelier compte les plants de chaque espèce
+         le vent, la bordure interne apporte de la biomasse. « Proposer les espèces de cette bordure » montre
+         celles qui remplissent ces fonctions et que les règles conseillent de ce côté, sauf les annuelles, car une
+         bordure est pérenne. Lavande, romarin et hysope vont au sud et à l'ouest, sauge et consoude au nord et à
+         l'est. Vous gardez celles que vous voulez. Les autres espèces restent à ajouter à la main, sauf les plantes
+         qui ne sont que de production. L'atelier compte les plants de chaque espèce
          d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chacune avec sa
          couleur et son sigle. La <strong>légende</strong> les liste. Les sigles s'inscrivent sur le plan quand le
          zoom le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Tout/rien » affiche
@@ -1341,7 +1354,7 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
          bas de la page, masque la légende.</p>
       <p><strong>Répartir une liste de plantes.</strong> Sur des bordures encore vides, vous cochez une seule
          liste pour toute la parcelle. L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en
-         alternance. Il pose seulement des émergentes au sud et à l'ouest de l'externe, des brise-vent sur les côtés
+         alternance, et du côté où elle se plaît. Il pose seulement des émergentes au sud et à l'ouest de l'externe, des brise-vent sur les côtés
          cochés « vent », et la colonne vertébrale choisie un plant sur deux. Un côté ne garde que les plantes qu'il
          peut porter. S'il en reste moins de deux, rien n'est réparti et l'atelier dit pourquoi. L'aperçu s'affiche
          sur le plan avant de poser, et chaque côté se retouche ensuite à la main.</p>

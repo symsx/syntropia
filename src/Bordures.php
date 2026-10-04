@@ -203,16 +203,17 @@ final class Bordures
     }
 
     /**
-     * Ce que l'atelier propose pour une bordure : **toutes** les espèces du référentiel qui remplissent sa fonction
+     * Ce que l'atelier propose pour un côté de bordure : **toutes** les espèces du référentiel qui remplissent sa fonction
      * (décision du porteur, 2026-09-23), dans l'ordre reçu, **sauf les annuelles et bisannuelles** — une bordure porte
-     * des plantes pérennes ; un cycle non noté ne l'écarte pas. Chacune vient avec les fonctions qu'elle y remplit et,
-     * s'il y a lieu, une réserve tirée du corpus : sur une face sud ou ouest de la bordure externe, le ch. 14 (§ 4.2,
-     * règle 1) ne veut que des émergentes — une espèce dont la strate notée ne l'est pas est signalée, non écartée.
+     * des plantes pérennes ; un cycle non noté ne l'écarte pas. **Seulement celles que les règles conseillent sur ce
+     * côté** (le porteur, 2026-10-04) : les mêmes que la répartition (`RepartitionBordures::refusSurCote()` — orientation
+     * notée, émergentes sur les faces exposées de l'externe, brise-vent seul sur un côté coché). Les autres restent
+     * ajoutables à la main, parmi « les autres espèces ». Chacune vient avec les fonctions qu'elle y remplit.
      *
      * @param list<array<string, mixed>> $especes le référentiel du site (`Especes::toutes()`)
      * @return list<array{espece: array<string, mixed>, fonctions: list<string>, reserve: ?string}>
      */
-    public static function proposer(string $cadre, string $cote, array $especes): array
+    public static function proposer(string $cadre, string $cote, array $especes, bool $briseVent = false): array
     {
         $out = [];
         foreach ($especes as $e) {
@@ -224,20 +225,16 @@ final class Bordures
                 $out[] = self::propositionLiane($e, $roles);
                 continue;
             }
+            if (RepartitionBordures::refusSurCote($cadre, $cote, $briseVent, $e) !== null) {
+                continue;
+            }
             $fonctions = [];
             foreach (self::CADRES[$cadre]['fonctions'] as $f) {
                 if (in_array($f, $roles, true) || ($f === 'bloque_herbe' && (int) ($e['bloque_herbe'] ?? 0) === 1)) {
                     $fonctions[] = $f;
                 }
             }
-            $reserve = null;
-            // Une bordure rend un service : sa strate de service si elle est dite (schéma 18), sinon ses strates possibles.
-            $strates = LignesDeService::stratesService($e);
-            if ($cadre === 'externe' && in_array($cote, ['sud', 'ouest'], true) && $strates !== [] && !in_array('emergente', $strates, true)) {
-                $reserve = 'Face ' . $cote . ', exposée : le ch. 14 n’y veut que des plantes émergentes, et sa strate notée est « '
-                    . implode(', ', $strates) . ' ».';
-            }
-            $out[] = ['espece' => $e, 'fonctions' => $fonctions, 'reserve' => $reserve];
+            $out[] = ['espece' => $e, 'fonctions' => $fonctions, 'reserve' => null];
         }
         if ($cadre === 'liane') {
             // Les émergentes d'abord (en haut de la structure), puis la strate haute ; tri stable.
@@ -282,6 +279,31 @@ final class Bordures
     private static function strates(array $e): array
     {
         return array_values(array_filter(explode('|', (string) ($e['strates_possibles'] ?? ''))));
+    }
+
+    /** Où se dit le côté, dans une phrase (« sa place en bordure est au sud et à l’ouest »). */
+    private const AU_COTE = ['nord' => 'au nord', 'sud' => 'au sud', 'est' => 'à l’est', 'ouest' => 'à l’ouest'];
+
+    /**
+     * Les côtés où l'orientation notée au référentiel (`espece.orientation_bordure`) place une espèce en bordure :
+     * « sud-ouest » → sud et ouest, « nord-est » → nord et est ; « les deux », ou rien de noté → tous les côtés (`null`).
+     * C'est le tableau des bordures vivantes du livre (annexes ; ch. 14 § 4.2) et le cours 7-5 de la formation : romarin,
+     * lavande, hysope au sud-ouest, sauge et consoude au nord-est. Règle posée par le porteur le 2026-10-04.
+     *
+     * @param array<string, mixed> $e
+     * @return list<string>|null
+     */
+    public static function cotesConseilles(array $e): ?array
+    {
+        preg_match_all('/\b(nord|sud|est|ouest)\b/u', mb_strtolower((string) ($e['orientation_bordure'] ?? '')), $m);
+        return $m[1] === [] ? null : array_values(array_unique($m[1]));
+    }
+
+    /** @param list<string> $cotes */
+    public static function auxCotes(array $cotes): string
+    {
+        $mots = array_map(static fn (string $c): string => self::AU_COTE[$c] ?? $c, $cotes);
+        return count($mots) > 1 ? implode(', ', array_slice($mots, 0, -1)) . ' et ' . end($mots) : (string) ($mots[0] ?? '');
     }
 
     /**

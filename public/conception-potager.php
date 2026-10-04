@@ -441,7 +441,7 @@ foreach (array_unique(array_merge(array_keys($calendrierLignes['dates']), array_
         'titre' => 'Prévu : ' . implode(' · ', array_filter([$P !== null ? 'mise en place ' . $dateFr((string) $P) : '', $F !== null ? 'fin ' . $dateFr((string) $F) : '',
             $T !== [] ? count($T) . ' perturbation' . (count($T) > 1 ? 's' : '') : '']))];
 }
-usort($lignesCal, static fn (array $a, array $b): int => [$a['planche'] ?? PHP_INT_MAX, $a['debut'], mb_strtolower($a['espece'])] <=> [$b['planche'] ?? PHP_INT_MAX, $b['debut'], mb_strtolower($b['espece'])]);
+usort($lignesCal, static fn (array $a, array $b): int => [$a['planche'] ?? PHP_INT_MAX, $a['debut'], \Syntropia\Associations::normaliser($a['espece'])] <=> [$b['planche'] ?? PHP_INT_MAX, $b['debut'], \Syntropia\Associations::normaliser($b['espece'])]);
 $sansDate = count($cultures) - count($datees);
 $lienCal = static fn (int $a): string => $retour . '&vue=calendrier&annee=' . $a;
 $initiales12 = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];

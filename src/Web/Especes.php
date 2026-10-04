@@ -77,9 +77,10 @@ final class Especes
                 $fusion[$cle] = $ligne;
             }
         }
+        // Sans accent ni casse (le porteur, 2026-10-04) : « Érable » se range parmi les E, pas après le Z.
         usort($fusion, static fn (array $a, array $b): int =>
-            strcasecmp((string) ($a['nom_usuel'] ?: $a['nom_scientifique']),
-                       (string) ($b['nom_usuel'] ?: $b['nom_scientifique'])));
+            strcmp(\Syntropia\Associations::normaliser((string) ($a['nom_usuel'] ?: $a['nom_scientifique'])),
+                   \Syntropia\Associations::normaliser((string) ($b['nom_usuel'] ?: $b['nom_scientifique']))));
         return array_values($fusion);
     }
 

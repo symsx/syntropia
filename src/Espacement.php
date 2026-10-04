@@ -65,6 +65,24 @@ final class Espacement
         return self::DEFAUTS[self::service($espece['role'] ?? null)] ?? null;
     }
 
+    /**
+     * L'espacement d'une culture du potager : celui de production (`espacement_monoculture_m`), à défaut celui de service
+     * noté sur la fiche (`espacement_retenu_m`) ; `null` sans l'un ni l'autre. Une culture est une production — la
+     * courge se cultive à 1 m, même si elle sert à 0,40 m comme biomasse (le porteur, 2026-10-04).
+     *
+     * @param array<string, mixed>|null $espece une fiche du référentiel
+     */
+    public static function deCulture(?array $espece): ?float
+    {
+        foreach (['espacement_monoculture_m', 'espacement_retenu_m'] as $champ) {
+            $v = $espece[$champ] ?? null;
+            if ($v !== null && $v !== '' && (float) $v > 0) {
+                return (float) $v;
+            }
+        }
+        return null;
+    }
+
     /** L'espacement de service vient-il du défaut de son service, et non de la fiche ? */
     public static function parDefaut(?array $espece): bool
     {

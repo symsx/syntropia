@@ -345,7 +345,7 @@ final class Materiel
         }
         unset($g);
         usort($liste, static fn (array $a, array $b): int =>
-            [$ordre[$a['origine']] ?? 99, mb_strtolower($a['espece'])] <=> [$ordre[$b['origine']] ?? 99, mb_strtolower($b['espece'])]);
+            [$ordre[$a['origine']] ?? 99, Associations::normaliser($a['espece'])] <=> [$ordre[$b['origine']] ?? 99, Associations::normaliser($b['espece'])]);
         return $liste;
     }
 

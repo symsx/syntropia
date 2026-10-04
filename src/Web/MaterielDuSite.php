@@ -47,12 +47,8 @@ final class MaterielDuSite
             }
         }
         $especeDe = static fn (string $nom): ?array => $fiches[mb_strtolower(trim($nom))] ?? null;
-        // L'espacement du référentiel pour une culture du potager : de service, à défaut de production.
-        $espacementDe = static function (string $nom) use ($especeDe): ?float {
-            $e = $especeDe($nom);
-            $v = $e === null ? 0.0 : (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
-            return $v > 0 ? $v : null;
-        };
+        // L'espacement du référentiel pour une culture du potager : de production, à défaut de service.
+        $espacementDe = static fn (string $nom): ?float => Espacement::deCulture($especeDe($nom));
 
         // Un plant du plan (bordure, ligne de service) est de biomasse quand le rôle de son espèce en donne le service.
         $planDeBiomasse = static fn (array $d): bool => Espacement::service(($especeDe($d['espece']) ?? $especeDe($d['nom_scientifique']))['role'] ?? null) === 'biomasse';

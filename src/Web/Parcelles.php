@@ -422,6 +422,14 @@ final class Parcelles
                 $tortue !== null ? [$tortue !== '' ? $tortue : null] : [],
                 [$id, $siteId]));
 
+            // « Réinitialiser » repart de zéro pour toute la parcelle (le porteur, 2026-10-04) : les plantes et le
+            // calendrier prévu de toutes ses lignes — bordures, planches, lianes — partent avec l'ancien plan.
+            if (!empty($valeurs['reinitialiser'])) {
+                foreach (['ligne_plantation', 'ligne_calendrier', 'perturbation_prevue'] as $table) {
+                    $pdo->prepare("DELETE FROM `$table` WHERE parcelle_id = ?")->execute([$id]);
+                }
+            }
+
             $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? AND site_id = ?');
             $req->execute([$id, $siteId]);
             $nouvelle = $req->fetch();

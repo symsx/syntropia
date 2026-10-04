@@ -55,9 +55,8 @@ final class PartBiomasse
                     continue;
                 }
                 $e = $trouver((string) $c['espece']);
-                $esp = $e === null ? null : (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
                 $planches[(int) $c['planche']][] = ['nom' => (string) $c['espece'],
-                    'n' => Materiel::quantiteCulture($c, $bandes, $esp !== null && $esp > 0 ? $esp : null)['n'],
+                    'n' => Materiel::quantiteCulture($c, $bandes, Espacement::deCulture($e))['n'],
                     'biomasse' => Espacement::service($c['role'] ?? null) === 'biomasse'];
             }
             foreach ((new LignesPlantation($this->pdo(), $especes))->etatPlanches($parcelle, $siteId) as $numero => $ep) {

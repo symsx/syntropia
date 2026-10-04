@@ -6,6 +6,7 @@ namespace Syntropia\Web;
 
 use PDO;
 use Syntropia\Database;
+use Syntropia\Espacement;
 use Syntropia\Materiel;
 use Syntropia\Scenario;
 use Syntropia\Strates;
@@ -50,10 +51,6 @@ final class Occupation
         $trouver = static fn (string $nom): ?array => $parNom[mb_strtolower(trim($nom))] ?? $especes->parNomUsage($nom, $siteId);
         $largeur = static fn (?array $e): ?float => $e !== null && ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null;
         $production = static fn (?array $e): bool => in_array('production', explode('|', (string) ($e['role'] ?? '')), true);
-        $espacement = static function (?array $e): ?float {
-            $v = $e === null ? 0.0 : (float) ($e['espacement_retenu_m'] ?: $e['espacement_monoculture_m']);
-            return $v > 0 ? $v : null;
-        };
 
         $plantes = [];
         // Les lignes du plan : leurs plants comptés.
@@ -88,7 +85,7 @@ final class Occupation
                 $e = $trouver((string) $c['espece']);
                 $plantes[] = ['nom' => (string) $c['espece'],
                     'strate' => ($c['strate'] ?? null) !== null ? (string) $c['strate'] : Strates::proposee($e, true),
-                    'n' => Materiel::quantiteCulture($c, $bandes, $espacement($e))['n'], 'largeur' => $largeur($e)];
+                    'n' => Materiel::quantiteCulture($c, $bandes, Espacement::deCulture($e))['n'], 'largeur' => $largeur($e)];
             }
         } else {
             $cadres = ['bord_ext' => 'externe', 'bord_int' => 'interne'];

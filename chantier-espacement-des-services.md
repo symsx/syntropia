@@ -257,3 +257,7 @@ perfectionnement conception syntropie, **en janvier 2027**.
   surcharges. Les comptes du plan de La Vadaux P1 sont inchangés (chalef 19, saule 18, consoude 40), les pages sans
   erreur.
 
+
+**Le potager, 2026-10-04 (le porteur).** Une culture du potager se compte avec l'espacement de **production**, à défaut
+celui de service noté sur la fiche (`Espacement::deCulture()` — Matériel et eau, occupation, part de biomasse) ; avant, le
+service passait d'abord. La courge et la courgette prennent le rôle biomasse : 1 m en production, 0,40 et 0,30 m en service.

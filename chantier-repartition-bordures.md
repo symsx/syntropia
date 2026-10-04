@@ -58,6 +58,10 @@ Pour chaque côté actif de chaque bordure, l'atelier retient les espèces de la
 2. **respectent la strate** : sur les faces **sud et ouest de la bordure externe**, des **émergentes seulement** (ch. 14
    § 4.2, rangé par l'autrice parmi « ce qui ne bouge pas ») — aujourd'hui une simple réserve affichée, ici une règle
    qui décide ; les côtés nord et est peuvent porter des strates plus basses ;
+2 bis. **respectent l'orientation** notée au cadre (`espece.orientation_bordure`, `Bordures::cotesConseilles()`) :
+   « sud-ouest » ne va qu'au sud et à l'ouest, « nord-est » qu'au nord et à l'est, « les deux » ou rien de noté partout —
+   sur les deux bordures (le porteur, 2026-10-04 : lavande, lavandin, romarin étaient proposés au nord). Le romarin et
+   la sarriette passent de « les deux » à « sud-ouest » au cadre, comme le livre (annexes) et le cours 7-5 ;
 3. **pour le vent** : un côté coché « brise-vent » reçoit **en alternance des brise-vent et des bloque-herbe**, avec
    **au moins une espèce brise-vent** (décision du porteur, 2026-10-01 — le bloque-herbe reste la fonction première de
    l'externe, ch. 14) ; une espèce dont le seul rôle de bordure est `vent` ne va **que** sur un côté coché.
@@ -228,3 +232,9 @@ Le porteur a essayé la répartition sur La Vadaux P1 (17 × 4 m) et trouvé des
 
 Et le plan dessinait l'envergure en croissance libre (15 m pour un tilleul) : le disque est borné à **deux fois
 l'espacement**. 98 contrôles purs ; cadre régénéré, 3181 cases égales au CSV.
+
+**Les listes d'un côté, 2026-10-04 (le porteur).** « Proposer les espèces de cette bordure » et le groupe « Pour cette
+bordure » du menu d'ajout appliquent les règles de la répartition côté par côté (`RepartitionBordures::refusSurCote()` :
+orientation, émergentes sur les faces exposées, brise-vent seul sur un côté coché) — ce qui n'était qu'une réserve
+affichée écarte désormais l'espèce de la proposition. Les espèces non conseillées vont dans « les autres espèces »,
+toujours ajoutables à la main ; celles dont le seul rôle est `production` n'y figurent plus du tout.

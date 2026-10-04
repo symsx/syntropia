@@ -167,7 +167,8 @@ La ligne centrale, en trait plein sur le plan, porte la biomasse et la structure
 tuteurs. Dans la demi-planche du bord est (ou sud), elle est du côté de la bordure.
 
 Au bas de la page, « Annuler les changements » ramène le plan tel qu'il est enregistré.
-« Réinitialiser » le fait repartir des valeurs par défaut de l'atelier (12 × 8 m).
+
+« Réinitialiser » fait repartir toute la parcelle des valeurs par défaut de l'atelier (12 × 8 m), avec la conduite du site, sans stade ni tortue, et sans plantes sur ses lignes.
 
 Les deux demandent confirmation et n'enregistrent rien : seul « Enregistrer le plan » enregistre.
 
@@ -186,8 +187,11 @@ de la biomasse.
 « Proposer les espèces de cette bordure » montre les espèces qui remplissent sa fonction, sauf les
 annuelles, car une bordure est pérenne, et les plantes grimpantes, réservées à la ligne des lianes.
 
-Sur une face sud ou ouest exposée, la proposition rappelle la réserve de Théry : n'y mettre que
-des plantes émergentes. Vous gardez celles que vous voulez, et elles alternent dans cet ordre.
+Elle ne garde que celles que les règles conseillent sur ce côté. Lavande, romarin et hysope vont au
+sud et à l'ouest, sauge et consoude au nord et à l'est, et l'externe ne prend que des émergentes au sud et à l'ouest.
+
+Vous gardez celles que vous voulez, et elles alternent dans cet ordre. Les autres espèces restent à
+ajouter à la main, sauf les plantes qui ne sont que de production.
 
 Une plante peut être notée « bloque l'herbe » dans Espèces. En bordure, une plante couvre-sol
 compte aussi comme bloque-herbe.
@@ -217,9 +221,10 @@ sur toutes les bordures** d'un coup. Vous cochez une seule liste pour la parcell
 Les plantes sans espacement de service ou annuelles sont grisées, avec la raison. Vous pouvez choisir une
 **colonne vertébrale** par bordure, qui revient un plant sur deux.
 
-L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance. Il pose
-seulement des émergentes au sud et à l'ouest de l'externe, et des brise-vent sur les côtés cochés
-« vent ».
+L'atelier pose chaque plante sur les côtés dont elle remplit la fonction, en alternance.
+
+Il pose chaque plante du côté où elle se plaît, seulement des émergentes au sud et à l'ouest de l'externe,
+et des brise-vent sur les côtés cochés « vent ».
 
 Il faut au moins deux espèces par côté. Sinon, rien n'est réparti, et l'atelier dit quel côté
 manque de quoi.
@@ -385,7 +390,10 @@ Sur la ligne centrale d'une parcelle pérenne, les plantes se partagent la ligne
 prennent leur espacement de production, et les plantes de service vivaces et ligneuses remplissent
 les cases qui restent. Les annuelles semées en poquets ne prennent pas de case.
 
-Pour un potager, la liste vient du plan de culture. Pour une culture semée à l'abri, le nombre de
+Pour un potager, la liste vient du plan de culture. Chaque culture se compte avec son espacement de
+production, ou à défaut avec son espacement de service.
+
+Pour une culture semée à l'abri, le nombre de
 graines est calculé avec un taux de réussite de 80 %, la convention de planification de Lopez.
 
 La **biomasse à sacrifier** compte les plants dont la fonction est la biomasse : ils seront taillés

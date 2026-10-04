@@ -13,6 +13,8 @@ namespace Syntropia;
  *  - une espèce va sur **chaque** côté dont elle remplit la fonction (`Bordures::convient()`), les deux bordures
  *    comprises ; ni annuelle ni bisannuelle ; **sans espacement au référentiel, elle est écartée** — le placement ne se
  *    fait pas au hasard ;
+ *  - une espèce dont l'orientation est notée au référentiel ne va que sur ses côtés (`Bordures::cotesConseilles()` :
+ *    « sud-ouest », « nord-est »), sur les deux bordures (le porteur, 2026-10-04) ;
  *  - sur les faces **sud et ouest de l'externe, des émergentes seulement** (Théry, ch. 14 § 4.2) — d'après la strate de
  *    service (`LignesDeService::stratesService()`) ; une strate non notée n'y entre pas, l'atelier ne la devine pas ;
  *  - **brise-vent** : une coche par côté de l'externe (`parcelle.plan.bordures.externe.<côté>.brise_vent`). Un côté
@@ -102,6 +104,10 @@ final class RepartitionBordures
     {
         if (!Bordures::convient($cadre, $e)) {
             return 'ne remplit pas la fonction de la ' . mb_strtolower(Bordures::CADRES[$cadre]['libelle']);
+        }
+        $cotes = Bordures::cotesConseilles($e);
+        if ($cotes !== null && !in_array($cote, $cotes, true)) {
+            return 'sa place en bordure est ' . Bordures::auxCotes($cotes);
         }
         if ($cadre === 'externe') {
             if (!$briseVent && !self::bloqueHerbe($e)) {

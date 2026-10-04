@@ -704,6 +704,7 @@
       corps.set('conduite', document.getElementById('in-conduite').value);
       corps.set('stade', document.getElementById('in-stade').value);
       corps.set('tortue', document.getElementById('in-tortue').value);
+      if (planReinitialise) corps.set('reinitialiser', '1');
       if (document.getElementById('in-position-liane')) corps.set('liane', positionLiane());
       document.querySelectorAll('.lignes-planche').forEach(function(c){ corps.set('lignes[' + c.dataset.numero + ']', c.value); });
       if (choixPremiere){
@@ -815,13 +816,13 @@
     return champs.join('\u0001');
   }
   var etatEnregistre = etatDesChamps();
-  function majAnnuler(){ if (boutonAnnuler) boutonAnnuler.disabled = etatDesChamps() === etatEnregistre; }
+  function majAnnuler(){ if (boutonAnnuler) boutonAnnuler.disabled = !planReinitialise && etatDesChamps() === etatEnregistre; }
   document.getElementById('panneau-droit').addEventListener('input', majAnnuler);
   document.getElementById('panneau-droit').addEventListener('change', majAnnuler);
   document.addEventListener('plan-enregistre', function(){ etatEnregistre = etatDesChamps(); majAnnuler(); });
 
   Gabarit.onAnnuler(function(){
-    if (etatDesChamps() === etatEnregistre) return;
+    if (!planReinitialise && etatDesChamps() === etatEnregistre) return;
     Gabarit.confirmer({
       titre: 'Annuler les changements ?',
       texte: 'Le plan revient tel qu’il est enregistré : ce que vous avez modifié depuis, et pas encore enregistré, est perdu.',
@@ -833,17 +834,54 @@
 
   Gabarit.onReset(function(){
     Gabarit.confirmer({
-      titre: 'Réinitialiser le plan ?',
-      texte: 'Le plan repart des valeurs par défaut de l’atelier : 12 × 8 m, bordure externe sur les quatre côtés à 0,40 m, '
-        + 'sans coche « vent », sans bordure interne, planches nord-sud. Rien n’est enregistré avant « Enregistrer le plan ». '
-        + '« Annuler les changements » ramène au plan enregistré.',
+      titre: 'Réinitialiser la parcelle ?',
+      texte: 'La parcelle repart des valeurs par défaut de l’atelier : 12 × 8 m, bordure externe sur les quatre côtés à 0,40 m, '
+        + 'sans coche « vent », sans bordure interne, planches nord-sud, conduite du site, stade et tortue pas encore dits. '
+        + 'Les plantes et les dates prévues de toutes ses lignes, bordures et planches, sont retirées. '
+        + 'Rien n’est enregistré avant « Enregistrer le plan ». « Annuler les changements » ramène au plan enregistré.',
       oui: 'Réinitialiser', non: 'Garder mon plan'
     }).then(function(ok){ if (ok) reinitialiser(); });
   });
 
+  /* Réinitialiser repart de zéro pour toute la parcelle (le porteur, 2026-10-04) : la conduite, le stade, la tortue,
+     la géométrie, et aussi les plantes et le calendrier prévu de toutes ses lignes (bordures, planches, lianes). Ces
+     lignes ne se vident qu'à « Enregistrer le plan », qui reçoit `reinitialiser` (Parcelles::enregistrerPlan()). */
+  var planReinitialise = false;
+  function remettreChoix(id){
+    var c = document.getElementById(id);
+    if (!c || c.value === c.options[0].value) return;
+    c.value = c.options[0].value;
+    c.dispatchEvent(new Event('change'));
+  }
+  /* « Vider la ligne » écrit tout de suite, et rien ne la fait revenir — ni « Annuler les changements », qui ne
+     touche qu'au plan, ni un rechargement : le geste se confirme (le porteur, 2026-10-04). */
+  document.querySelectorAll('.bl-form button[name="geste"][value="vider"]').forEach(function(bouton){
+    bouton.addEventListener('click', function(e){
+      e.preventDefault();
+      var form = bouton.form;
+      var resume = bouton.closest('details').querySelector('summary');
+      var nom = resume ? resume.firstChild.textContent.trim() : 'cette ligne';
+      Gabarit.confirmer({
+        titre: 'Vider la ligne ?',
+        texte: 'Toutes les plantes de « ' + nom + ' » sont retirées, tout de suite. Ni « Annuler les changements » '
+          + 'ni un rechargement de la page ne les font revenir.',
+        oui: 'Vider la ligne', non: 'Garder la ligne'
+      }).then(function(ok){
+        if (!ok) return;
+        var geste = document.createElement('input');
+        geste.type = 'hidden'; geste.name = 'geste'; geste.value = 'vider';
+        form.appendChild(geste);
+        form.submit();
+      });
+    });
+  });
+
   function reinitialiser(){
+    planReinitialise = true;
     perimerPlants();
     lignesSaisies = {}; naturesSaisies = {}; signatureListe = '';
+    remettreChoix('in-conduite'); remettreChoix('in-stade'); remettreChoix('in-tortue');
+    if (choixPremiere) choixPremiere.value = 'perenne';
     champLongueur.value = '12,00'; champLargeur.value = '8,00';
     document.querySelectorAll('.bordure-active').forEach(function(c){ c.checked = true; });
     document.querySelectorAll('.bordure-largeur').forEach(function(c){ c.value = '0,40'; });

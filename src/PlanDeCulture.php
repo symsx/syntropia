@@ -74,8 +74,8 @@ final class PlanDeCulture
         foreach ($aPlacer as $c) {
             $poids[$c['id']] = $contrainte($c);
         }
-        usort($aPlacer, static fn (array $a, array $b): int => [$poids[$b['id']], mb_strtolower((string) $a['espece']), $a['id']]
-            <=> [$poids[$a['id']], mb_strtolower((string) $b['espece']), $b['id']]);
+        usort($aPlacer, static fn (array $a, array $b): int => [$poids[$b['id']], Associations::normaliser((string) $a['espece']), $a['id']]
+            <=> [$poids[$a['id']], Associations::normaliser((string) $b['espece']), $b['id']]);
 
         $placements = [];
         $nonPlaces = [];
@@ -133,7 +133,7 @@ final class PlanDeCulture
                     : 'Aucun voisinage n’est connu sur cette planche : la culture est placée là où il y a de la place.')
                     . ($bande !== null ? ' Dans la bande ' . ($bande === 'perenne' ? 'pérenne' : 'annuelle') . '.' : '')];
         }
-        usort($placements, static fn (array $a, array $b): int => [$a['planche'], mb_strtolower($a['espece'])] <=> [$b['planche'], mb_strtolower($b['espece'])]);
+        usort($placements, static fn (array $a, array $b): int => [$a['planche'], Associations::normaliser($a['espece'])] <=> [$b['planche'], Associations::normaliser($b['espece'])]);
         return ['placements' => $placements, 'non_places' => $nonPlaces];
     }
 
