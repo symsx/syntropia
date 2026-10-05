@@ -40,6 +40,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry).
   - **Planifiés, pas commencés** : `palette-vegetale` (2026-10-05 — tout tranché, prêt à commencer),
     `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
+    `formes-de-parcelle` (2026-10-05 — contour brisé ou courbe, chemins, points d'eau ; questions à trancher),
     `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions

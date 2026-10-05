@@ -676,14 +676,8 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
 
       <input type="radio" name="outil" id="outil-deplacer">
       <label class="outil-bouton" for="outil-deplacer">⇔ Déplacer un bord</label>
-
-      <span class="outil-separateur"></span>
-
-      <input type="radio" name="outil" id="outil-ligne" disabled>
-      <label class="outil-bouton a-venir" for="outil-ligne" title="À venir">✎ Tracer une ligne</label>
-
-      <input type="radio" name="outil" id="outil-gomme" disabled>
-      <label class="outil-bouton a-venir" for="outil-gomme" title="À venir">⌫ Gomme</label>
+      <!-- « Tracer une ligne » et « Gomme » (maquette le-bureau) retirés le 2026-10-05 : leurs usages sont à
+           définir dans chantier-formes-de-parcelle.md (contour brisé ou courbe, chemins, points d'eau). -->
     </div>
   </div>
 <?php endif; ?>
