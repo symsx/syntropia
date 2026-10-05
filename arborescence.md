@@ -56,6 +56,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Version.php              les trois versions de l'atelier (format du fichier, schéma des données, numéro d'application) et la fenêtre de compatibilité d'un export
     Import.php               l'import d'un fichier d'export en projet neuf — valide chaque colonne d'après le schéma réel, une transaction ; appelé par importer.php
     Export.php               l'export d'un projet en JSON — lit chaque table en entier, retire comptes/identifiants/accès, plafond 1 Mo ; appelé par exporter.php
+    PlanImprime.php          le plan d'une parcelle tel qu'il s'imprime (dessin, plants des bordures avec couleur et sigle, légende) — partagé par dossier-projet.php et feuillet-chantier.php
     MaterielDuSite.php       le matériel végétal de quelques parcelles (scénario ou plan de culture, plants du plan qui font foi) avant regroupement — partagé par conception-materiel-et-eau.php et dossier-projet.php
     PartBiomasse.php         la part de plants de biomasse d'une parcelle face aux 75 % — par planche au potager, sur la ligne centrale en pérenne ; appelé par conception-parcelles.php, conception-scenario.php, conception-potager.php
     ReleveSol.php            relevés de sol d'une parcelle (`releve_sol`) — infiltration, état d'humidité, jours depuis la pluie ; appelé par conception-materiel-et-eau.php
@@ -109,6 +110,7 @@ public/                racine servable du site en refonte
   conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
   dossier-projet.php         le Dossier Projet à imprimer (couverture, Définition ; chapitres cochés en CSS pur) — HORS GABARIT, seconde exception ; section « Dossier Projet » de gabarit.js, avant « Documentation »
+  feuillet-chantier.php      le feuillet du chantier de plantation d'une parcelle (plan en paysage, où va quoi, colonnes à pointer) — HORS GABARIT, sous-dossier du Dossier Projet ; ouvert depuis realisation-outils-et-plans.php
   realisation-preparation-parcelle.php  étape 1 (Réalisation)
   realisation-materiel-vegetal.php      étape 2 (Réalisation)
   realisation-outils-et-plans.php       étape 3 (Réalisation)
@@ -138,6 +140,7 @@ public/                racine servable du site en refonte
   api-altitude.php           POST relève une grille d'altitudes IGN sur l'emprise du fond tracé — un seul relevé par site, le suivant remplace le précédent
   assets/
     css/gabarit.css        la coquille du bureau — TOUTES les pages, publiques comprises ; `.terme` (mot expliqué au survol) y vit aussi
+    css/dessins-papier.css les dessins imprimés (terrain, plan, frise) et leur légende — dossier-projet.php et feuillet-chantier.php
     js/carte.js              moteur de tuiles sans dépendance — OpenStreetMap par défaut, fonds IGN au choix sur la grande carte (table `FONDS`) — partagé par toute carte
     js/calques.js            dessin des calques sur carte.js — modes via Gabarit.onOutilChange(), placement de parcelle par rectangle
     js/etapes.js            le manifeste des phases — `pret: true` = la page existe déjà

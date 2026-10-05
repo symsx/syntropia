@@ -425,6 +425,12 @@ exempt d'adventices, dont la concurrence freine le saut du chat.
 La consignation note la date et les conditions du chantier : un même chantier mené sous la pluie
 ou en pleine canicule ne donne pas le même résultat.
 
+L'étape « Outils et plans » imprime le **feuillet du chantier de plantation** de chaque parcelle,
+à emporter sur place : le plan en paysage, puis chaque ligne et ses plantes dans l'ordre.
+
+Pour chaque plante, le feuillet donne l'espacement, le nombre prévu, l'origine et la date prévue.
+On y coche ce qui est planté, et l'on note au crayon le nombre réel et ce que l'on voit.
+
 # Suivre
 
 Le **suivi** commence dès que quelque chose est en terre : l'arrosage et la germination, la
@@ -479,8 +485,16 @@ par parcelle, avec son plan, ses bordures, ses planches et son scénario ou son 
 Chaque parcelle dit aussi ce qu'il faut se procurer et l'eau qu'il lui faudra, avec les mêmes
 comptes que l'étape « Matériel et eau ». Un récapitulatif donne la liste de tout le projet.
 
-Le dossier finit par le calendrier, saison par saison, et par les participants : qui a accès au
-projet, avec quel rôle, et depuis quand.
+Vient ensuite le calendrier, saison par saison. La Réalisation reprend la préparation, le matériel
+végétal, les outils et la consignation.
+
+Le Suivi reprend l'arrosage et la germination, puis le journal de chaque parcelle, perturbations et
+constats du saut du chat dans l'ordre des jours, et sa consignation.
+
+Le dossier finit par les participants : qui a accès au projet, avec quel rôle, et depuis quand.
+
+Imprimée en noir et blanc, la frise du scénario se lit au contour de chaque barre : épais pour une
+production, en tirets pour production et service, fin pour un service.
 
 Les chapitres à imprimer se cochent. Ce qui s'affiche est ce qui s'imprime, et le choix se refait à
 chaque ouverture.
@@ -488,8 +502,8 @@ chaque ouverture.
 « Imprimer / Enregistrer en PDF » ouvre l'impression du navigateur, qui sait produire un PDF. Une
 question sans réponse s'y lit « pas encore renseigné ».
 
-Avec les fiches de relevé de sol, c'est le seul document de l'atelier qui défile comme une page
-ordinaire : tous deux sont faits pour le papier.
+Avec les fiches de relevé de sol et le feuillet du chantier de plantation, ce sont les seuls
+documents de l'atelier qui défilent comme une page ordinaire : ils sont faits pour le papier.
 
 # Le bureau
 

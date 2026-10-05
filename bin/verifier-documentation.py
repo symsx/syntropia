@@ -82,6 +82,7 @@ COUVERTURE = {
     "Réaliser": [
         "public/realisation-preparation-parcelle.php", "public/realisation-materiel-vegetal.php",
         "public/realisation-outils-et-plans.php", "public/realisation-consignation.php",
+        "public/feuillet-chantier.php",
     ],
     "Suivre": [
         "public/suivi-arrosage-germination.php", "public/suivi-perturbation.php",
@@ -89,7 +90,8 @@ COUVERTURE = {
         "src/Perturbation.php", "src/Web/Interventions.php", "src/SautDuChat.php", "src/Web/Constats.php",
     ],
     "Le Dossier Projet": ["public/dossier-projet.php", "src/DessinsDossier.php", "src/Web/Reponses.php",
-                          "src/Web/MaterielDuSite.php"],
+                          "src/Web/MaterielDuSite.php", "src/Web/PlanImprime.php", "public/feuillet-chantier.php",
+                          "public/assets/css/dessins-papier.css"],
     "Le bureau": ["public/assets/css/gabarit.css", "public/assets/js/gabarit.js"],
     "Comptes, projets et rôles": [
         "public/compte.php", "public/inscription.php", "public/deconnexion.php",

@@ -28,8 +28,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `peuplement-parcelle` (2026-09-23), `repartition-bordures` (2026-10-01 —
     face sud de l'externe en jardin-forêt rouverte, non tranchée),
     `textes-atelier` (2026-10-03).
-  - **En cours** : `dossier-projet` (Phases 1 et 2 faites et déployées, Phase 3
-    faite le 2026-10-04, pas déployée ; Phase 4 suivante — ordre du porteur) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
+  - **En cours** : `dossier-projet` (Phases 1 à 3 faites et déployées, Phases 4
+    et 5 faites le 2026-10-05, pas déployées — le livret relu, reste le déploiement) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
     3, 5 faites ; **Phase 4 bloquée**, attend le porteur et la formation — une
     règle sans réponse sourcée ne se code pas) ; `film-de-la-parcelle`
     (Phases 1, 2, 2 bis faites) ; `associations` (Phase 1 faite) ;
@@ -259,7 +259,9 @@ Sans mesure d'usage réelle, « le plus utilisé » se raisonne au départ —
   aucune page publique à part.** Voir § Architecture.
   **Deux exceptions posées, toutes deux des documents à imprimer :**
   `releve-vierge.php` (le 2026-09-14) et `dossier-projet.php` (admise par
-  le porteur le 2026-09-19, faite le 2026-10-02) — voir leur en-tête. Ne
+  le porteur le 2026-09-19, faite le 2026-10-02), avec son sous-dossier
+  `feuillet-chantier.php` (le feuillet de chantier d'une parcelle, décision 6
+  du même jour, fait le 2026-10-05) — voir leur en-tête. Ne
   pas s'en servir de précédent pour autre chose qu'un document destiné au
   papier.
 
@@ -277,7 +279,7 @@ vague) est dans `journal-de-reprise.md` ; ici, ce qui sert à chaque séance.*
   § Le backend.
 - **Le site EST le bureau**, aucun défilement — voir § Architecture. Deux
   exceptions seulement, des documents à imprimer : `releve-vierge.php` et
-  `dossier-projet.php`.
+  `dossier-projet.php` (avec son sous-dossier `feuillet-chantier.php`).
 - Nom affiché : **Syntropia**. Menus : du plus utilisé au moins utilisé, sauf
   les listes de parcours.
 - **Un compte peut avoir plusieurs projets** ; un **projet actif** (cookie

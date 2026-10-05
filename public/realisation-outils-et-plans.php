@@ -9,6 +9,7 @@ require __DIR__ . '/../src/Database.php';
 use Syntropia\Configuration;
 use Syntropia\Role;
 use Syntropia\Web\Authentification;
+use Syntropia\Web\Parcelles;
 use Syntropia\Web\Reponses;
 use Syntropia\Web\Sites;
 
@@ -37,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $auth->jetonValide($_POST['csrf'] ?
     exit;
 }
 $reponses = $reponsesService->pourParticipant($participantId);
+// Le feuillet du chantier de plantation, une parcelle à la fois (`feuillet-chantier.php`, chantier « Dossier Projet », Phase 5).
+$parcelles = (new Parcelles())->dUnSite($siteId);
 ?>
 <!doctype html>
 <html lang="fr">
@@ -64,6 +67,30 @@ $reponses = $reponsesService->pourParticipant($participantId);
   }
   .outils-bouton:hover{ opacity:.92; }
   .outils-note{ font:400 .78rem var(--texte); color:var(--muted); text-align:center; margin-top:.6rem; }
+  .outils-feuillet{ display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .5rem; margin:0 0 1.2rem; padding:.6rem .7rem;
+    border:1px solid var(--line); border-radius:.5rem; background:var(--surface); font:400 .85rem/1.35 var(--texte); }
+  .outils-feuillet label{ flex:1 1 12rem; color:var(--ink); }
+  .outils-feuillet select{ padding:.3rem .4rem; font:400 .85rem var(--texte); color:var(--ink); background:var(--surface);
+    border:1px solid var(--line); border-radius:.4rem; flex:1 1 8rem; min-width:0; }
+  .outils-feuillet button{ padding:.35rem .8rem; border:0; border-radius:.4rem; background:var(--accent); color:var(--bouton-encre);
+    font:600 .8rem var(--titre); cursor:pointer; }
+
+  /* Le feuillet, trois champs et leurs aides : sur un écran peu haut, la page se resserre au lieu de déborder. */
+  @media (max-height:46rem){
+    .outils-annonce{ margin-bottom:.7rem; }
+    .outils-feuillet{ margin-bottom:.7rem; padding:.4rem .6rem; }
+    .outils-champ{ margin-bottom:.6rem; }
+    .outils-bouton{ margin-top:0; padding:.5rem; }
+  }
+  @media (max-height:46rem) and (max-width:30rem){
+    .outils-note{ display:none; }
+    .outils-annonce{ margin-bottom:.4rem; }
+  }
+  @media (max-height:38rem){
+    .outils-annonce, .outils-note, .outils-champ small{ display:none; }
+    .outils-champ textarea{ padding:.4rem .6rem; }
+    .outils-cadre{ padding-top:1.6rem; }
+  }
 </style>
 </head>
 <body>
@@ -133,6 +160,17 @@ $reponses = $reponsesService->pourParticipant($participantId);
     <main class="bureau" id="bureau">
       <div class="outils-cadre">
         <p class="outils-annonce">Le jour du chantier se prépare avant le chantier.</p>
+<?php if ($parcelles !== []): ?>
+        <form class="outils-feuillet" method="get" action="feuillet-chantier.php">
+          <label for="feuillet-parcelle">Le feuillet du chantier de plantation de la parcelle</label>
+          <select id="feuillet-parcelle" name="parcelle">
+<?php foreach ($parcelles as $pc): ?>
+            <option value="<?= (int) $pc['id'] ?>"><?= htmlspecialchars($pc['code'] . ' — ' . $pc['nom'], ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+          </select>
+          <button type="submit">Imprimer</button>
+        </form>
+<?php endif; ?>
 
         <form method="post">
           <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
@@ -172,6 +210,9 @@ $reponses = $reponsesService->pourParticipant($participantId);
          commencer : les outils et les personnes. Le scénario de plantation,
          en Conception, dit quoi planter, à quelle strate et pour combien de
          temps. Les notes sur le plan d'implantation précisent où.</p>
+      <p><strong>Le feuillet du chantier de plantation</strong> d'une parcelle s'imprime d'ici, pour l'emporter sur la
+         parcelle : son plan en paysage, puis chaque ligne avec ses plantes dans l'ordre, leur espacement, le nombre
+         prévu, l'origine et la date prévue, et trois colonnes à remplir au crayon — planté, nombre, notes.</p>
     </div>
   </aside>
 

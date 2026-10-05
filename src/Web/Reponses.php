@@ -70,6 +70,28 @@ final class Reponses
     }
 
     /**
+     * Les réponses de la Réalisation (préparation, matériel végétal, outils et plans, consignation), pour le Dossier
+     * Projet, sur la même règle que `definitionDuProjet()`.
+     *
+     * @return array{reponses: array<string, string>, nom: ?string}
+     */
+    public function realisationDuProjet(int $siteId, int $compteId): array
+    {
+        return $this->duProjet($siteId, $compteId, 'realisation');
+    }
+
+    /**
+     * Les réponses du Suivi (arrosage et germination, consignation), pour le Dossier Projet, sur la même règle.
+     *
+     * @return array{reponses: array<string, string>, nom: ?string}
+     */
+    public function suiviDuProjet(int $siteId, int $compteId): array
+    {
+        return $this->duProjet($siteId, $compteId, 'suivi', ['suivi_arrosage', 'suivi_boutures', 'suivi_germination',
+            'suivi_arrosage_notes', 'consignation_suivi_date', 'consignation_suivi_observations', 'consignation_suivi_resultats']);
+    }
+
+    /**
      * Les réponses d'une phase, limitées à quelques questions si `$questions` les nomme : celles de la personne si elle
      * en a donné au moins une, à défaut celles du porteur. Lecture seule.
      *

@@ -10,7 +10,9 @@ declare(strict_types=1);
  * avec échelle et nord, sans fond de carte) et une page par parcelle (ce qui la définit, son plan, son scénario). Les
  * dessins viennent de `DessinsDossier`. Phase 3 : dans chaque parcelle, ce qu'il faut se procurer et l'eau (les comptes
  * de l'étape « Matériel et eau », par `MaterielDuSite` et `BesoinEau`), puis le récapitulatif du projet, le calendrier
- * et les participants.
+ * et les participants. Phase 4 : la Réalisation (préparation, matériel végétal, outils et plans, consignation) et le
+ * Suivi (arrosage et germination, le journal des perturbations et les constats du saut du chat de chaque parcelle, la
+ * consignation) — ce que ces étapes enregistrent, rien de plus.
  *
  * DÉLIBÉRÉMENT HORS DU GABARIT « LE BUREAU » — la seconde exception, admise par le porteur le 2026-09-19, comme
  * `releve-vierge.php` : c'est un document qu'on imprime, pas une page qu'on visite, et il fait plusieurs pages ; le
@@ -36,20 +38,25 @@ use Syntropia\Conduite;
 use Syntropia\Configuration;
 use Syntropia\DessinsDossier;
 use Syntropia\Materiel;
+use Syntropia\Perturbation;
 use Syntropia\Planches;
 use Syntropia\Relief;
 use Syntropia\Role;
-use Syntropia\Sigles;
+use Syntropia\SautDuChat;
 use Syntropia\Stade;
 use Syntropia\Tortue;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Calques;
 use Syntropia\Web\Comptes;
+use Syntropia\Web\Constats;
 use Syntropia\Web\Cultures;
+use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
+use Syntropia\Web\Interventions;
 use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\MaterielDuSite;
 use Syntropia\Web\Parcelles;
+use Syntropia\Web\PlanImprime;
 use Syntropia\Web\ReleveSol;
 use Syntropia\Web\Reponses;
 use Syntropia\Web\Sites;
@@ -184,7 +191,7 @@ $lignesService = new LignesPlantation();
 $materielService = new MaterielDuSite();
 $releves = new ReleveSol();
 $entreesProjet = [];
-$couleursPlants = ['#285738', '#8b4528', '#365b8c', '#80528a', '#675b20', '#a13d53', '#1f6f78', '#b36b00', '#556b2f', '#7a3b3b'];
+$planImprime = new PlanImprime();
 $parcelles = [];
 foreach ($parcellesService->dUnSite($siteId) as $p) {
     $idP = (int) $p['id'];
@@ -193,46 +200,17 @@ foreach ($parcellesService->dUnSite($siteId) as $p) {
     $l = $p['largeur_m'] !== null ? (float) $p['largeur_m'] : null;
     $zone = Planches::zone($p);
 
-    // Les plants des bordures : une couleur et un sigle par espèce, comme sur le plan de l'écran.
-    $etat = $L !== null && $l !== null ? $lignesService->etat($p, $siteId) : [];
-    $especesPlan = [];
-    $plants = [];
+    // Le plan, ses plants et leur légende : les mêmes que sur le feuillet de chantier (`PlanImprime`).
+    $imprime = $planImprime->dUneParcelle($p, $siteId);
     $bordures = [];
-    foreach ($etat as $cle => $b) {
+    foreach ($imprime['etat'] as $cle => $b) {
         if ($b['places'] === []) {
             continue;
         }
-        foreach ($b['places'] as $pl) {
-            $especesPlan[$pl['nom_scientifique'] . "\0" . $pl['variete']] ??= ['nom' => $pl['nom'], 'variete' => $pl['variete'], 'n' => 0];
-        }
-        $g = $b['geometrie'];
         $compte = $b['compte'];
-        if ($g !== null && $compte !== null && $compte['ok']) {
-            $dx = ($g['x2'] - $g['x1']) / $g['longueur'];
-            $dy = ($g['y2'] - $g['y1']) / $g['longueur'];
-            foreach ($compte['positions'] as [$k, $d]) {
-                $pl = $b['places'][$k];
-                $cleE = $pl['nom_scientifique'] . "\0" . $pl['variete'];
-                $especesPlan[$cleE]['n']++;
-                $env = $pl['largeur'] !== null && $pl['espacement'] !== null ? min($pl['largeur'], 2 * $pl['espacement']) : ($pl['largeur'] ?? $pl['espacement'] ?? 0.3);
-                $plants[] = ['x' => $g['x1'] + $d * $dx, 'y' => $g['y1'] + $d * $dy, 'cle' => $cleE, 'r' => $env / 2];
-            }
-        }
         $bordures[] = ['libelle' => Bordures::libelle($cle), 'serie' => array_map(static fn (array $pl): string => $pl['nom'] . ($pl['variete'] !== '' ? ' (' . $pl['variete'] . ')' : ''), $b['places']),
-            'total' => $compte !== null && $compte['ok'] ? $compte['total'] : null, 'hors_plan' => $g === null];
+            'total' => $compte !== null && $compte['ok'] ? $compte['total'] : null, 'hors_plan' => $b['geometrie'] === null];
     }
-    $sigles = Sigles::calculer(array_values(array_map(static fn (array $e): array => ['nom' => $e['nom'], 'variete' => $e['variete']], $especesPlan)));
-    $i = 0;
-    foreach ($especesPlan as $cleE => $e) {
-        $especesPlan[$cleE]['sigle'] = $sigles[$i];
-        $especesPlan[$cleE]['couleur'] = $couleursPlants[$i % count($couleursPlants)];
-        $i++;
-    }
-    foreach ($plants as &$pl) {
-        $pl['couleur'] = $especesPlan[$pl['cle']]['couleur'];
-        $pl['sigle'] = $especesPlan[$pl['cle']]['sigle'];
-    }
-    unset($pl);
 
     // Les lignes des planches qui portent une plante de service.
     $natures = Planches::natures($p);
@@ -288,11 +266,9 @@ foreach ($parcellesService->dUnSite($siteId) as $p) {
             'Campagne de plantation' => $dateEnMots($p['date_plantation'] ?? null) === null ? null
                 : 'commencée le ' . $dateEnMots($p['date_plantation']) . (($f = $dateEnMots($p['fin_plantation'] ?? null)) !== null ? ', finie le ' . $f : ''),
         ],
-        'plan' => DessinsDossier::plan($p, $plants),
-        // Ce que le dessin montre, et seulement cela : les hachures n'existent qu'en zèbre et en abeille, la ligne des lianes qu'en liane.
-        'legendePlan' => 'Bordures en ocre' . ($natures !== [] ? ', planches pérennes hachurées' : '')
-            . ' ; la ligne centrale de chaque planche en trait plein' . (($p['tortue'] ?? null) === 'liane' ? ', la ligne des lianes en tirets violets' : '') . '.',
-        'legende' => array_values(array_filter($especesPlan, static fn (array $e): bool => $e['n'] > 0)),
+        'plan' => $imprime['plan'],
+        'legendePlan' => $imprime['legendePlan'],
+        'legende' => $imprime['legende'],
         'bordures' => $bordures, 'planches' => $planches,
         'cultures' => $cultures,
         'materiel' => Materiel::regrouper($materiel['entrees']),
@@ -316,6 +292,74 @@ $ressourceDetail = trim((string) ($site['ressource_eau_detail'] ?? ''));
 
 $calendrier = (new Reponses())->calendrierDuProjet($siteId, $compteId);
 $saisons = ['calendrier_printemps' => 'Printemps', 'calendrier_ete' => 'Été', 'calendrier_automne' => 'Automne', 'calendrier_hiver' => 'Hiver'];
+
+/* ------------------------------------------------------------------ la Réalisation et le Suivi */
+
+// Ce que ces deux phases enregistrent (décision 5 du porteur : ce qui n'est pas enregistré ne s'imprime pas) : des
+// réponses — celles de la personne, à défaut celles du porteur — et, par parcelle, le journal des perturbations et les
+// constats du saut du chat. Les deux consignations ne gardent que leur dernière saisie : le dossier imprime celle-là.
+$realisation = (new Reponses())->realisationDuProjet($siteId, $compteId);
+$suivi = (new Reponses())->suiviDuProjet($siteId, $compteId);
+$rep = static function (array $source, string $cle): ?string {
+    $v = trim((string) ($source['reponses'][$cle] ?? ''));
+    return $v === '' ? null : $v;
+};
+$repChoix = static fn (array $source, string $cle, array $libelles): ?string => ($v = $rep($source, $cle)) === null ? null : ($libelles[$v] ?? null);
+$repDate = static fn (array $source, string $cle): ?string => ($v = $rep($source, $cle)) === null ? null : ($dateEnMots($v) ?? $v);
+
+/** Les chapitres de la Réalisation et du Suivi, comme ceux de la Définition : titre, étape, lignes (`null` : le journal). */
+$chapitresRealisation = [
+    'preparation' => ['Préparation de la parcelle', 'realisation-preparation-parcelle.php', [
+        'La technique' => $repChoix($realisation, 'preparation_technique', SautDuChat::PREPARATIONS),
+        'Réalisée'     => $repChoix($realisation, 'preparation_realisee', ['manuellement' => 'Manuellement', 'animaux' => 'Par un ou plusieurs animaux',
+            'machine' => 'Avec une machine', 'les-deux' => 'Plusieurs moyens', 'autre' => 'Autrement']),
+        'Précisions'   => $rep($realisation, 'preparation_precisions'),
+    ]],
+    'materiel-vegetal' => ['Matériel végétal', 'realisation-materiel-vegetal.php', [
+        'Ce que vous multipliez vous-même' => $rep($realisation, 'materiel_multiplication'),
+        'Ce que vous allez vous procurer'  => $rep($realisation, 'materiel_achat'),
+    ]],
+    'outils' => ['Outils et plans', 'realisation-outils-et-plans.php', [
+        'Les outils nécessaires'           => $rep($realisation, 'outils_necessaires'),
+        'Qui vient, et combien'            => $rep($realisation, 'outils_moyens_humains'),
+        'Notes sur le plan d’implantation' => $rep($realisation, 'outils_plan_notes'),
+    ]],
+    'consignation-realisation' => ['Consignation', 'realisation-consignation.php', [
+        'Quand'                   => $repDate($realisation, 'consignation_realisation_date'),
+        'Ce qui a été fait'       => $rep($realisation, 'consignation_realisation_fait'),
+        'Dans quelles conditions' => $rep($realisation, 'consignation_realisation_conditions'),
+    ]],
+];
+$chapitresSuivi = [
+    'arrosage' => ['Arrosage et germination', 'suivi-arrosage-germination.php', [
+        'L’arrosage'                    => $rep($suivi, 'suivi_arrosage'),
+        'Les boutures ont-elles pris ?' => $repChoix($suivi, 'suivi_boutures', ['oui' => 'Oui', 'en-cours' => 'En cours', 'non' => 'Non', 'sans-objet' => 'Sans objet']),
+        'Germination visible ?'         => $repChoix($suivi, 'suivi_germination', ['oui' => 'Oui', 'pas-encore' => 'Pas encore', 'sans-objet' => 'Sans objet']),
+        'Notes'                         => $rep($suivi, 'suivi_arrosage_notes'),
+    ]],
+    'journal' => ['Perturbations et saut du chat', 'suivi-perturbation.php', null],
+    'consignation-suivi' => ['Consignation', 'suivi-consignation.php', [
+        'Quand'              => $repDate($suivi, 'consignation_suivi_date'),
+        'Ce qui est observé' => $rep($suivi, 'consignation_suivi_observations'),
+        'Les résultats'      => $rep($suivi, 'consignation_suivi_resultats'),
+    ]],
+];
+
+// Le journal de chaque parcelle, dans l'ordre des jours — un papier se lit du début à la fin. La hauteur d'un constat se
+// dit contre la hauteur adulte d'Espèces, comme à l'écran.
+$interventionsService = new Interventions();
+$constatsService = new Constats();
+$especesService = new Especes();
+$journaux = [];
+foreach ($parcelles as $pc) {
+    $constatsP = array_reverse($constatsService->dUneParcelle($pc['id']));
+    foreach ($constatsP as $k => $c) {
+        $fiche = $c['hauteur_cm'] !== null && (string) ($c['vegetal'] ?? '') !== '' ? $especesService->parNomUsage((string) $c['vegetal'], $siteId) : null;
+        $constatsP[$k]['adulte'] = $fiche !== null && ($fiche['hauteur_m'] ?? null) !== null ? (float) $fiche['hauteur_m'] : null;
+    }
+    $journaux[] = ['code' => $pc['code'], 'nom' => $pc['nom'], 'id' => $pc['id'],
+        'interventions' => array_reverse($interventionsService->dUneParcelle($pc['id'])), 'constats' => $constatsP];
+}
 
 /** Les chapitres de la Conception, pour les cases : le terrain, une page par parcelle, le matériel et l'eau, le calendrier. */
 $chapitresConception = ['terrain' => 'Le terrain'] + ($parcelles === [] ? ['parcelles' => 'Les parcelles'] : []);
@@ -358,6 +402,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dossier Projet — <?= htmlspecialchars($nomProjet, ENT_QUOTES, 'UTF-8') ?></title>
+<link rel="stylesheet" href="assets/css/dessins-papier.css?v=<?= (int) @filemtime(__DIR__ . '/assets/css/dessins-papier.css') ?>">
 <style>
   @font-face{ font-family:'Clash Display'; src:url('assets/polices/ClashDisplay-Semibold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
   @font-face{ font-family:'Archivo'; src:url('assets/polices/Archivo-Regular.woff2') format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
@@ -417,12 +462,14 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   .a-faire{ margin:.8rem 0 0; color:var(--muted); font-size:.85rem; }
 
   /* Le choix des chapitres : une case décochée retire son chapitre, à l'écran comme sur le papier. */
-<?php foreach (array_merge(['couverture'], array_keys($chapitres), array_keys($chapitresConception), ['participants']) as $id): ?>
+<?php foreach (array_merge(['couverture'], array_keys($chapitres), array_keys($chapitresConception), array_keys($chapitresRealisation), array_keys($chapitresSuivi), ['participants']) as $id): ?>
   body:has(#imprimer-<?= $id ?>:not(:checked)) #chapitre-<?= $id ?>{ display:none; }
 <?php endforeach; ?>
   .aucun{ display:none; }
   body:not(:has(<?= implode(', ', array_map(static fn (string $id): string => '#imprimer-' . $id . ':checked', array_keys($chapitres))) ?>)) #phase-definition{ display:none !important; }
   body:not(:has(<?= implode(', ', array_map(static fn (string $id): string => '#imprimer-' . $id . ':checked', array_keys($chapitresConception))) ?>)) #phase-conception{ display:none !important; }
+  body:not(:has(<?= implode(', ', array_map(static fn (string $id): string => '#imprimer-' . $id . ':checked', array_keys($chapitresRealisation))) ?>)) #phase-realisation{ display:none !important; }
+  body:not(:has(<?= implode(', ', array_map(static fn (string $id): string => '#imprimer-' . $id . ':checked', array_keys($chapitresSuivi))) ?>)) #phase-suivi{ display:none !important; }
   body:not(:has(.reglage input:checked)) .aucun{ display:block; }
 
   .reglage .groupe{ font-weight:500; color:var(--muted); font-size:.85rem; margin:.4rem 0 .2rem; }
@@ -432,37 +479,13 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   /* Un titre et ce qu'il annonce ne se séparent pas : Firefox ignore `break-after:avoid` sur le titre seul. */
   .bloc{ break-inside:avoid; page-break-inside:avoid; }
   figcaption{ color:var(--muted); font-size:.85rem; margin-top:.3rem; }
-  .d-dessin{ display:block; width:100%; height:auto; font-family:var(--texte); }
-  .d-texte{ font-size:13px; fill:#26312A; }
-  .d-gras{ font-weight:500; }
-  .d-vide{ fill:#4E5A50; font-style:italic; }
-  .d-etiquette{ font-size:13px; font-weight:500; paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
-  .d-parcelle{ fill:#fff; stroke:#26312A; stroke-width:1.6; }
-  .d-bordure{ fill:#EBD9A8; stroke:#C89B3C; stroke-width:1.2; }
-  .d-bordure-interne{ fill:#F4E8C7; stroke:#C89B3C; stroke-width:1; stroke-dasharray:4 3; }
-  .d-planche{ fill:#EEF3E8; stroke:#7E9A6E; stroke-width:1; }
-  .d-ligne{ stroke:#4E5A50; stroke-width:.8; stroke-dasharray:4 4; }
-  .d-ligne-centrale{ stroke:#26312A; stroke-width:1.4; }
-  .d-liane{ stroke:#80528a; stroke-width:3; stroke-dasharray:10 5; }
-  .d-plant{ stroke:#fff; stroke-width:1; fill-opacity:.9; }
-  .d-sigle{ font-size:8px; font-weight:500; fill:#fff; }
-  .d-numero{ font-size:11px; fill:#4E5A50; }
-  .d-cote{ font-size:13px; fill:#4E5A50; text-transform:uppercase; letter-spacing:.08em; }
-  .d-mesure{ stroke:#4E5A50; stroke-width:1; }
-  .d-periode{ fill:#FBF7EE; }
-  .d-periode.impair{ fill:#F3EBD9; }
-  .d-trait{ stroke:#C7D2BE; stroke-width:1; }
-  .d-limite{ stroke:#C7D2BE; stroke-width:1; stroke-dasharray:2 3; }
-  .d-barre rect:first-child{ stroke:#26312A; stroke-width:.8; }
-  .b-rouge rect:first-child{ fill:#E7A99B; } .b-orange rect:first-child{ fill:#F0C48A; }
-  .b-vert rect:first-child{ fill:#B5D1A5; } .b-bleu rect:first-child{ fill:#A9C5E0; }
-  .legende{ list-style:none; margin:.6rem 0 0; padding:0; display:flex; flex-wrap:wrap; gap:.25rem 1rem; font-size:.85rem; }
-  .legende i{ display:inline-block; width:.8rem; height:.8rem; border-radius:50%; vertical-align:-.1rem; margin-right:.3rem; }
-  .legende .trait{ border-radius:0; height:.3rem; vertical-align:.15rem; }
   table.liste{ width:100%; border-collapse:collapse; font-size:.9rem; }
   table.liste th, table.liste td{ text-align:left; vertical-align:top; padding:.35rem .5rem .35rem 0; border-top:1px solid var(--line); }
   table.liste th{ font-weight:500; color:var(--muted); font-size:.8rem; }
   table.liste tr{ break-inside:avoid; }
+  table.liste.serre{ font-size:.8rem; }
+  .feuille.journal{ break-inside:auto; }
+  .feuille.journal table + .sous-titre{ margin-top:1.1rem; }
   .nombre{ text-align:right !important; white-space:nowrap; }
   .note-dossier{ color:var(--muted); font-size:.85rem; margin:.5rem 0 0; }
 
@@ -487,7 +510,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     .couverture{ padding-top:35vh; break-after:page; margin:0; }
     .phase{ display:none; }
     .titre-phase{ display:block; }
-    #phase-conception{ break-before:page; }
+    #phase-conception, #phase-realisation, #phase-suivi{ break-before:page; }
     .feuille.parcelle, .feuille.a-part{ break-before:page; break-inside:auto; }
     .feuille.terrain{ break-inside:auto; }
     a{ color:inherit; text-decoration:none; }
@@ -513,6 +536,18 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
   <p class="groupe">Conception</p>
   <div class="cases">
 <?php foreach ($chapitresConception as $id => $titre): ?>
+    <label><input type="checkbox" id="imprimer-<?= $id ?>" checked><span><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></span></label>
+<?php endforeach; ?>
+  </div>
+  <p class="groupe">Réalisation</p>
+  <div class="cases">
+<?php foreach ($chapitresRealisation as $id => [$titre]): ?>
+    <label><input type="checkbox" id="imprimer-<?= $id ?>" checked><span><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></span></label>
+<?php endforeach; ?>
+  </div>
+  <p class="groupe">Suivi</p>
+  <div class="cases">
+<?php foreach ($chapitresSuivi as $id => [$titre]): ?>
     <label><input type="checkbox" id="imprimer-<?= $id ?>" checked><span><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></span></label>
 <?php endforeach; ?>
   </div>
@@ -715,7 +750,9 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
 <?php elseif (isset($pc['scenario']['frise'])): ?>
     <figure>
       <?= $pc['scenario']['frise'] ?>
-      <figcaption>Chaque végétal, de son entrée à sa sortie du scénario ; hachuré après son retrait.</figcaption>
+      <figcaption>Chaque végétal, de son entrée à sa sortie du scénario ; hachuré après son retrait. Contour épais (rouge) :
+        une production ; en tirets (orange) : production et service ; trait fin (vert) : un service ; en pointillés (bleu) :
+        une couleur choisie à la main.</figcaption>
     </figure>
 <?php else: ?>
     <dl class="reponses">
@@ -880,6 +917,93 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     </dl>
 <?php endif; ?>
   </section>
+
+<?php foreach (['realisation' => ['Réalisation', $chapitresRealisation, $realisation], 'suivi' => ['Suivi', $chapitresSuivi, $suivi]] as $cle => [$phase, $liste, $source]): ?>
+  <h2 class="titre-phase" id="phase-<?= $cle ?>"><?= $phase ?></h2>
+<?php foreach ($liste as $id => [$titre, $etape, $lignes]): ?>
+<?php if ($lignes === null): ?>
+  <section class="feuille journal" id="chapitre-<?= $id ?>">
+    <p class="phase"><?= $phase ?></p>
+    <h2><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></h2>
+    <p class="sous-titre">Le journal des perturbations et les constats du saut du chat, parcelle par parcelle, dans l’ordre des jours.</p>
+<?php if ($journaux === []): ?>
+    <p class="vide">Aucune parcelle n’est encore créée. Cela se fait à l’étape « Créer les parcelles » de la Conception.</p>
+<?php endif; ?>
+<?php foreach ($journaux as $j): ?>
+    <div class="bloc">
+      <h3>Parcelle <?= htmlspecialchars($j['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars($j['nom'], ENT_QUOTES, 'UTF-8') ?></h3>
+<?php if ($j['interventions'] === [] && $j['constats'] === []): ?>
+      <p class="vide">Rien n’est encore noté. Cela se fait aux étapes « Perturbation » et « Saut du chat » du Suivi.</p>
+      <p class="a-faire lien-etape"><a href="suivi-perturbation.php?parcelle=<?= $j['id'] ?>">Aller au journal →</a></p>
+<?php endif; ?>
+<?php if ($j['interventions'] !== []): ?>
+      <p class="sous-titre">Les perturbations</p>
+      <table class="liste serre">
+        <thead><tr><th>Date</th><th>Geste</th><th>Végétaux</th><th>État des plantes</th><th>Eau</th><th>Biomasse</th><th>Constaté ensuite</th></tr></thead>
+        <tbody>
+<?php foreach ($j['interventions'] as $i): ?>
+          <tr>
+            <td><?= htmlspecialchars($dateEnMots((string) $i['date']) ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(Perturbation::libelle(Perturbation::TYPES, $i['type']), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(Perturbation::joindre(Perturbation::vegetaux($i['especes'] ?? '')) . ((string) ($i['zone'] ?? '') !== '' ? ' (' . $i['zone'] . ')' : ''), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(Perturbation::libelle(Perturbation::STADES, $i['stade_phenologique']), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(Perturbation::libelle(Perturbation::EAUX, $i['conditions_eau']), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(Perturbation::libelle(Perturbation::BIOMASSES, $i['biomasse_deposee']), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= $h((string) ($i['resultat_constate'] ?? '')) ?></td>
+          </tr>
+<?php endforeach; ?>
+        </tbody>
+      </table>
+<?php endif; ?>
+<?php if ($j['constats'] !== []): ?>
+      <p class="sous-titre">Les constats du saut du chat</p>
+      <table class="liste serre">
+        <thead><tr><th>Date</th><th>Visible</th><th>Plante</th><th>Pousse</th><th>Hauteur</th><th>Biomasse</th><th>Sol</th><th>Adventices</th><th>Notes</th></tr></thead>
+        <tbody>
+<?php foreach ($j['constats'] as $c): ?>
+          <tr>
+            <td><?= htmlspecialchars($dateEnMots((string) $c['date']) ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= $c['visible'] === 'oui' ? 'Oui' : 'Pas encore' ?></td>
+            <td><?= htmlspecialchars((string) ($c['vegetal'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= $c['pousse_cm'] !== null ? htmlspecialchars(DessinsDossier::nombre((float) $c['pousse_cm'], 1) . ' cm en ' . (int) $c['sur_jours'] . ' j', ENT_QUOTES, 'UTF-8') : '' ?></td>
+            <td><?= $c['hauteur_cm'] !== null ? htmlspecialchars(SautDuChat::hauteurDite((float) $c['hauteur_cm'], $c['adulte']), ENT_QUOTES, 'UTF-8') : '' ?></td>
+            <td><?= htmlspecialchars(SautDuChat::BIOMASSES[$c['biomasse'] ?? ''] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(SautDuChat::SOLS[$c['sol'] ?? ''] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= htmlspecialchars(SautDuChat::ADVENTICES[$c['adventices'] ?? ''] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+            <td><?= $h((string) ($c['notes'] ?? '')) ?></td>
+          </tr>
+<?php endforeach; ?>
+        </tbody>
+      </table>
+<?php endif; ?>
+    </div>
+<?php endforeach; ?>
+  </section>
+<?php else: ?>
+<?php $renseignees = array_filter($lignes, static fn (?string $v): bool => $v !== null); ?>
+  <section class="feuille" id="chapitre-<?= $id ?>">
+    <p class="phase"><?= $phase ?></p>
+    <h2><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></h2>
+<?php if ($renseignees === []): ?>
+    <p class="vide">Pas encore renseigné. Cela se fait à l’étape « <?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?> » <?= $cle === 'suivi' ? 'du Suivi' : 'de la Réalisation' ?>.</p>
+    <p class="a-faire lien-etape"><a href="<?= $etape ?>">Aller à cette étape →</a></p>
+<?php else: ?>
+<?php if ($source['nom'] !== null): ?>
+    <p class="provenance">Réponses de <?= htmlspecialchars($source['nom'], ENT_QUOTES, 'UTF-8') ?>.</p>
+<?php endif; ?>
+    <dl class="reponses">
+<?php foreach ($lignes as $question => $reponse): ?>
+      <div>
+        <dt><?= htmlspecialchars($question, ENT_QUOTES, 'UTF-8') ?></dt>
+        <dd><?= $reponse !== null ? $h($reponse) : '<span class="vide">pas encore renseigné</span>' ?></dd>
+      </div>
+<?php endforeach; ?>
+    </dl>
+<?php endif; ?>
+  </section>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endforeach; ?>
 
   <section class="feuille" id="chapitre-participants">
     <p class="phase">Le projet</p>

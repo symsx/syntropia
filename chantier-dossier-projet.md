@@ -1,6 +1,6 @@
 # Le Dossier Projet — un document imprimable du projet
 
-**Demandé par le porteur le 2026-09-19 ; Phase 1 faite le 2026-10-02. Les six
+**Demandé par le porteur le 2026-09-19 ; Phase 1 faite le 2026-10-02, Phases 4 et 5 le 2026-10-05. Les six
 questions ont reçu leur réponse le jour même (§ Décisions du porteur).** Le porteur l'a
 formulé ainsi : « créer la fonctionnalité de création d'un Dossier Projet. Un
 document imprimable pour que l'utilisateur puisse avoir son projet au format
@@ -186,7 +186,7 @@ Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impres
   `<style>`, une entité HTML ne se décode pas).
 - **Non fait** : le chapitre « Participants » (Phase 3) — la couverture ne nomme que le porteur.
 
-## Phase 2 — faite le 2026-10-03, pas encore déployée
+## Phase 2 — faite le 2026-10-03, déployée le 2026-10-04
 
 - **`src/DessinsDossier.php`** (pur) : le terrain (les tracés de `calque_element`, projection locale de `Calques`, le
   nord en haut, échelle et flèche du nord, sans fond de carte ; du relief, les courbes de niveau seules), le plan d'une
@@ -213,7 +213,7 @@ Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impres
 - **Laissé tel quel, accord du porteur** : le PDF de Firefox porte ses propres en-têtes (adresse, date) et ignore le
   pied de page de `@page` — c'est un réglage de la boîte d'impression.
 
-## Phase 3 — faite le 2026-10-04, pas encore déployée
+## Phase 3 — faite et déployée le 2026-10-04
 
 - **Dans chaque parcelle** : « Ce qu'il faut se procurer » (végétal, origine, quantité — estimée, minimale ou à
   déterminer, dite comme à l'écran) et « L'eau » (le besoin annuel en trois sols et la mare creusée, la pointe
@@ -235,6 +235,47 @@ Demandée par le porteur (« suivre l'ordre du chantier » plutôt qu'une impres
 - **Vérifié** en local avec un compte contributeur (`claudetest1`) : PDF par `Page.printToPDF`, 12 pages, relu ;
   les cases des nouveaux chapitres ; la Définition inchangée. Le calendrier rempli n'a pas été vu imprimé (La Vadaux
   n'en a pas en local).
+
+## Phase 4 — faite le 2026-10-05, pas encore déployée
+
+- **La Réalisation** (saut de page avant) : un chapitre par étape — préparation de la parcelle, matériel végétal, outils
+  et plans, consignation —, chaque question avec sa réponse, les choix dits par leur libellé, la date en mots
+  (`Reponses::realisationDuProjet()`, la personne à défaut le porteur, comme la Définition).
+- **Le Suivi** (saut de page avant) : arrosage et germination ; **le journal de chaque parcelle**, dans l'ordre des
+  jours — les perturbations (geste, végétaux, état des plantes, eau, biomasse, ce qui est constaté ensuite) et les
+  constats du saut du chat (ses trois signes, la hauteur lue contre la hauteur adulte d'Espèces) ; la consignation
+  (`Reponses::suiviDuProjet()`). Une parcelle sans rien de noté le dit et renvoie au journal.
+- **Ce qui ne s'imprime pas, faute d'être enregistré** (décision 5) : les deux consignations ne gardent que leur dernière
+  saisie ; la table `celebration` n'est écrite par aucune page.
+- **Le noir et blanc** : les quatre fonds de la frise deviennent des gris presque égaux. Chaque catégorie a désormais son
+  contour — épais (production), tirets (production et service), fin (service), pointillés (bleu, choisi à la main) —
+  dit dans la légende sous la frise. Vérifié sur un PDF rendu en niveaux de gris.
+- **Vérifié** en local avec `claudetest1` : PDF de 19 pages par `Page.printToPDF`, relu ; une parcelle temporaire avec
+  deux perturbations, un constat et quatre végétaux de scénario (supprimée ensuite) ; des réponses de test de la
+  Réalisation et du Suivi (supprimées ensuite) ; les chapitres vides disent où ils se remplissent.
+
+## Phase 5 — faite le 2026-10-05, pas encore déployée
+
+Cadrée par le porteur le 2026-10-05 : un bouton dans l'étape « Outils et plans » de la Réalisation, qui dit que c'est
+« le feuillet du chantier de plantation de la parcelle X » ; le plan en paysage ; **l'espacement de chaque plante, pas la
+position de chaque plant** ; des colonnes à pointer (planté, nombre, notes) ; l'origine du cadre des espèces, en
+attendant la palette végétale.
+
+- **`public/feuillet-chantier.php`**, hors gabarit (le sous-dossier du Dossier Projet, même exception) : une page en
+  paysage (`@page paysage`) avec le titre, l'en-tête (projet, date d'édition, dimensions, planches, campagne) et le plan
+  avec la légende des sigles ; puis « Où va quoi » en portrait — chaque bordure et la ligne des lianes (longueur, total,
+  série dans l'ordre par sigles, date de plantation prévue ; une rangée par espèce : espacement, nombre prévu, origine),
+  chaque planche ligne par ligne (avec la centrale et la mise en place prévue), les végétaux du scénario (où, strate,
+  entrée, nombre ≈ estimé) ou les cultures du potager ; puis « Le jour du chantier », des lignes pour noter.
+- **Un seul calcul** : le plan, ses sigles et ses couleurs sortent de `dossier-projet.php` dans `src/Web/PlanImprime.php`
+  (dossier vérifié identique avant et après, à la date près) ; les règles des dessins dans
+  `public/assets/css/dessins-papier.css`, chargé par les deux pages ; les quantités de `MaterielDuSite`.
+- **`realisation-outils-et-plans.php`** : « Le feuillet du chantier de plantation de la parcelle [liste] — Imprimer »,
+  et une phrase au panneau Informations. La page débordait déjà de 71 px à 320×568 avant l'ajout : elle se resserre
+  désormais en deux paliers de hauteur (comme `realisation-preparation-parcelle.php`), vérifié à 375×667, 320×568 et
+  1400×700, captures à l'appui.
+- **Vérifié** en local : une parcelle temporaire (bordures de P1, une ligne de planche, deux végétaux de scénario, une
+  date prévue), supprimée ensuite ; PDF de 3 pages (la première en A4 paysage, les autres en portrait), relu.
 
 ## Phases proposées
 
