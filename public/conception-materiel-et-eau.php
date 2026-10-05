@@ -738,7 +738,6 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
       <p><strong>Quand arroser.</strong> On arrose tard le soir, la nuit ou très tôt le matin, et le matin par beau temps pour les plantes qui craignent l'humidité sur le
          feuillage. Les semaines qui suivent un semis de couvert sont les plus importantes : la graine ne doit pas se dessécher. L'excès d'eau a aussi ses dégâts :
          asphyxie, lessivage, salinisation.</p>
-      <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
 

@@ -1372,7 +1372,6 @@ foreach ($lignesBordures as $cle => $lb):
       </ul>
 <?php endif; ?>
 <?php endif; ?>
-      <p>Connecté en tant que <?= htmlspecialchars($nomAffiche, ENT_QUOTES, 'UTF-8') ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
 

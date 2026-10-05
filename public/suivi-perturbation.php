@@ -637,7 +637,6 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
          une nouvelle taille est possible au bout de trois semaines. Sur votre site, le rythme suit la repousse de vos plantes.</p>
       <p><strong>Couper et affaiblir.</strong> Une couverture spontanée qu'on veut planter ne se taille pas avant d'être couverte, car la coupe la fait repartir. On la couche sous la
          paille. Ce geste se note à part, et il ne compte pas comme une perturbation.</p>
-      <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
 

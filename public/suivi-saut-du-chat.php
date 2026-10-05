@@ -664,7 +664,6 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
          à la main, et l'on densifie avec des plantes du système d'accumulation.</p>
       <p><strong>Quand.</strong> Dans les exemples de Théry, le saut du chat vient dès les premiers mois et dès la première année, quand les plantes de biomasse et les
          annuelles de démarrage sont réussies. Un mauvais démarrage des bordures vivantes le retarde, et le rattrapage coûte du travail.</p>
-      <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
 

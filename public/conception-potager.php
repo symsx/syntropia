@@ -1165,7 +1165,6 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
          proposition en tout ou en partie, ou vous la laissez.</p>
       <p><strong>Les cultures absentes des tables.</strong> « Aucun voisinage connu » ne veut pas dire « sans effet ». Les tables ne sont pas
          symétriques : une relation est connue dès qu'une des deux plantes la cite.</p>
-      <p>Connecté en tant que <?= $h($nomAffiche) ?>. <a href="deconnexion.php">Se déconnecter</a>.</p>
     </div>
   </aside>
 
