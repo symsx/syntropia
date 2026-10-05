@@ -91,6 +91,8 @@ code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); 
    relais si ça ne suffit pas. */
 .bg-centre{
   position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
+  z-index:1; /* au-dessus de .bg-droite, positionné pour la lisière, qui occupe aussi la colonne du milieu : sans cela,
+                il recouvre les flèches étape précédente / suivante (bug du 2026-10-05) */
   max-width:min(55vw, 30rem);
   min-width:0; display:flex; align-items:center; justify-content:center; gap:.3rem; overflow:hidden;
 }
