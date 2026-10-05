@@ -1117,14 +1117,16 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
 <?php if ($occupation !== null): ?>
-      <p><strong>L'occupation au sol, par strate.</strong> C'est la surface que couvrent les plantes adultes (l'envergure, dans
-         <a href="especes.php">Espèces</a>), rapportée à la parcelle. Les repères de Théry (ch. 05) sont de 20 % pour l'émergente,
+      <p><strong>L'occupation au sol, par strate.</strong> C'est la surface que couvriront les plantes gardées jusqu'à l'âge
+         adulte (l'envergure, dans <a href="especes.php">Espèces</a>), rapportée à la parcelle. La biomasse, taillée ou retirée
+         avant, ne compte pas. Les repères de Théry (ch. 05) sont de 20 % pour l'émergente,
          40 % pour la haute, 60 % pour la moyenne et 80 % pour la basse. La somme dépasse 100 %, car chaque strate prend la lumière
          que la précédente laisse.</p>
       <ul class="pi-saut">
 <?php foreach ($occupation as $o):
     $manque = array_merge($o['sans_envergure'] !== [] ? ['sans envergure : ' . implode(', ', $o['sans_envergure'])] : [],
-        $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : []); ?>
+        $o['sans_nombre'] !== [] ? ['sans nombre de plants : ' . implode(', ', $o['sans_nombre'])] : [],
+        $o['biomasse'] > 0 ? [$o['biomasse'] . ($o['biomasse'] > 1 ? ' plants de biomasse non comptés' : ' plant de biomasse non compté')] : []); ?>
         <li class="<?= $o['couverture'] === null ? 'vide' : ($o['couverture'] >= $o['repere'] ? 'ok' : 'attention') ?>"><span class="pi-saut-signe"><?= $o['couverture'] === null ? '○' : ($o['couverture'] >= $o['repere'] ? '✓' : '⚠') ?></span>
           <strong><?= $h($o['libelle']) ?></strong> : <?= $o['couverture'] === null ? 'rien de compté' : $h(str_replace('.', ',', (string) $o['couverture']) . ' %') ?> (repère <?= (int) $o['repere'] ?> %)<?= $o['plants'] > 0 ? ' · ' . (int) $o['plants'] . ($o['plants'] > 1 ? ' plants comptés' : ' plant compté') : '' ?><?= $manque !== [] ? ' · <small>' . $h(implode(' ; ', $manque)) . '</small>' : '' ?></li>
 <?php endforeach; ?>

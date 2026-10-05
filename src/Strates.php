@@ -17,8 +17,9 @@ namespace Syntropia;
  *    émergente, maïs B haute ; sureau et figuier P haute, B moyenne ; décision du porteur, 2026-09-30, schéma 18). Une
  *    colonne vide : la seule strate syntropique de `strates_possibles` s'il n'y en a qu'une ; plusieurs (la fève, la pomme
  *    de terre, qui changent de strate au fil du cycle) : rien n'est deviné ;
- *  - **l'occupation au sol** : la surface projetée des houppiers de chaque strate, comparée au repère de la source
- *    (émergente 20 %, haute 40 %, moyenne 60 %, basse 80 % — la somme dépasse 100 %, « c'est voulu »).
+ *  - **l'occupation au sol** : la surface projetée des houppiers de chaque strate — des plants gardés jusqu'à l'âge
+ *    adulte, sans la biomasse —, comparée au repère de la source (émergente 20 %, haute 40 %, moyenne 60 %, basse 80 % —
+ *    la somme dépasse 100 %, « c'est voulu »).
  */
 final class Strates
 {
@@ -73,8 +74,13 @@ final class Strates
      * plant) rapportée à la surface. Une plante sans envergure connue ou sans nombre de plants ne compte pas — elle est
      * nommée, pour que la personne sache ce qui manque.
      *
-     * @param list<array{nom: string, strate: ?string, n: ?int, largeur: ?float}> $plantes
-     * @return array<string, array{libelle: string, repere: int, couverture: ?float, plants: int,
+     * **Seuls les plants gardés jusqu'à l'âge adulte comptent** (le porteur, 2026-10-05) : les plants de biomasse
+     * (`biomasse` vrai), taillés ou retirés à la perturbation, n'atteignent jamais leur houppier adulte. Les compter
+     * donnait des milliers de pour cent sur une plantation dense, comparés à des repères qui décrivent le système
+     * installé. Ils sont comptés à part (`biomasse`), pour que la personne voie ce qui est laissé de côté.
+     *
+     * @param list<array{nom: string, strate: ?string, n: ?int, largeur: ?float, biomasse?: bool}> $plantes
+     * @return array<string, array{libelle: string, repere: int, couverture: ?float, plants: int, biomasse: int,
      *                              sans_envergure: list<string>, sans_nombre: list<string>}>|null  `null` sans surface
      */
     public static function occupation(array $plantes, float $surfaceM2): ?array
@@ -85,12 +91,16 @@ final class Strates
         $out = [];
         foreach (self::REPERES as $cle => $r) {
             $out[$cle] = ['libelle' => $r['libelle'], 'repere' => $r['sol'], 'couverture' => null, 'plants' => 0,
-                'sans_envergure' => [], 'sans_nombre' => []];
+                'biomasse' => 0, 'sans_envergure' => [], 'sans_nombre' => []];
         }
         $aire = [];
         foreach ($plantes as $p) {
             $s = $p['strate'];
             if ($s === null || !isset($out[$s])) {
+                continue;
+            }
+            if (!empty($p['biomasse'])) {
+                $out[$s]['biomasse'] += (int) ($p['n'] ?? 0);
                 continue;
             }
             if ($p['n'] === null) {

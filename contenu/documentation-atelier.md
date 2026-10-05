@@ -274,8 +274,8 @@ Quand une espèce a plusieurs strates possibles, comme la fève ou la pomme de t
 l'atelier vous laisse choisir.
 
 Le panneau Informations montre **l'occupation au sol** de chaque strate : la surface des plantes
-adultes, rapportée à la parcelle. Les repères de Théry sont de 20, 40, 60 et 80 % de la plus haute
-à la plus basse.
+gardées jusqu'à l'âge adulte, rapportée à la parcelle. La biomasse ne compte pas. Les repères de
+Théry sont de 20, 40, 60 et 80 % de la plus haute à la plus basse.
 
 Le même panneau donne **la part de biomasse** de la ligne centrale : combien de ses plants servent
 à la biomasse. Théry en destine 70 à 80 % à l'implantation, et l'atelier vise 75 %. C'est une

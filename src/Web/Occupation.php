@@ -20,6 +20,10 @@ use Syntropia\Strates;
  * fois quand le plan porte déjà des lignes de ce côté. La strate est celle qui est saisie (scénario, culture), à défaut
  * celle que propose le référentiel pour son usage (`Strates::proposee()` — sa strate de production ou de service : une
  * plante de bordure ou d'une ligne de service rend un service, une culture de potager est une production). La surface est celle de la parcelle, longueur × largeur.
+ *
+ * Un plant de biomasse ne compte pas dans la surface (le porteur, 2026-10-05 — `Strates::occupation()`). Il se reconnaît
+ * comme dans Matériel et eau (`MaterielDuSite`) : une ligne du scénario par `Espacement::ligneDeBiomasse()`, une culture
+ * par ses fonctions, un plant du plan par le rôle de son espèce — sauf une production de la ligne des lianes.
  */
 final class Occupation
 {
@@ -51,6 +55,7 @@ final class Occupation
         $trouver = static fn (string $nom): ?array => $parNom[mb_strtolower(trim($nom))] ?? $especes->parNomUsage($nom, $siteId);
         $largeur = static fn (?array $e): ?float => $e !== null && ($e['largeur_m'] ?? null) !== null ? (float) $e['largeur_m'] : null;
         $production = static fn (?array $e): bool => in_array('production', explode('|', (string) ($e['role'] ?? '')), true);
+        $deBiomasse = static fn (?string $role): bool => Espacement::service($role) === 'biomasse';
 
         $plantes = [];
         // Les lignes du plan : leurs plants comptés.
@@ -66,15 +71,18 @@ final class Occupation
                 $e = $pl['id'] !== null ? ($parId[$pl['id']] ?? null) : null;
                 // Une bordure rend un service (bloque-herbe, biomasse) ; la ligne des lianes porte aussi des productions
                 // (vigne, kiwi).
-                $plantes[] = ['nom' => $pl['nom'], 'strate' => Strates::proposee($e, $cadre === 'liane' && $production($e)),
-                    'n' => $b['compte'] !== null && $b['compte']['ok'] ? (int) $b['compte']['comptes'][$k] : null, 'largeur' => $largeur($e)];
+                $produit = $cadre === 'liane' && $production($e);
+                $plantes[] = ['nom' => $pl['nom'], 'strate' => Strates::proposee($e, $produit),
+                    'n' => $b['compte'] !== null && $b['compte']['ok'] ? (int) $b['compte']['comptes'][$k] : null, 'largeur' => $largeur($e),
+                    'biomasse' => !$produit && $deBiomasse($e['role'] ?? null)];
             }
         }
         foreach ($lignes->etatPlanches($parcelle, $siteId) as $p) {
             foreach ($p['lignes'] as $l) {
                 if ($l !== null) {
                     // Une ligne de service : la strate de la biomasse et du service, la plus basse.
-                    $plantes[] = ['nom' => $l['nom'], 'strate' => Strates::proposee($l['espece'], false), 'n' => $l['compte'], 'largeur' => $largeur($l['espece'])];
+                    $plantes[] = ['nom' => $l['nom'], 'strate' => Strates::proposee($l['espece'], false), 'n' => $l['compte'], 'largeur' => $largeur($l['espece']),
+                        'biomasse' => $deBiomasse($l['espece']['role'] ?? null)];
                 }
             }
         }
@@ -85,7 +93,8 @@ final class Occupation
                 $e = $trouver((string) $c['espece']);
                 $plantes[] = ['nom' => (string) $c['espece'],
                     'strate' => ($c['strate'] ?? null) !== null ? (string) $c['strate'] : Strates::proposee($e, true),
-                    'n' => Materiel::quantiteCulture($c, $bandes, Espacement::deCulture($e))['n'], 'largeur' => $largeur($e)];
+                    'n' => Materiel::quantiteCulture($c, $bandes, Espacement::deCulture($e))['n'], 'largeur' => $largeur($e),
+                    'biomasse' => $deBiomasse($c['role'] ?? null)];
             }
         } else {
             $cadres = ['bord_ext' => 'externe', 'bord_int' => 'interne'];
@@ -97,8 +106,9 @@ final class Occupation
                 if (isset($cadres[$ou], $bordAvecLignes[$cadres[$ou]])) {
                     continue; // le plan porte déjà ce qui pousse de ce côté
                 }
+                $e = $trouver((string) $l['espece']);
                 $plantes[] = ['nom' => (string) $l['espece'], 'strate' => (string) $l['strate'],
-                    'n' => $quantites[$rang]['n'], 'largeur' => $largeur($trouver((string) $l['espece']))];
+                    'n' => $quantites[$rang]['n'], 'largeur' => $largeur($e), 'biomasse' => Espacement::ligneDeBiomasse($l, $e)];
             }
         }
         return Strates::occupation($plantes, $surface);
