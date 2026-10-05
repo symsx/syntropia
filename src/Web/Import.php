@@ -41,6 +41,12 @@ final class Import
     /** Combien d'erreurs on détaille avant de dire « et N autres ». */
     private const MAX_ERREURS = 15;
 
+    /**
+     * Les colonnes retirées du schéma qu'un fichier plus ancien peut encore porter : ignorées, sans erreur, pour que la
+     * fenêtre d'import reste ouverte. Schéma 20 : le constat du saut du chat n'a plus de témoin (le porteur, 2026-10-05).
+     */
+    public const RETIREES = ['constat' => ['temoin_decrit', 'temoin_pousse_cm']];
+
     /** Les clés que le fichier peut porter à sa racine. */
     private const RACINE = ['format', 'exporte_le', 'versions', 'application', 'projet', 'participants', 'reponses',
         'syntheses', 'ressources', 'gisements', 'commandes', 'especes_locales', 'parcelles', 'calques', 'integrite'];
@@ -377,7 +383,7 @@ final class Import
 
         foreach (array_keys($ligne) as $cle) {
             $cle = (string) $cle;
-            if (in_array($cle, $extra, true)) {
+            if (in_array($cle, $extra, true) || in_array($cle, self::RETIREES[$table] ?? [], true)) {
                 continue;
             }
             if (in_array($cle, $exclues, true)) {

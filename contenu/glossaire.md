@@ -33,8 +33,8 @@ plutôt que transplanter. Elle permet de commencer avec peu de moyens.
 
 # Saut du chat
 
-L'accélération nette de la croissance du système, effet de la perturbation. Il se constate en comparant avec un témoin
-conduit de façon classique.
+L'accélération nette de la croissance du système, effet de la perturbation. Il se reconnaît à un sol qui change, à des
+plantes qui poussent vite et haut, et à une biomasse importante.
 
 # Témoin
 

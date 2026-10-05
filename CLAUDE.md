@@ -38,7 +38,8 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `documentation-atelier` (maintenance continue, voir § Directives).
   - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
     fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry).
-  - **Planifiés, pas commencés** : `suppression-projet` (sans date — personne
+  - **Planifiés, pas commencés** : `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
+    `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions
     tranchées, prête à commencer).

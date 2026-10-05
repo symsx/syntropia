@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Syntropia;
 
 /**
- * Le saut du chat : le vocabulaire d'un constat, la comparaison au témoin, et la lecture des
- * conditions qui le rendent possible — pur, sans base.
+ * Le saut du chat : le vocabulaire d'un constat et la lecture des conditions qui le rendent possible —
+ * pur, sans base.
  *
  * Voir `chantier-saut-du-chat.md`, Phase 2. Le saut du chat est l'EFFET de la perturbation, non un
- * objectif indépendant : il se déclenche par la taille (pas par la seule densité) et se reconnaît en
- * comparant à un témoin. Rien ici ne rend de verdict : `conditions()` dit ce que l'atelier SAIT (une
+ * objectif indépendant : il se déclenche par la taille (pas par la seule densité) et se reconnaît à trois
+ * signes (le porteur, 2026-10-05) : des végétaux implantés qui poussent vite et haut, une biomasse produite
+ * importante, la structure du sol qui change par rapport au départ. Pas de témoin conduit classiquement :
+ * on ne contraint personne à cultiver avec des intrants. Rien ici ne rend de verdict : `conditions()` dit ce que l'atelier SAIT (une
  * coupe est notée, l'eau y était…), ce qu'il faut REGARDER, et ce que personne n'a encore noté — jamais
  * « échec ».
  *
@@ -80,13 +82,28 @@ final class SautDuChat
     /** Au-delà de ce repère du scénario (0 à 28), une plante n'est plus une plante de démarrage : fin de Placenta 3. */
     private const FIN_DEMARRAGE = 12;
 
-    /** La pousse de la plante rapportée à celle du témoin — `null` sans témoin mesuré (ou nul). */
-    public static function rapport(?float $pousse, ?float $temoin): ?float
+    /** La biomasse produite, deuxième signe du saut du chat : une réponse à noter, non un seuil. */
+    public const BIOMASSES = [
+        'faible' => 'Faible',
+        'moyenne' => 'Moyenne',
+        'importante' => 'Importante',
+    ];
+
+    /** La structure du sol par rapport au départ, troisième signe : ce que la personne voit et sent à la bêche. */
+    public const SOLS = [
+        'plus_grumeleux' => 'Plus grumeleux',
+        'pareil' => 'Pareil',
+        'plus_tasse' => 'Plus tassé',
+    ];
+
+    /**
+     * La hauteur de la plante observée, dite contre sa hauteur adulte d'Espèces (le porteur, 2026-10-05) :
+     * « 1,20 m, pour 1,80 m adulte ». Sans hauteur adulte notée, la hauteur seule.
+     */
+    public static function hauteurDite(float $hauteurCm, ?float $adulteM): string
     {
-        if ($pousse === null || $temoin === null || $temoin <= 0.0) {
-            return null;
-        }
-        return round($pousse / $temoin, 1);
+        $m = static fn (float $v): string => rtrim(rtrim(number_format($v, 2, ',', ''), '0'), ',');
+        return $m($hauteurCm / 100) . ' m' . ($adulteM !== null && $adulteM > 0 ? ', pour ' . $m($adulteM) . ' m adulte' : '');
     }
 
     /**

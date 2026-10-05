@@ -28,6 +28,10 @@
   d'essai, « Quoi de neuf ». Demandé le 2026-10-01 (bêta-testeurs en production) ; **Phases 1 à 4 faites, déployées et essayées en production le
   jour même** (le jeton des formulaires porte la marque du déploiement : une page d'avant une mise à jour n'écrit plus ;
   les personnes connectées se comptent par des traces d'activité, `contenu/actifs/`) ; phases 5 à 7 avant la version 1 (cycle maintenance, puis un `mettre-a-jour` complet) ; on garde les **cinq** dernières sauvegardes.
+- `chantier-releves-de-sol.md` — le plan (4 phases) pour saisir les relevés de sol de chaque parcelle et les
+  comparer d'une campagne à l'autre, témoin compris (la table `releve_sol` existe, seule l'infiltration y entre, par
+  « Matériel et eau ») : demandé le 2026-10-04, **planifié, pas commencé** ; six questions tranchées le 2026-10-05
+  (pas de flore, pas de témoin, la campagne déduite), **reste la référence non cultivée, facultative**.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.

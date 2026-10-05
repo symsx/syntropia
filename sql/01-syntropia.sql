@@ -665,13 +665,14 @@ CREATE TABLE IF NOT EXISTS `scenario_ligne` (
 -- ---------------------------------------------------------------------
 -- LE CONSTAT DU SAUT DU CHAT — schéma 3, 2026-09-20 (chantier-saut-du-chat.md, Phase 2)
 --
--- Le saut du chat est l'EFFET de la perturbation : il se reconnaît, il ne se décrète pas, et il
--- se MESURE PAR COMPARAISON avec un témoin conduit classiquement dans le même sol (Théry,
--- entretien « 11 questions sur la syntropie »). Un constat est donc daté, dit s'il est visible,
--- et — quand on l'a mesuré — donne la pousse d'une plante sur une durée, à côté de celle du
--- témoin. Sans durée, une pousse ne dit rien ; sans pousse, un témoin ne compare rien : la
--- validation (`Web/Constats`) l'exige. Les ordres de grandeur du corpus (maïs jusqu'à 30 cm en
--- 24 h…) sont des repères dits à l'écran, jamais des seuils.
+-- Le saut du chat est l'EFFET de la perturbation : il se reconnaît, il ne se décrète pas. Il se
+-- constate par TROIS SIGNES (le porteur, 2026-10-05 ; Théry, entretien « 11 questions » : « l'explosion
+-- de la vie du sol et de la pousse aérienne ») : des végétaux implantés qui poussent vite et haut
+-- (`pousse_cm` sur `sur_jours`, `hauteur_cm`, lue contre la hauteur adulte d'Espèces), une biomasse
+-- produite importante (`biomasse`), la structure du sol qui change par rapport au départ (`sol`).
+-- Plus de témoin conduit classiquement (schéma 20) : on ne peut contraindre personne à mener une
+-- culture avec des intrants. Sans durée, une pousse ne dit rien : la validation (`Web/Constats`)
+-- l'exige. Le repère du corpus (maïs jusqu'à 30 cm en 24 h) se dit à l'écran, jamais comme un seuil.
 --
 -- La perturbation qui précède n'est PAS une clé étrangère : elle se lit dans le journal
 -- (`intervention`) par sa date, ce qui garde l'export sans référence entre deux tables filles.
@@ -684,8 +685,9 @@ CREATE TABLE IF NOT EXISTS `constat` (
   `vegetal`          VARCHAR(160) NULL,
   `pousse_cm`        DECIMAL(7,1) NULL,
   `sur_jours`        SMALLINT UNSIGNED NULL,
-  `temoin_decrit`    VARCHAR(190) NULL,
-  `temoin_pousse_cm` DECIMAL(7,1) NULL,
+  `hauteur_cm`       DECIMAL(7,1) NULL,            -- la hauteur de la plante observée (schéma 20)
+  `biomasse`         ENUM('faible','moyenne','importante') NULL,                 -- la biomasse produite (schéma 20)
+  `sol`              ENUM('plus_grumeleux','pareil','plus_tasse') NULL,          -- le sol par rapport au départ (schéma 20)
   -- Des adventices reviennent-elles ? (schéma 5.) Le sol se prépare par déchaumage, avec les moyens du
   -- porteur ; si des adventices reviennent en cours de projet, c'est le SIGNE que la plantation n'est pas
   -- assez dense — des plantes de colonisation sont encore là : on désherbe à la main ET l'on densifie avec des
@@ -1284,7 +1286,7 @@ SET @adv_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
                       AND TABLE_NAME = 'constat'
                       AND COLUMN_NAME = 'adventices');
 SET @ajout_adv = IF(@adv_existe = 0,
-                    'ALTER TABLE `constat` ADD COLUMN `adventices` ENUM(''non'',''oui'') NULL AFTER `temoin_pousse_cm`',
+                    'ALTER TABLE `constat` ADD COLUMN `adventices` ENUM(''non'',''oui'') NULL AFTER `sur_jours`',
                     'DO 0');
 PREPARE ajout_adv FROM @ajout_adv;
 EXECUTE ajout_adv;
@@ -1330,6 +1332,50 @@ EXECUTE ajout_plants;
 DEALLOCATE PREPARE ajout_plants;
 
 
+-- Le constat du saut du chat sans témoin — schéma 20 (le porteur, 2026-10-05). Ajoute la hauteur, la biomasse et le
+-- sol ; retire la pousse et la description du témoin. Même forme que ci-dessus : rejouable, sur MySQL et MariaDB.
+SET @hc_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'constat' AND COLUMN_NAME = 'hauteur_cm');
+SET @ajout_hc = IF(@hc_existe = 0,
+                   'ALTER TABLE `constat` ADD COLUMN `hauteur_cm` DECIMAL(7,1) NULL AFTER `sur_jours`',
+                   'DO 0');
+PREPARE ajout_hc FROM @ajout_hc;
+EXECUTE ajout_hc;
+DEALLOCATE PREPARE ajout_hc;
+
+SET @cb_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'constat' AND COLUMN_NAME = 'biomasse');
+SET @ajout_cb = IF(@cb_existe = 0,
+                   'ALTER TABLE `constat` ADD COLUMN `biomasse` ENUM(''faible'',''moyenne'',''importante'') NULL AFTER `hauteur_cm`',
+                   'DO 0');
+PREPARE ajout_cb FROM @ajout_cb;
+EXECUTE ajout_cb;
+DEALLOCATE PREPARE ajout_cb;
+
+SET @cs_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'constat' AND COLUMN_NAME = 'sol');
+SET @ajout_cs = IF(@cs_existe = 0,
+                   'ALTER TABLE `constat` ADD COLUMN `sol` ENUM(''plus_grumeleux'',''pareil'',''plus_tasse'') NULL AFTER `biomasse`',
+                   'DO 0');
+PREPARE ajout_cs FROM @ajout_cs;
+EXECUTE ajout_cs;
+DEALLOCATE PREPARE ajout_cs;
+
+SET @td_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'constat' AND COLUMN_NAME = 'temoin_decrit');
+SET @retrait_td = IF(@td_existe = 1, 'ALTER TABLE `constat` DROP COLUMN `temoin_decrit`', 'DO 0');
+PREPARE retrait_td FROM @retrait_td;
+EXECUTE retrait_td;
+DEALLOCATE PREPARE retrait_td;
+
+SET @tp_existe = (SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'constat' AND COLUMN_NAME = 'temoin_pousse_cm');
+SET @retrait_tp = IF(@tp_existe = 1, 'ALTER TABLE `constat` DROP COLUMN `temoin_pousse_cm`', 'DO 0');
+PREPARE retrait_tp FROM @retrait_tp;
+EXECUTE retrait_tp;
+DEALLOCATE PREPARE retrait_tp;
+
+
 -- ---------------------------------------------------------------------
 -- LA VERSION DU SCHÉMA — de quelle forme sont les données de CETTE base
 --
@@ -1368,6 +1414,9 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 16 = `espece.hauteur_m` (la hauteur de la plante adulte — colonne facultative, idem) ;
 -- 17 = `espece.largeur_m` (l'envergure de la plante adulte — colonne facultative, idem) ;
 -- 18 = `espece.strate_production` et `espece.strate_service` (la strate selon l'usage — colonnes facultatives, idem) ;
--- 19 = `parcelle.stade` gagne l'abondance (une valeur de plus : un fichier plus ancien se charge tel quel).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '19')
+-- 19 = `parcelle.stade` gagne l'abondance (une valeur de plus : un fichier plus ancien se charge tel quel) ;
+-- 20 = le constat du saut du chat sans témoin : `constat.hauteur_cm`, `biomasse`, `sol` (colonnes facultatives),
+-- `temoin_decrit` et `temoin_pousse_cm` retirées — un fichier plus ancien se charge, ces deux champs ignorés
+-- (`Import::RETIREES`).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '20')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

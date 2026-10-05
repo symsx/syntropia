@@ -6,9 +6,9 @@ declare(strict_types=1);
  * Saut du chat — le constat d'une parcelle, et ce qui le rend possible.
  *
  * Étape 3 de Suivi. Deux vues, en onglets CSS purs :
- * - **Les constats** : datés, avec — quand on l'a mesuré — la pousse d'une plante sur une durée, à côté
- *   de celle d'un témoin conduit classiquement dans le même sol. Le saut du chat est un EFFET, il se
- *   reconnaît en comparant.
+ * - **Les constats** : datés, avec ses trois signes quand on les a notés (le porteur, 2026-10-05) : la pousse
+ *   et la hauteur d'une plante (lue contre sa hauteur adulte d'Espèces), la biomasse produite, le sol par
+ *   rapport au départ. Le saut du chat est un EFFET, il se reconnaît à ces signes.
  * - **Ce qui le rend possible** : les conditions, lues dans le journal des perturbations et dans le
  *   scénario (`SautDuChat::conditions()`). Elles disent ce que l'atelier sait, ce qu'il faut regarder et
  *   ce que personne n'a noté — jamais « échec ». C'est la vue par défaut tant que le saut du chat n'est
@@ -30,6 +30,7 @@ use Syntropia\SautDuChat;
 use Syntropia\Web\Authentification;
 use Syntropia\Web\Constats;
 use Syntropia\Web\Cultures;
+use Syntropia\Web\Especes;
 use Syntropia\Web\Interventions;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\Reponses;
@@ -49,6 +50,7 @@ if ($site === null) {
 $siteId = (int) $site['id'];
 $participantId = $sites->participantDuCompte($siteId, $compteId, $auth->nomAffiche() ?? 'Porteur');
 $peutEcrire = $sites->peutEcrireSur($siteId, $compteId);
+$especesSrv = new Especes();
 $parcellesService = new Parcelles();
 $constatsService = new Constats();
 $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
@@ -186,7 +188,7 @@ if (!in_array($vue, ['constats', 'conditions'], true)) {
 
 // Les valeurs du formulaire du constat.
 $f = ['date' => date('Y-m-d'), 'visible' => 'pas_encore', 'vegetal' => '', 'pousse_cm' => '', 'sur_jours' => '',
-    'temoin_pousse_cm' => '', 'temoin_decrit' => '', 'adventices' => '', 'notes' => ''];
+    'hauteur_cm' => '', 'biomasse' => '', 'sol' => '', 'adventices' => '', 'notes' => ''];
 if ($saisie !== null) {
     foreach ($f as $k => $_) {
         $f[$k] = (string) ($saisie[$k] ?? '');
@@ -275,7 +277,6 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   .sd-tableau td a{ color:var(--accent-titre); font-weight:600; text-decoration:none; }
   .sd-tableau td a:hover{ text-decoration:underline; }
   .sd-tableau .doux{ color:var(--muted); font-size:.85em; }
-  .sd-tableau .rapport{ font-weight:600; color:var(--accent-titre); white-space:nowrap; }
   .sd-tableau .notes{ max-width:16rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .sd-page-nav{ display:none; align-items:center; gap:.6rem; font:400 .78rem var(--texte); color:var(--muted); }
   .sd-page-nav.actif{ display:flex; }
@@ -288,7 +289,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   .sd-ancienne a{ color:var(--accent-titre); font-weight:600; }
   .sd-tableau .sous-date{ display:none; font-size:.85em; color:var(--muted); font-weight:400; }
   @media (max-width:60rem){ .sd-tableau .c-notes, .sd-tableau .c-adv{ display:none; } }
-  @media (max-width:46rem){ .sd-tableau .c-temoin{ display:none; } }
+  @media (max-width:46rem){ .sd-tableau .c-sol, .sd-tableau .c-biomasse{ display:none; } }
   @media (max-width:40rem){ .sd-centre{ padding-top:1.8rem; } .sd-tableau th, .sd-tableau td{ padding-left:.3rem; padding-right:.3rem; } }
   @media (max-width:26rem){ .sd-tableau .c-plante{ display:none; } .sd-tableau .sous-date{ display:block; } }
   @media (max-height:38rem){ .sd-temps, .sd-si-tarde{ display:none; } }
@@ -474,7 +475,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php endif; ?>
 <?php if ($constats === []): ?>
 <?php if ($ancienne === []): ?>
-          <p class="sd-vide">Aucun constat n'est encore noté sur cette parcelle. Le saut du chat se constate en comparant : notez la pousse d'une plante sur quelques jours, à côté d'un témoin.
+          <p class="sd-vide">Aucun constat n'est encore noté sur cette parcelle. Le saut du chat se reconnaît à trois signes : des plantes qui poussent vite et haut, une biomasse importante, un sol qui change par rapport au départ.
 <?php if ($peutEcrire): ?>
             <a href="<?= $h($retour) ?>&amp;saisie=1" id="sd-saisir-vide">Noter le premier →</a>
 <?php endif; ?></p>
@@ -482,16 +483,19 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php else: ?>
           <div class="sd-zone" id="sd-const-zone">
             <table class="sd-tableau">
-              <thead><tr><th>Date</th><th>Visible</th><th class="c-plante">Plante</th><th>Pousse</th><th class="c-temoin">Témoin</th><th>Rapport</th><th class="c-adv">Adventices</th><th class="c-notes">Notes</th></tr></thead>
+              <thead><tr><th>Date</th><th>Visible</th><th class="c-plante">Plante</th><th>Pousse</th><th>Hauteur</th><th class="c-biomasse">Biomasse</th><th class="c-sol">Sol</th><th class="c-adv">Adventices</th><th class="c-notes">Notes</th></tr></thead>
               <tbody>
-<?php foreach ($constats as $k): $rapport = SautDuChat::rapport($k['pousse_cm'] !== null ? (float) $k['pousse_cm'] : null, $k['temoin_pousse_cm'] !== null ? (float) $k['temoin_pousse_cm'] : null); ?>
+<?php foreach ($constats as $k):
+    $fiche = $k['hauteur_cm'] !== null && (string) ($k['vegetal'] ?? '') !== '' ? $especesSrv->parNomUsage((string) $k['vegetal'], $siteId) : null;
+    $adulte = $fiche !== null && ($fiche['hauteur_m'] ?? null) !== null ? (float) $fiche['hauteur_m'] : null; ?>
                 <tr class="sd-item-const">
                   <td class="d"><?php if ($peutEcrire): ?><a href="<?= $h($retour) ?>&amp;modifier=<?= (int) $k['id'] ?>&amp;vue=constats" title="Ouvrir pour corriger"><?= $h($dateFr((string) $k['date'])) ?></a><?php else: ?><?= $h($dateFr((string) $k['date'])) ?><?php endif; ?><?php if ((string) ($k['vegetal'] ?? '') !== ''): ?><span class="sous-date"><?= $h($k['vegetal']) ?></span><?php endif; ?></td>
                   <td><?= $k['visible'] === 'oui' ? 'Oui' : 'Pas encore' ?></td>
                   <td class="c-plante"><?= $h($k['vegetal'] ?? '') ?></td>
                   <td><?php if ($k['pousse_cm'] !== null): ?><?= $h($nombre((float) $k['pousse_cm'], 1)) ?> cm <span class="doux">en <?= (int) $k['sur_jours'] ?> j</span><?php endif; ?></td>
-                  <td class="c-temoin" title="<?= $h($k['temoin_decrit'] ?? '') ?>"><?php if ($k['temoin_pousse_cm'] !== null): ?><?= $h($nombre((float) $k['temoin_pousse_cm'], 1)) ?> cm<?php endif; ?></td>
-                  <td class="rapport"><?= $rapport !== null ? '× ' . $h($nombre($rapport, 1)) : '' ?></td>
+                  <td><?= $k['hauteur_cm'] !== null ? $h(SautDuChat::hauteurDite((float) $k['hauteur_cm'], $adulte)) : '' ?></td>
+                  <td class="c-biomasse"><?= $h(SautDuChat::BIOMASSES[$k['biomasse'] ?? ''] ?? '') ?></td>
+                  <td class="c-sol"><?= $h(SautDuChat::SOLS[$k['sol'] ?? ''] ?? '') ?></td>
                   <td class="c-adv"><?= $k['adventices'] === 'oui' ? 'Oui' : ($k['adventices'] === 'non' ? 'Non' : '') ?></td>
                   <td class="c-notes notes" title="<?= $h($k['notes'] ?? '') ?>"><?= $h($k['notes'] ?? '') ?></td>
                 </tr>
@@ -530,7 +534,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 
         <section class="sd-panneau sd-p-constat">
           <p class="pd-titre"><?= $editionId > 0 ? 'Corriger le constat' : 'Noter un constat' ?>, <?= $h($parcelle['code']) ?></p>
-          <p class="sd-note"><b>À quoi il sert.</b> Le constat sert à reconnaître le saut du chat et à le suivre dans le temps. Il se fait en <strong>comparant</strong> la pousse d'une plante sur quelques jours avec celle d'un témoin, dans le même sol, conduit de façon classique. Seules la date et la réponse sont demandées. La mesure se note quand on l'a.</p>
+          <p class="sd-note"><b>À quoi il sert.</b> Le constat sert à reconnaître le saut du chat et à le suivre dans le temps. Il se reconnaît à <strong>trois signes</strong> : des plantes implantées qui poussent vite et haut, une biomasse produite importante, un sol qui change par rapport au départ. Seules la date et la réponse sont demandées. Le reste se note quand on l'a.</p>
           <form method="post" action="suivi-saut-du-chat.php?parcelle=<?= $idP ?>">
             <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
             <input type="hidden" name="action" value="<?= $editionId > 0 ? 'modifier' : 'ajouter' ?>">
@@ -559,15 +563,28 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
                 <input type="number" name="sur_jours" min="1" max="730" step="1" value="<?= $h($f['sur_jours']) ?>">
               </label>
             </div>
+            <label class="sd-champ">Sa hauteur <small>En cm, aujourd'hui</small>
+              <input type="number" name="hauteur_cm" min="0" max="5000" step="0.1" inputmode="decimal" value="<?= $h($f['hauteur_cm']) ?>">
+            </label>
+            <p class="sd-note">Une pousse se mesure sur une durée. La hauteur se lit à côté de la hauteur adulte notée dans Espèces, quand la plante y est. Un <b>repère</b> de la formation : un maïs perturbé pousse jusqu'à 30 cm en 24 h.</p>
             <div class="sd-deux">
-              <label class="sd-champ">Pousse du témoin <small>En cm, sur la même durée</small>
-                <input type="number" name="temoin_pousse_cm" min="0" max="2000" step="0.1" inputmode="decimal" value="<?= $h($f['temoin_pousse_cm']) ?>">
+              <label class="sd-champ">La biomasse produite <small>Facultatif</small>
+                <select name="biomasse">
+                  <option value="">Non dit</option>
+<?php foreach (SautDuChat::BIOMASSES as $cle => $lib): ?>
+                  <option value="<?= $h($cle) ?>"<?= $f['biomasse'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
+<?php endforeach; ?>
+                </select>
               </label>
-              <label class="sd-champ">Le témoin <small>Facultatif</small>
-                <input type="text" name="temoin_decrit" maxlength="190" value="<?= $h($f['temoin_decrit']) ?>" placeholder="Ex. mêmes plants, à 10 m, paillés">
+              <label class="sd-champ">Le sol, par rapport au départ <small>Facultatif</small>
+                <select name="sol">
+                  <option value="">Non dit</option>
+<?php foreach (SautDuChat::SOLS as $cle => $lib): ?>
+                  <option value="<?= $h($cle) ?>"<?= $f['sol'] === $cle ? ' selected' : '' ?>><?= $h($lib) ?></option>
+<?php endforeach; ?>
+                </select>
               </label>
             </div>
-            <p class="sd-note">Une pousse se mesure sur une durée, et la comparaison demande de mesurer aussi la plante. Les ordres de grandeur de la formation sont des <b>repères</b> : le maïs jusqu'à 30 cm en 24 h, des tournesols 1,50 m plus hauts que les mêmes plantés de façon classique, des pérennes qui poussent jusqu'à deux fois plus vite.</p>
             <label class="sd-champ">Des adventices reviennent-elles ? <small>Facultatif</small>
               <select name="adventices">
                 <option value="">Non dit</option>
@@ -630,14 +647,14 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-      <p>Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?> est l'accélération nette de la croissance du système. Il se constate
-         en comparant avec un <?= Documentation::terme($termes, 'temoin', 'témoin') ?> conduit de façon classique.</p>
+      <p>Le <?= Documentation::terme($termes, 'saut-du-chat', 'saut du chat') ?> est l'accélération nette de la croissance du système. Il se reconnaît
+         à trois signes : la structure du sol qui change par rapport au départ, des végétaux implantés qui poussent vite et haut, une production de biomasse importante.</p>
       <p>C'est <strong>l'effet de la perturbation</strong> : quand on taille la biomasse, le sol est nourri et l'information « il faut que ça pousse » gagne les plantes
          alentour. La <strong>taille</strong> le déclenche, et la densité seule ne suffit pas. La formation l'explique par l'acide gibbérellique transmis par les racines
          et les mycorhizes. L'atelier rapporte cette explication sans la donner pour établie.</p>
-      <p><strong>Pourquoi un témoin.</strong> Une plante qui pousse vite peut simplement vivre une bonne année. Le témoin est conduit de façon classique dans le même sol.
-         L'entretien de Théry donne des ordres de grandeur, à lire comme des repères : des maïs perturbés en fin de printemps qui poussent jusqu'à 30 cm en 24 heures,
-         des tournesols 1,50 m plus hauts que les mêmes plantés de façon classique à 10 m, des pérennes qui poussent jusqu'à deux fois plus vite que des arbres paillés et arrosés.</p>
+      <p><strong>Les trois signes.</strong> Théry parle de « l'explosion de la vie du sol et de la pousse aérienne ». Le constat note la pousse d'une plante sur
+         quelques jours et sa hauteur, que l'atelier met à côté de sa hauteur adulte notée dans Espèces ; la biomasse produite ; et le sol, plus grumeleux, pareil ou plus
+         tassé qu'au départ. Un repère de son entretien : des maïs perturbés en fin de printemps qui poussent jusqu'à 30 cm en 24 heures.</p>
       <p><strong>Ce qui le rend possible</strong> se lit dans ce que vous avez déjà noté : une perturbation dans le journal, de quoi couper au scénario, l'état des plantes et
          l'eau à la coupe, la biomasse laissée au sol, toutes les plantes de biomasse coupées ensemble, des plantes de démarrage. Chaque ligne dit ce que l'atelier sait,
          ce qu'il faut regarder, ou que rien n'est encore noté. Ce que la formation n'a pas encore tranché n'est pas chiffré ici : combien de biomasse suffit, à quelle

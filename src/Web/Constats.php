@@ -11,9 +11,9 @@ use Syntropia\SautDuChat;
 /**
  * Les constats du saut du chat d'une parcelle (`constat`).
  *
- * Un constat est daté et dit si le saut du chat est visible ; quand on l'a mesuré, il donne la
- * pousse d'une plante sur une durée, à côté de celle du témoin. Une pousse sans durée ne dit rien, un
- * témoin sans pousse ne compare rien : la validation l'exige, et n'exige rien d'autre.
+ * Un constat est daté et dit si le saut du chat est visible. Il note, quand on les a, ses trois signes
+ * (le porteur, 2026-10-05) : la pousse et la hauteur d'une plante, la biomasse produite, le sol par rapport
+ * au départ. Une pousse sans durée ne dit rien : la validation l'exige, et n'exige rien d'autre.
  *
  * Même conduite que `Interventions` : le garde-fou d'appartenance d'une parcelle à un site se fait à
  * l'appel, chaque requête est en plus bornée à la parcelle, la modification se fait sous verrou de
@@ -85,7 +85,6 @@ final class Constats
             return $valeur;
         };
         $vegetal = $texte('vegetal', 160, 'La plante observée');
-        $temoinDecrit = $texte('temoin_decrit', 190, 'La description du témoin');
         $notes = $texte('notes', 2000, 'Les notes');
 
         $nombre = static function (string $cle, float $min, float $max, string $message) use ($v, &$erreurs): ?float {
@@ -100,7 +99,7 @@ final class Constats
             return round((float) $brut, 1);
         };
         $pousse = $nombre('pousse_cm', 0, 2000, 'La pousse se compte en centimètres, de 0 à 2 000.');
-        $temoinPousse = $nombre('temoin_pousse_cm', 0, 2000, 'La pousse du témoin se compte en centimètres, de 0 à 2 000.');
+        $hauteur = $nombre('hauteur_cm', 0, 5000, 'La hauteur se compte en centimètres, de 0 à 5 000.');
         $jours = null;
         $brut = trim((string) ($v['sur_jours'] ?? ''));
         if ($brut !== '') {
@@ -116,12 +115,18 @@ final class Constats
             $erreurs['adventices'] = 'Indiquez si des adventices reviennent, ou laissez vide.';
         }
 
-        // Une pousse sans durée ne dit rien ; un témoin sans pousse ne compare rien.
-        if (($pousse !== null || $temoinPousse !== null) && $jours === null && !isset($erreurs['sur_jours'])) {
-            $erreurs['sur_jours'] = 'Une pousse se mesure sur une durée : indiquez sur combien de jours.';
+        $biomasse = trim((string) ($v['biomasse'] ?? ''));
+        if ($biomasse !== '' && !isset(SautDuChat::BIOMASSES[$biomasse])) {
+            $erreurs['biomasse'] = 'Indiquez si la biomasse produite est faible, moyenne ou importante, ou laissez vide.';
         }
-        if ($temoinPousse !== null && $pousse === null && !isset($erreurs['pousse_cm'])) {
-            $erreurs['pousse_cm'] = 'Le témoin sert à comparer : notez aussi la pousse de la plante.';
+        $sol = trim((string) ($v['sol'] ?? ''));
+        if ($sol !== '' && !isset(SautDuChat::SOLS[$sol])) {
+            $erreurs['sol'] = 'Indiquez si le sol est plus grumeleux, pareil ou plus tassé qu’au départ, ou laissez vide.';
+        }
+
+        // Une pousse sans durée ne dit rien.
+        if ($pousse !== null && $jours === null && !isset($erreurs['sur_jours'])) {
+            $erreurs['sur_jours'] = 'Une pousse se mesure sur une durée : indiquez sur combien de jours.';
         }
 
         return ['valeurs' => [
@@ -130,8 +135,9 @@ final class Constats
             'vegetal' => $vegetal,
             'pousse_cm' => $pousse,
             'sur_jours' => $jours,
-            'temoin_decrit' => $temoinDecrit,
-            'temoin_pousse_cm' => $temoinPousse,
+            'hauteur_cm' => $hauteur,
+            'biomasse' => isset(SautDuChat::BIOMASSES[$biomasse]) ? $biomasse : null,
+            'sol' => isset(SautDuChat::SOLS[$sol]) ? $sol : null,
             'adventices' => isset(SautDuChat::ADVENTICES[$adventices]) ? $adventices : null,
             'notes' => $notes,
         ], 'erreurs' => $erreurs];

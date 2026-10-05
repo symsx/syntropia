@@ -548,3 +548,13 @@ ch. 11) — planter plusieurs boutures au même endroit, toujours de la même es
   chantier ; le nœud `formation-joala` à chaque nouveau versement.
 - `CLAUDE.md` : la ligne de ce chantier dans § Où sont les choses, et l'état dans § Point de reprise à chaque phase.
 - Le livret « SAF » reste au porteur.
+
+**Le constat sans témoin — 2026-10-05 (le porteur).** On ne peut contraindre personne à mener une culture avec des
+intrants : le constat ne compare plus à un témoin conduit classiquement. Le saut du chat se reconnaît à **trois signes** —
+la structure du sol qui change par rapport au départ, des végétaux implantés qui poussent vite et avec une hauteur
+significative, une production de biomasse significative (Théry, entretien : « l'explosion de la vie du sol et de la pousse
+aérienne »). Schéma 20 : `constat.hauteur_cm` (lue contre la hauteur adulte d'Espèces, `SautDuChat::hauteurDite()`),
+`biomasse` (faible, moyenne, importante), `sol` (plus grumeleux, pareil, plus tassé) ; `temoin_decrit` et
+`temoin_pousse_cm` retirés, ignorés à l'import d'un fichier plus ancien (`Import::RETIREES`). Des repères de la formation,
+seul le maïs (30 cm en 24 h) reste à l'écran : les tournesols et les pérennes étaient mesurés contre un témoin. Aucun
+constat n'existait en production.

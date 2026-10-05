@@ -122,8 +122,8 @@ function fixture(PDO $pdo, Sites $sites, int $compteId): int
                    VALUES (?, '2026-09-10', 'Point 1', 0, 15.5, 'ressuyé', 3, ?)")->execute([$p1, $porteur]);
     $pdo->prepare("INSERT INTO intervention (parcelle_id, `date`, type, duree_h, premiere_fois, saisi_par) VALUES (?, '2026-09-11', 'taille', 2.5, 1, ?)")
         ->execute([$p1, $compteId]);
-    $pdo->prepare("INSERT INTO constat (parcelle_id, `date`, visible, vegetal, pousse_cm, sur_jours, temoin_decrit, temoin_pousse_cm, adventices, notes, saisi_par)
-                   VALUES (?, '2026-09-13', 'oui', 'Maïs', 30.5, 1, 'mêmes plants, à 10 m', 12, 'oui', 'feuillage plus vert', ?)")->execute([$p1, $compteId]);
+    $pdo->prepare("INSERT INTO constat (parcelle_id, `date`, visible, vegetal, pousse_cm, sur_jours, hauteur_cm, biomasse, sol, adventices, notes, saisi_par)
+                   VALUES (?, '2026-09-13', 'oui', 'Maïs', 30.5, 1, 180, 'importante', 'plus_grumeleux', 'oui', 'feuillage plus vert', ?)")->execute([$p1, $compteId]);
     $pdo->prepare("INSERT INTO celebration (parcelle_id, jalon, `date`, saisi_par, presents) VALUES (?, 'chantier', '2026-09-12', ?, 'Tous')")
         ->execute([$p1, $compteId]);
     $celebration = (int) $pdo->lastInsertId();

@@ -444,11 +444,14 @@ perturbation vient en juin, les suivantes quand il y a de quoi couper.
 Affaiblir une couverture en la couchant sous la paille, ou désherber à la main, se note aussi, mais
 ne compte pas comme une perturbation.
 
-Le **saut du chat** est l'accélération nette de la croissance du système. Il se constate en
-comparant avec un témoin conduit de façon classique.
+Le **saut du chat** est l'accélération nette de la croissance du système. Il se reconnaît à trois
+signes : le sol qui change par rapport au départ, des plantes qui poussent vite et haut, une
+biomasse importante.
 
-Chaque **constat** est daté et dit si le saut du chat est visible. Quand vous l'avez mesurée, il
-donne la pousse d'une plante sur quelques jours, à côté de celle du témoin.
+Chaque **constat** est daté et dit si le saut du chat est visible. Il note aussi, quand vous les
+avez, la pousse d'une plante sur quelques jours et sa hauteur, la biomasse produite et le sol.
+
+La hauteur se lit à côté de la hauteur adulte notée dans Espèces : « 1,2 m, pour 2 m adulte ».
 
 La page dit aussi **ce qui le rend possible**, d'après ce que vous avez noté : le sol préparé, la
 plantation faite dans une même période, une perturbation au journal, de quoi couper.
