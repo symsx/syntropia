@@ -394,6 +394,9 @@ le feuillet de chantier de chaque parcelle), puis la présentation
 d'arrosage, retirées).
 
 **En attente du porteur ou de la formation** :
+- Formes de parcelle (`chantier-formes-de-parcelle.md` § Questions à trancher) : six questions — formes de
+  contour, bordures sur un contour libre, planches dans une forme courbe, chemins, points d'eau, lien avec l'étude
+  du site. Le porteur répondra plus tard ; ne rien coder avant.
 - Saut du chat, Phase 4 (itinéraire technique) : la liste des itinéraires et
   leurs critères, le tableau « itinéraire × période ». Ne pas coder sans.
 - Décisions en suspens (`chantier-plan-de-culture.md` § À trancher,
