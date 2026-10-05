@@ -36,7 +36,7 @@ Toute correction passe par une **note datée** ajoutée dans le fichier concern�
 |---|---|
 | `entretien-anaelle-thery-11-questions` | **Définition du saut du chat**, cinq leviers de la perturbation, seuil de microclimat |
 | `webinaire-faraj-design-esparcette` | Design chiffré ligne par ligne, nids de graines, vigne mariée, irrigation, rendement |
-| `webinaire-faraj-gestion-calendriers-taille` | **Trois calendriers de taille**, effet de sénescence, seuil des 400 mm, diagnostic d'un contre-exemple |
+| `webinaire-faraj-gestion-calendriers-taille` | **Trois calendriers de taille**, effet de sénescence, seuil des 400 mm, diagnostic d'un contre-exemple. **Support versé le 2026-10-05** : calendrier de gestion 2024, coûts et rendements de l'Esparcette |
 | `webinaire-faraj-densite-gestion-montage-projet` | **La densité comme outil de décision**, coupe à ras sans déracinement, nid de graines multi-espèces, étapes de montage de projet, couvert pluriannuel, chantier contrarié |
 | `visite-verger-bois-gourmand-robin` | **Visite de ferme, Bretagne.** Troisième praticienne francophone. Consoude en bordure mécanisée, rumex en placentaire, itinéraire de reprise d'une terre céréalière, économie chiffrée. Marquage `[Robin]` |
 

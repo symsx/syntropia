@@ -346,3 +346,68 @@ Projet mené avec des collègues au Mexique et au Costa Rica : production d'oran
 18. Devant un système mal démarré, hiérarchiser : couvrir le sol d'abord.
 19. Savoir qu'en climat aride, un système mal démarré se rattrape difficilement.
 20. En gestion collective, ne pas viser l'horizontalité avant que toute l'équipe soit formée.
+
+---
+
+## Note du 2026-10-05 — le support de la séance, huit diapositives
+
+*Versé le 2026-10-05 : huit captures d'écran de la vidéo (« Webinaire 1.5 Lina Faraj », diapositives 11, 13, 14, 15, 19, 20 et 23 sur 64 ; la 11 en deux captures). C'est le support que cette fiche disait « non transmis » (§ 12.1). Lu à l'image, sans le son ; les arcs des calendriers en roue se lisent au mois près, pas mieux.*
+
+### Le calendrier de gestion 2024 de l'Esparcette (diapositive 11)
+
+| Tâche | Période | Ce que dit la diapositive |
+|---|---|---|
+| Désherbage sélectif | Février à décembre | Passer régulièrement pour retirer graminées, liseron et potentille des lignes de production. Le passage régulier évite d'être débordé et de perdre le contrôle |
+| Irrigation | Juin à septembre ; mai et octobre en teinte claire | Des arrosages longs mais espacés, pour favoriser l'enracinement |
+| Gestion de la densité | Avril à juillet | Par de petites tailles, donner à chaque espèce l'espace dont elle a besoin ; libérer la place des nids de graines |
+| Récolte | Février à août | Roquette (février, mars) ; menthe, estragon (avril) ; bleuet, menthe (mai) ; bleuet, oignon (juin) ; ail, tomate, oignon (juillet) ; tomate (août) |
+| Inter-rang | Mars à mi-juillet, puis septembre-octobre | Semis d'un couvert pérenne de graminées et luzerne ; couper le couvert dès que possible, pour produire de la biomasse et éviter l'effet de sénescence |
+
+La luzerne est celle « annoncée dans le support » (§ 6) : à l'oral, le couvert semé a finalement été trèfle et sainfoin.
+
+### Les trois calendriers de taille, en roue (diapositives 13 à 15)
+
+| Calendrier | Fenêtres lues sur la roue |
+|---|---|
+| Fruitiers | Taille des fruitiers de janvier à mars ; éclaircissage d'avril à juin ; « éventuelle taille (rameaux latéraux) » en juillet-août |
+| Espèces support | Taille d'hiver et trognes de fin décembre à février ; taille en vert et gestion de la densité d'avril à mai |
+| Inter-rang | Fauche de mars à mai, puis en septembre-octobre |
+
+Les trois roues confirment le § 5 et le § 6 : trois calendriers distincts, la taille latérale des fruitiers donnée comme éventuelle, une fauche d'automne à côté de celle de printemps.
+
+### Les chiffres de l'Esparcette (diapositives 19 et 20)
+
+**Surface : environ 360 m²**, selon le support. Cela tranche l'écart du § 11 (300, 360 ou 400 m²) en faveur de la fiche `webinaire-faraj-densite-gestion-montage-projet.md`.
+
+| Coût de préparation | Montant |
+|---|---|
+| Sans rémunération du travail | 747,49 € |
+| Travail compté à 5 €/h | 1 202,90 € |
+| Travail compté à 11 €/h | 1 484,57 € |
+| Lissé sur sept ans (à 11 €/h) | 212 €/an |
+
+| Production de la première année | Quantité | Vente possible |
+|---|---|---|
+| Roquette | 6 kg | 66 € |
+| Ail | 4,5 kg | 49,50 € |
+| Tomates | 28,8 kg | 115,20 € |
+| Menthe | 1,6 kg | 16 € |
+| Bleuet | 71 kg | 3 372,50 € |
+| **Total** | | **3 618,70 €** |
+
+Le bleuet fait 93 % de la valeur ; ses 71 kg recoupent la fiche `webinaire-faraj-design-esparcette.md` (§ 10).
+
+| Culture | Rendement en 2024, dans le système | Référence hors agroforesterie | Commentaire du support |
+|---|---|---|---|
+| Tomates | 400 g/plant | 300 g/plant (plein champ 2022) ; 1 kg/plant en bio classique (ITAB) | Échec : pas de paillage sur les lignes X, et des plants peu pratiques à soigner |
+| Roquette | 0,6 kg/m² | 1,5 kg/m² | Une seule coupe ; montée vite en graine, mise en place tardive |
+| Ail | 1 kg/m² | 860 g/m² | Rien à signaler |
+| Bleuet | — | — | Bonne pousse, récolte de meilleure qualité, deuxième coupe possible non faite, plantation à contre-saison pratique |
+
+### Le projet pédagogique urbain de Marseille (diapositive 23)
+
+Complète le § 12.2. Production fruitière d'amandes et d'abricots, et pédagogie tout public. Préparation du terrain et plantation en janvier 2024.
+
+**Le plan, en treize bandes, de gauche à droite** : ligne fruitière, passe-pied, couvert, inter-rang, couvert, passe-pied, ligne intermédiaire, passe-pied, couvert, inter-rang, couvert, passe-pied, ligne fruitière. Les inter-rangs portent eux-mêmes une rangée de plantes entre deux bandes de couvert.
+
+**Ce que l'intervenante a fourni** : un atelier de co-conception et un plan de plantation qui chiffre les besoins en matériel végétal ; l'approvisionnement, arbitré selon un budget fixé, avec des pépiniéristes locaux et la préparation des boutures ; l'appui aux choix techniques de préparation du sol.

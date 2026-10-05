@@ -538,6 +538,12 @@ années plutôt qu'une grande » — pas encore une liste d'itinéraires. **N° 
 tous les 50 cm — valable pour ce design seulement. **Deux erreurs dites par l'autrice** : le **tipi de boutures** de variétés différentes (le livre,
 ch. 11) — planter plusieurs boutures au même endroit, toujours de la même espèce ; et l'eucalyptus, remplacé par le chêne, le frêne, l'orme, le charme.
 
+**Mise à jour du 2026-10-05 (support d'un webinaire Faraj — note datée de `connaissances/autres-sources/webinaire-faraj-gestion-calendriers-taille.md`)**
+— aucune question fermée, deux documentées. **N° 12 (désherbage)** : à l'Esparcette, la première année, le désherbage sélectif court de février à
+décembre, en passages réguliers — la position de Faraj, chiffrée pour un site et un an. **N° 2 (quoi planter, quand)** : un calendrier de gestion
+mois par mois pour un site (irrigation, gestion de la densité, récolte, inter-rang) et les fenêtres des trois calendriers de taille, lues sur des roues
+— un exemple de l'itinéraire « lignes et consortiums », pas le tableau par itinéraire.
+
 ## Documentation, à chaque phase
 
 - Livret « L'atelier » (`contenu/documentation-atelier.md`) : le chapitre concerné **dans la même vague**,
