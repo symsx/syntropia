@@ -29,7 +29,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     face sud de l'externe en jardin-forêt rouverte, non tranchée),
     `textes-atelier` (2026-10-03).
   - **En cours** : `dossier-projet` (Phases 1 à 3 faites et déployées, Phases 4
-    et 5 faites le 2026-10-05, pas déployées — le livret relu, reste le déploiement) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
+    et 5 faites et déployées le 2026-10-05) ; `saut-du-chat` (Phases 1, 2, 2 bis, 2 ter,
     3, 5 faites ; **Phase 4 bloquée**, attend le porteur et la formation — une
     règle sans réponse sourcée ne se code pas) ; `film-de-la-parcelle`
     (Phases 1, 2, 2 bis faites) ; `associations` (Phase 1 faite) ;
@@ -369,10 +369,13 @@ valeur de `acces.role` ; le moment venu, donner au porteur une ligne `acces`
 `('plantae', 'administrateur')` ; réponse sur `acces.application` **pas
 encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
-### État et prochaine étape — au 2026-10-04 au soir
+### État et prochaine étape — au 2026-10-05 au soir
 
-La production est à jour (commit `9fd375d`, **schéma 19**, inchangé), déployée le
-2026-10-04 avec sauvegarde. Ce déploiement porte la légende du plan retirée avec
+La production est à jour (commit `f66201c`, **schéma 20**), déployée le 2026-10-05
+avec sauvegarde : le Dossier Projet Phases 4 et 5 et le saut du chat sans témoin
+(déployés plus tôt le même jour, à `ea737e3`), puis la lisière du porteur en fond
+du bandeau général. Le déploiement précédent, le
+2026-10-04, porte porte la légende du plan retirée avec
 les plants périmés, le Dossier Projet Phase 3 (matériel, eau, calendrier,
 participants), les cinq phases de `chantier-espacement-des-services.md` (deux
 espacements, la ligne centrale pérenne en série, la part de biomasse, la biomasse
