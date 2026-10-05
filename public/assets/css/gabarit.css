@@ -65,6 +65,16 @@ code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); 
   position:relative; /* pour le titre centré sur la fenêtre, pas sur l'espace restant */
   grid-row:1; height:3.4rem; min-width:0; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.9rem;
   padding:0 1rem; background:var(--surface);
+  isolation:isolate; /* la lisière (::before, z-index -1) passe sous le contenu, pas sous le fond */
+}
+/* La lisière — un dessin du porteur, répété sur toute la largeur, en fond
+   du bandeau. Le dessin sert de masque : sa couleur suit le thème
+   (--accent), sa transparence est de 75 %. */
+.bandeau-general::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:var(--accent); opacity:.25;
+  -webkit-mask:url('../images/lisiere.svg') left bottom / auto 100% repeat-x;
+          mask:url('../images/lisiere.svg') left bottom / auto 100% repeat-x;
 }
 .bg-gauche{ display:flex; align-items:center; gap:.7rem; min-width:0; }
 .bg-droite{ display:flex; align-items:center; gap:.6rem; justify-content:flex-end; }

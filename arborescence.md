@@ -147,6 +147,7 @@ public/                racine servable du site en refonte
     js/gabarit.js           Gabarit.init() ; grise précédente/suivante vers une étape non `pret` ; initTermes() arme la bulle de tout `.terme`
     js/livret.js             pagine un chapitre de documentation-{site,saf}.php trop long pour l'écran — mesuré en pixels, pas un compte de paragraphes
     polices/               Clash Display, Archivo, reprises de le-bureau/fonts/
+    images/lisiere.svg     la lisière dessinée par le porteur — fond du bandeau général (masque CSS, gabarit.css)
 composants/            un dossier par zone du gabarit, réutilisable entre pages
   bandeau-general/  bandeau-outils/  panneau-gauche/  panneau-droit/
   panneau-informations/  bulle/  pied-de-page/
