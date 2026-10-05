@@ -28,6 +28,11 @@
   d'essai, « Quoi de neuf ». Demandé le 2026-10-01 (bêta-testeurs en production) ; **Phases 1 à 4 faites, déployées et essayées en production le
   jour même** (le jeton des formulaires porte la marque du déploiement : une page d'avant une mise à jour n'écrit plus ;
   les personnes connectées se comptent par des traces d'activité, `contenu/actifs/`) ; phases 5 à 7 avant la version 1 (cycle maintenance, puis un `mettre-a-jour` complet) ; on garde les **cinq** dernières sauvegardes.
+- `chantier-palette-vegetale.md` — le plan (5 phases) d'une étape « La palette » avant le plan de la parcelle :
+  productions principales, secondaires, plantes de service par fonction, et l'origine de chaque plante dans le projet.
+  Demandé le 2026-10-05, **planifié, pas commencé** ; tout est tranché le jour même — ce que le site offre, les
+  origines par projet choisies par la personne, la palette par parcelle, et la palette du projet qui les regroupe.
+  Prêt à commencer par la Phase 1.
 - `chantier-releves-de-sol.md` — le plan (4 phases) pour saisir les relevés de sol de chaque parcelle et les
   comparer d'une campagne à l'autre, témoin compris (la table `releve_sol` existe, seule l'infiltration y entre, par
   « Matériel et eau ») : demandé le 2026-10-04, **planifié, pas commencé** ; six questions tranchées le 2026-10-05
