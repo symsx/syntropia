@@ -371,11 +371,13 @@ encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
 ### État et prochaine étape — au 2026-10-05 au soir
 
-La production est à jour (commit `f66201c`, **schéma 20**), déployée le 2026-10-05
+La production est à jour (commit `609ef83`, **schéma 20**), déployée le 2026-10-05
 avec sauvegarde : le Dossier Projet Phases 4 et 5 et le saut du chat sans témoin
-(déployés plus tôt le même jour, à `ea737e3`), puis la lisière du porteur en fond
-du bandeau général. Le déploiement précédent, le
-2026-10-04, porte porte la légende du plan retirée avec
+(déployés plus tôt le même jour, à `ea737e3`), la lisière du porteur en fond du
+bandeau général, le menu du compte repassé au-dessus du bureau, l'occupation au
+sol sans la biomasse (décision du porteur), « Connecté en tant que » retiré des
+panneaux Informations. Le déploiement précédent, le
+2026-10-04, porte la légende du plan retirée avec
 les plants périmés, le Dossier Projet Phase 3 (matériel, eau, calendrier,
 participants), les cinq phases de `chantier-espacement-des-services.md` (deux
 espacements, la ligne centrale pérenne en série, la part de biomasse, la biomasse
