@@ -372,9 +372,10 @@ encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
 ### État et prochaine étape — au 2026-10-05 au soir
 
-La production est à jour (commit `6e34e8e`, **schéma 20**), déployée le 2026-10-05
-avec sauvegarde (dernier envoi : les flèches du bandeau réparées, « Tracer une ligne »
-et « Gomme » retirés du plan) : le Dossier Projet Phases 4 et 5 et le saut du chat sans témoin
+La production est à jour (commit `57f4bc9`, **schéma 20**), déployée le 2026-10-05
+avec sauvegarde (derniers envois : les flèches du bandeau réparées, « Tracer une ligne »
+et « Gomme » retirés du plan, puis les livrets — liste des chapitres paginée,
+pagination des chapitres réparée) : le Dossier Projet Phases 4 et 5 et le saut du chat sans témoin
 (déployés plus tôt le même jour, à `ea737e3`), la lisière du porteur en fond du
 bandeau général, le menu du compte repassé au-dessus du bureau, l'occupation au
 sol sans la biomasse (décision du porteur), « Connecté en tant que » retiré des
