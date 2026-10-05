@@ -425,9 +425,11 @@ d'arrosage, retirées).
   légende, survol) — demandé par le porteur.
 - Le porteur doit cliquer « Enregistrer le plan » de La Vadaux P1 en
   production (9 → 10 planches).
-- Livrets : le livret SAF déborde de ~50 px à 320×568 ; la
-  tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
-  panneau gauche défile déjà à 800 px de haut.
+- Livrets : la tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
+  panneau gauche défile déjà à 800 px de haut. (Le débordement du livret SAF à 320×568
+  est corrigé le 2026-10-05 : un paragraphe seul trop haut réduit sa police, `livret.js`.)
+- Bandeau sur téléphone (320 px) : le titre central chevauche l'emplacement du logo et le
+  bouton de thème — antérieur à la lisière ; à trancher avec le porteur (quoi retirer).
 - `chantier-mises-a-jour.md` Phases 5-7 — dont **une vraie restauration de
   sauvegarde, jamais essayée**.
 - La hauteur des espèces servira à l'ombre portée et à la vue de côté — à

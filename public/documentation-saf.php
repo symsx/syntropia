@@ -113,6 +113,14 @@ $chapitres = Documentation::chapitres(__DIR__ . '/../contenu/documentation-saf.m
     .doc-chapitres label{ padding:.3rem .7rem; font-size:.78rem; }
     .doc-chapitres-titre{ margin-bottom:.3rem; }
   }
+  /* la même colonne resserrée, posée par assets/js/livret.js quand la liste ne tient
+     pas dans le bureau, quelle que soit la hauteur de l'écran (22 chapitres pour
+     « L'atelier » : elle montait sur le bandeau à 776×977, le 2026-10-05). S'il le
+     faut encore, livret.js la découpe en pages de chapitres (.doc-liste-nav). */
+  .doc-chapitres-serre .doc-chapitres{ gap:.1rem; }
+  .doc-chapitres-serre .doc-chapitres label{ padding:.3rem .7rem; font-size:.78rem; }
+  .doc-chapitres-serre .doc-chapitres-titre{ margin-bottom:.3rem; }
+  .doc-liste-nav{ margin-top:.4rem; }
 
   /* petit écran : la colonne des chapitres (11rem fixes) ne tient plus
      à côté de la page — voir documentation-site.php, même correctif.
