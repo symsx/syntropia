@@ -1356,6 +1356,29 @@ il apparaît réellement, pour ne pas noyer le motif.
 
 ### Prochaine étape
 
+0000. **État au 2026-10-05, fin de soirée — pour la reprise.** Tout est commité **et poussé** ; **la production est à
+   jour** (commit `57f4bc9`, **schéma 20** inchangé, chaque envoi par `mettre-a-jour` avec sauvegarde, vérifié : rien à
+   renvoyer, syntaxe PHP distante, 200/302/403 attendus). Fait ce soir :
+   - **Corpus** (`d611c34`) : huit diapositives du support d'un webinaire de Lina Faraj (`input/lina/`) versées en note
+     datée de `webinaire-faraj-gestion-calendriers-taille.md` — calendrier de gestion 2024 de l'Esparcette, trois
+     calendriers de taille en roue, coûts et rendements de la première année, plan du projet de Marseille ; la surface
+     (360 m²) tranchée par le support. Questions 12 et 2 du saut du chat documentées, aucune fermée.
+   - **La lisière du porteur** (`f66201c`) en fond du bandeau général : `public/assets/images/lisiere.svg` en masque CSS,
+     couleur `--accent`, transparence 75 %, répétée. Deux régressions qu'elle a causées, corrigées et déployées :
+     le menu du compte sous le bureau (`isolation:isolate` retiré, `7c3833c`), puis les flèches étape précédente /
+     suivante recouvertes par `.bg-droite` (`.bg-centre` en `z-index:1`, `e81e5d7`). **Leçon** : tout positionnement
+     ajouté dans le bandeau se vérifie avec `elementFromPoint` sur le menu du compte ET les flèches.
+   - **L'occupation au sol sans la biomasse** (`cf4ad0e`, décision du porteur) : elle affichait 3 137 % sur le potager
+     P1 (chaque plant compté à son houppier adulte) ; seuls les plants gardés comptent, la biomasse est dite à part.
+   - **« Connecté en tant que… »** retiré de cinq panneaux Informations (`609ef83`) : un reste du premier commit.
+   - **« Tracer une ligne » et « Gomme »** retirés du plan ; **`chantier-formes-de-parcelle.md`** ouvert (contour brisé ou
+     courbe, chemins, points d'eau) — six questions en attente du porteur (`df86a59`).
+   - **Livrets** (`57f4bc9`, `livret.js`) : la liste des chapitres se resserre puis se pagine (elle montait sur le
+     bandeau à 776×977) ; la pagination d'un chapitre comptait depuis son premier paragraphe (« les bordures » : 14
+     sous-pages presque vides, 3 désormais) ; la retenue par chapitre ; un paragraphe seul trop haut réduit sa police
+     (livret SAF à 320×568). Vérifié sur 8 tailles, 3 livrets, chaque sous-page.
+   - **Décidé par le porteur, à faire** : retirer l'emplacement du logo du bandeau sur smartphone (sous 30rem), pour que
+     le titre central ne chevauche plus le logo et le bouton de thème.
 0000. **État au 2026-10-04, fin de journée — pour la reprise.** Tout est commité **et poussé** (`origin/main` à `903fee0`) ;
    **la production est à jour** (commit `9fd375d`, **schéma 19** inchangé, `mettre-a-jour` avec sauvegarde, vérifié :
    fichiers identiques, syntaxe PHP distante, 200/302/403 attendus). Le porteur teste, puis revient. Fait ce jour :

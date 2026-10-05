@@ -370,7 +370,7 @@ valeur de `acces.role` ; le moment venu, donner au porteur une ligne `acces`
 `('plantae', 'administrateur')` ; réponse sur `acces.application` **pas
 encore transmise à Plantae**. Détail : `journal-de-reprise.md`, point 13.
 
-### État et prochaine étape — au 2026-10-05 au soir
+### État et prochaine étape — au 2026-10-05, fin de soirée
 
 La production est à jour (commit `57f4bc9`, **schéma 20**), déployée le 2026-10-05
 avec sauvegarde (derniers envois : les flèches du bandeau réparées, « Tracer une ligne »
@@ -390,8 +390,8 @@ espacements, la ligne centrale pérenne en série, la part de biomasse, la bioma
 Dossier Projet complet ; ouvrir une fiche d'espèce ; regarder la part de biomasse
 (panneau Informations du plan, du scénario, du potager) et « Matériel et eau ».
 
-**La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5 (la 5 :
-le feuillet de chantier de chaque parcelle), puis la présentation
+**La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5, est fait et
+déployé ; puis la présentation
 (`chantier-presentation.md` ; sa Phase 1 corrigera la description des doses
 d'arrosage, retirées).
 
@@ -429,8 +429,9 @@ d'arrosage, retirées).
 - Livrets : la tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
   panneau gauche défile déjà à 800 px de haut. (Le débordement du livret SAF à 320×568
   est corrigé le 2026-10-05 : un paragraphe seul trop haut réduit sa police, `livret.js`.)
-- Bandeau sur téléphone (320 px) : le titre central chevauche l'emplacement du logo et le
-  bouton de thème — antérieur à la lisière ; à trancher avec le porteur (quoi retirer).
+- **Décidé par le porteur (2026-10-05), à faire** : retirer l'emplacement du logo du bandeau
+  sur smartphone (sous 30rem) — le titre central y chevauche le logo et le bouton de thème.
+  Vérifier ensuite avec `elementFromPoint` le menu du compte et les flèches du titre.
 - `chantier-mises-a-jour.md` Phases 5-7 — dont **une vraie restauration de
   sauvegarde, jamais essayée**.
 - La hauteur des espèces servira à l'ombre portée et à la vue de côté — à
