@@ -65,19 +65,22 @@ code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); 
   position:relative; /* pour le titre centré sur la fenêtre, pas sur l'espace restant */
   grid-row:1; height:3.4rem; min-width:0; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.9rem;
   padding:0 1rem; background:var(--surface);
-  isolation:isolate; /* la lisière (::before, z-index -1) passe sous le contenu, pas sous le fond */
 }
 /* La lisière — un dessin du porteur, répété sur toute la largeur, en fond
    du bandeau. Le dessin sert de masque : sa couleur suit le thème
-   (--accent), sa transparence est de 75 %. */
+   (--accent), sa transparence est de 75 %. Ni z-index ni `isolation` sur le
+   bandeau : un contexte d'empilement y enfermerait le menu du compte
+   (z-index 25), qui passerait alors sous le bureau (bug du 2026-10-05). La
+   lisière reste dessous par l'ordre : elle vient avant .bg-gauche et
+   .bg-droite, positionnés pour peindre après elle. */
 .bandeau-general::before{
-  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  content:""; position:absolute; inset:0; pointer-events:none;
   background:var(--accent); opacity:.25;
   -webkit-mask:url('../images/lisiere.svg') left bottom / auto 100% repeat-x;
           mask:url('../images/lisiere.svg') left bottom / auto 100% repeat-x;
 }
-.bg-gauche{ display:flex; align-items:center; gap:.7rem; min-width:0; }
-.bg-droite{ display:flex; align-items:center; gap:.6rem; justify-content:flex-end; }
+.bg-gauche{ position:relative; display:flex; align-items:center; gap:.7rem; min-width:0; }
+.bg-droite{ position:relative; display:flex; align-items:center; gap:.6rem; justify-content:flex-end; }
 /* Centré sur la fenêtre, pas sur la colonne `1fr` du bandeau : quand
    gauche et droite n'ont pas la même largeur (ex. `connexion.php`, sans
    pastille de compte), un centrage par grille glisse visiblement du
