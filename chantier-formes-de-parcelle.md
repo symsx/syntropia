@@ -1,7 +1,7 @@
 # Les formes de la parcelle — plan
 
-**Demandé par le porteur le 2026-10-05. Planifié, pas commencé. Six questions tranchées par le porteur le 2026-10-07 ;
-cinq points de détail restent à confirmer avant de commencer (voir « Ce qui reste à confirmer »).**
+**Demandé par le porteur le 2026-10-05. Planifié, pas commencé. Tout est tranché par le porteur le 2026-10-07 (six
+questions, puis cinq points de détail) : prêt à commencer par la Phase 1.**
 
 ## Pourquoi
 
@@ -57,32 +57,30 @@ Le chantier a trois objectifs, donnés par le porteur :
   carte des contours, rangés par calque (`calque_element`), dont `eau` et `circulations`. Échelle du site, en latitude
   et longitude : pas repris (décision 6). Son code de tracé peut servir de modèle, pas de source de données.
 
-## Ce qui reste à confirmer
+## Les points de détail, tranchés (2026-10-07)
 
-Les décisions laissent ouverts quelques points de détail. Je ne les tranche pas seul.
-
-1. **Le pas de la grille** : 10 cm par défaut. La personne peut-elle le changer (par exemple 50 cm ou 1 m pour une grande
-   parcelle) ?
-2. **Le type de la parcelle** : une parcelle polygonale peut-elle être pérenne **et** potager, comme le rectangle ?
-3. **Ce que porte une zone de culture** : un scénario de plantation, des cultures de potager, des lignes de plants ? Le
-   scénario reste-t-il **un par parcelle**, ou devient-il **un par zone** ? C'est ce qui décide du compte des plants
-   (Matériel et eau, Dossier Projet) et de l'occupation au sol, qui comptera la surface des zones.
-4. **Les données d'un point d'eau** : la surface se calcule. Faut-il aussi une profondeur, ou un volume, pour qu'il
-   serve plus loin (l'arrosage dans Matériel et eau) ?
-5. **Changer de forme après coup** : une parcelle créée en rectangle peut-elle devenir polygonale, ou l'inverse ? Si oui,
-   que deviennent ses bordures ou ses zones ?
+1. **Le pas de la grille se règle**, de **5 cm à 100 cm** ; 10 cm par défaut.
+2. **Une parcelle polygonale est pérenne ou potager**, comme le rectangle.
+3. **Un scénario par parcelle**, comme aujourd'hui. **Une zone de culture est l'équivalent d'une planche de potager**,
+   en forme de polygone : elle reçoit des cultures, annuelles ou pérennes. Dans le code, une culture se rattache à sa
+   planche par son numéro (`succession_ligne.planche`) ; une zone peut prendre la même place. Le compte des plants d'une
+   culture (`Materiel::quantiteCulture()`, qui part des bandes du rectangle) devra partir de la surface de la zone.
+4. **Un point d'eau n'a que sa surface et son emplacement** sur la parcelle.
+5. **La forme se change tant que la parcelle ne contient aucun objet** (ni zone de culture, ni point d'eau). Dès qu'elle
+   en contient un, le choix est fermé, et l'atelier dit pourquoi.
 
 ## Phases proposées
 
-1. **Le choix de la forme et le contour polygonal** : la forme choisie à la création (colonne neuve, schéma 21) ; le
-   tracé du polygone sur le bureau (grille, longueur du segment, clic droit, fermeture sur le premier point) ; le
-   déplacement des sommets ; la surface recalculée. Le rectangle inchangé, vérifié de bout en bout.
+1. **Le choix de la forme et le contour polygonal** : la forme choisie à la création (colonne neuve, schéma 21),
+   modifiable tant que la parcelle est vide ; le tracé du polygone sur le bureau (grille réglable de 5 à 100 cm,
+   longueur du segment, clic droit, fermeture sur le premier point) ; le déplacement des sommets ; la surface
+   recalculée. Le rectangle inchangé, vérifié de bout en bout.
 2. **Les zones de culture** : leur tracé, comme le contour, et la règle « à l'intérieur de la parcelle, une limite
-   partagée admise » ; leur surface ; les passe-pieds montrés comme le reste. Ce qu'elles portent selon la réponse au
-   point 3.
-3. **Les points d'eau** : leur tracé, hors des zones de culture et dans la parcelle ; leurs données selon le point 4.
-4. **Les étapes suivantes** : le scénario ou les cultures, Matériel et eau, l'occupation au sol, le Dossier Projet et le
-   feuillet de chantier, pour une parcelle polygonale.
+   partagée admise » ; leur surface ; les passe-pieds montrés comme le reste. Les cultures s'y placent comme sur une
+   planche de potager.
+3. **Les points d'eau** : leur tracé, hors des zones de culture et dans la parcelle ; leur surface et leur emplacement.
+4. **Les étapes suivantes** : le scénario (un par parcelle), le compte des plants par la surface des zones, Matériel et
+   eau, l'occupation au sol, le Dossier Projet et le feuillet de chantier, pour une parcelle polygonale.
 
 Chaque phase met à jour le livret « L'atelier », l'export et l'import d'un projet (`bin/dev.py verifier-export`), et
 monte `Version::SCHEMA` si le schéma change.

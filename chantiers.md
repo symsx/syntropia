@@ -41,8 +41,10 @@
   création ; le rectangle reste tel quel. Demandé le 2026-10-05, **planifié, pas commencé** ; six questions tranchées le
   2026-10-07 : un polygone dont les sommets collent à une grille de 10 cm, des **zones de culture** polygonales au lieu
   des bordures (le reste est passe-pied), des points d'eau polygonaux hors des zones, rien de repris de la carte du site.
-  **Cinq points de détail à confirmer** (pas de la grille, type, ce que porte une zone, données d'un point d'eau,
-  changement de forme). « Tracer une ligne » et « Gomme » retirés de la barre d'outils du plan en attendant.
+  Les cinq points de détail tranchés le même jour (grille de 5 à 100 cm ; pérenne ou potager ; un scénario par
+  parcelle, une zone = une planche de potager polygonale ; un point d'eau = surface et emplacement ; forme modifiable
+  tant que la parcelle est vide) : **prêt à commencer par la Phase 1**. « Tracer une ligne » et « Gomme » retirés de la
+  barre d'outils du plan en attendant.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
