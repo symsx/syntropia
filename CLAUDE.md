@@ -40,7 +40,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry).
   - **Planifiés, pas commencés** : `palette-vegetale` (2026-10-05 — tout tranché, prêt à commencer),
     `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
-    `formes-de-parcelle` (2026-10-05 — contour brisé ou courbe, chemins, points d'eau ; questions à trancher),
+    `formes-de-parcelle` (2026-10-05 — parcelle polygonale, zones de culture, points d'eau ; tranché le 2026-10-07, cinq détails à confirmer),
     `suppression-projet` (sans date — personne
     ne peut supprimer un projet aujourd'hui), `manuel-utilisateur` (sur
     demande du porteur, à priori à la version 1.0), `presentation` (2026-10-03, questions
@@ -396,9 +396,9 @@ déployé ; puis la présentation
 d'arrosage, retirées).
 
 **En attente du porteur ou de la formation** :
-- Formes de parcelle (`chantier-formes-de-parcelle.md` § Questions à trancher) : six questions — formes de
-  contour, bordures sur un contour libre, planches dans une forme courbe, chemins, points d'eau, lien avec l'étude
-  du site. Le porteur répondra plus tard ; ne rien coder avant.
+- Formes de parcelle (`chantier-formes-de-parcelle.md`) : les six questions tranchées le 2026-10-07 (polygone choisi à
+  la création, le rectangle intact ; zones de culture au lieu des bordures ; points d'eau polygonaux). **Cinq points de
+  détail à confirmer** (§ Ce qui reste à confirmer) — ne rien coder avant.
 - Saut du chat, Phase 4 (itinéraire technique) : la liste des itinéraires et
   leurs critères, le tableau « itinéraire × période ». Ne pas coder sans.
 - Décisions en suspens (`chantier-plan-de-culture.md` § À trancher,

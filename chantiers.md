@@ -37,10 +37,12 @@
   comparer d'une campagne à l'autre, témoin compris (la table `releve_sol` existe, seule l'infiltration y entre, par
   « Matériel et eau ») : demandé le 2026-10-04, **planifié, pas commencé** ; six questions tranchées le 2026-10-05
   (pas de flore, pas de témoin, la campagne déduite), **reste la référence non cultivée, facultative**.
-- `chantier-formes-de-parcelle.md` — le plan (5 phases proposées) pour sortir la parcelle du rectangle : un contour
-  brisé ou courbe (les règles des bordures sont à définir), des chemins, des points d'eau (une mare). Demandé le
-  2026-10-05, **planifié, pas commencé** ; six questions à trancher avec le porteur avant la Phase 1. « Tracer une
-  ligne » et « Gomme », grisés depuis la maquette, retirés de la barre d'outils du plan en attendant.
+- `chantier-formes-de-parcelle.md` — le plan (4 phases) d'une nouvelle forme de parcelle, le polygone, choisie à la
+  création ; le rectangle reste tel quel. Demandé le 2026-10-05, **planifié, pas commencé** ; six questions tranchées le
+  2026-10-07 : un polygone dont les sommets collent à une grille de 10 cm, des **zones de culture** polygonales au lieu
+  des bordures (le reste est passe-pied), des points d'eau polygonaux hors des zones, rien de repris de la carte du site.
+  **Cinq points de détail à confirmer** (pas de la grille, type, ce que porte une zone, données d'un point d'eau,
+  changement de forme). « Tracer une ligne » et « Gomme » retirés de la barre d'outils du plan en attendant.
 - `chantier-suppression-projet.md` — la spécification (3 phases) pour archiver
   puis supprimer un projet, demandée le 2026-09-18 : **spécifiée, à réaliser
   plus tard, sans date** — aujourd'hui personne ne peut supprimer un projet.
