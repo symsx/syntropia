@@ -55,6 +55,7 @@ COUVERTURE = {
         "src/Web/Altimetrie.php", "src/Relief.php", "src/ShadeMap.php", "src/Geojson.php",
     ],
     "Concevoir : l'étude du sol": ["public/conception-etude-sol.php", "public/releve-vierge.php", "src/FicheTerrain.php"],
+    "Concevoir : la palette": ["public/conception-palette.php", "src/Palette.php", "src/Web/Palettes.php", "src/Web/Parcelles.php"],
     "Concevoir : le plan de la parcelle": [
         "public/conception-parcelles.php", "public/conception-parcelles.js", "src/Web/Parcelles.php",
         "src/Planches.php", "src/Stade.php", "src/Tortue.php", "public/assets/js/gabarit.js", "src/Web/PartBiomasse.php",

@@ -38,7 +38,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `documentation-atelier` (maintenance continue, voir § Directives).
   - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
     fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry) ;
-    `palette-vegetale` (Phase 1 faite le 2026-10-07, en local, **pas déployée**, schéma 21 — la page « La palette », où
+    `palette-vegetale` (Phase 1 faite et déployée le 2026-10-07, schéma 21 — la page « La palette », où
     la parcelle naît ; Phases 2 à 6 à faire).
   - **Planifiés, pas commencés** :
     `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
@@ -393,10 +393,11 @@ espacements, la ligne centrale pérenne en série, la part de biomasse, la bioma
 Dossier Projet complet ; ouvrir une fiche d'espèce ; regarder la part de biomasse
 (panneau Informations du plan, du scénario, du potager) et « Matériel et eau ».
 
-**Au 2026-10-07, en local, pas déployé** : la palette végétale, Phase 1 (`chantier-palette-vegetale.md` § Fait),
-**schéma 21**. Au déploiement : relire l'état de la production, `mettre-a-jour`, puis le livret « L'atelier » (un
-chapitre « La palette », et « Créer les parcelles » qui ne crée plus de parcelle). Ensuite, palette Phase 2, ou les
-formes de parcelle (`chantier-formes-de-parcelle.md`, tout tranché ; elle prendra le schéma suivant, et le choix de
+**Au 2026-10-07** : la palette végétale, Phase 1 (`chantier-palette-vegetale.md` § Fait), vérifiée en local par le
+porteur puis **déployée** (commit `5179420`, **schéma 21** ; production lue avant : 4 projets, 3 parcelles, 17 lignes
+de scénario, 88 plants de bordure, 17 cultures — intacts après) ; livret relu (chapitre « Concevoir : la palette »).
+Parcours à essayer par le porteur avec son vrai compte : ouvrir une parcelle dans « La palette ». Ensuite, palette
+Phase 2, ou les formes de parcelle (`chantier-formes-de-parcelle.md`, tout tranché ; elle prendra le schéma suivant, et le choix de
 la forme ira dans la page où la parcelle naît, « La palette »).
 
 **La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5, est fait et

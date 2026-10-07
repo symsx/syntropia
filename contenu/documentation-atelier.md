@@ -65,8 +65,8 @@ sur toutes les pages, que l'on soit connecté ou non.
 La **Définition** décrit le projet : qui le porte, pour quoi, avec quels moyens, sur quel
 terrain.
 
-La **Conception** dessine le terrain et les parcelles, compose le scénario de plantation, puis
-compte ce qu'il faudra se procurer et l'eau à donner.
+La **Conception** dessine le terrain, choisit les plantes de chaque parcelle puis la dessine,
+compose le scénario de plantation, et compte ce qu'il faudra se procurer et l'eau à donner.
 
 La **Réalisation** prépare le terrain, le matériel et les outils, et consigne ce qui a été fait.
 
@@ -132,10 +132,37 @@ décider. Sur le terrain, on suit l'ordre de la fiche imprimée.
 
 Le test d'infiltration se note aussi dans l'atelier, à l'étape « Matériel et eau ».
 
+# Concevoir : la palette
+
+Une parcelle naît à l'étape « La palette », avec un code, un nom et un type. Sa conduite et son
+type de tortue se donnent ici, ou plus tard dans son plan.
+
+La palette réunit les plantes de la parcelle avant son dessin. Elle se compose en trois onglets,
+dans l'ordre que donne Théry : tout se construit autour des productions principales.
+
+Les **productions principales** sont ce que vous voulez impérativement produire. Les
+**productions secondaires** sont un plus, que la parcelle donnera si la place le permet.
+
+Les **plantes de service** se rangent en neuf fonctions : biomasse, bloque-herbe et couvre-sol,
+brise-vent, azote, nectar et pollen, auxiliaires, ombre, tuteur vivant, protection contre
+l'abroutement.
+
+Pour chaque fonction, l'atelier met en tête les espèces qui la remplissent. Une même plante peut
+rendre plusieurs services, et une production aussi : un fruitier offre du nectar.
+
+À côté de chaque espèce est noté ce qu'elle demande pour s'obtenir : plant, bouture, éclat de
+touffe, semis. Vous choisissez selon vos moyens, rappelés en tête de l'onglet.
+
+« Reprendre » ajoute les plantes de service d'une autre parcelle du projet, que vous ajustez
+ensuite. Les productions, propres à chaque parcelle, ne se reprennent pas.
+
+Le plan, le scénario et le potager ne puisent pas encore dans la palette : ils proposent toujours
+toutes les espèces du projet.
+
 # Concevoir : le plan de la parcelle
 
-Pour créer une parcelle, un code et un nom suffisent. Son plan se précise ensuite : dimensions,
-bordures externe et interne, planches et sens des planches. Le nombre de planches se calcule seul.
+Le plan d'une parcelle ouverte dans « La palette » se précise ici : dimensions, bordures externe
+et interne, planches et sens des planches. Le nombre de planches se calcule seul.
 
 Chaque demi-planche se travaille depuis un passe-pied. Sans passe-pied le long des bords, les
 planches des deux bords sont des demi-planches. Avec un passe-pied aux deux bords, toutes sont

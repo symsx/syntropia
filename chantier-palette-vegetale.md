@@ -2,7 +2,7 @@
 
 **Demandé par le porteur le 2026-10-05. Toutes les questions tranchées par le porteur le 2026-10-05, et la
 proposition « site, projet, parcelle » confirmée le même jour, avec la palette du projet en plus. Phase 1 faite le
-2026-10-07, vérifiée en local, pas encore déployée : voir § Fait.**
+2026-10-07 et déployée : voir § Fait.**
 
 ## La demande
 
@@ -154,7 +154,7 @@ tout déploiement ; le livret « L'atelier » et le glossaire dans la même vagu
 
 ## Fait
 
-**Phase 1, le 2026-10-07 — en local, pas déployée.**
+**Phase 1, le 2026-10-07 — vérifiée en local par le porteur, déployée le même jour (`5179420`, schéma 21).**
 
 - **La table `palette`** (schéma 21) : une ligne par espèce et par parcelle, sa `place` (`principale`, `secondaire`,
   `service`) et ses `fonctions` (les neuf clés de `Palette::FONCTIONS`, multivaluées par `|`). L'espèce se désigne par
@@ -177,6 +177,6 @@ tout déploiement ; le livret « L'atelier » et le glossaire dans la même vagu
 - **« Créer les parcelles » ne crée plus de parcelle** : `?nouvelle=1`, ou un projet sans parcelle, renvoie à la palette ;
   « Nouvelle parcelle » mène à la palette depuis toutes les pages ; « La palette » s'ajoute au menu de chaque parcelle
   (plan, scénario, potager, matériel et eau). Le nom de l'étape « Créer les parcelles » reste celui-là.
-- **Pas encore fait** : le livret « L'atelier » (au déploiement, puisqu'il ne décrit que la production) ; le glossaire
-  (Phase 6). Les parcelles de production auront une palette vide jusqu'à la Phase 6 ; rien en aval ne la lit encore.
+- **Le livret « L'atelier »** : chapitre « Concevoir : la palette », relu au déploiement. **Pas encore fait** : le
+  glossaire (Phase 6). Les parcelles de production auront une palette vide jusqu'à la Phase 6 ; rien en aval ne la lit encore.
 
