@@ -140,7 +140,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="vision-cadre">
+      <div class="vision-cadre" data-tenir>
         <p class="vision-annonce">Trois questions courtes, environ deux minutes. Vos réponses
            disent où va le projet, et avec quelle motivation.</p>
 

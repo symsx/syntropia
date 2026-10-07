@@ -133,7 +133,7 @@ usort($chapitres, static fn (array $a, array $b): int => strcoll($a['titre'], $b
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="gloss-cadre">
+      <div class="gloss-cadre" data-tenir>
         <p class="gloss-annonce">Les mots techniques de l'atelier, expliqués en une phrase
            chacun. Ce sont les mêmes définitions qu'au survol d'un mot souligné, ailleurs
            sur le site.</p>

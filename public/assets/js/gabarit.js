@@ -46,8 +46,38 @@ window.Gabarit = (function(){
     initEchap();
     initTermes();
     initAvisPerime();
+    initTenir();
 
     return api;
+  }
+
+  /* -------------------------------------------------- tenir dans le bureau */
+  /* Un contenu trop long se réduit, il ne défile jamais (CLAUDE.md § Architecture). Un cadre marqué `data-tenir` — le
+     formulaire centré d'une étape — se réduit d'un seul facteur (`zoom` : texte, champs et espaces ensemble) jusqu'à
+     tenir dans la hauteur du bureau ; sa largeur se recalcule pour occuper toujours la même place à l'écran. */
+  function initTenir(){
+    var cadres = Array.prototype.slice.call(document.querySelectorAll('[data-tenir]'));
+    if (!cadres.length) return;
+    function ajuster(){
+      cadres.forEach(function(c){
+        var b = c.closest('.bureau');
+        if (!b) return;
+        c.style.zoom = '';
+        c.style.width = '';
+        var st = getComputedStyle(b);
+        var place = b.clientHeight - parseFloat(st.paddingTop) - parseFloat(st.paddingBottom);
+        var z = 1;
+        while (c.getBoundingClientRect().height > place && z > 0.6) {
+          z = Math.round((z - 0.025) * 1000) / 1000;
+          c.style.zoom = z;
+          c.style.width = (100 / z) + '%';
+        }
+      });
+    }
+    ajuster();
+    window.addEventListener('resize', ajuster);
+    // une partie qui s'ouvre ou se ferme (une suggestion, un détail) change la hauteur
+    cadres.forEach(function(c){ c.addEventListener('change', ajuster); c.addEventListener('toggle', ajuster, true); });
   }
 
   /* -------------------------------------------------- documentation */

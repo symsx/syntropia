@@ -151,7 +151,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="moyens-cadre">
+      <div class="moyens-cadre" data-tenir>
         <p class="moyens-annonce">Quatre questions, environ deux minutes. Vos réponses
            situent le point de départ du projet.</p>
 

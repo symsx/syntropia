@@ -201,9 +201,9 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
     .site-note{ margin-top:.3rem; }
   }
 
-  /* très bas (1024×600, téléphone 320×568) : l'annonce cède sa place — le
-     panneau Informations dit la même chose — et la carte se réduit encore. */
-  @media (max-height:38rem){
+  /* très bas (1024×600, téléphones jusqu'à 700 px de haut, 375×667 compris — vu le 2026-10-07) : l'annonce cède sa
+     place — le panneau Informations dit la même chose — et la carte se réduit encore. */
+  @media (max-height:44rem){
     .site-annonce{ display:none; }
     .site-carte{ height:3.6rem; }
     .site-champ{ margin-bottom:.4rem; }

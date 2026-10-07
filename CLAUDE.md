@@ -176,6 +176,11 @@ Règles à respecter pour tout nouveau panneau ou composant :
 - Cases à cocher redessinées au thème (`.case`), jamais le rendu par
   défaut du navigateur.
 
+**Un formulaire centré qui peut dépasser le bureau porte `data-tenir`** (2026-10-07) : `gabarit.js` (`initTenir`) le
+réduit d'un seul facteur (`zoom`) jusqu'à tenir, et `gabarit.css` lui laisse en haut la place de l'onglet Informations.
+Jamais sur un cadre qui contient une carte (`definition-site.php` : ses propres règles de hauteur) — `zoom` fausserait
+le point cliqué.
+
 **Sans dépendance** — `:has()` et `input:checked + label` plutôt qu'une
 bibliothèque JS ; SVG en unités réelles (mètres) pour le dessin. Deux
 polices seulement pour le bureau : Clash Display (titres, menus, outils —
@@ -439,8 +444,6 @@ d'arrosage, retirées).
 - Livrets : la tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
   panneau gauche défile déjà à 800 px de haut. (Le débordement du livret SAF à 320×568
   est corrigé le 2026-10-05 : un paragraphe seul trop haut réduit sa police, `livret.js`.)
-- Le formulaire de Moyens (`definition-moyens.php`) est plus haut que l'écran à 320 × 568 : il remonte sous le
-  bandeau et couvre le bouton de thème (vu le 2026-10-07, à corriger).
 - `chantier-mises-a-jour.md` Phases 5-7 — dont **une vraie restauration de
   sauvegarde, jamais essayée**.
 - La hauteur des espèces servira à l'ombre portée et à la vue de côté — à

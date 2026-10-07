@@ -132,7 +132,7 @@ $termes = Documentation::glossaire(__DIR__ . '/../contenu/glossaire.md');
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="mveg-cadre">
+      <div class="mveg-cadre" data-tenir>
         <p class="mveg-annonce">Ce qui va être planté vient de vous, ou d'ailleurs.</p>
 
         <form method="post">

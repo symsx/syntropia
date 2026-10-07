@@ -247,7 +247,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
     .mv-vue-eau:has(#b-1:checked) .mv-bloc:nth-child(1), .mv-vue-eau:has(#b-2:checked) .mv-bloc:nth-child(2),
     .mv-vue-eau:has(#b-3:checked) .mv-bloc:nth-child(3){ display:block; }
   }
-  @media (max-height:38rem){ .mv-pied-note{ display:none; } }
+  /* téléphone ou écran bas : la note ne tient pas sous le tableau ; elle reste dans le panneau Informations */
+  @media (max-height:44rem), (max-width:30rem){ .mv-pied-note{ display:none; } }
   @media (max-height:38rem) and (max-width:40rem){ .mv-synthese{ display:none; } }
   .mv-bloc{ border:1px solid var(--line); border-radius:.6rem; padding:.5rem .7rem; background:var(--surface); min-width:0; }
   .mv-bloc h2{ font:600 .95em var(--titre); color:var(--accent-titre); margin:0 0 .3em; }
@@ -452,7 +453,10 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
           <div class="mv-page-nav" id="mv-nav">
             <button type="button" id="mv-prec">← Précédents</button><span id="mv-page"></span><button type="button" id="mv-suiv">Suivants →</button>
           </div>
-          <p class="mv-pied-note">
+<?php
+// La note des quantités : sous le tableau, et toujours dans le panneau Informations — sur téléphone ou sur un écran bas,
+// elle ne tient pas sous le tableau et s'y masque ; l'explication reste lisible dans le panneau.
+ob_start(); ?>
 <?php if ($estimes > 0): ?>
             Sur la ligne centrale d'une parcelle pérenne, une quantité « estimée » se compte en série : les productions à leur espacement de production, les plantes de service vivaces et ligneuses dans les cases qui restent, à leur espacement de service. Ailleurs, et pour les annuelles semées en poquets, elle compte une ligne de plants par planche ou par bande de bordure. Une quantité saisie dans le scénario ou le plan de culture la remplace.
 <?php else: ?>
@@ -476,7 +480,8 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
 <?php if ($sansCulture !== []): ?>
             Parcelles sans culture au plan : <?= $h(implode(', ', $sansCulture)) ?>.
 <?php endif; ?>
-          </p>
+<?php $noteQuantites = trim((string) ob_get_clean()); ?>
+          <p class="mv-pied-note"><?= $noteQuantites ?></p>
 <?php endif; ?>
         </section>
 
@@ -714,6 +719,9 @@ $urlParcelle = static fn (array $p): string => 'conception-materiel-et-eau.php?p
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
+<?php if (($noteQuantites ?? '') !== ''): ?>
+      <p><strong>Les quantités.</strong> <?= $noteQuantites ?></p>
+<?php endif; ?>
       <p>Cette étape prépare deux choses avant de planter : <strong>ce qu'il faudra se procurer</strong> et <strong>l'eau qu'il faudra donner</strong>.
          La liste des plants se déduit du scénario de chaque parcelle et des lignes posées sur son plan (bordures, lignes de service des planches).
          Le classement « à acheter, à multiplier soi-même, régénération naturelle » vient de l'origine que vous y avez notée.</p>

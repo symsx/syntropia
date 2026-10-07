@@ -145,7 +145,7 @@ $destinationsChoisies = array_filter(explode(',', $reponses['objectifs_destinati
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="objectifs-cadre">
+      <div class="objectifs-cadre" data-tenir>
         <p class="objectifs-annonce">Trois questions, environ deux minutes. Vos réponses
            peuvent changer à tout moment.</p>
 

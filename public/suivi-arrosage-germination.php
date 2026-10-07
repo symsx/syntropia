@@ -135,7 +135,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="arros-cadre">
+      <div class="arros-cadre" data-tenir>
         <p class="arros-annonce">Les premiers signes de vie, après la plantation.</p>
 
         <form method="post">

@@ -506,6 +506,10 @@ input:checked + .outil-bouton{ background:var(--surface); border-color:var(--acc
   .outil-separateur{ display:none; }
 }
 
+/* un cadre qui se réduit pour tenir dans le bureau (gabarit.js, initTenir) : en haut, la place de l'onglet
+   « Informations », qui recouvre le haut du bureau */
+[data-tenir]{ padding-top:1.9rem; }
+
 .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
 /* L'avis d'une mise à jour (gabarit.js, chantier-mises-a-jour.md, Phase 4) : au-dessus de tout, au bas du bureau. */

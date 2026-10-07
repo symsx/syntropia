@@ -134,7 +134,7 @@ $reponses = $reponsesService->pourParticipant($participantId);
     </nav>
 
     <main class="bureau" id="bureau">
-      <div class="consuiv-cadre">
+      <div class="consuiv-cadre" data-tenir>
         <p class="consuiv-annonce">Notez ce que vous observez et les résultats obtenus.</p>
 
         <form method="post">
