@@ -93,7 +93,8 @@ code{ font-family:var(--texte); font-weight:600; background:var(--accent-fond); 
   position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
   z-index:1; /* au-dessus de .bg-droite, positionné pour la lisière, qui occupe aussi la colonne du milieu : sans cela,
                 il recouvre les flèches étape précédente / suivante (bug du 2026-10-05) */
-  max-width:min(55vw, 30rem);
+  /* la place des deux côtés : la marque à gauche (environ 11rem), le thème et le compte à droite (environ 13rem) */
+  max-width:min(55vw, 30rem, calc(100vw - 28rem));
   min-width:0; display:flex; align-items:center; justify-content:center; gap:.3rem; overflow:hidden;
 }
 .bg-centre-titre{
@@ -467,6 +468,13 @@ input:checked + .outil-bouton{ background:var(--surface); border-color:var(--acc
   .pied-annuler-icone{ display:block; font:700 1rem var(--titre); }
 }
 
+/* Écran étroit (téléphone, tablette, petite fenêtre) : centré sur la fenêtre, le titre recouvrait la marque et le
+   bouton de thème. Il reprend la colonne du milieu de la grille, entre la gauche et la droite du bandeau, quitte à
+   n'être pas tout à fait au centre ; un titre trop long finit par « … ». */
+@media (max-width:48rem){
+  .bg-centre{ position:relative; left:auto; top:auto; transform:none; grid-column:2; justify-self:center; max-width:100%; }
+}
+
 /* petit écran : le bandeau général ne tient plus avec le nom du site,
    le nom du compte et le titre central tous en même temps — on retire
    ce qui se déduit du contexte, jamais l'accès (hamburger, thème,
@@ -474,6 +482,9 @@ input:checked + .outil-bouton{ background:var(--surface); border-color:var(--acc
 @media (max-width:30rem){
   .bandeau-general{ padding:0 .6rem; gap:.4rem; }
   .marque{ display:none; }
+  /* l'emplacement du logo aussi : le titre central le chevauchait, et le bouton de thème avec lui (le porteur,
+     2026-10-05) */
+  .logo-espace{ display:none; }
   .compte-nom{ display:none; }
   .compte{ padding:.35rem; }
   .bg-centre-titre{ font-size:.92rem; }
