@@ -37,8 +37,10 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
     `mises-a-jour` (Phases 1-4 faites, 5-7 avant la version 1) ;
     `documentation-atelier` (maintenance continue, voir § Directives).
   - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
-    fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry).
-  - **Planifiés, pas commencés** : `palette-vegetale` (2026-10-05 — tout tranché, prêt à commencer),
+    fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry) ;
+    `palette-vegetale` (Phase 1 faite le 2026-10-07, en local, **pas déployée**, schéma 21 — la page « La palette », où
+    la parcelle naît ; Phases 2 à 6 à faire).
+  - **Planifiés, pas commencés** :
     `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
     `formes-de-parcelle` (2026-10-05 — parcelle polygonale, zones de culture, points d'eau ; tout tranché le 2026-10-07, prêt à commencer),
     `suppression-projet` (sans date — personne
@@ -287,7 +289,8 @@ vague) est dans `journal-de-reprise.md` ; ici, ce qui sert à chaque séance.*
   `syntropia_projet`, revérifié contre `membre_site`) — `Sites::pourCompte()`
   renvoie toujours UN site. Premier site : `definition-projet.php` ; un de
   plus : `definition-projet.php?nouveau=1`.
-- Les vingt étapes de `etapes.js` portent `pret: true`.
+- Les vingt et une étapes de `etapes.js` portent `pret: true` (« La palette » ajoutée le 2026-10-07, avant « Créer
+  les parcelles », qui ne crée plus de parcelle).
 - Export : **somme de contrôle seule** (pas de HMAC) ; un import crée
   toujours un projet neuf, dates d'origine gardées.
 - Stade du terrain : **trois stades, par parcelle** (colonisation,
@@ -389,6 +392,12 @@ espacements, la ligne centrale pérenne en série, la part de biomasse, la bioma
 `claudetest1` (voir la mémoire). Parcours à essayer par le porteur : imprimer le
 Dossier Projet complet ; ouvrir une fiche d'espèce ; regarder la part de biomasse
 (panneau Informations du plan, du scénario, du potager) et « Matériel et eau ».
+
+**Au 2026-10-07, en local, pas déployé** : la palette végétale, Phase 1 (`chantier-palette-vegetale.md` § Fait),
+**schéma 21**. Au déploiement : relire l'état de la production, `mettre-a-jour`, puis le livret « L'atelier » (un
+chapitre « La palette », et « Créer les parcelles » qui ne crée plus de parcelle). Ensuite, palette Phase 2, ou les
+formes de parcelle (`chantier-formes-de-parcelle.md`, tout tranché ; elle prendra le schéma suivant, et le choix de
+la forme ira dans la page où la parcelle naît, « La palette »).
 
 **La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5, est fait et
 déployé ; puis la présentation

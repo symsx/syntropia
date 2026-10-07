@@ -38,14 +38,10 @@ if ($site === null) {
 $siteId = (int) $site['id'];
 $parcellesService = new Parcelles();
 
-$erreursCreation = [];
 $erreursPlan = [];
 // emplacement → message : une erreur sur la ligne d'une bordure (chantier « peuplement de la parcelle », Phase 2).
 $erreursLigne = [];
 $lignesService = new LignesPlantation();
-$codeSaisi = '';
-$nomSaisi = '';
-$typeSaisi = 'perenne';
 // Répartir une liste de plantes sur les bordures (chantier-repartition-bordures.md, Phase 3) : les choix lus d'un aperçu
 // (GET) ou d'un envoi refusé (POST), et le message du refus.
 $paramsRepartition = null;
@@ -88,23 +84,13 @@ if ($jetonOk) {
     $action = (string) ($_POST['action'] ?? '');
     if (!$peutEcrire) {
         $refus = ['droit' => "Vous lisez ce projet : il ne se modifie pas depuis votre compte."];
-        $erreursCreation = $erreursPlan = $refus;
+        $erreursPlan = $refus;
         if (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') {
             http_response_code(403);
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode(['ok' => false, 'erreurs' => $refus, 'version' => null], JSON_UNESCAPED_UNICODE);
             exit;
         }
-    } elseif ($action === 'creer') {
-        $codeSaisi = (string) ($_POST['code'] ?? '');
-        $nomSaisi = (string) ($_POST['nom'] ?? '');
-        $typeSaisi = (string) ($_POST['type'] ?? 'perenne');
-        $resultat = $parcellesService->creer($siteId, $codeSaisi, $nomSaisi, $typeSaisi);
-        if ($resultat['erreurs'] === []) {
-            header('Location: ' . Configuration::base() . 'conception-parcelles.php?parcelle=' . $resultat['id']);
-            exit;
-        }
-        $erreursCreation = $resultat['erreurs'];
     } elseif ($action === 'plan') {
         $parcelleId = (int) ($_POST['parcelle_id'] ?? 0);
         $resultatPlan = $parcellesService->enregistrerPlan($parcelleId, $siteId, [
@@ -228,26 +214,22 @@ if ($jetonOk) {
 }
 
 $parcelles = $parcellesService->dUnSite($siteId);
-$demandeNouvelle = ($_GET['nouvelle'] ?? '') === '1' || ($parcelles === [] && $erreursCreation === []);
-$parcelleActive = null;
-if (!$demandeNouvelle) {
-    $idDemande = (int) ($_GET['parcelle'] ?? 0);
-    foreach ($parcelles as $p) {
-        if ((int) $p['id'] === $idDemande) {
-            $parcelleActive = $p;
-            break;
-        }
-    }
-    if ($parcelleActive === null && $parcelles !== []) {
-        $parcelleActive = $parcelles[0];
+// Une parcelle naît dans « La palette » (chantier-palette-vegetale.md, Phase 1) : une nouvelle parcelle, ou un projet
+// qui n'en a pas encore, s'y ouvre.
+if (($_GET['nouvelle'] ?? '') === '1' || $parcelles === []) {
+    header('Location: ' . Configuration::base() . 'conception-palette.php?nouvelle=1');
+    exit;
+}
+$parcelleActive = $parcelles[0];
+$idDemande = (int) ($_GET['parcelle'] ?? 0);
+foreach ($parcelles as $p) {
+    if ((int) $p['id'] === $idDemande) {
+        $parcelleActive = $p;
+        break;
     }
 }
 // La part de biomasse, face aux 75 % (`PartBiomasse`) : par planche au potager, sur la ligne centrale en pérenne.
-$partsBiomasse = $parcelleActive !== null ? (new PartBiomasse())->dUneParcelle($parcelleActive, $siteId) : [];
-if ($parcelleActive === null && $parcelles === [] && $erreursCreation !== []) {
-    // Échec de création avec zéro parcelle existante : rester sur le formulaire.
-    $demandeNouvelle = true;
-}
+$partsBiomasse = (new PartBiomasse())->dUneParcelle($parcelleActive, $siteId);
 
 /* Ce que le plan affiche à l'ouverture — les valeurs enregistrées si la
  * parcelle en a, les mêmes valeurs par défaut qu'avant sinon (12 x 8 m,
@@ -321,7 +303,7 @@ $calendrierBordures = ['dates' => [], 'perturbations' => []];
 $bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string) array_key_first($erreursLigne) : ''));
 // La bordure dont on regarde la proposition (Phase 3) — rien ne s'écrit avant « Poser cette série ».
 $bordureProposee = ($_GET['proposer'] ?? '') === '1' ? $bordureOuverte : '';
-if ($parcelleActive !== null && !$demandeNouvelle) {
+if ($parcelleActive !== null) {
     $lignesBordures = $lignesService->etat($parcelleActive, $siteId);
     $especesSite = (new Especes())->toutes($siteId);
     $calendrierBordures = (new CalendrierLignes())->dUneParcelle((int) $parcelleActive['id']);
@@ -336,7 +318,7 @@ $repGrisees = [];
 $repChoix = [];
 $repColonnes = ['externe' => null, 'interne' => null];
 $repApercu = null;
-if ($parcelleActive !== null && !$demandeNouvelle) {
+if ($parcelleActive !== null) {
     $repGeometrie = array_filter(Bordures::lignes($parcelleActive), static fn (array $l): bool => in_array($l['cadre'], RepartitionBordures::CADRES, true));
     foreach ($lignesBordures as $cle => $lb) {
         if (in_array(Bordures::depuisCle($cle)[0], RepartitionBordures::CADRES, true) && $lb['places'] !== []) {
@@ -581,29 +563,9 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
   .plan-fleche{ stroke:var(--muted); stroke-width:1.4; fill:none; }
   .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
-  /* l'état « aucune parcelle encore » — un formulaire simple, pas de SVG */
-  .parc-creation{ width:100%; max-width:26rem; }
-  .parc-annonce{ font:400 .92rem/1.5 var(--texte); color:var(--muted); margin:0 0 1.4rem; text-align:center; }
-  .parc-champ{ margin-bottom:1rem; }
-  .parc-champ label, .parc-champ legend{ display:block; font:600 .85rem var(--titre); color:var(--ink); margin-bottom:.35rem; padding:0; }
-  .parc-champ small{ display:block; font:400 .78rem/1.3 var(--texte); color:var(--muted); margin-bottom:.3rem; }
-  .parc-champ input[type=text]{
-    width:100%; padding:.5rem .7rem; font:400 .9rem var(--texte); color:var(--ink);
-    background:var(--surface); border:1px solid var(--line); border-radius:.5rem;
-  }
-  .parc-champ input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  /* des choix côte à côte, dans le panneau Données */
   .parc-choix{ display:flex; gap:1rem; }
   .parc-choix label{ display:flex; align-items:center; gap:.35rem; font:400 .86rem var(--texte); color:var(--ink); }
-  .parc-erreur{
-    margin:0 0 .8rem; padding:.5rem .7rem; border-radius:.5rem; background:var(--alerte);
-    color:var(--bouton-encre); font:500 .82rem var(--texte);
-  }
-  .parc-bouton{
-    width:100%; margin-top:.3rem; padding:.6rem; border:0; border-radius:.6rem;
-    background:var(--accent); color:var(--bouton-encre); font:600 .92rem var(--titre); cursor:pointer;
-  }
-  .parc-bouton:hover{ opacity:.92; }
-  .parc-annuler{ display:block; text-align:center; margin-top:.7rem; font:400 .8rem var(--texte); color:var(--muted); }
 
   /* le bouton d'enregistrement du plan, et ses messages d'état — noms
      hérités de « les mesures réelles », un bloc distinct disparu avec la
@@ -661,7 +623,6 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
     </div>
   </header>
 
-<?php if (!$demandeNouvelle): ?>
   <div class="bandeau-outils" role="toolbar" aria-label="Outils du plan" id="bandeau-outils">
     <button type="button" class="outils-declencheur" id="outils-declencheur" aria-haspopup="true"
             aria-expanded="false" aria-controls="outils-liste">
@@ -680,7 +641,6 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
            définir dans chantier-formes-de-parcelle.md (contour brisé ou courbe, chemins, points d'eau). -->
     </div>
   </div>
-<?php endif; ?>
 
   <div class="bulle" id="bulle" role="status"></div>
 
@@ -707,62 +667,25 @@ $initiales = mb_substr($initiales, 0, 2) ?: '?';
           <p class="pg-titre">Parcelles</p>
           <ul class="pg-liste">
 <?php foreach ($parcelles as $p):
-        $estActive = !$demandeNouvelle && $parcelleActive !== null && (int) $p['id'] === (int) $parcelleActive['id']; ?>
+        $estActive = (int) $p['id'] === (int) $parcelleActive['id']; ?>
             <li><a href="conception-parcelles.php?parcelle=<?= (int) $p['id'] ?>"<?= $estActive ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">▤</span><span class="pg-libelle"><?= htmlspecialchars((string) $p['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $p['nom'], ENT_QUOTES, 'UTF-8') ?></span></a></li>
 <?php endforeach; ?>
-            <li><a href="conception-parcelles.php?nouvelle=1"<?= $demandeNouvelle ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
+            <li><a href="conception-palette.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
           </ul>
         </div>
-<?php if (!$demandeNouvelle && $parcelleActive !== null): ?>
         <div class="pg-section">
           <p class="pg-titre"><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?> — <?= htmlspecialchars((string) $parcelleActive['nom'], ENT_QUOTES, 'UTF-8') ?></p>
           <ul class="pg-liste">
+            <li><a href="conception-palette.php?parcelle=<?= (int) $parcelleActive['id'] ?>"><span class="pg-puce">✿</span><span class="pg-libelle">La palette</span></a></li>
             <li><a href="conception-parcelles.php?parcelle=<?= (int) $parcelleActive['id'] ?>" class="active" aria-current="page"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
             <li><a href="conception-scenario.php?parcelle=<?= (int) $parcelleActive['id'] ?>"><span class="pg-puce">≋</span><span class="pg-libelle">Le scénario</span></a></li>
             <li><a href="conception-materiel-et-eau.php?parcelle=<?= (int) $parcelleActive['id'] ?>"><span class="pg-puce">◍</span><span class="pg-libelle">Matériel et eau</span></a></li>
             <li><a href="#" class="a-venir" tabindex="-1" aria-disabled="true"><span class="pg-puce">✎</span><span class="pg-libelle">Le suivi</span></a></li>
           </ul>
         </div>
-<?php endif; ?>
       </div>
     </nav>
 
-<?php if ($demandeNouvelle): ?>
-    <main class="bureau" id="bureau">
-      <div class="parc-creation">
-        <p class="parc-annonce"><?= $parcelles === [] ? 'Ouvrez votre première parcelle. Vous pourrez en ajouter d\'autres ensuite.' : 'Ouvrez une nouvelle parcelle.' ?></p>
-        <form method="post">
-          <input type="hidden" name="csrf" value="<?= htmlspecialchars($auth->jeton(), ENT_QUOTES, 'UTF-8') ?>">
-          <input type="hidden" name="action" value="creer">
-<?php if ($erreursCreation !== []): ?>
-          <p class="parc-erreur"><?= htmlspecialchars(implode(' ', $erreursCreation), ENT_QUOTES, 'UTF-8') ?></p>
-<?php endif; ?>
-          <div class="parc-champ">
-            <label for="code">Code</label>
-            <small>Un repère court, comme A, B ou P1, pour la retrouver dans les listes.</small>
-            <input type="text" id="code" name="code" placeholder="A" maxlength="32"
-                   value="<?= htmlspecialchars($codeSaisi, ENT_QUOTES, 'UTF-8') ?>">
-          </div>
-          <div class="parc-champ">
-            <label for="nom">Nom</label>
-            <input type="text" id="nom" name="nom" placeholder="Le verger, la butte du bas…"
-                   value="<?= htmlspecialchars($nomSaisi, ENT_QUOTES, 'UTF-8') ?>">
-          </div>
-          <fieldset class="parc-champ">
-            <legend>Type</legend>
-            <div class="parc-choix">
-              <label><input type="radio" class="radio" name="type" value="perenne"<?= $typeSaisi === 'perenne' ? ' checked' : '' ?>>Pérenne</label>
-              <label><input type="radio" class="radio" name="type" value="potager"<?= $typeSaisi === 'potager' ? ' checked' : '' ?>>Potager</label>
-            </div>
-          </fieldset>
-          <button type="submit" class="parc-bouton">Créer la parcelle</button>
-        </form>
-<?php if ($parcelles !== []): ?>
-        <a class="parc-annuler" href="conception-parcelles.php?parcelle=<?= (int) $parcelles[0]['id'] ?>">Annuler, revenir à mes parcelles</a>
-<?php endif; ?>
-      </div>
-    </main>
-<?php else: ?>
     <main class="bureau" id="bureau">
       <svg class="bureau-carte" id="plan" viewBox="0 0 1240 900" role="img"
            aria-label="Plan de la parcelle <?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?>">
@@ -1304,7 +1227,6 @@ foreach ($lignesBordures as $cle => $lb):
            compris. La surface des planches ne compte que ce qui se cultive.</p>
       </div>
     </aside>
-<?php endif; ?>
   </div>
 
   <div class="scrim" id="scrim-info"></div>
@@ -1315,13 +1237,6 @@ foreach ($lignesBordures as $cle => $lb):
   </button>
   <aside class="panneau-info" id="panneau-info" aria-hidden="true">
     <div class="pi-corps">
-<?php if ($demandeNouvelle): ?>
-      <p>Le code et le nom suffisent pour ouvrir une parcelle. La forme, les dimensions et
-         le sol se précisent ensuite, ici ou dans les étapes suivantes. Une parcelle
-         <strong>pérenne</strong> est portée par des arbres : verger, haie. Un
-         <strong>potager</strong> porte des cultures de légumes, de feuilles et de racines
-         pour soi et la famille.</p>
-<?php else: ?>
       <p>Cette étape fixe la forme et la place des parcelles du site. Pour la parcelle
          <code><?= htmlspecialchars((string) $parcelleActive['code'], ENT_QUOTES, 'UTF-8') ?></code>, vous donnez
          ses dimensions, ses bordures et le sens de ses planches. Le nombre de planches se calcule seul, et avec
@@ -1365,7 +1280,6 @@ foreach ($lignesBordures as $cle => $lb):
 <?php endforeach; ?>
       </ul>
 <?php endif; ?>
-<?php endif; ?>
     </div>
   </aside>
 
@@ -1376,14 +1290,11 @@ foreach ($lignesBordures as $cle => $lb):
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
       </button>
     </form>
-<?php if (!$demandeNouvelle): ?>
     <label class="pied-option"><input type="checkbox" id="afficher-cotes" class="case" checked> Afficher les cotes</label>
 <?php if ($legende !== []): ?>
     <label class="pied-option"><input type="checkbox" id="afficher-legende" class="case" checked> Afficher la légende</label>
 <?php endif; ?>
-<?php endif; ?>
     <span class="pied-spacer"></span>
-<?php if (!$demandeNouvelle): ?>
     <button class="pied-annuler" id="pied-annuler" aria-label="Annuler les changements" title="Revenir au plan enregistré" disabled>
       <span class="pied-annuler-texte">Annuler les changements</span>
       <span class="pied-annuler-icone" aria-hidden="true">↶</span>
@@ -1392,7 +1303,6 @@ foreach ($lignesBordures as $cle => $lb):
       <span class="pied-reset-texte">Réinitialiser</span>
       <span class="pied-reset-icone" aria-hidden="true">R</span>
     </button>
-<?php endif; ?>
   </footer>
 
 </div>
@@ -1403,11 +1313,9 @@ foreach ($lignesBordures as $cle => $lb):
   Gabarit.init({
     site: <?= json_encode((string) $site['nom'], JSON_UNESCAPED_UNICODE) ?>,
     etape: 'conception-parcelles',
-    contexte: <?= $demandeNouvelle ? json_encode('nouvelle parcelle', JSON_UNESCAPED_UNICODE)
-      : json_encode($parcelleActive['code'] . ' — ' . $parcelleActive['nom'], JSON_UNESCAPED_UNICODE) ?>
+    contexte: <?= json_encode($parcelleActive['code'] . ' — ' . $parcelleActive['nom'], JSON_UNESCAPED_UNICODE) ?>
   });
 </script>
-<?php if (!$demandeNouvelle): ?>
 <script>
   // Largeur de planche et passe-pied : une seule source, Parcelles::PLANCHE_M/
   // PASSE_PIED_M — sans quoi le calcul serveur de nb_planches et l'aperçu du
@@ -1431,6 +1339,5 @@ foreach ($lignesBordures as $cle => $lb):
       'ouvrir' => $repOuverte ? 'rb' : ($bordureOuverte === '' ? null : ($bordureOuverte === 'recompte' ? 'bl-titre' : 'bl-' . str_replace(':', '-', $bordureOuverte)))], JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="conception-parcelles.js?v=<?= (int) @filemtime(__DIR__ . '/conception-parcelles.js') ?>"></script>
-<?php endif; ?>
 </body>
 </html>

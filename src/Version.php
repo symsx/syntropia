@@ -54,8 +54,10 @@ final class Version
      * 20 : le constat du saut du chat sans témoin — `constat.hauteur_cm`, `biomasse`, `sol` (colonnes facultatives) ;
      * `temoin_decrit` et `temoin_pousse_cm` retirées. Un fichier plus ancien se charge encore : l'import ignore ces deux
      * champs (`Import::RETIREES`), sans refermer la fenêtre.
+     * 21 : la table `palette`, la palette végétale d'une parcelle (table facultative : un fichier plus ancien se charge,
+     * la palette vide).
      */
-    public const SCHEMA = 20;
+    public const SCHEMA = 21;
 
     /** Le plus ancien schéma dont un export se recharge encore tel quel. */
     public const SCHEMA_IMPORTABLE_DEPUIS = 1;

@@ -26,6 +26,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
   Temps.php               le temps d'une plante — la semaine (lundi ISO), la fenêtre d'une culture (mise en place → récolte, levée), les périodes du scénario rapportées à la date de plantation, l'échelle (semaine, mois, année) ; pur
   RepartitionBordures.php répartit une liste de plantes sur les bordures externe et interne d'une parcelle — fonction, émergentes au sud et à l'ouest de l'externe, brise-vent sur les côtés cochés, colonne vertébrale un plant sur deux, deux espèces au moins par côté sinon refus ; pur
   Sigles.php              les sigles des plantes d'un plan (« La », « FeA ») — calculés, uniques sur le plan, deux sigles qui ne diffèrent que d'un accent comptent pour un ; pur
+  Palette.php             la palette végétale d'une parcelle — ses trois places (productions principales, secondaires, service) et les neuf fonctions de service, chacune avec ce qu'elle apporte et les rôles du référentiel qui la désignent ; pur
   Tortue.php              le type de tortue d'une parcelle — classique, zèbre, abeille, liane (Théry, ch. 15) : libellé et une phrase de la source ; pur
   Stade.php               le stade du terrain — colonisation, accumulation ou abondance (trois stades, par parcelle, schéma 19) : ce qui s'observe, ce que le corpus permet d'affirmer, et ce qu'on fait à chaque stade (densité, taille — Joala 6-8, sans chiffre) ; pur
   Espacement.php          l'espacement selon la fonction — le service d'une espèce lu dans son rôle (biomasse, puis bloque-herbe, puis brise-vent), la part de biomasse visée (75 %) ; pur
@@ -46,7 +47,8 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Interventions.php        le journal des perturbations d'une parcelle (`intervention`) — ajouter, modifier sous verrou de version, retirer ; appelé par suivi-perturbation.php
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
-    Parcelles.php            les parcelles d'un site — création, et les trois mesures pour la carte à venir
+    Parcelles.php            les parcelles d'un site — création (appelée par conception-palette.php), plan, campagne de plantation
+    Palettes.php             la palette d'une parcelle (`palette`) — choisir une espèce pour une place ou une fonction, retirer, reprendre les plantes de service d'une autre parcelle ; sous le verrou de la parcelle ; appelé par conception-palette.php
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
     Cadastre.php             parcelles cadastrales IGN (API Carto) — éphémère, jamais stocké ; appelé par api-cadastre.php
     Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
@@ -103,11 +105,12 @@ public/                racine servable du site en refonte
   definition-site.php        étape 4 (Définition) — trois onglets CSS purs : le lieu (carte réelle), les observations, la conduite
   conception-etude-site.php  étape 1 (Conception) — la carte interactive du terrain, calques.js
   conception-etude-sol.php   étape 2 (Conception), gardée par Authentification::exige()
-  conception-potager.php     étape 4 (Conception) pour une parcelle de type potager — le plan de culture par planche, les voisinages de Weinrich ; `conception-scenario.php` y redirige un potager
-  conception-scenario.php    étape 4 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
-  conception-parcelles.php   étape 7 (Conception) — le plan d'une parcelle (bordures, planches, lignes, plants des bordures à leur envergure) ; zoom
-  conception-materiel-et-eau.php  étape 5 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
-  conception-calendrier.php  étape 6 (Conception), gardée par Authentification::exige()
+  conception-palette.php     étape 3 (Conception) — la parcelle y naît (code, nom, type, conduite, tortue), puis sa palette en trois onglets : productions principales, secondaires, plantes de service par fonction
+  conception-potager.php     étape 5 (Conception) pour une parcelle de type potager — le plan de culture par planche, les voisinages de Weinrich ; `conception-scenario.php` y redirige un potager
+  conception-scenario.php    étape 5 (Conception) — le tableau temps × strates d'une parcelle (`?parcelle=ID`) : frise SVG, ou pastilles par strate ; saisie dans le panneau Données
+  conception-parcelles.php   étape 4 (Conception) — le plan d'une parcelle (bordures, planches, lignes, plants des bordures à leur envergure) ; zoom ; `?nouvelle=1`, ou un projet sans parcelle, renvoie à conception-palette.php
+  conception-materiel-et-eau.php  étape 6 (Conception) — deux onglets : le matériel végétal à se procurer (`?parcelle=ID` ou `?tout=1`), et l'eau (besoin, ressource, fréquence d'arrosage d'après les tests de sol)
+  conception-calendrier.php  étape 7 (Conception), gardée par Authentification::exige()
   releve-vierge.php          fiches de relevé de sol à imprimer — HORS GABARIT, voir son en-tête
   dossier-projet.php         le Dossier Projet à imprimer (couverture, Définition ; chapitres cochés en CSS pur) — HORS GABARIT, seconde exception ; section « Dossier Projet » de gabarit.js, avant « Documentation »
   feuillet-chantier.php      le feuillet du chantier de plantation d'une parcelle (plan en paysage, où va quoi, colonnes à pointer) — HORS GABARIT, sous-dossier du Dossier Projet ; ouvert depuis realisation-outils-et-plans.php

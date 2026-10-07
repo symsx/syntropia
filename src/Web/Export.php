@@ -63,6 +63,7 @@ final class Export
         'lignes' => 'ligne_plantation',
         'calendriers' => 'ligne_calendrier',
         'perturbations_prevues' => 'perturbation_prevue',
+        'palette' => 'palette',
     ];
 
     /**
@@ -214,6 +215,7 @@ final class Export
                     $table === 'ligne_plantation' => 'emplacement, rang',
                     $table === 'ligne_calendrier' => 'emplacement',
                     $table === 'perturbation_prevue' => 'emplacement, date_prevue, id',
+                    $table === 'palette' => 'place, id',
                     default => 'id',
                 };
                 $entree[$partie] = array_map(fn (array $l): array => $this->ligne($table, $l),
@@ -443,7 +445,7 @@ final class Export
     private function empreinteSchema(): string
     {
         $tables = ['site', 'participant', 'reponse', 'synthese', 'ressource', 'gisement', 'commande', 'espece',
-            'parcelle', 'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'ligne_plantation', 'ligne_calendrier', 'perturbation_prevue', 'celebration',
+            'parcelle', 'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'ligne_plantation', 'ligne_calendrier', 'perturbation_prevue', 'palette', 'celebration',
             'reconnaissance', 'calque_element'];
         $lignes = [];
         foreach ($tables as $t) {

@@ -58,14 +58,15 @@ final class Import
     /** Ce que porte chaque parcelle. */
     private const ENFANTS_PARCELLE = ['scenario' => 'scenario_ligne', 'succession' => 'succession_ligne',
         'releves_sol' => 'releve_sol', 'interventions' => 'intervention', 'constats' => 'constat',
-        'lignes' => 'ligne_plantation', 'calendriers' => 'ligne_calendrier', 'perturbations_prevues' => 'perturbation_prevue'];
+        'lignes' => 'ligne_plantation', 'calendriers' => 'ligne_calendrier', 'perturbations_prevues' => 'perturbation_prevue',
+        'palette' => 'palette'];
 
     /** Le nom d'une chose, pour dire où est l'erreur. */
     private const LIBELLE = ['synthese' => 'synthèse', 'ressource' => 'ressource', 'gisement' => 'gisement',
         'commande' => 'commande', 'espece' => 'espèce du projet', 'scenario_ligne' => 'végétal du scénario',
         'succession_ligne' => 'végétal de la succession', 'releve_sol' => 'relevé de sol', 'intervention' => 'intervention', 'constat' => 'constat du saut du chat',
         'ligne_plantation' => 'place d’une ligne de plantation', 'ligne_calendrier' => 'calendrier d’une ligne',
-        'perturbation_prevue' => 'perturbation prévue'];
+        'perturbation_prevue' => 'perturbation prévue', 'palette' => 'espèce de la palette'];
 
     /** Les bornes des entiers, par type. [signé, non signé]. */
     private const BORNES = [
@@ -168,7 +169,7 @@ final class Import
             return $this->regles;
         }
         $tables = ['site', 'participant', 'reponse', 'synthese', 'ressource', 'gisement', 'commande', 'espece', 'parcelle',
-            'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'ligne_plantation', 'ligne_calendrier', 'perturbation_prevue', 'celebration', 'reconnaissance', 'calque_element'];
+            'scenario_ligne', 'succession_ligne', 'releve_sol', 'intervention', 'constat', 'ligne_plantation', 'ligne_calendrier', 'perturbation_prevue', 'palette', 'celebration', 'reconnaissance', 'calque_element'];
         $in = implode(',', array_fill(0, count($tables), '?'));
         $req = $this->pdo()->prepare(
             "SELECT table_name AS t, column_name AS c, data_type AS d, column_type AS ct,

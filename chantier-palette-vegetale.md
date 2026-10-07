@@ -1,7 +1,8 @@
 # La palette végétale d'une parcelle — plan
 
-**Demandé par le porteur le 2026-10-05. Planifié, pas commencé. Toutes les questions tranchées par le porteur le 2026-10-05, et la
-proposition « site, projet, parcelle » confirmée le même jour, avec la palette du projet en plus.**
+**Demandé par le porteur le 2026-10-05. Toutes les questions tranchées par le porteur le 2026-10-05, et la
+proposition « site, projet, parcelle » confirmée le même jour, avec la palette du projet en plus. Phase 1 faite le
+2026-10-07, vérifiée en local, pas encore déployée : voir § Fait.**
 
 ## La demande
 
@@ -150,3 +151,32 @@ origine, avec les ressources du site.
 **Phase 6 — Les parcelles existantes et le livret.** Leur palette remplie depuis leurs données (les origines restent à
 décider par la personne), vérifiée en local avant
 tout déploiement ; le livret « L'atelier » et le glossaire dans la même vague.
+
+## Fait
+
+**Phase 1, le 2026-10-07 — en local, pas déployée.**
+
+- **La table `palette`** (schéma 21) : une ligne par espèce et par parcelle, sa `place` (`principale`, `secondaire`,
+  `service`) et ses `fonctions` (les neuf clés de `Palette::FONCTIONS`, multivaluées par `|`). L'espèce se désigne par
+  `nom_scientifique` + `variete`, comme `ligne_plantation`. Export et import la portent (`palette`, enfant de la
+  parcelle) ; `bin/dev.py verifier-export` passe, le projet de vérification compris.
+- **Une production peut aussi rendre un service** (le nectar d'un fruitier) : elle garde sa place et gagne la fonction ;
+  l'onglet service la montre avec son repère « production principale ». Choisir comme principale une espèce déjà
+  secondaire (ou de service) la fait passer de place. Retirer une production qui rend un service la laisse comme plante
+  de service ; une plante de service sans plus aucune fonction sort de la palette.
+- **La page `conception-palette.php`**, étape « La palette » de `etapes.js`, avant « Créer les parcelles ». La parcelle y
+  naît : code, nom, type, conduite et tortue (`Parcelles::creer()`). Puis trois onglets dans le bureau : productions
+  principales, secondaires (la réponse « Quelles productions ? » des Objectifs rappelée), plantes de service (les
+  Moyens rappelés, la régénération naturelle assistée quand le budget est faible ; les neuf fonctions, chacune avec ce
+  qu'elle apporte ; les espèces que le référentiel associe à la fonction en tête de la liste). À côté de chaque espèce,
+  son type de plant au cadre ; au survol d'une plante choisie, le même repère. La palette se réduit au lieu de défiler
+  (vérifié à 320 × 568, 375 × 667, 1366 × 768, thèmes clair et sombre).
+- **La reprise** : les plantes de service d'une autre parcelle du projet (celles dont la place est « service » ; les
+  productions, propres à chaque parcelle, ne se reprennent pas). Une espèce déjà présente gagne les fonctions qui lui
+  manquaient.
+- **« Créer les parcelles » ne crée plus de parcelle** : `?nouvelle=1`, ou un projet sans parcelle, renvoie à la palette ;
+  « Nouvelle parcelle » mène à la palette depuis toutes les pages ; « La palette » s'ajoute au menu de chaque parcelle
+  (plan, scénario, potager, matériel et eau). Le nom de l'étape « Créer les parcelles » reste celui-là.
+- **Pas encore fait** : le livret « L'atelier » (au déploiement, puisqu'il ne décrit que la production) ; le glossaire
+  (Phase 6). Les parcelles de production auront une palette vide jusqu'à la Phase 6 ; rien en aval ne la lit encore.
+

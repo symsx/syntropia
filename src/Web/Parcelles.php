@@ -147,13 +147,14 @@ final class Parcelles
     }
 
     /**
-     * Ouvre une parcelle — code et nom seulement, le strict minimum pour
-     * qu'elle existe et se distingue des autres. Tout le reste
-     * s'ajoute ensuite via `enregistrer()`.
+     * Ouvre une parcelle — son code, son nom et son type, le strict minimum pour qu'elle existe et se distingue des
+     * autres ; sa conduite et son type de tortue, facultatifs (« » : comme le site, pas encore dit). Elle naît dans « La
+     * palette » (`conception-palette.php`, chantier-palette-vegetale.md, Phase 1) ; ses dimensions viennent ensuite,
+     * avec son plan (`enregistrerPlan()`).
      *
      * @return array{id: ?int, erreurs: array<string, string>}
      */
-    public function creer(int $siteId, string $code, string $nom, string $type): array
+    public function creer(int $siteId, string $code, string $nom, string $type, string $conduite = '', string $tortue = ''): array
     {
         $code = trim($code);
         $nom = trim($nom);
@@ -170,6 +171,14 @@ final class Parcelles
         if (!in_array($type, ['perenne', 'potager'], true)) {
             $erreurs['type'] = 'Type de parcelle inconnu.';
         }
+        $conduite = trim($conduite);
+        if ($conduite !== '' && \Syntropia\Conduite::tryFrom($conduite) === null) {
+            $erreurs['conduite'] = 'La conduite est « Syntropie », « Jardin-forêt » ou celle du site.';
+        }
+        $tortue = trim($tortue);
+        if ($tortue !== '' && \Syntropia\Tortue::tryFrom($tortue) === null) {
+            $erreurs['tortue'] = 'Le type de tortue est « Classique », « Zèbre », « Abeille », « Liane » ou pas encore dit.';
+        }
         if ($erreurs === []) {
             $req = $this->pdo()->prepare('SELECT 1 FROM parcelle WHERE site_id = ? AND code = ?');
             $req->execute([$siteId, $code]);
@@ -182,8 +191,8 @@ final class Parcelles
         }
 
         $req = $this->pdo()->prepare(
-            'INSERT INTO parcelle (site_id, code, nom, type) VALUES (?, ?, ?, ?)');
-        $req->execute([$siteId, $code, $nom, $type]);
+            'INSERT INTO parcelle (site_id, code, nom, type, conduite, tortue) VALUES (?, ?, ?, ?, ?, ?)');
+        $req->execute([$siteId, $code, $nom, $type, $conduite !== '' ? $conduite : null, $tortue !== '' ? $tortue : null]);
         return ['id' => (int) $this->pdo()->lastInsertId(), 'erreurs' => []];
     }
 

@@ -367,7 +367,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
 <?php foreach ($parcelles as $p): $estActive = $parcelle !== null && (int) $p['id'] === $idP; ?>
             <li><a href="suivi-perturbation.php?parcelle=<?= (int) $p['id'] ?>"<?= $estActive ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">≋</span><span class="pg-libelle"><?= $h($p['code']) ?> — <?= $h($p['nom']) ?></span></a></li>
 <?php endforeach; ?>
-            <li><a href="conception-parcelles.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
+            <li><a href="conception-palette.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
           </ul>
         </div>
         <p class="pg-pied">Deuxième étape de Suivi : le journal des coupes et des tailles de la parcelle.</p>
@@ -378,7 +378,7 @@ $panneauOuvert = $ouvre || (bool) preg_match('/[?&]saisie=1/', $_SERVER['QUERY_S
 <?php if ($parcelle === null): ?>
       <div class="pj-centre">
         <p class="pj-vide">Le journal des perturbations se tient parcelle par parcelle, et ce site n'a pas encore de parcelle.
-          <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
+          <a href="conception-palette.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="pj-centre">

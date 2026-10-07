@@ -769,6 +769,31 @@ CREATE TABLE IF NOT EXISTS `perturbation_prevue` (
 
 
 -- ---------------------------------------------------------------------
+-- LA PALETTE VÉGÉTALE D'UNE PARCELLE — schéma 21, 2026-10-07 (chantier-palette-vegetale.md, Phase 1)
+--
+-- Les espèces choisies pour une parcelle AVANT son plan, dans l'ordre du ch. 11 de Théry : les productions
+-- principales, les productions secondaires, puis les plantes de service par fonction. Une ligne par espèce : sa
+-- `place` (principale, secondaire ou service) et ses `fonctions` de service (les clés de `Palette::FONCTIONS`,
+-- multivaluées par `|`, comme `espece.role`) — une production peut aussi rendre un service (le nectar d'un fruitier).
+-- L'espèce se désigne par `nom_scientifique` + `variete`, comme `ligne_plantation` : une surcharge d'espèce ou un import
+-- ne la perd pas.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `palette` (
+  `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parcelle_id`      INT UNSIGNED NOT NULL,
+  `nom_scientifique` VARCHAR(160) NOT NULL,
+  `variete`          VARCHAR(120) NOT NULL DEFAULT '',
+  `place`            ENUM('principale','secondaire','service') NOT NULL,
+  `fonctions`        VARCHAR(120) NULL,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_palette_espece` (`parcelle_id`, `nom_scientifique`, `variete`),
+  CONSTRAINT `fk_palette_parcelle` FOREIGN KEY (`parcelle_id`)
+    REFERENCES `parcelle` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+
+-- ---------------------------------------------------------------------
 -- LA SUCCESSION DU POTAGER — `P-modele-potager/succession.csv`
 --
 -- Une saison, deux demi-planches en miroir, deux successions du ch. 8. Ce
@@ -1417,6 +1442,8 @@ CREATE TABLE IF NOT EXISTS `atelier_version` (
 -- 19 = `parcelle.stade` gagne l'abondance (une valeur de plus : un fichier plus ancien se charge tel quel) ;
 -- 20 = le constat du saut du chat sans témoin : `constat.hauteur_cm`, `biomasse`, `sol` (colonnes facultatives),
 -- `temoin_decrit` et `temoin_pousse_cm` retirées — un fichier plus ancien se charge, ces deux champs ignorés
--- (`Import::RETIREES`).
-INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '20')
+-- (`Import::RETIREES`) ;
+-- 21 = la table `palette` (la palette végétale d'une parcelle — table facultative : un fichier sans elle se charge, la
+-- palette simplement vide).
+INSERT INTO `atelier_version` (`cle`, `valeur`) VALUES ('schema', '21')
   ON DUPLICATE KEY UPDATE `valeur` = VALUES(`valeur`);

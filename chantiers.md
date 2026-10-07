@@ -30,9 +30,9 @@
   les personnes connectées se comptent par des traces d'activité, `contenu/actifs/`) ; phases 5 à 7 avant la version 1 (cycle maintenance, puis un `mettre-a-jour` complet) ; on garde les **cinq** dernières sauvegardes.
 - `chantier-palette-vegetale.md` — le plan (5 phases) d'une étape « La palette » avant le plan de la parcelle :
   productions principales, secondaires, plantes de service par fonction, et l'origine de chaque plante dans le projet.
-  Demandé le 2026-10-05, **planifié, pas commencé** ; tout est tranché le jour même — ce que le site offre, les
+  Demandé le 2026-10-05 ; tout est tranché le jour même — ce que le site offre, les
   origines par projet choisies par la personne, la palette par parcelle, et la palette du projet qui les regroupe.
-  Prêt à commencer par la Phase 1.
+  **Phase 1 faite le 2026-10-07, en local, pas déployée** (schéma 21) : la page « La palette », où la parcelle naît.
 - `chantier-releves-de-sol.md` — le plan (4 phases) pour saisir les relevés de sol de chaque parcelle et les
   comparer d'une campagne à l'autre, témoin compris (la table `releve_sol` existe, seule l'infiltration y entre, par
   « Matériel et eau ») : demandé le 2026-10-04, **planifié, pas commencé** ; six questions tranchées le 2026-10-05

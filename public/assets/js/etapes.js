@@ -24,6 +24,7 @@
 
     { id: 'conception-etude-site',      phase: 'conception', titre: 'Étude du site', pret: true },
     { id: 'conception-etude-sol',       phase: 'conception', titre: 'Étude du sol', pret: true },
+    { id: 'conception-palette',         phase: 'conception', titre: 'La palette', pret: true },
     { id: 'conception-parcelles',       phase: 'conception', titre: 'Créer les parcelles', pret: true },
     { id: 'conception-scenario',        phase: 'conception', titre: 'Scénario de plantation', pret: true },
     { id: 'conception-materiel-et-eau', phase: 'conception', titre: 'Matériel et eau', pret: true },

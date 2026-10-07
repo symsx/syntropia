@@ -927,7 +927,7 @@ $cssTexte = static fn (string $t): string => (string) preg_replace_callback('/["
     <h2><?= htmlspecialchars($titre, ENT_QUOTES, 'UTF-8') ?></h2>
     <p class="sous-titre">Le journal des perturbations et les constats du saut du chat, parcelle par parcelle, dans l’ordre des jours.</p>
 <?php if ($journaux === []): ?>
-    <p class="vide">Aucune parcelle n’est encore créée. Cela se fait à l’étape « Créer les parcelles » de la Conception.</p>
+    <p class="vide">Aucune parcelle n’est encore ouverte. Cela se fait à l’étape « La palette » de la Conception.</p>
 <?php endif; ?>
 <?php foreach ($journaux as $j): ?>
     <div class="bloc">

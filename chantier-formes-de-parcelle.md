@@ -46,8 +46,9 @@ Le chantier a trois objectifs, donnés par le porteur :
   `parcelle.plan`. Leurs lignes de plants (`Bordures`), leur répartition (`RepartitionBordures`), le compte des plants
   (Matériel et eau, Dossier Projet) et l'occupation au sol supposent tous quatre côtés droits. Une parcelle polygonale
   n'en a pas.
-- **La création d'une parcelle** : `conception-parcelles.php?nouvelle=1` (code, nom, type), puis
-  `Web/Parcelles::creer()`. Le choix de la forme s'y ajoute.
+- **La création d'une parcelle** : depuis le 2026-10-07, dans « La palette » (`conception-palette.php?nouvelle=1` : code,
+  nom, type, conduite, tortue), puis `Web/Parcelles::creer()` (`chantier-palette-vegetale.md`, Phase 1). Le choix de la
+  forme s'y ajoute. La palette a pris le schéma 21 : ce chantier prendra le suivant.
 - **La colonne `parcelle.forme`** (`zebre`, `abeille`, `liane`, `autre`) existe au schéma mais n'est lue nulle part ; ses
   valeurs sont des formes de tortue, que `parcelle.tortue` porte aujourd'hui. **Ne pas la réemployer** pour le contour :
   une colonne à part (par exemple `parcelle.contour`, `rectangle` ou `polygone`) évite la confusion.
@@ -71,7 +72,7 @@ Le chantier a trois objectifs, donnés par le porteur :
 
 ## Phases proposées
 
-1. **Le choix de la forme et le contour polygonal** : la forme choisie à la création (colonne neuve, schéma 21),
+1. **Le choix de la forme et le contour polygonal** : la forme choisie à la création (colonne neuve, schéma 22),
    modifiable tant que la parcelle est vide ; le tracé du polygone sur le bureau (grille réglable de 5 à 100 cm,
    longueur du segment, clic droit, fermeture sur le premier point) ; le déplacement des sommets ; la surface
    recalculée. Le rectangle inchangé, vérifié de bout en bout.

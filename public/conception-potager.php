@@ -646,13 +646,14 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php foreach ($parcelles as $p): $estActive = $parcelle !== null && (int) $p['id'] === $idP; ?>
             <li><a href="<?= $h($lienParcelle($p)) ?>"<?= $estActive ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce"><?= ($p['type'] ?? '') === 'potager' ? '▥' : '≋' ?></span><span class="pg-libelle"><?= $h($p['code']) ?> — <?= $h($p['nom']) ?></span></a></li>
 <?php endforeach; ?>
-            <li><a href="conception-parcelles.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
+            <li><a href="conception-palette.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
           </ul>
         </div>
 <?php if ($parcelle !== null): ?>
         <div class="pg-section">
           <p class="pg-titre"><?= $h($parcelle['code']) ?> — <?= $h($parcelle['nom']) ?></p>
           <ul class="pg-liste">
+            <li><a href="conception-palette.php?parcelle=<?= $idP ?>"><span class="pg-puce">✿</span><span class="pg-libelle">La palette</span></a></li>
             <li><a href="conception-parcelles.php?parcelle=<?= $idP ?>"><span class="pg-puce">▤</span><span class="pg-libelle">Le plan</span></a></li>
             <li><a href="conception-potager.php?parcelle=<?= $idP ?>" class="active" aria-current="page"><span class="pg-puce">▥</span><span class="pg-libelle">Le plan de culture</span></a></li>
             <li><a href="conception-materiel-et-eau.php?parcelle=<?= $idP ?>"><span class="pg-puce">◍</span><span class="pg-libelle">Matériel et eau</span></a></li>
@@ -667,7 +668,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($parcelle === null): ?>
       <div class="pt-centre">
         <p class="pt-vide-page">Le plan de culture se compose parcelle par parcelle, et ce site n'a pas encore de parcelle.
-          <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
+          <a href="conception-palette.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="pt-centre">

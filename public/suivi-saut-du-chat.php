@@ -392,7 +392,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php foreach ($parcelles as $p): $estActive = $parcelle !== null && (int) $p['id'] === $idP; ?>
             <li><a href="suivi-saut-du-chat.php?parcelle=<?= (int) $p['id'] ?>"<?= $estActive ? ' class="active" aria-current="page"' : '' ?>><span class="pg-puce">≋</span><span class="pg-libelle"><?= $h($p['code']) ?> — <?= $h($p['nom']) ?></span></a></li>
 <?php endforeach; ?>
-            <li><a href="conception-parcelles.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
+            <li><a href="conception-palette.php?nouvelle=1"><span class="pg-puce">+</span><span class="pg-libelle">Nouvelle parcelle</span></a></li>
           </ul>
         </div>
         <p class="pg-pied">Troisième étape de Suivi : reconnaître le saut du chat, et voir ce qui le rend possible.</p>
@@ -403,7 +403,7 @@ $symboles = [SautDuChat::OK => ['✓', 'en place'], SautDuChat::ATTENTION => ['!
 <?php if ($parcelle === null): ?>
       <div class="sd-centre">
         <p class="sd-vide">Le saut du chat se constate parcelle par parcelle, et ce site n'a pas encore de parcelle.
-          <a href="conception-parcelles.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
+          <a href="conception-palette.php?nouvelle=1">Ouvrir la première parcelle →</a></p>
       </div>
 <?php else: ?>
       <div class="sd-centre">
