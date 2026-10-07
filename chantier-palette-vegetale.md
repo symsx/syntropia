@@ -90,6 +90,23 @@ que « Matériel et eau » et la Réalisation (« Matériel végétal », les co
 - **Les neuf fonctions de service** proposées sont retenues : biomasse ; bloque-herbe et couvre-sol ; brise-vent ; fixer
   l'azote ; nectar et pollen ; abriter les auxiliaires ; ombrer ; tuteur vivant ; protéger de l'abroutement.
 
+## Décisions du porteur, 2026-10-07 (Phases 4 et 6)
+
+Lu en production le jour même : les productions du Verger sont des catégories (« fruits » en principale, « Légumes » en
+secondaire) ; douze noms du scénario et du potager ne sont pas des espèces du référentiel (Amandier, fruits rouges,
+mais, menthe, Nashi, passiflore, symphytum officinale, troene, chevrefeuille arbustif, fraise, maïs doux, vesce) ; la
+vigne, la caseille (rôle « production » seul) et le frêne (« secours ») sont posés en bordure sans fonction de service.
+
+- **La palette décide des productions du Scénario** : une espèce en production principale dans la palette est une
+  production principale du scénario. L'onglet « Productions » et les catégories disparaissent ; la réponse des
+  Objectifs reste rappelée dans la palette.
+- **Un nom libre se garde et se signale** : la Phase 6 fait entrer dans la palette ce qui se reconnaît ; le reste garde
+  sa ligne telle quelle, signalée « hors palette », à rattacher par la personne. Les nouvelles lignes ne viennent que de
+  la palette.
+- **Une plante posée sans fonction de service au référentiel** entre comme plante de service avec la fonction de sa
+  ligne : bordure externe → bloque-herbe ; bordure interne et ligne de planche → biomasse.
+- **Les cultures d'un potager sans fonction de service** entrent en production principale.
+
 ## Ce qui revient au projet, ce qui revient à la parcelle — proposition
 
 Le porteur pose la question : les productions changent d'une parcelle à l'autre, mais les plantes de service peuvent
@@ -179,4 +196,32 @@ tout déploiement ; le livret « L'atelier » et le glossaire dans la même vagu
   (plan, scénario, potager, matériel et eau). Le nom de l'étape « Créer les parcelles » reste celui-là.
 - **Le livret « L'atelier »** : chapitre « Concevoir : la palette », relu au déploiement. **Pas encore fait** : le
   glossaire (Phase 6). Les parcelles de production auront une palette vide jusqu'à la Phase 6 ; rien en aval ne la lit encore.
+
+**Phases 4 et 6, le 2026-10-07 — en local, pas déployées** (pas de changement de schéma).
+
+- **Le plan puise dans la palette** (`conception-parcelles.php`) : la proposition d'une bordure, son menu d'ajout, la
+  répartition sur les bordures et les lianes ne montrent que les espèces de la palette, avec « Compléter la palette ».
+  Ce qui est déjà posé reste affiché tel quel.
+- **Le serveur le garantit** (`LignesPlantation::horsPalette()`) : une espèce nouvellement posée sur une bordure, une
+  ligne de planche ou par la répartition doit être dans la palette ; ce qui était déjà sur la ligne peut y rester.
+- **Le Scénario** (`conception-scenario.php`) : le végétal se choisit dans la palette, groupé par place, et sa production
+  vient de sa place (décision du porteur) — principale, secondaire, ou accompagnement. L'onglet « Productions » et le
+  choix « Production visée » disparaissent ; « La palette » remplace le bouton « Productions ». Une ligne au nom libre se
+  signale « hors palette », se modifie sous son nom avec la production qu'elle portait, ne se recopie pas en nouvelle
+  ligne, et se rattache en choisissant une espèce de la palette (« Je corrige le nom »). `Scenarios::productions()`,
+  `Scenario::selectionDe()` et `versionProductions()` sont retirés ; les colonnes `parcelle.production_*` restent en
+  base, avec leurs données, plus lues.
+- **Le potager** (`conception-potager.php`) : la culture se choisit dans la palette ; son nom enregistré reste le nom
+  usuel (`Palette::nomCourt()`), que les tables de voisinage et le calendrier reconnaissent. Les lignes des planches ne
+  proposent que la palette, et gardent la plante déjà posée (« hors palette »). Les cultures au nom libre se signalent.
+- **Une espèce employée ne sort pas de la palette** (`Palettes::emplois()`) : employée dans le plan, le scénario ou le
+  potager, elle n'a pas de croix là où la retirer la ferait sortir ; le survol dit où elle sert. Elle peut changer de
+  place ou perdre une de ses fonctions.
+- **Phase 6** : `Palettes::remplir()` et `bin/remplir-palettes.php` (simulation par défaut, `--ecrire` pour écrire),
+  aux règles du porteur ; seules les palettes vides sont remplies, relancer ne change rien. Simulé en production
+  (lecture seule) le 2026-10-07 : 16 espèces pour P1, 26 pour Syntrop, 18 pour le Verger, 60 en tout ; restent hors
+  palette Nashi, Amandier, fruits rouges, menthe, mais, passiflore, troene, symphytum officinale (Verger), fraise,
+  chevrefeuille arbustif, maïs doux, vesce (Syntrop).
+- **Au déploiement** : `mettre-a-jour`, puis `ssh jubile 'cd www/syntropia && php bin/remplir-palettes.php'` (relire),
+  puis la même commande avec `--ecrire` ; le livret « L'atelier » (palette, plan, bordures, scénario, potager).
 

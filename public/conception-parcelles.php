@@ -20,6 +20,7 @@ use Syntropia\Web\CalendrierLignes;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\LignesPlantation;
+use Syntropia\Web\Palettes;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Sites;
@@ -195,7 +196,7 @@ if ($jetonOk) {
         if ($parcelleRep === null) {
             $erreurRepartition = 'Cette parcelle n’appartient pas à ce projet.';
         } else {
-            [$liste, $colonnes] = $lireRepartition($_POST, (new Especes())->toutes($siteId));
+            [$liste, $colonnes] = $lireRepartition($_POST, (new Palettes())->especes($parcelleId, $siteId));
             $rep = RepartitionBordures::repartir($parcelleRep, $liste, $colonnes);
             if (!$rep['ok']) {
                 $erreurRepartition = 'Cette liste ne se répartit pas sur les bordures actuelles : voyez l’aperçu.';
@@ -298,6 +299,8 @@ if ($parcelleActive !== null) {
 // Les lignes des bordures : ce qui est posé, compté sur le plan ENREGISTRÉ — les champs du plan, eux, peuvent changer à
 // l'écran sans être enregistrés ; conception-parcelles.js masque alors les plants et suspend la saisie.
 $lignesBordures = [];
+// Les espèces où le plan puise : celles de la palette de la parcelle (chantier-palette-vegetale.md, Phase 4). Ce qui est
+// déjà posé reste affiché tel quel, même hors palette.
 $especesSite = [];
 $calendrierBordures = ['dates' => [], 'perturbations' => []];
 $bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string) array_key_first($erreursLigne) : ''));
@@ -305,7 +308,7 @@ $bordureOuverte = (string) ($_GET['bordure'] ?? ($erreursLigne !== [] ? (string)
 $bordureProposee = ($_GET['proposer'] ?? '') === '1' ? $bordureOuverte : '';
 if ($parcelleActive !== null) {
     $lignesBordures = $lignesService->etat($parcelleActive, $siteId);
-    $especesSite = (new Especes())->toutes($siteId);
+    $especesSite = (new Palettes())->especes((int) $parcelleActive['id'], $siteId);
     $calendrierBordures = (new CalendrierLignes())->dUneParcelle((int) $parcelleActive['id']);
 }
 
@@ -892,6 +895,8 @@ $resume = static fn (Conduite $c): string => count($c->strates()) . ' strates, p
         <p class="pd-note">Chaque côté reçoit une ligne de plants, au milieu de sa bande, avec une espèce ou
            plusieurs qui alternent. L'écart entre deux plants voisins est la moyenne de leurs espacements, et
            chaque bout garde la moitié du sien. Les espacements viennent de <a href="especes.php">Espèces</a>.</p>
+        <p class="pd-note">Les plantes se choisissent dans la palette de la parcelle<?= $especesSite === [] ? ', encore vide' : '' ?>.
+           <a href="conception-palette.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;onglet=service">Compléter la palette →</a></p>
         <p class="pd-note" id="bl-suspendu" hidden>Le plan a changé. Enregistrez-le d'abord : les plants se
            comptent sur le plan enregistré.</p>
 <?php if ($peutEcrire && $repGeometrie !== []):
@@ -1066,21 +1071,21 @@ foreach ($lignesBordures as $cle => $lb):
           <div class="bl-proposition">
             <p class="pd-titre" style="margin-top:.4rem">Ce que l'atelier propose</p>
 <?php if ($proposition === [] && $cadre === 'liane'): ?>
-            <p class="pd-note">Votre référentiel n'a aucune liane vivace ou ligneuse. Dans <a href="especes.php">Espèces</a>,
-              cochez la strate « Liane / grimpante » des lianes que vous voulez voir ici.</p>
+            <p class="pd-note">La palette n'a aucune liane vivace ou ligneuse. Ajoutez-en dans <a href="conception-palette.php?parcelle=<?= (int) $parcelleActive['id'] ?>">la palette</a>.
+              Une liane se reconnaît à sa strate « Liane / grimpante », dans <a href="especes.php">Espèces</a>.</p>
 <?php elseif ($proposition === []): ?>
-            <p class="pd-note">Aucune espèce vivace ou ligneuse de votre référentiel n'a la fonction de cette bordure
-              (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>). Ajoutez-la dans
-              <a href="especes.php">Espèces</a>, avec le rôle ou la case « bloque l'herbe ».</p>
+            <p class="pd-note">Aucune espèce vivace ou ligneuse de la palette n'a la fonction de cette bordure
+              (<?= htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') ?>). Ajoutez-en dans
+              <a href="conception-palette.php?parcelle=<?= (int) $parcelleActive['id'] ?>&amp;onglet=service">la palette</a>.</p>
 <?php else: ?>
 <?php if ($cadre === 'liane'):
     $annuelles = Bordures::lianesAnnuelles($especesSite); ?>
-            <p class="pd-note">Voici les lianes vivaces ou ligneuses de votre référentiel (strate « Liane / grimpante »),
+            <p class="pd-note">Voici les lianes vivaces ou ligneuses de la palette (strate « Liane / grimpante »),
               les émergentes d'abord. Seules les lianes de contrées ensoleillées supportent le plein soleil en haut de la
               structure (Théry, ch. 15).<?= $annuelles !== [] ? ' La première année, doublez-les de lianes annuelles le temps qu’elles s’installent : '
               . htmlspecialchars(implode(', ', array_map(static fn (array $e): string => (string) ($e['nom_usuel'] ?: $e['nom_scientifique']), $annuelles)), ENT_QUOTES, 'UTF-8') . '.' : '' ?></p>
 <?php endif; ?>
-            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Voici les espèces vivaces ou ligneuses de votre référentiel
+            <p class="pd-note"><?= $cadre === 'liane' ? '' : 'Voici les espèces vivaces ou ligneuses de la palette
               qui savent ' . htmlspecialchars(Bordures::CADRES[$cadre]['role'], ENT_QUOTES, 'UTF-8') . ' et que les règles conseillent
               de ce côté : la face où chacune se plaît, des émergentes au sud et à l\'ouest de l\'externe. Les annuelles n\'y sont
               pas, car une bordure est pérenne. Les autres espèces restent à ajouter à la main. ' ?>Gardez celles que vous voulez : elles alterneront dans cet ordre. Celles qui
@@ -1255,7 +1260,7 @@ foreach ($lignesBordures as $cle => $lb):
          celles qui remplissent ces fonctions et que les règles conseillent de ce côté, sauf les annuelles, car une
          bordure est pérenne. Lavande, romarin et hysope vont au sud et à l'ouest, sauge et consoude au nord et à
          l'est. Vous gardez celles que vous voulez. Les autres espèces restent à ajouter à la main, sauf les plantes
-         qui ne sont que de production. L'atelier compte les plants de chaque espèce
+         qui ne sont que de production. Toutes viennent de la palette de la parcelle. L'atelier compte les plants de chaque espèce
          d'après leur espacement (<a href="especes.php">Espèces</a>) et les dessine sur le plan, chacune avec sa
          couleur et son sigle. La <strong>légende</strong> les liste. Les sigles s'inscrivent sur le plan quand le
          zoom le permet, et le survol d'un point donne le nom de la plante. Dans la légende, « Tout/rien » affiche

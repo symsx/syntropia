@@ -25,6 +25,7 @@ require __DIR__ . '/../src/Database.php';
 
 use Syntropia\Conduite;
 use Syntropia\Configuration;
+use Syntropia\Palette;
 use Syntropia\Role;
 use Syntropia\SautDuChat;
 use Syntropia\Scenario;
@@ -34,6 +35,7 @@ use Syntropia\Web\Authentification;
 use Syntropia\Web\Especes;
 use Syntropia\Web\Heritage;
 use Syntropia\Web\Occupation;
+use Syntropia\Web\Palettes;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Scenarios;
@@ -78,7 +80,6 @@ $erreurs = [];
 $idP = 0;
 $peutAjouter = false;
 $ouvre = false;          // le panneau Données s'ouvre tout seul
-$onglet = 'veg';         // 'veg' ou 'prod'
 $flash = $_SESSION['syntropia_flash_scenario'] ?? null;
 unset($_SESSION['syntropia_flash_scenario']);
 
@@ -89,10 +90,23 @@ if ($parcelle !== null) {
     $conduiteDefinie = $niveauConduite !== 'aucun';
     $lignes = $parcellesService->scenario($idP);
     $parId = array_column($lignes, null, 'id');
-    $selection = Scenario::selectionDe($parcelle);
+    // Les végétaux et les productions du scénario viennent de la palette de la parcelle (chantier-palette-vegetale.md,
+    // Phase 4 ; décision du porteur, 2026-10-07) : une espèce en production principale dans la palette est une production
+    // principale du scénario. Les anciennes productions en texte (« fruits ») restent lisibles sur les lignes qui les portent.
+    $especesPalette = (new Palettes())->especes($idP, $siteId);
+    $selection = [];
+    foreach (['principale', 'secondaire'] as $place) {
+        foreach ($especesPalette as $e) {
+            if ($e['palette']['place'] === $place) {
+                $selection[Scenario::cleSouhait($place, Palette::nomCourt($e))] = ['texte' => Palette::nomCourt($e), 'priorite' => $place];
+            }
+        }
+    }
+    // Les lignes dont le nom n'est pas une espèce de la palette : gardées telles quelles, signalées (décision du porteur).
+    $horsPalette = array_values(array_unique(array_map(static fn (array $l): string => (string) $l['espece'],
+        array_filter($lignes, static fn (array $l): bool => Palette::trouver((string) $l['espece'], $especesPalette) === null))));
     $aUnePrincipale = array_filter($selection, static fn (array $s): bool => $s['priorite'] === 'principale') !== [];
     $peutAjouter = $peutEcrire && $conduiteDefinie && $aUnePrincipale;
-    $souhaitsDuSite = $scenarios->souhaitsDuSite($siteId, $participantId);
     // L'occupation au sol par strate (Théry, ch. 05) — les quatre strates de lumière, syntropie seulement.
     $occupation = isset($conduite->strates()['emergente']) ? (new Occupation())->dUneParcelle($parcelle, $siteId) : null;
     // La part de biomasse de la ligne centrale, face aux 75 % (`PartBiomasse`) — une information.
@@ -111,62 +125,21 @@ if ($parcelle !== null) {
     if ($editId > 0 || isset($_GET['strate']) || isset($_GET['nouveau'])) {
         $ouvre = true;
     }
+    // Les productions se choisissent dans la palette : l'ancien lien y mène.
     if (isset($_GET['productions'])) {
-        $ouvre = true;
-        $onglet = 'prod';
+        header('Location: ' . Configuration::base() . 'conception-palette.php?parcelle=' . $idP);
+        exit;
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = (string) ($_POST['action'] ?? '');
         $ouvre = true;
-        $onglet = $action === 'productions' ? 'prod' : 'veg';
         if (!$peutEcrire) {
             http_response_code(403);
             $erreurs[] = 'Vous lisez ce projet : il ne se modifie pas depuis votre compte.';
         } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
             http_response_code(403);
             $erreurs[] = 'Le formulaire a expiré. Rechargez la page.';
-        } elseif ($action === 'productions') {
-            // Ce qui est proposé : les souhaits de la personne (ou du porteur) et
-            // ce que la parcelle a déjà retenu. Rien d'autre ne passe, hormis la
-            // ligne « une autre production », validée par Scenarios::productions().
-            $offerts = [];
-            foreach (array_merge($souhaitsDuSite['souhaits'], array_column($selection, 'texte')) as $t) {
-                $offerts[mb_strtolower($t)] = true;
-            }
-            $principales = $secondaires = [];
-            $textes = is_array($_POST['texte'] ?? null) ? $_POST['texte'] : [];
-            $niveaux = is_array($_POST['niveau'] ?? null) ? $_POST['niveau'] : [];
-            foreach ($textes as $i => $texte) {
-                $niveau = (string) ($niveaux[$i] ?? '');
-                if ($niveau === '') {
-                    continue;
-                }
-                if (!is_string($texte) || !isset($offerts[mb_strtolower($texte)]) || !in_array($niveau, ['principale', 'secondaire'], true)) {
-                    $erreurs[] = 'Choisissez parmi les productions proposées.';
-                    break;
-                }
-                $niveau === 'principale' ? $principales[] = $texte : $secondaires[] = $texte;
-            }
-            $autre = trim((string) ($_POST['autre'] ?? ''));
-            if ($autre !== '' && $erreurs === []) {
-                ($_POST['autre_niveau'] ?? '') === 'secondaire' ? $secondaires[] = $autre : $principales[] = $autre;
-            }
-            if ($erreurs === []) {
-                try {
-                    $scenarios->productions($idP, $compteId, (string) ($_POST['version'] ?? ''), $principales, $secondaires);
-                    $_SESSION['syntropia_flash_scenario'] = ['ok', 'Les productions de la parcelle sont enregistrées.'];
-                    header('Location: ' . $retour);
-                    exit;
-                } catch (\RuntimeException $e) {
-                    http_response_code(409);
-                    $erreurs[] = $e->getMessage();
-                } catch (\PDOException $e) {
-                    error_log('Scénario : ' . $e->getMessage());
-                    http_response_code(500);
-                    $erreurs[] = "L'enregistrement a échoué. Réessayez dans un instant.";
-                }
-            }
         } elseif (in_array($action, ['vegetal', 'supprimer'], true)) {
             $editId = (int) ($_POST['vegetal_id'] ?? 0);
             $form = $_POST;                       // ce qui a été tapé ne se perd pas
@@ -187,9 +160,26 @@ if ($parcelle !== null) {
                     $validation = ['erreurs' => ($_POST['confirmer'] ?? '') === '1' ? [] : ['Confirmez le retrait de ce végétal.'], 'ligne' => null];
                 } else {
                     if (!$aUnePrincipale) {
-                        $erreurs[] = 'Choisissez d’abord les productions principales de cette parcelle.';
+                        $erreurs[] = 'Choisissez d’abord les productions principales de cette parcelle, dans sa palette.';
                     }
-                    $validation = Scenario::valider($_POST, $conduite, $options);
+                    // Le végétal vient de la palette, et sa production avec lui. Une ligne hors palette se modifie sous
+                    // son nom, avec la production qu'elle portait ; elle ne se recopie pas en nouvelle ligne.
+                    $donnees = $_POST;
+                    $choisie = Palette::trouver((string) ($_POST['espece'] ?? ''), $especesPalette);
+                    $nouvelleLigne = $editId === 0 || ($_POST['operation'] ?? '') === 'ajouter';
+                    $memeNom = !$nouvelleLigne && mb_strtolower(trim((string) ($_POST['espece'] ?? '')))
+                        === mb_strtolower(trim((string) $parId[$editId]['espece']));
+                    if ($choisie !== null) {
+                        $place = (string) $choisie['palette']['place'];
+                        $donnees['production'] = $place === 'service' ? '' : Scenario::cleSouhait($place, Palette::nomCourt($choisie));
+                    } elseif ($memeNom) {
+                        $donnees['production'] = (string) ($ancien['production_cle'] ?? '');
+                    } else {
+                        $erreurs[] = 'Choisissez un végétal de la palette de la parcelle. Une espèce manque ? Ajoutez-la d’abord à la palette.';
+                    }
+                    // Un végétal refusé ne se valide pas plus loin : un seul message, celui qui compte.
+                    $validation = $choisie === null && !$memeNom ? ['erreurs' => [], 'ligne' => null]
+                        : Scenario::valider($donnees, $conduite, $options);
                 }
                 $erreurs = array_merge($erreurs, $validation['erreurs']);
                 if ($erreurs === []) {
@@ -221,30 +211,9 @@ if ($parcelle !== null) {
         $ouvre = true;
     }
 
-    // Les productions déjà portées par un végétal restent proposées au choix d'une ligne.
-    $optionsProduction = $selection;
-    $ancien = Scenario::details($parId[$editId] ?? []);
-    if (isset($ancien['production_cle'], $ancien['production']) && is_array($ancien['production'])) {
-        $optionsProduction[$ancien['production_cle']] = $ancien['production'];
-    }
-    $versionProductions = Scenario::versionProductions($parcelle);
-
-    // Les souhaits proposés : ceux de la personne (à défaut du porteur), plus ce que la parcelle retient déjà.
-    $proposes = [];
-    foreach (array_merge($souhaitsDuSite['souhaits'], array_column($selection, 'texte')) as $t) {
-        $proposes[mb_strtolower($t)] ??= $t;
-    }
-    $niveauDe = [];
-    foreach ($selection as $s) {
-        $niveauDe[mb_strtolower($s['texte'])] = $s['priorite'];
-    }
-
-    // Suggestions de saisie : les espèces connues de ce projet, puis les noms botaniques du catalogue.
-    $suggestions = [];
+    // Les strates que le référentiel note, pour proposer celle du végétal choisi.
     $stratesEspeces = [];
     foreach ((new Especes())->toutes($siteId) as $e) {
-        $nom = trim((string) ($e['nom_usuel'] ?: $e['nom_scientifique']));
-        $suggestions[$nom] = (string) $e['nom_scientifique'];
         // Les strates que le référentiel note, pour proposer celle du végétal saisi (Théry, ch. 05 — assets/js/strates.js).
         if (($s = Strates::pourLeNavigateur($e)) !== null) {
             foreach ([$e['nom_usuel'], $e['nom_scientifique']] as $n) {
@@ -253,10 +222,6 @@ if ($parcelle !== null) {
                 }
             }
         }
-    }
-    $catalogue = json_decode((string) @file_get_contents(__DIR__ . '/../contenu/catalogue-scenario.json'), true);
-    foreach ($catalogue['vegetaux'] ?? [] as $v) {
-        $suggestions[(string) $v['nom']] ??= (string) $v['communs'];
     }
 }
 
@@ -469,15 +434,6 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
   .sc-vide-page{ margin:auto; max-width:24rem; text-align:center; font:400 .92rem/1.5 var(--texte); color:var(--muted); }
   .sc-vide-page a{ color:var(--accent-titre); font-weight:600; }
 
-  /* le panneau Données : deux onglets en CSS pur */
-  .sc-radio{ position:absolute; opacity:0; pointer-events:none; }
-  .sc-onglets{ display:flex; gap:.3rem; margin-bottom:.7rem; border-bottom:1px solid var(--line); }
-  .sc-onglet{ flex:1; text-align:center; padding:.35rem .3rem; cursor:pointer; border-radius:.5rem .5rem 0 0;
-    font:500 .8rem var(--titre); color:var(--muted); border:1px solid transparent; border-bottom:0; }
-  .pd-corps:has(#o-veg:checked) label[for=o-veg], .pd-corps:has(#o-prod:checked) label[for=o-prod]{
-    color:var(--accent-titre); background:var(--accent-fond); border-color:var(--line); font-weight:600; }
-  .sc-panneau{ display:none; }
-  .pd-corps:has(#o-veg:checked) .sc-p-veg, .pd-corps:has(#o-prod:checked) .sc-p-prod{ display:block; }
   .sc-form label.sc-champ{ display:block; font:500 .78rem var(--titre); color:var(--ink); margin:0 0 .5rem; }
   .sc-form label.sc-champ small{ font:400 .68rem var(--texte); color:var(--muted); }
   .sc-form input[type=text], .sc-form input[type=number], .sc-form select, .sc-form textarea{
@@ -495,8 +451,6 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
   .sc-erreurs ul{ margin:.2rem 0 0 1rem; padding:0; }
   .sc-actions-form{ display:flex; flex-direction:column; gap:.4rem; margin-top:.6rem; }
   .sc-retirer{ margin-top:.9rem; }
-  .sc-prod-ligne{ display:grid; grid-template-columns:1fr 6.6rem; gap:.5rem; align-items:center; padding:.3rem 0; border-top:1px solid var(--line); font:400 .84rem var(--texte); color:var(--ink); }
-  .sc-prod-ligne select{ margin:0 !important; }
 </style>
 </head>
 <body<?= $ouvre ? ' data-ouvre="1"' : '' ?>>
@@ -603,7 +557,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
           <span class="sc-badge"><?= $h($conduite->libelle()) ?><?= $niveauConduite === 'site' ? ' · comme le site' : ($niveauConduite === 'aucun' ? ' · pas encore choisie' : '') ?></span>
 <?php if ($peutEcrire): ?>
           <span class="sc-actions">
-            <a class="sc-bouton sc-bouton--calme" href="conception-scenario.php?parcelle=<?= $idP ?>&amp;productions=1">Productions</a>
+            <a class="sc-bouton sc-bouton--calme" href="conception-palette.php?parcelle=<?= $idP ?>">La palette</a>
 <?php if ($peutAjouter): ?>
             <a class="sc-bouton" href="conception-scenario.php?parcelle=<?= $idP ?>&amp;nouveau=1">＋ Ajouter un végétal</a>
 <?php endif; ?>
@@ -621,7 +575,12 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
           végétal ne se place avant ce choix. Choisissez-la <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour tout le site</a>.</p>
 <?php elseif ($peutEcrire && !$aUnePrincipale): ?>
         <p class="sc-message sc-message--alerte">Les productions se choisissent avant les végétaux : ce que la parcelle doit donner décide
-          du reste. <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;productions=1">Les choisir →</a><?= $proposes === [] ? ' Aucune n\'est encore donnée : l\'étape <a href="definition-objectifs.php">Objectifs</a> les demande.' : '' ?></p>
+          du reste. Elles se choisissent dans <a href="conception-palette.php?parcelle=<?= $idP ?>">la palette de la parcelle →</a></p>
+<?php endif; ?>
+<?php if ($horsPalette !== []): ?>
+        <p class="sc-message sc-message--alerte">Hors palette : <?= $h(implode(', ', $horsPalette)) ?>. Ces végétaux restent tels quels. Pour
+          les rattacher, ajoutez leur espèce à <a href="conception-palette.php?parcelle=<?= $idP ?>">la palette</a>, puis choisissez-la
+          dans le végétal et cochez la correction du nom.</p>
 <?php endif; ?>
 <?php if (!$conduite->scenarioADesTemps()): ?>
         <p class="sc-message">En jardin-forêt, une plante est posée à sa place et y reste. Le tableau se lit par strate, sans axe du temps.</p>
@@ -667,12 +626,6 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
     </button>
     <aside class="panneau-droit" id="panneau-droit" aria-hidden="true">
       <div class="pd-corps sc-form">
-        <input class="sc-radio" type="radio" name="onglet" id="o-veg"<?= $onglet === 'veg' ? ' checked' : '' ?>>
-        <input class="sc-radio" type="radio" name="onglet" id="o-prod"<?= $onglet === 'prod' ? ' checked' : '' ?>>
-        <div class="sc-onglets" role="tablist">
-          <label class="sc-onglet" for="o-veg">Un végétal</label>
-          <label class="sc-onglet" for="o-prod">Productions</label>
-        </div>
 <?php if ($erreurs !== []): ?>
         <div class="sc-erreurs" role="alert"><strong>Votre saisie est à reprendre.</strong>
           <ul><?php foreach ($erreurs as $e): ?><li><?= $h($e) ?></li><?php endforeach; ?></ul></div>
@@ -683,7 +636,7 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
 <?php if (!$conduiteDefinie): ?>
           <p class="sc-note">Choisissez d'abord la conduite, <a href="conception-parcelles.php?parcelle=<?= $idP ?>">pour cette parcelle</a> ou <a href="definition-site.php">pour le site</a>.</p>
 <?php elseif (!$aUnePrincipale): ?>
-          <p class="sc-note">Choisissez d'abord les productions de la parcelle, dans l'onglet « Productions ».</p>
+          <p class="sc-note">Choisissez d'abord les productions de la parcelle, dans <a href="conception-palette.php?parcelle=<?= $idP ?>">sa palette</a>.</p>
 <?php elseif ($editId > 0): ?>
           <p class="sc-note">Vous modifiez <strong><?= $h($parId[$editId]['espece'] ?? '') ?></strong>. Pour une autre implantation, utilisez « Ajouter comme nouveau végétal », ou ouvrez <a href="conception-scenario.php?parcelle=<?= $idP ?>&amp;nouveau=1">un formulaire vide</a>.</p>
 <?php else: ?>
@@ -695,9 +648,26 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
             <input type="hidden" name="vegetal_id" value="<?= $editId ?>">
             <input type="hidden" name="version" value="<?= $val($form, 'version') ?>">
             <fieldset style="border:0;padding:0;margin:0"<?= $peutAjouter ? '' : ' disabled' ?>>
-              <label class="sc-champ">Végétal
-                <input type="text" name="espece" list="sc-especes" maxlength="160" required value="<?= $val($form, 'espece') ?>" placeholder="Nom commun ou scientifique">
+<?php $vegetalChoisi = Scenario::texte($form, 'espece') !== '' ? Palette::trouver(Scenario::texte($form, 'espece'), $especesPalette) : null; ?>
+              <label class="sc-champ">Végétal <small>de la palette de la parcelle</small>
+                <select name="espece" required>
+                  <option value="" data-place="">Choisir dans la palette…</option>
+<?php if (Scenario::texte($form, 'espece') !== '' && $vegetalChoisi === null): ?>
+                  <option value="<?= $val($form, 'espece') ?>" data-place="" selected><?= $val($form, 'espece') ?> (hors palette)</option>
+<?php endif; ?>
+<?php foreach (['principale' => 'Productions principales', 'secondaire' => 'Productions secondaires', 'service' => 'Plantes de service'] as $place => $titre):
+    $groupe = array_filter($especesPalette, static fn (array $e): bool => $e['palette']['place'] === $place);
+    if ($groupe === []) { continue; } ?>
+                  <optgroup label="<?= $h($titre) ?>">
+<?php foreach ($groupe as $e): ?>
+                    <option value="<?= $h(Palette::nomCourt($e)) ?>" data-place="<?= $place ?>"<?= $vegetalChoisi !== null && (int) $vegetalChoisi['id'] === (int) $e['id'] ? ' selected' : '' ?>><?= $h(Palette::nom($e)) ?></option>
+<?php endforeach; ?>
+                  </optgroup>
+<?php endforeach; ?>
+                </select>
               </label>
+              <p class="sc-note">Sa place dans <a href="conception-palette.php?parcelle=<?= $idP ?>">la palette</a> dit s'il est une production principale,
+                secondaire, ou un accompagnement.</p>
 <?php if ($editId > 0): ?>
               <label class="sc-fonctions"><span style="display:flex;gap:.4rem;align-items:flex-start;font:400 .74rem/1.3 var(--texte)"><input type="checkbox" class="case" name="confirmer_renommage" value="1"<?= ($_POST['confirmer_renommage'] ?? '') === '1' ? ' checked' : '' ?>> Je corrige le nom de « <?= $h($parId[$editId]['espece'] ?? '') ?> » sur cette même implantation.</span></label>
 <?php endif; ?>
@@ -717,12 +687,6 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
               <p class="sc-note" id="sc-strate-repere" hidden></p>
               <p class="sc-note">En bordure, les plants se posent et se comptent sur
                 <a href="conception-parcelles.php?parcelle=<?= $idP ?>&amp;bordure=recompte">le plan</a>, côté par côté. C'est ce compte qui fait foi.</p>
-              <label class="sc-champ">Production visée
-                <select name="production">
-                  <option value="">Accompagnement uniquement</option>
-<?php foreach ($optionsProduction as $k => $v) { echo '                  ', $option($form, 'production', $k, $v['texte'] . ' (' . $v['priorite'] . ')'), "\n"; } ?>
-                </select>
-              </label>
               <details<?= ($form['fonctions'] ?? []) !== [] ? ' open' : '' ?>>
                 <summary>Fonctions d'accompagnement (<?= count($form['fonctions'] ?? []) ?>)</summary>
                 <div class="sc-fonctions">
@@ -816,46 +780,8 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
             </form>
           </details>
 <?php endif; ?>
-          <datalist id="sc-especes">
-<?php foreach ($suggestions as $nom => $complement): ?>
-            <option value="<?= $h($nom) ?>"><?= $h($complement) ?></option>
-<?php endforeach; ?>
-          </datalist>
         </section>
 
-        <section class="sc-panneau sc-p-prod">
-          <p class="pd-titre">Les productions de cette parcelle</p>
-          <p class="sc-note">Les productions disent ce que la parcelle doit donner. Il faut <strong>au moins une production principale</strong> avant tout végétal.
-            <?php if ($souhaitsDuSite['de'] === 'soi'): ?>Voici vos réponses de l'étape <a href="definition-objectifs.php">Objectifs</a>.<?php elseif ($souhaitsDuSite['de'] === 'porteur'): ?>Vous n'avez pas répondu aux objectifs : voici les réponses du porteur du projet.<?php else: ?>L'étape <a href="definition-objectifs.php">Objectifs</a> n'a pas encore de réponse. Ajoutez une production ci-dessous.<?php endif; ?></p>
-          <form method="post" action="conception-scenario.php?parcelle=<?= $idP ?>">
-            <input type="hidden" name="csrf" value="<?= $h($auth->jeton()) ?>">
-            <input type="hidden" name="action" value="productions">
-            <input type="hidden" name="version" value="<?= $h($versionProductions) ?>">
-            <fieldset style="border:0;padding:0;margin:0"<?= $peutEcrire ? '' : ' disabled' ?>>
-<?php $i = 0; foreach ($proposes as $cle => $texte): $courant = $niveauDe[$cle] ?? ''; ?>
-              <div class="sc-prod-ligne">
-                <span><?= $h($texte) ?><input type="hidden" name="texte[<?= $i ?>]" value="<?= $h($texte) ?>"></span>
-                <select name="niveau[<?= $i ?>]" aria-label="Niveau de « <?= $h($texte) ?> »">
-                  <option value="">Non retenue</option>
-                  <option value="principale"<?= $courant === 'principale' ? ' selected' : '' ?>>Principale</option>
-                  <option value="secondaire"<?= $courant === 'secondaire' ? ' selected' : '' ?>>Secondaire</option>
-                </select>
-              </div>
-<?php $i++; endforeach; ?>
-              <div class="sc-prod-ligne">
-                <input type="text" name="autre" maxlength="120" placeholder="Une autre production…" aria-label="Une autre production" style="margin:0">
-                <select name="autre_niveau" aria-label="Niveau de l'autre production">
-                  <option value="principale">Principale</option>
-                  <option value="secondaire">Secondaire</option>
-                </select>
-              </div>
-              <div class="sc-actions-form">
-                <button type="submit" class="sc-bouton">Garder ces productions</button>
-              </div>
-            </fieldset>
-          </form>
-          <p class="sc-note" style="margin-top:.6rem">Chaque production s'écrit sans virgule. Une production retirée reste lisible sur les végétaux qui la portent.</p>
-        </section>
       </div>
     </aside>
 <?php endif; ?>
@@ -980,13 +906,13 @@ $val = static fn (array $form, string $cle): string => htmlspecialchars(Scenario
     window.addEventListener('resize', ajuster);
 <?php if ($parcelle !== null && isset($conduite->strates()['emergente'])): ?>
     // La strate proposée d'après le référentiel (les quatre strates de lumière — syntropie seulement).
-    var formV = document.querySelector('input[name=espece][list=sc-especes]');
+    // Une production de la palette se place à sa strate de production, un accompagnement à sa strate de service.
+    var formV = document.querySelector('.sc-p-veg select[name=espece]');
     if (formV) {
-      var f = formV.form, prod = f.querySelector('[name=production]');
-      StrateProposee({ espece: formV, strate: f.querySelector('[name=strate]'), note: document.getElementById('sc-strate-repere'),
+      StrateProposee({ espece: formV, strate: formV.form.querySelector('[name=strate]'), note: document.getElementById('sc-strate-repere'),
         especes: <?= json_encode((object) $stratesEspeces, JSON_UNESCAPED_UNICODE) ?>,
         libelles: <?= json_encode($conduite->strates(), JSON_UNESCAPED_UNICODE) ?>,
-        production: function(){ return prod && prod.value !== ''; }, autres: prod ? [prod] : [] });
+        production: function(){ var o = formV.options[formV.selectedIndex]; return !!o && (o.dataset.place === 'principale' || o.dataset.place === 'secondaire'); } });
     }
 <?php endif; ?>
     // Une bulle dit ce qu'est chaque bande — jamais le title natif.

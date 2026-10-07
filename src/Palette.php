@@ -61,6 +61,43 @@ final class Palette
         return $fonctions === [] ? null : implode('|', $fonctions);
     }
 
+    /**
+     * Les fonctions de palette que désignent des rôles ou des fonctions du scénario (`espece.role`, `Scenario::FONCTIONS`,
+     * `succession_ligne.role`) : « biomasse » ou « perturbation » donnent la biomasse, « nectar » ou « pollen » le nectar…
+     * Un rôle sans fonction de palette (« production », « racines », « secours ») n'en donne aucune.
+     *
+     * @param list<string> $roles
+     * @return list<string>
+     */
+    public static function depuisRoles(array $roles): array
+    {
+        $roles = array_map('trim', $roles);
+        return array_values(array_filter(array_keys(self::FONCTIONS),
+            static fn (string $f): bool => array_intersect(self::FONCTIONS[$f]['roles'], $roles) !== []));
+    }
+
+    /**
+     * Une espèce de la palette que désigne un nom libre (une ligne du scénario, une culture du potager) : même nom
+     * usuel, scientifique ou affiché, sans accent ni casse, au singulier ou au pluriel (`Associations::memeNom()`).
+     *
+     * @param list<array<string, mixed>> $especes les espèces de la palette, telles que le référentiel les décrit
+     * @return array<string, mixed>|null
+     */
+    public static function trouver(string $nom, array $especes): ?array
+    {
+        if (trim($nom) === '') {
+            return null;
+        }
+        foreach ($especes as $e) {
+            foreach ([self::nom($e), (string) ($e['nom_usuel'] ?? ''), (string) $e['nom_scientifique']] as $n) {
+                if ($n !== '' && Associations::memeNom($n, $nom)) {
+                    return $e;
+                }
+            }
+        }
+        return null;
+    }
+
     /** L'espèce du référentiel est-elle conseillée pour cette fonction, d'après son rôle ? */
     public static function conseillee(array $espece, string $fonction): bool
     {
@@ -72,6 +109,16 @@ final class Palette
     public static function deProduction(array $espece): bool
     {
         return in_array('production', array_map('trim', explode('|', (string) ($espece['role'] ?? ''))), true);
+    }
+
+    /**
+     * Le nom qu'une ligne du scénario ou une culture du potager enregistre pour une espèce de la palette : son nom usuel,
+     * ou son nom scientifique, sans la variété — celui que les tables de voisinage, le calendrier et le référentiel
+     * reconnaissent (`Associations::memeNom()`, `Especes::parNomUsage()`), comme les noms déjà saisis.
+     */
+    public static function nomCourt(array $espece): string
+    {
+        return trim((string) ($espece['nom_usuel'] ?? '')) ?: (string) $espece['nom_scientifique'];
     }
 
     /** Le nom affiché d'une espèce : son nom usuel, ou son nom scientifique, et sa variété. */

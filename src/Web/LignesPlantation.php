@@ -80,9 +80,14 @@ final class LignesPlantation
         try {
             $req = $pdo->prepare('SELECT * FROM ligne_plantation WHERE parcelle_id = ? AND emplacement = ? ORDER BY rang FOR UPDATE');
             $req->execute([$parcelleId, $emplacement]);
-            if (!hash_equals(self::version($req->fetchAll()), $versionRecue)) {
+            $anciennes = $req->fetchAll();
+            if (!hash_equals(self::version($anciennes), $versionRecue)) {
                 $pdo->rollBack();
                 return ['ok' => false, 'erreurs' => ['version' => 'Cette ligne a changé depuis que vous l’avez ouverte : rechargez la page, puis refaites votre changement.']];
+            }
+            if (($refus = $this->horsPalette($parcelleId, $places, $anciennes)) !== null) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['serie' => $refus]];
             }
             $pdo->prepare('DELETE FROM ligne_plantation WHERE parcelle_id = ? AND emplacement = ?')->execute([$parcelleId, $emplacement]);
             $ins = $pdo->prepare('INSERT INTO ligne_plantation (parcelle_id, emplacement, rang, nom_scientifique, variete) VALUES (?, ?, ?, ?, ?)');
@@ -148,6 +153,10 @@ final class LignesPlantation
                 $pdo->rollBack();
                 return ['ok' => false, 'erreurs' => ['version' => 'Une bordure a reçu des plantes depuis l’aperçu : la répartition part de bordures vides.']];
             }
+            if (($refus = $this->horsPalette($parcelleId, array_merge(...array_values($places)), [])) !== null) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['serie' => $refus]];
+            }
             $ins = $pdo->prepare('INSERT INTO ligne_plantation (parcelle_id, emplacement, rang, nom_scientifique, variete) VALUES (?, ?, ?, ?, ?)');
             foreach ($places as $emplacement => $serie) {
                 foreach ($serie as $k => [$nom, $variete]) {
@@ -160,6 +169,32 @@ final class LignesPlantation
             throw $e;
         }
         return ['ok' => true, 'erreurs' => []];
+    }
+
+    /**
+     * Les plantes d'une ligne viennent de la palette de la parcelle (chantier-palette-vegetale.md, Phase 4) : une espèce
+     * posée qui n'y est pas est refusée, sauf si elle était déjà sur cette ligne — ce qui est posé reste, même hors
+     * palette.
+     *
+     * @param list<array{0: string, 1: string}> $places nom scientifique et variété de chaque place
+     * @param list<array<string, mixed>> $anciennes les lignes déjà enregistrées à cet endroit
+     * @return string|null le refus à montrer, `null` si tout vient de la palette
+     */
+    private function horsPalette(int $parcelleId, array $places, array $anciennes): ?string
+    {
+        $permises = [];
+        foreach ($anciennes as $l) {
+            $permises[Palettes::cle($l)] = true;
+        }
+        foreach ((new Palettes($this->pdo()))->dUneParcelle($parcelleId) as $l) {
+            $permises[Palettes::cle($l)] = true;
+        }
+        foreach ($places as [$nom, $variete]) {
+            if (!isset($permises[Palettes::cle(['nom_scientifique' => $nom, 'variete' => $variete])])) {
+                return 'Une espèce choisie n’est pas dans la palette de la parcelle : ajoutez-la d’abord à la palette.';
+            }
+        }
+        return null;
     }
 
     /** La clé d'une ligne de planche : `planche:3:2` — planche 3, deuxième ligne (d'ouest en est, ou du nord au sud). */
@@ -204,9 +239,14 @@ final class LignesPlantation
         try {
             $req = $pdo->prepare('SELECT * FROM ligne_plantation WHERE parcelle_id = ? AND emplacement LIKE ? ORDER BY emplacement, rang FOR UPDATE');
             $req->execute([$parcelleId, $prefixe . '%']);
-            if (!hash_equals(self::versionPlanche($req->fetchAll()), $versionRecue)) {
+            $anciennes = $req->fetchAll();
+            if (!hash_equals(self::versionPlanche($anciennes), $versionRecue)) {
                 $pdo->rollBack();
                 return ['ok' => false, 'erreurs' => ['version' => 'Les lignes de cette planche ont changé depuis que vous les avez ouvertes : rechargez la page, puis refaites votre choix.']];
+            }
+            if (($refus = $this->horsPalette($parcelleId, array_values($places), $anciennes)) !== null) {
+                $pdo->rollBack();
+                return ['ok' => false, 'erreurs' => ['serie' => $refus]];
             }
             $pdo->prepare('DELETE FROM ligne_plantation WHERE parcelle_id = ? AND emplacement LIKE ?')->execute([$parcelleId, $prefixe . '%']);
             $ins = $pdo->prepare('INSERT INTO ligne_plantation (parcelle_id, emplacement, rang, nom_scientifique, variete) VALUES (?, ?, 1, ?, ?)');

@@ -39,7 +39,7 @@ l'interface (bandeau général, panneau gauche) : « Syntropia », jamais
   - **En cours aussi** : `espacement-des-services` (2026-10-04 — un espacement par
     fonction, la ligne pérenne en série, 75 % de biomasse ; les cinq phases faites ; à reprendre après janvier 2027, question à Théry) ;
     `palette-vegetale` (Phase 1 faite et déployée le 2026-10-07, schéma 21 — la page « La palette », où
-    la parcelle naît ; Phases 2 à 6 à faire).
+    la parcelle naît ; Phases 4 et 6 faites le même jour en local, **pas déployées** ; Phases 2, 3, 5 à faire).
   - **Planifiés, pas commencés** :
     `releves-de-sol` (2026-10-05 — décisions prises, reste la référence non cultivée),
     `formes-de-parcelle` (2026-10-05 — parcelle polygonale, zones de culture, points d'eau ; tout tranché le 2026-10-07, prêt à commencer),
@@ -396,8 +396,11 @@ Dossier Projet complet ; ouvrir une fiche d'espèce ; regarder la part de biomas
 **Au 2026-10-07** : la palette végétale, Phase 1 (`chantier-palette-vegetale.md` § Fait), vérifiée en local par le
 porteur puis **déployée** (commit `5179420`, **schéma 21** ; production lue avant : 4 projets, 3 parcelles, 17 lignes
 de scénario, 88 plants de bordure, 17 cultures — intacts après) ; livret relu (chapitre « Concevoir : la palette »).
-Parcours à essayer par le porteur avec son vrai compte : ouvrir une parcelle dans « La palette ». Ensuite, palette
-Phase 2, ou les formes de parcelle (`chantier-formes-de-parcelle.md`, tout tranché ; elle prendra le schéma suivant, et le choix de
+Parcours à essayer par le porteur avec son vrai compte : ouvrir une parcelle dans « La palette ».
+**Puis, en local, pas déployé** : le logo retiré du bandeau sur téléphone (le titre ne recouvre plus le thème sous
+48rem), et la palette Phases 4 et 6 (`chantier-palette-vegetale.md` § Fait — décisions du porteur du 2026-10-07). Au
+déploiement : `mettre-a-jour`, puis `php bin/remplir-palettes.php` en production (simulation, à relire), puis
+`--ecrire`, puis le livret. Ensuite, palette Phase 2, ou les formes de parcelle (`chantier-formes-de-parcelle.md`, tout tranché ; elle prendra le schéma suivant, et le choix de
 la forme ira dans la page où la parcelle naît, « La palette »).
 
 **La suite, dans l'ordre du porteur** : le Dossier Projet, Phases 4 et 5, est fait et
@@ -436,9 +439,8 @@ d'arrosage, retirées).
 - Livrets : la tirette « Informations » recouvre « Chapitre n sur N » sur téléphone. Le
   panneau gauche défile déjà à 800 px de haut. (Le débordement du livret SAF à 320×568
   est corrigé le 2026-10-05 : un paragraphe seul trop haut réduit sa police, `livret.js`.)
-- **Décidé par le porteur (2026-10-05), à faire** : retirer l'emplacement du logo du bandeau
-  sur smartphone (sous 30rem) — le titre central y chevauche le logo et le bouton de thème.
-  Vérifier ensuite avec `elementFromPoint` le menu du compte et les flèches du titre.
+- Le formulaire de Moyens (`definition-moyens.php`) est plus haut que l'écran à 320 × 568 : il remonte sous le
+  bandeau et couvre le bouton de thème (vu le 2026-10-07, à corriger).
 - `chantier-mises-a-jour.md` Phases 5-7 — dont **une vraie restauration de
   sauvegarde, jamais essayée**.
 - La hauteur des espèces servira à l'ombre portée et à la vue de côté — à

@@ -26,6 +26,7 @@ use Syntropia\Associations;
 use Syntropia\CalendrierLopez;
 use Syntropia\Configuration;
 use Syntropia\LignesDeService;
+use Syntropia\Palette;
 use Syntropia\PlanDeCulture;
 use Syntropia\Planches;
 use Syntropia\Role;
@@ -38,6 +39,7 @@ use Syntropia\Web\Cultures;
 use Syntropia\Web\Especes;
 use Syntropia\Web\LignesPlantation;
 use Syntropia\Web\Occupation;
+use Syntropia\Web\Palettes;
 use Syntropia\Web\Parcelles;
 use Syntropia\Web\PartBiomasse;
 use Syntropia\Web\Sites;
@@ -84,6 +86,18 @@ if ($parcelle === null && $parcelles !== []) {
 }
 $idP = $parcelle !== null ? (int) $parcelle['id'] : 0;
 $nbPlanches = $parcelle !== null ? (int) ($parcelle['nb_planches'] ?? 0) : 0;
+// Les espèces où le potager puise, cultures et lignes des planches : la palette de la parcelle (chantier-palette-vegetale.md,
+// Phase 4). Une culture déjà notée sous un autre nom reste telle quelle, signalée hors palette.
+$especesPalette = $parcelle !== null ? (new Palettes())->especes($idP, $siteId) : [];
+// Une culture nouvelle, ou renommée, vient de la palette ; une culture qui garde son nom reste, même hors palette.
+$cultureHorsPalette = static function (array $v, ?array $ancienne) use ($especesPalette): ?string {
+    $nom = trim((string) ($v['espece'] ?? ''));
+    if ($nom === '' || Palette::trouver($nom, $especesPalette) !== null
+        || ($ancienne !== null && mb_strtolower($nom) === mb_strtolower(trim((string) $ancienne['espece'])))) {
+        return null;
+    }
+    return 'Choisissez une culture de la palette de la parcelle. Une espèce manque ? Ajoutez-la d’abord à la palette.';
+};
 // La nature des planches — tortue zèbre (planches pérennes et annuelles) ou abeille (une bande de chaque sur chaque
 // planche) : chantier « peuplement de la parcelle », Phase 5. Vide pour une autre tortue.
 $natures = $parcelle !== null ? Planches::natures($parcelle) : [];
@@ -125,6 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $parcelle !== null) {
     } elseif (!$auth->jetonValide($_POST['csrf'] ?? null)) {
         http_response_code(403);
         $erreurs['jeton'] = 'Le formulaire a expiré. Rechargez la page.';
+    } elseif ($action === 'ajouter' && ($refus = $cultureHorsPalette($_POST, null)) !== null) {
+        $erreurs['espece'] = $refus;
+    } elseif ($action === 'modifier' && ($refus = $cultureHorsPalette($_POST, $culturesService->obtenir($editionId, $idP))) !== null) {
+        $erreurs['espece'] = $refus;
     } elseif ($action === 'ajouter') {
         $erreurs = $culturesService->ajouter($idP, $nbPlanches, $_POST);
         if ($erreurs === []) {
@@ -235,7 +253,7 @@ if ($parcelle !== null && $peutEcrire && isset($etatPlanches[$planchesLignes])) 
         $strates = array_merge($strates, $connues);
     }
     $etatP = $etatPlanches[$planchesLignes];
-    $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesService->toutes($siteId), $natures[$planchesLignes] ?? null,
+    $propLignes = LignesDeService::proposer(count($etatP['lignes']), array_values(array_unique($strates)), $especesPalette, $natures[$planchesLignes] ?? null,
         LignesDeService::liane($parcelle, new \DateTimeImmutable('today')),
         \Syntropia\Planches::demiPlancheDeFin($parcelle, $planchesLignes));
     // Rien de posé sur la planche, ou « Reprendre la proposition » : les choix partent de la proposition.
@@ -347,16 +365,6 @@ if ($saisie !== null) {
 $ficheEditee = $f['espece'] !== '' ? Associations::fiche($f['espece']) : null;
 $suiteEditee = $f['espece'] !== '' && Succession::connue($f['espece'])
     ? ['avant' => Succession::avant($f['espece']), 'apres' => Succession::apres($f['espece'])] : null;
-$connues = array_map(static fn (array $l): string => (string) $l['nom'], array_values(Associations::table('potager')));
-// Les repères de Lopez : dix-sept cultures d'automne et d'hiver, en édition seulement (le nom est alors enregistré).
-foreach (CalendrierLopez::table() as $l) {
-    $connues[] = $l['culture'];
-}
-// Les espèces du référentiel (cadre + vos surcharges) : voir/éditer sur la page « Espèces ».
-foreach ($especesService->toutes($siteId) as $e) {
-    $connues[] = (string) ($e['nom_usuel'] ?: $e['nom_scientifique']);
-}
-$connues = array_values(array_unique($connues));
 $repere = $f['espece'] !== '' && $editionId > 0 ? CalendrierLopez::pour($f['espece']) : null;
 $indicatives = $repere !== null ? CalendrierLopez::datesIndicatives($repere, new DateTimeImmutable('today')) : null;
 // Le référentiel des espèces — Phase 3 du chantier « caractéristiques des végétaux » : même mécanique que le
@@ -692,6 +700,13 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php if ($erreurs !== []): ?>
         <p class="pt-message pt-message--alerte" role="alert">Votre saisie est à reprendre. Le détail est dans le panneau Données.</p>
 <?php endif; ?>
+<?php $horsPalette = array_values(array_unique(array_map(static fn (array $c): string => (string) $c['espece'],
+    array_filter($cultures, static fn (array $c): bool => Palette::trouver((string) $c['espece'], $especesPalette) === null)))); ?>
+<?php if ($horsPalette !== []): ?>
+        <p class="pt-message pt-message--alerte">Hors palette : <?= $h(implode(', ', $horsPalette)) ?>. Ces cultures restent telles
+          quelles. Pour les rattacher, ajoutez leur espèce à <a href="conception-palette.php?parcelle=<?= $idP ?>">la palette</a>, puis
+          corrigez la culture et choisissez-la dans la liste.</p>
+<?php endif; ?>
 <?php if ($nbPlanches < 1): ?>
         <p class="pt-message">Le plan de cette parcelle n'a pas encore de planches, et les cultures se placent par planche. <a href="conception-parcelles.php?parcelle=<?= $idP ?>">Ouvrir le plan →</a></p>
 <?php else: ?>
@@ -899,11 +914,21 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
 <?php endforeach; ?>
                 </optgroup>
 <?php endif; ?>
-                <optgroup label="Les autres espèces">
-<?php foreach ($especesService->toutes($siteId) as $e): if (in_array((int) $e['id'], $idsCand, true)) { continue; } ?>
+<?php // Les autres espèces de la palette ; et la plante déjà posée sur cette ligne, même hors palette, pour qu'elle ne
+      // disparaisse pas à l'enregistrement.
+      $autresLigne = array_values(array_filter($especesPalette, static fn (array $e): bool => !in_array((int) $e['id'], $idsCand, true)));
+      $poseeHors = $pose !== null && ($pose['espece'] ?? null) !== null && !in_array((int) $pose['espece']['id'], $idsCand, true)
+          && !in_array((int) $pose['espece']['id'], array_map(static fn (array $e): int => (int) $e['id'], $autresLigne), true) ? $pose['espece'] : null; ?>
+<?php if ($autresLigne !== []): ?>
+                <optgroup label="Les autres espèces de la palette">
+<?php foreach ($autresLigne as $e): ?>
                   <option value="<?= (int) $e['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $e['id'] ? ' selected' : '' ?>><?= $h((string) ($e['nom_usuel'] ?: $e['nom_scientifique'])) ?></option>
 <?php endforeach; ?>
                 </optgroup>
+<?php endif; ?>
+<?php if ($poseeHors !== null): ?>
+                <option value="<?= (int) $poseeHors['id'] ?>"<?= (int) $pl['choix'][$k] === (int) $poseeHors['id'] ? ' selected' : '' ?>><?= $h((string) ($poseeHors['nom_usuel'] ?: $poseeHors['nom_scientifique'])) ?> (hors palette)</option>
+<?php endif; ?>
               </select></label>
             <small class="pt-note"><?= $h($l['raison']) ?></small>
 <?php $dl = $pl['dates'][$k]; ?>
@@ -978,14 +1003,29 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
           <input type="hidden" name="culture_id" value="<?= $editionId ?>">
           <input type="hidden" name="version" value="<?= $h($editionVersion) ?>">
 <?php endif; ?>
+<?php $cultureChoisie = $f['espece'] !== '' ? Palette::trouver((string) $f['espece'], $especesPalette) : null; ?>
           <label class="pt-champ">La culture
-            <input type="text" name="espece" list="pt-connues" required maxlength="160" value="<?= $h($f['espece']) ?>" placeholder="Ex. tomate, carotte, haricot">
-          </label>
-          <datalist id="pt-connues">
-<?php foreach ($connues as $n): ?>
-            <option value="<?= $h($n) ?>"></option>
+            <select name="espece" required>
+              <option value="">Choisir dans la palette…</option>
+<?php if ($f['espece'] !== '' && $cultureChoisie === null): ?>
+              <option value="<?= $h($f['espece']) ?>" selected><?= $h($f['espece']) ?> (hors palette)</option>
+<?php endif; ?>
+<?php foreach (['principale' => 'Productions principales', 'secondaire' => 'Productions secondaires', 'service' => 'Plantes de service'] as $place => $titre):
+    $groupe = array_filter($especesPalette, static fn (array $e): bool => $e['palette']['place'] === $place);
+    if ($groupe === []) { continue; } ?>
+              <optgroup label="<?= $h($titre) ?>">
+<?php foreach ($groupe as $e): ?>
+                <option value="<?= $h(Palette::nomCourt($e)) ?>"<?= $cultureChoisie !== null && (int) $cultureChoisie['id'] === (int) $e['id'] ? ' selected' : '' ?>><?= $h(Palette::nom($e)) ?></option>
 <?php endforeach; ?>
-          </datalist>
+              </optgroup>
+<?php endforeach; ?>
+            </select>
+          </label>
+<?php if ($especesPalette === []): ?>
+          <p class="pt-note">La palette de cette parcelle est vide : les cultures s'y choisissent. <a href="conception-palette.php?parcelle=<?= $idP ?>">Composer la palette →</a></p>
+<?php else: ?>
+          <p class="pt-note">Les cultures viennent de la palette de la parcelle. <a href="conception-palette.php?parcelle=<?= $idP ?>">Compléter la palette →</a></p>
+<?php endif; ?>
 <?php if ($ficheEditee !== null): ?>
           <div class="pt-fiche"><b>Ce que les tables disent de « <?= $h($ficheEditee['nom']) ?> »</b> [<?= $h($ficheEditee['source']) ?>]<br>
             S'entend bien avec : <?= $ficheEditee['favorables'] !== [] ? $h($listeNoms($ficheEditee['favorables'])) : '<i>rien de noté</i>' ?><br>
@@ -1203,7 +1243,7 @@ $listeNoms = static fn (array $noms): string => implode(', ', array_map(static f
       });
     });
     // La strate proposée d'après le référentiel : une culture de potager est une production (Théry, ch. 05).
-    var champEspece = document.querySelector('input[name=espece][list=pt-connues]');
+    var champEspece = document.querySelector('.pt-form select[name=espece], form select[name=espece]');
     if (champEspece) StrateProposee({ espece: champEspece, strate: champEspece.form.querySelector('[name=strate]'),
       note: document.getElementById('pt-strate-repere'), especes: <?= json_encode((object) $stratesEspeces, JSON_UNESCAPED_UNICODE) ?>,
       libelles: <?= json_encode(Cultures::STRATES, JSON_UNESCAPED_UNICODE) ?>, production: function(){ return true; } });

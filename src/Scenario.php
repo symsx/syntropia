@@ -106,9 +106,6 @@ final class Scenario
     /** Le dernier repère temporel : « le climax, horizon ouvert ». */
     public const POSITION_MAX = 28;
 
-    /** Ce que la colonne `parcelle.production_*` peut porter. */
-    public const PRODUCTION_MAX = 190;
-
     private const LIMITES = [
         'espece' => ['Le nom du végétal', 160], 'repere' => ['Le repère', 160],
         'beneficiaire' => ['Le bénéficiaire', 500], 'plantation' => ['La plantation', 160],
@@ -164,31 +161,6 @@ final class Scenario
     public static function cleSouhait(string $priorite, string $texte): string
     {
         return hash('sha256', $priorite . ':' . $texte);
-    }
-
-    /**
-     * Les productions retenues pour une parcelle, telles que la base les porte
-     * (`production_principale`/`production_secondaire`, un souhait par ligne).
-     *
-     * @param array<string, mixed> $parcelle
-     * @return array<string, array{texte: string, priorite: string}> clé de souhait ⇒ souhait
-     */
-    public static function selectionDe(array $parcelle): array
-    {
-        $selection = [];
-        foreach (['principale', 'secondaire'] as $priorite) {
-            foreach (self::souhaits((string) ($parcelle['production_' . $priorite] ?? '')) as $texte) {
-                $selection[self::cleSouhait($priorite, $texte)] = ['texte' => $texte, 'priorite' => $priorite];
-            }
-        }
-        return $selection;
-    }
-
-    /** Le jeton du verrou sur le choix des productions — un changement entre-temps le périme. */
-    public static function versionProductions(array $parcelle): string
-    {
-        return hash('sha256', json_encode([$parcelle['production_principale'] ?? null,
-            $parcelle['production_secondaire'] ?? null]));
     }
 
     /** @return array<string, mixed> */

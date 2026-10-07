@@ -41,6 +41,66 @@ final class Palettes
     }
 
     /**
+     * Les espèces de la palette, telles que le référentiel du site les décrit, chacune avec sa ligne de palette
+     * (`palette` : id, place, fonctions). C'est la liste où le plan, le scénario et le potager puisent (Phase 4). Une ligne
+     * dont l'espèce n'est plus au référentiel est laissée de côté.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function especes(int $parcelleId, int $siteId): array
+    {
+        $parCle = [];
+        foreach ((new Especes($this->pdo()))->toutes($siteId) as $e) {
+            $parCle[self::cle($e)] = $e;
+        }
+        $especes = [];
+        foreach ($this->dUneParcelle($parcelleId) as $l) {
+            if (isset($parCle[self::cle($l)])) {
+                $especes[] = $parCle[self::cle($l)] + ['palette' => $l];
+            }
+        }
+        return $especes;
+    }
+
+    /** La clé d'une espèce : son nom scientifique (sans casse) et sa variété. */
+    public static function cle(array $e): string
+    {
+        return mb_strtolower((string) $e['nom_scientifique']) . '|' . (string) $e['variete'];
+    }
+
+    /**
+     * Où chaque espèce de la palette est employée : le plan (bordures, lignes des planches, ligne des lianes), le
+     * scénario, le potager. Une espèce employée ne se retire pas de la palette (décision du porteur, 2026-10-05). Les
+     * lignes du scénario et du potager se reconnaissent par leur nom (`Palette::trouver()`).
+     *
+     * @return array<string, list<string>> clé d'espèce → où elle sert (« le plan », « le scénario », « le potager »)
+     */
+    public function emplois(int $parcelleId, int $siteId): array
+    {
+        $especes = $this->especes($parcelleId, $siteId);
+        $cles = array_flip(array_map([self::class, 'cle'], $especes));
+        $emplois = [];
+        $req = $this->pdo()->prepare('SELECT DISTINCT nom_scientifique, variete FROM ligne_plantation WHERE parcelle_id = ?');
+        $req->execute([$parcelleId]);
+        foreach ($req->fetchAll() as $l) {
+            if (isset($cles[self::cle($l)])) {
+                $emplois[self::cle($l)][] = 'le plan';
+            }
+        }
+        foreach (['scenario_ligne' => 'le scénario', 'succession_ligne' => 'le potager'] as $table => $ou) {
+            $req = $this->pdo()->prepare("SELECT DISTINCT espece FROM `$table` WHERE parcelle_id = ?");
+            $req->execute([$parcelleId]);
+            foreach ($req->fetchAll(PDO::FETCH_COLUMN) as $nom) {
+                $e = Palette::trouver((string) $nom, $especes);
+                if ($e !== null && !in_array($ou, $emplois[self::cle($e)] ?? [], true)) {
+                    $emplois[self::cle($e)][] = $ou;
+                }
+            }
+        }
+        return $emplois;
+    }
+
+    /**
      * Combien de plantes de service chaque parcelle du site porte — pour proposer de les reprendre.
      *
      * @return array<int, int> parcelle_id → nombre
@@ -113,7 +173,16 @@ final class Palettes
             throw new RuntimeException('Ce choix n’est pas reconnu.');
         }
         $parNom = $this->nomsDuSite($siteId);
-        return $this->sousVerrou($parcelleId, $siteId, function (PDO $pdo) use ($parcelleId, $ligneId, $fonction, $parNom): string {
+        $emplois = $this->emplois($parcelleId, $siteId);
+        // Une espèce employée ne sort pas de la palette : elle peut changer de place ou perdre une fonction, pas partir.
+        $sortir = static function (array $ligne, string $nom) use ($emplois): void {
+            $ou = $emplois[self::cle($ligne)] ?? [];
+            if ($ou !== []) {
+                throw new RuntimeException("$nom est employée dans " . implode(' et ', $ou) . ' : elle reste dans la palette. '
+                    . 'Retirez-la d’abord de ' . (count($ou) > 1 ? 'ces étapes' : 'cette étape') . '.');
+            }
+        };
+        return $this->sousVerrou($parcelleId, $siteId, function (PDO $pdo) use ($parcelleId, $ligneId, $fonction, $parNom, $sortir): string {
             $req = $pdo->prepare('SELECT * FROM palette WHERE id = ? AND parcelle_id = ?');
             $req->execute([$ligneId, $parcelleId]);
             $ligne = $req->fetch();
@@ -125,6 +194,7 @@ final class Palettes
             if ($fonction !== null) {
                 $reste = array_values(array_diff($fonctions, [$fonction]));
                 if ($reste === [] && $ligne['place'] === 'service') {
+                    $sortir($ligne, $nom);
                     $pdo->prepare('DELETE FROM palette WHERE id = ?')->execute([$ligneId]);
                     return "$nom sort de la palette.";
                 }
@@ -138,6 +208,7 @@ final class Palettes
                 $pdo->prepare("UPDATE palette SET place = 'service' WHERE id = ?")->execute([$ligneId]);
                 return "$nom n’est plus une production, mais reste dans la palette pour ses services.";
             }
+            $sortir($ligne, $nom);
             $pdo->prepare('DELETE FROM palette WHERE id = ?')->execute([$ligneId]);
             return "$nom sort de la palette.";
         });
@@ -187,6 +258,122 @@ final class Palettes
                 . ($completees > 0 ? $completees . ' plante' . ($completees > 1 ? 's' : '') . ' déjà présente' . ($completees > 1 ? 's' : '')
                     . ' gagne' . ($completees > 1 ? 'nt' : '') . ' des fonctions.' : ''));
         });
+    }
+
+    /**
+     * Remplit la palette d'une parcelle depuis ce qu'elle porte déjà (Phase 6) — **seulement si sa palette est vide** : une
+     * palette déjà composée n'est jamais touchée, et relancer ne change rien. Règles du porteur (2026-10-07) :
+     * - une plante posée sur une ligne (bordure, ligne de planche, lianes) entre comme plante de service, avec les
+     *   fonctions que son rôle au référentiel désigne ; sans aucune, avec celle de sa ligne : bordure externe →
+     *   bloque-herbe, bordure interne et ligne de planche → biomasse (une liane sans fonction, cas non rencontré en
+     *   production, entre en production secondaire) ;
+     * - une ligne du scénario : production principale ou secondaire d'après sa production, sinon plante de service avec
+     *   ses fonctions (à défaut, celles de son rôle au référentiel, puis la biomasse) ;
+     * - une culture du potager : plante de service si elle a des fonctions de service, sinon production principale ;
+     * - un nom du scénario ou du potager qui n'est pas une espèce du référentiel reste hors palette, et se signale.
+     * Une espèce venue de plusieurs endroits garde la place la plus forte (principale, secondaire, service) et toutes
+     * ses fonctions.
+     *
+     * @return array{vide: bool, entrees: list<array{nom: string, place: string, fonctions: list<string>, de: list<string>}>, hors: list<string>}
+     */
+    public function remplir(array $parcelle, int $siteId, bool $ecrire): array
+    {
+        $parcelleId = (int) $parcelle['id'];
+        if ($this->dUneParcelle($parcelleId) !== []) {
+            return ['vide' => false, 'entrees' => [], 'hors' => []];
+        }
+        $especesService = new Especes($this->pdo());
+        $referentiel = $especesService->toutes($siteId);
+        $parCle = [];
+        foreach ($referentiel as $e) {
+            $parCle[self::cle($e)] = $e;
+        }
+        $rang = ['principale' => 3, 'secondaire' => 2, 'service' => 1];
+        $entrees = [];
+        $hors = [];
+        $poser = static function (array $e, string $place, array $fonctions, string $de) use (&$entrees, $rang): void {
+            $cle = self::cle($e);
+            $x = $entrees[$cle] ?? ['espece' => $e, 'nom' => Palette::nom($e), 'place' => $place, 'fonctions' => [], 'de' => []];
+            if ($rang[$place] > $rang[$x['place']]) {
+                $x['place'] = $place;
+            }
+            $x['fonctions'] = Palette::fonctionsDe(implode('|', [...$x['fonctions'], ...$fonctions]));
+            if (!in_array($de, $x['de'], true)) {
+                $x['de'][] = $de;
+            }
+            $entrees[$cle] = $x;
+        };
+        $rolesDe = static fn (?array $e): array => $e === null ? [] : array_map('trim', explode('|', (string) ($e['role'] ?? '')));
+
+        $req = $this->pdo()->prepare('SELECT emplacement, nom_scientifique, variete FROM ligne_plantation WHERE parcelle_id = ? ORDER BY emplacement, rang');
+        $req->execute([$parcelleId]);
+        foreach ($req->fetchAll() as $l) {
+            $e = $parCle[self::cle($l)] ?? null;
+            if ($e === null) {
+                $hors[] = Palette::nom($l);
+                continue;
+            }
+            $cadre = explode(':', (string) $l['emplacement'])[0];
+            $fonctions = Palette::depuisRoles($rolesDe($e));
+            if ($fonctions === [] && $cadre === 'liane') {
+                $poser($e, 'secondaire', [], 'la ligne des lianes');
+                continue;
+            }
+            if ($fonctions === []) {
+                $fonctions = [$cadre === 'externe' ? 'bloque_herbe' : 'biomasse'];
+            }
+            $poser($e, 'service', $fonctions, $cadre === 'planche' ? 'les lignes des planches' : ($cadre === 'liane' ? 'la ligne des lianes' : 'les bordures'));
+        }
+
+        $req = $this->pdo()->prepare('SELECT espece, details FROM scenario_ligne WHERE parcelle_id = ? ORDER BY ordre, id');
+        $req->execute([$parcelleId]);
+        foreach ($req->fetchAll() as $l) {
+            $e = $especesService->parNomUsage((string) $l['espece'], $siteId);
+            if ($e === null) {
+                $hors[] = (string) $l['espece'];
+                continue;
+            }
+            $d = \Syntropia\Scenario::details($l);
+            $fonctions = Palette::depuisRoles(is_array($d['fonctions'] ?? null) ? $d['fonctions'] : []);
+            $priorite = is_array($d['production'] ?? null) ? (string) ($d['production']['priorite'] ?? '') : '';
+            if (in_array($priorite, ['principale', 'secondaire'], true)) {
+                $poser($e, $priorite, $fonctions, 'le scénario');
+                continue;
+            }
+            $fonctions = $fonctions ?: (Palette::depuisRoles($rolesDe($e)) ?: ['biomasse']);
+            $poser($e, 'service', $fonctions, 'le scénario');
+        }
+
+        $req = $this->pdo()->prepare('SELECT espece, role FROM succession_ligne WHERE parcelle_id = ? ORDER BY id');
+        $req->execute([$parcelleId]);
+        foreach ($req->fetchAll() as $l) {
+            $e = $especesService->parNomUsage((string) $l['espece'], $siteId);
+            if ($e === null) {
+                $hors[] = (string) $l['espece'];
+                continue;
+            }
+            $fonctions = Palette::depuisRoles(\Syntropia\Scenario::fonctionsDe((string) ($l['role'] ?? '')));
+            $fonctions === [] ? $poser($e, 'principale', [], 'le potager') : $poser($e, 'service', $fonctions, 'le potager');
+        }
+
+        $hors = array_values(array_unique($hors));
+        if ($ecrire && $entrees !== []) {
+            $this->sousVerrou($parcelleId, $siteId, function (PDO $pdo) use ($parcelleId, $entrees): string {
+                $req = $pdo->prepare('SELECT COUNT(*) FROM palette WHERE parcelle_id = ?');
+                $req->execute([$parcelleId]);
+                if ((int) $req->fetchColumn() > 0) {
+                    return '';
+                }
+                $ins = $pdo->prepare('INSERT INTO palette (parcelle_id, nom_scientifique, variete, place, fonctions) VALUES (?, ?, ?, ?, ?)');
+                foreach ($entrees as $x) {
+                    $ins->execute([$parcelleId, $x['espece']['nom_scientifique'], $x['espece']['variete'], $x['place'],
+                        Palette::fonctionsEnTexte($x['fonctions'])]);
+                }
+                return '';
+            });
+        }
+        return ['vide' => true, 'hors' => $hors, 'entrees' => array_values(array_map(
+            static fn (array $x): array => ['nom' => $x['nom'], 'place' => $x['place'], 'fonctions' => $x['fonctions'], 'de' => $x['de']], $entrees))];
     }
 
     /**

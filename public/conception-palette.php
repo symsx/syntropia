@@ -11,7 +11,8 @@ declare(strict_types=1);
  * s'obtenir (son type de plant, au cadre des espèces). Les plantes de service d'une autre parcelle se reprennent d'un
  * geste.
  *
- * Le plan, le scénario et le plan de culture ne lisent pas encore la palette : c'est la Phase 4.
+ * Le plan (bordures, lignes, lianes), le scénario et le potager puisent dans la palette (Phase 4) ; une espèce qui y est
+ * employée ne se retire pas (`Palettes::emplois()`).
  *
  * Toute écriture passe par `Palettes` (vérifie la parcelle et l'espèce, sous verrou) ; un POST finit par une
  * redirection, avec son message.
@@ -136,6 +137,7 @@ $lignes = [];
 $parPlace = ['principale' => [], 'secondaire' => [], 'service' => []];
 $parFonction = array_fill_keys(array_keys(Palette::FONCTIONS), []);
 $autresParcelles = [];
+$emplois = [];
 $souhaits = ['souhaits' => [], 'de' => null];
 $moyens = [];
 $onglet = 'principale';
@@ -145,6 +147,8 @@ if ($parcelle !== null) {
         $especes[mb_strtolower((string) $e['nom_scientifique']) . '|' . $e['variete']] = $e;
     }
     $lignes = $palettes->dUneParcelle($idP);
+    // Où chaque espèce sert déjà : une espèce employée ne sort pas de la palette (décision du porteur, 2026-10-05).
+    $emplois = $palettes->emplois($idP, $siteId);
     foreach ($lignes as $l) {
         $l['espece'] = $especes[mb_strtolower((string) $l['nom_scientifique']) . '|' . $l['variete']] ?? null;
         $l['nom'] = Palette::nom($l['espece'] ?? $l);
@@ -212,13 +216,18 @@ $options = static function (array $especes, callable $conseillee, array $deja, s
 };
 
 /** Une plante de la palette, en pastille : son nom, ce qu'elle demande pour s'obtenir, et la croix qui la retire. */
-$puce = static function (array $l, string $onglet, ?string $fonction, string $repere = '') use ($h, $auth, $idP, $peutEcrire, $typePlant): string {
+$puce = static function (array $l, string $onglet, ?string $fonction, string $repere = '') use ($h, $auth, $idP, $peutEcrire, $typePlant, &$emplois): string {
     $t = $typePlant($l['espece']);
+    $ou = $emplois[Palettes::cle($l)] ?? [];
+    // Le retrait qui ferait sortir l'espèce de la palette : une production sans service, ou le dernier service.
+    $sortirait = $fonction === null ? Palette::fonctionsDe($l['fonctions']) === []
+        : ($l['place'] === 'service' && Palette::fonctionsDe($l['fonctions']) === [$fonction]);
     $info = ($t !== '' ? 'Pour l’obtenir : ' . $t . '.' : 'Le type de plant n’est pas encore noté pour cette espèce.')
+        . ($ou !== [] ? ' Employée dans ' . implode(' et ', $ou) . '.' : '')
         . ($l['espece'] === null ? ' Cette espèce n’est plus dans le référentiel du projet.' : '');
     $html = '<li class="pa-puce" tabindex="0" data-info="' . $h($info) . '"><span>' . $h($l['nom']) . '</span>'
         . ($repere !== '' ? '<small>' . $h($repere) . '</small>' : '');
-    if ($peutEcrire) {
+    if ($peutEcrire && !($sortirait && $ou !== [])) {
         $html .= '<form method="post"><input type="hidden" name="csrf" value="' . $h($auth->jeton()) . '">'
             . '<input type="hidden" name="action" value="retirer"><input type="hidden" name="parcelle_id" value="' . $idP . '">'
             . '<input type="hidden" name="onglet" value="' . $h($onglet) . '"><input type="hidden" name="ligne" value="' . (int) $l['id'] . '">'
@@ -658,7 +667,7 @@ if ($budget !== null) {
          et le type de tortue se disent maintenant ou plus tard, dans le plan de la parcelle.</p>
       <p>Viennent ensuite la palette de la parcelle, puis son plan : ses dimensions, ses bordures et ses planches.</p>
 <?php else: ?>
-      <p>La palette réunit les plantes de la parcelle avant son dessin. Elle se compose dans l'ordre que donne Théry : les
+      <p>La palette réunit les plantes de la parcelle avant son dessin. Le plan, le scénario et le potager y puisent. Elle se compose dans l'ordre que donne Théry : les
          productions principales d'abord, car tout se construit autour d'elles, puis les productions secondaires, puis les
          plantes de service.</p>
       <p>Les plantes de service se rangent en neuf fonctions. Pour chacune, l'atelier met en tête les espèces que le
@@ -667,6 +676,7 @@ if ($budget !== null) {
       <p>À côté de chaque espèce est noté ce qu'elle demande pour s'obtenir : un plant en conteneur, une bouture, un éclat de
          touffe, un semis. Choisissez selon vos moyens et vos compétences. Le survol d'une plante choisie le rappelle.</p>
       <p>La croix retire une plante. Une production qui rend aussi un service reste dans la palette pour ce service.
+         Une plante déjà employée dans le plan, le scénario ou le potager ne se retire pas : le survol dit où elle sert.
          « Reprendre » ajoute les plantes de service d'une autre parcelle du projet, que vous ajustez ensuite.</p>
 <?php endif; ?>
     </div>

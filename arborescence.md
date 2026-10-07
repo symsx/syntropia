@@ -48,7 +48,7 @@ src/                   backend PHP, adapté de application/src/ (namespace Syntr
     Constats.php             les constats du saut du chat d'une parcelle (`constat`) — même conduite qu'Interventions ; appelé par suivi-saut-du-chat.php
     Reponses.php             lit/écrit la table reponse — question ⇒ texte
     Parcelles.php            les parcelles d'un site — création (appelée par conception-palette.php), plan, campagne de plantation
-    Palettes.php             la palette d'une parcelle (`palette`) — choisir une espèce pour une place ou une fonction, retirer, reprendre les plantes de service d'une autre parcelle ; sous le verrou de la parcelle ; appelé par conception-palette.php
+    Palettes.php             la palette d'une parcelle (`palette`) — choisir une espèce pour une place ou une fonction, retirer (jamais une espèce employée), reprendre les plantes de service d'une autre parcelle ; les espèces où le plan, le scénario et le potager puisent ; remplir une palette vide depuis ce que porte la parcelle ; sous le verrou de la parcelle
     Calques.php              calque_element — CRUD + géométrie (surface, longueur, emprise du terrain) ; appelé par api-calques.php
     Cadastre.php             parcelles cadastrales IGN (API Carto) — éphémère, jamais stocké ; appelé par api-cadastre.php
     Eau.php                  l'eau OpenStreetMap (Overpass) autour du fond tracé — devient une donnée du projet ; appelé par api-eau.php
@@ -90,6 +90,7 @@ bin/
   dev.py                  serveur de développement — voir Commandes
   verifier-export-import.php  l'aller-retour export → import → export d'un projet — appelé par `dev.py verifier-export`, JAMAIS en direct
   compte.php              crée/modifie un compte en CLI — appelé par `dev.py compte`, JAMAIS en direct (voir § Point de reprise)
+  remplir-palettes.php    remplit les palettes VIDES depuis ce que portent les parcelles (Palettes::remplir) — simulation par défaut, `--ecrire` pour écrire ; lancé une fois en production au déploiement des Phases 4 et 6 de la palette ; sur ce poste, exporter config/local.env d'abord
   deployer.py             déploiement vers alwaysdata — etat/fichiers/config/base/preparer
   catalogue-plantae.py    exporte les noms botaniques de plantae-corpus vers contenu/catalogue-scenario.json (autocomplete du scénario), et un instantané de guilde.csv vers contenu/guildes-plantae.json
   lancer-local.sh          lance dev.py et ouvre Firefox dès que le port répond — pour le lanceur de bureau, pas l'usage courant (dev.py seul suffit)

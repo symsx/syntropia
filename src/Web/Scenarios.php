@@ -10,7 +10,8 @@ use Syntropia\Database;
 use Syntropia\Scenario;
 
 /**
- * Écrire le scénario d'une parcelle : ses productions, puis ses végétaux.
+ * Écrire le scénario d'une parcelle : ses végétaux. Ses productions viennent de sa palette depuis le 2026-10-07
+ * (`chantier-palette-vegetale.md`, Phase 4) ; `souhaitsDuSite()` sert à la palette, qui rappelle les Objectifs.
  *
  * Port réduit de `Scenarios` du dépôt de référence, chantier
  * `chantier-scenario-plantation.md`, Phase 3. **Réduit** : rien ne touche
@@ -65,57 +66,6 @@ final class Scenarios
         return is_string($texte) && Scenario::souhaits($texte) !== []
             ? ['souhaits' => Scenario::souhaits($texte), 'de' => 'porteur']
             : ['souhaits' => [], 'de' => null];
-    }
-
-    /**
-     * Retient les productions d'une parcelle, principales et secondaires.
-     *
-     * Au moins une principale ; un souhait ne peut être les deux ; chaque
-     * liste tient dans sa colonne (190 caractères) **sans troncature** — la
-     * base couperait en silence un texte plus long, ou refuserait l'écriture.
-     *
-     * @param list<string> $principales
-     * @param list<string> $secondaires
-     * @throws RuntimeException
-     */
-    public function productions(int $parcelleId, int $compteId, string $version,
-                                array $principales, array $secondaires): void
-    {
-        $principales = $this->propres($principales);
-        $secondaires = $this->propres($secondaires);
-        if ($principales === []) {
-            throw new RuntimeException('Choisissez au moins une production principale pour cette parcelle.');
-        }
-        if (array_intersect(array_map('mb_strtolower', $principales), array_map('mb_strtolower', $secondaires)) !== []) {
-            throw new RuntimeException('Une production est principale ou secondaire, pas les deux.');
-        }
-        foreach (['principales' => $principales, 'secondaires' => $secondaires] as $nom => $liste) {
-            if (mb_strlen(implode("\n", $liste)) > Scenario::PRODUCTION_MAX) {
-                throw new RuntimeException(sprintf(
-                    'Trop de productions %s pour être retenues (%d caractères au plus en tout) : '
-                    . 'gardez les plus importantes.', $nom, Scenario::PRODUCTION_MAX));
-            }
-        }
-
-        $pdo = $this->pdo();
-        $pdo->beginTransaction();
-        try {
-            $req = $pdo->prepare('SELECT * FROM parcelle WHERE id = ? FOR UPDATE');
-            $req->execute([$parcelleId]);
-            $p = $req->fetch();
-            if (!$p || !(new Sites($pdo))->peutEcrireSur((int) $p['site_id'], $compteId)) {
-                throw new RuntimeException('Vous ne pouvez pas modifier cette parcelle.');
-            }
-            if (!hash_equals(Scenario::versionProductions($p), $version)) {
-                throw new RuntimeException('La sélection a changé. Rechargez la page avant de la modifier.');
-            }
-            $pdo->prepare('UPDATE parcelle SET production_principale = ?, production_secondaire = ? WHERE id = ?')
-                ->execute([implode("\n", $principales), $secondaires === [] ? null : implode("\n", $secondaires), $parcelleId]);
-            $pdo->commit();
-        } catch (\Throwable $e) {
-            $pdo->rollBack();
-            throw $e;
-        }
     }
 
     /**
@@ -193,33 +143,5 @@ final class Scenarios
             $pdo->rollBack();
             throw $e;
         }
-    }
-
-    /**
-     * Des souhaits propres : sans doublon (à la casse près), sans vide, et
-     * chacun **un seul souhait** une fois relu — un texte qui contiendrait `;`
-     * ou `,` se scinderait à la lecture (`Scenario::souhaits()`) et ne
-     * reviendrait pas tel qu'il est parti.
-     *
-     * @param list<string> $textes
-     * @return list<string>
-     */
-    private function propres(array $textes): array
-    {
-        $propres = [];
-        foreach ($textes as $texte) {
-            if (!is_string($texte)) {
-                throw new RuntimeException('Les productions choisies ne sont pas reconnues.');
-            }
-            $lus = Scenario::souhaits($texte);
-            if ($lus === []) {
-                continue;
-            }
-            if (count($lus) !== 1) {
-                throw new RuntimeException('Une production tient en un seul souhait, sans virgule ni point-virgule.');
-            }
-            $propres[mb_strtolower($lus[0])] = $lus[0];
-        }
-        return array_values($propres);
     }
 }
