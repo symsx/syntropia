@@ -156,8 +156,11 @@ touffe, semis. Vous choisissez selon vos moyens, rappelés en tête de l'onglet.
 « Reprendre » ajoute les plantes de service d'une autre parcelle du projet, que vous ajustez
 ensuite. Les productions, propres à chaque parcelle, ne se reprennent pas.
 
-Le plan, le scénario et le potager ne puisent pas encore dans la palette : ils proposent toujours
-toutes les espèces du projet.
+Le plan, le scénario et le potager puisent dans la palette. Une plante qui y est employée ne se
+retire pas de la palette : le survol dit où elle sert.
+
+Les parcelles ouvertes avant la palette ont reçu la leur, tirée de ce qu'elles portaient. Un nom
+du scénario ou du potager qui n'est pas une espèce reste tel quel, signalé « hors palette ».
 
 # Concevoir : le plan de la parcelle
 
@@ -211,14 +214,14 @@ La bordure externe bloque l'herbe et freine le vent. Cochez « vent » sur le c�
 dominant : ce côté se dessine en tirets épais et recevra des brise-vent. La bordure interne apporte
 de la biomasse.
 
-« Proposer les espèces de cette bordure » montre les espèces qui remplissent sa fonction, sauf les
+« Proposer les espèces de cette bordure » montre les espèces de la palette qui remplissent sa fonction, sauf les
 annuelles, car une bordure est pérenne, et les plantes grimpantes, réservées à la ligne des lianes.
 
 Elle ne garde que celles que les règles conseillent sur ce côté. Lavande, romarin et hysope vont au
 sud et à l'ouest, sauge et consoude au nord et à l'est, et l'externe ne prend que des émergentes au sud et à l'ouest.
 
-Vous gardez celles que vous voulez, et elles alternent dans cet ordre. Les autres espèces restent à
-ajouter à la main, sauf les plantes qui ne sont que de production.
+Vous gardez celles que vous voulez, et elles alternent dans cet ordre. Les autres espèces de la
+palette restent à ajouter à la main, sauf les plantes qui ne sont que de production.
 
 Une plante peut être notée « bloque l'herbe » dans Espèces. En bordure, une plante couvre-sol
 compte aussi comme bloque-herbe.
@@ -243,7 +246,7 @@ Une espèce sans espacement de service empêche le compte de sa ligne, et la pag
 de dimensions ou de bordures, les plants se recomptent quand le plan est de nouveau enregistré.
 
 Tant que les bordures externe et interne sont vides, vous pouvez **répartir une liste de plantes
-sur toutes les bordures** d'un coup. Vous cochez une seule liste pour la parcelle.
+sur toutes les bordures** d'un coup. Vous cochez une seule liste, prise dans la palette.
 
 Les plantes sans espacement de service ou annuelles sont grisées, avec la raison. Vous pouvez choisir une
 **colonne vertébrale** par bordure, qui revient un plant sur deux.
@@ -291,10 +294,16 @@ productions voulues.
 En syntropie, il se compose sur une frise : le temps en largeur, les strates en hauteur. En
 jardin-forêt, qui n'a pas d'axe du temps, il se lit par strate.
 
+Les végétaux se choisissent dans la palette de la parcelle. Leur place dans la palette dit s'ils
+sont une production principale, une production secondaire ou un accompagnement.
+
+Un végétal noté avant la palette sous un autre nom reste tel quel, signalé « hors palette ». Pour
+le rattacher, choisissez son espèce et cochez la correction du nom.
+
 En syntropie, les quatre strates classent les plantes par **besoin en lumière**, et non par
 hauteur (Théry, ch. 05) : émergente 80 à 100 %, haute 60 à 80 %, moyenne 40 à 60 %, basse 20 à 40 %.
 
-Quand vous nommez un végétal, l'atelier **propose sa strate** d'après Espèces. Une espèce a une
+Quand vous choisissez un végétal, l'atelier **propose sa strate** d'après Espèces. Une espèce a une
 **strate de production** et une **strate de service**, et l'atelier prend celle de l'usage.
 
 Quand une espèce a plusieurs strates possibles, comme la fève ou la pomme de terre précoce,
@@ -358,6 +367,9 @@ vérifié en entier avant tout enregistrement.
 Une parcelle de type **potager** se compose **par planche**, dans son plan de culture. Les planches
 viennent du plan de la parcelle, et chacune peut porter plusieurs cultures.
 
+Les cultures se choisissent dans la palette de la parcelle, comme les plantes des lignes de chaque
+planche. Une culture notée avant sous un autre nom reste telle quelle, signalée « hors palette ».
+
 Chaque planche dit ce que les tables d'association de Christa Weinrich savent de ses voisinages :
 ce qui s'entend bien, et ce qu'il vaut mieux éviter de placer côte à côte.
 
@@ -411,7 +423,8 @@ Le **matériel végétal** se déduit du scénario et du plan, et se classe par 
 multiplier soi-même, régénération naturelle.
 
 La quantité saisie l'emporte. Sinon, elle est estimée d'après l'espacement et le plan, et la page
-le dit. Les plants posés sur les lignes du plan sont comptés tels quels.
+le dit. Les plants posés sur les lignes du plan sont comptés tels quels. Le panneau Informations
+explique ce compte.
 
 Sur la ligne centrale d'une parcelle pérenne, les plantes se partagent la ligne. Les productions
 prennent leur espacement de production, et les plantes de service vivaces et ligneuses remplissent

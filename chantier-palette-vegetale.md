@@ -197,7 +197,8 @@ tout déploiement ; le livret « L'atelier » et le glossaire dans la même vagu
 - **Le livret « L'atelier »** : chapitre « Concevoir : la palette », relu au déploiement. **Pas encore fait** : le
   glossaire (Phase 6). Les parcelles de production auront une palette vide jusqu'à la Phase 6 ; rien en aval ne la lit encore.
 
-**Phases 4 et 6, le 2026-10-07 — en local, pas déployées** (pas de changement de schéma).
+**Phases 4 et 6, le 2026-10-07 — déployées le même jour** (`eb14074`, pas de changement de schéma) ; palettes de
+production remplies (60 espèces), livret relu.
 
 - **Le plan puise dans la palette** (`conception-parcelles.php`) : la proposition d'une bordure, son menu d'ajout, la
   répartition sur les bordures et les lianes ne montrent que les espèces de la palette, avec « Compléter la palette ».
