@@ -60,23 +60,30 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
      pour le papier, pas pour l'écran du bureau. */
   :root{ --haut-bandeaux: 3.4rem; }
 
-  .sol-cadre{ width:100%; max-width:34rem; }
-  .sol-annonce{ font:400 .92rem/1.55 var(--texte); color:var(--ink); margin:0 0 1.1rem; text-align:center; }
-  .sol-liste{ list-style:none; margin:0 0 1.3rem; padding:0; border-top:1px solid var(--line); }
+  /* Les tailles sont en em, rapportées au cadre : quand il ne tient pas dans le bureau, sa taille se réduit (script en
+     bas de page) — un contenu trop long se réduit, il ne défile jamais. En haut, la place de l'onglet « Informations ». */
+  .sol-cadre{ width:100%; max-width:34rem; font-size:16px; padding-top:1.9rem; }
+  .sol-annonce{ font:400 .92em/1.55 var(--texte); color:var(--ink); margin:0 0 1.1em; text-align:center; }
+  .sol-liste{ list-style:none; margin:0 0 1.3em; padding:0; border-top:1px solid var(--line); }
   .sol-ligne{
-    display:flex; align-items:baseline; gap:.7rem; padding:.5rem .1rem;
+    display:flex; align-items:baseline; gap:.7em; padding:.5em .1em;
     border-bottom:1px solid var(--line);
   }
   .sol-numero{
-    flex:0 0 auto; font:600 .72rem var(--titre); color:var(--accent-titre);
-    background:var(--accent-fond); border-radius:1rem; padding:.15rem .5rem;
+    flex:0 0 auto; font:600 .72em var(--titre); color:var(--accent-titre);
+    background:var(--accent-fond); border-radius:1em; padding:.15em .5em;
   }
-  .sol-titre{ flex:1 1 auto; font:600 .86rem var(--titre); color:var(--ink); }
-  .sol-pourquoi{ flex:0 0 auto; font:400 .74rem var(--texte); color:var(--muted); text-align:right; max-width:15rem; }
+  .sol-titre{ flex:1 1 auto; min-width:0; font:600 .86em var(--titre); color:var(--ink); }
+  .sol-pourquoi{ flex:0 1 auto; min-width:0; font:400 .74em var(--texte); color:var(--muted); text-align:right; max-width:15rem; }
+  /* téléphone : le « pourquoi » passe sous le titre, sur toute la largeur, au lieu de déborder à droite */
+  @media (max-width:30rem){
+    .sol-ligne{ flex-wrap:wrap; row-gap:.15em; }
+    .sol-pourquoi{ flex:1 1 100%; max-width:none; text-align:left; }
+  }
 
   .sol-action{
-    display:block; width:100%; padding:.65rem; border:0; border-radius:.6rem;
-    background:var(--accent); color:var(--bouton-encre); font:600 .92rem var(--titre);
+    display:block; width:100%; padding:.65em; border:0; border-radius:.6em;
+    background:var(--accent); color:var(--bouton-encre); font:600 .92em var(--titre);
     text-align:center; text-decoration:none; cursor:pointer;
   }
   .sol-action:hover{ opacity:.92; }
@@ -200,6 +207,19 @@ usort($fiches, static fn (array $a, array $b): int => $a['numero'] <=> $b['numer
 <script src="assets/js/gabarit.js?v=<?= (int) @filemtime(__DIR__ . '/assets/js/gabarit.js') ?>"></script>
 <script>
   Gabarit.init({ etape: 'conception-etude-sol' });
+
+  // Le cadre ne défile jamais : s'il dépasse le bureau, sa taille se réduit jusqu'à tenir.
+  (function(){
+    var b = document.getElementById('bureau'), c = document.querySelector('.sol-cadre');
+    function ajuster(){
+      if (!b || !c) return;
+      var st = getComputedStyle(b), place = b.clientHeight - parseFloat(st.paddingTop) - parseFloat(st.paddingBottom), t = 16;
+      c.style.fontSize = t + 'px';
+      while (c.offsetHeight > place && t > 9) { t -= 0.5; c.style.fontSize = t + 'px'; }
+    }
+    ajuster();
+    window.addEventListener('resize', ajuster);
+  })();
 </script>
 </body>
 </html>
